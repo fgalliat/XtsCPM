@@ -1,2 +1,7 @@
 _untracked
 distro
+*.o
+*~
+RunCPM/RunCPM
+RunCPM/lua/lua
+RunCPM/lua/luac
