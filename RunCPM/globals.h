@@ -1,6 +1,12 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+/* Some Xtase-fgalliat definitions */
+// the Xtase YATL Teeensy3.6 based layout
+#define XTASE_T36_YATL_LAYOUT 1
+
+
+
 /* Some definitions needed globally */
 #ifdef __MINGW32__
 #include <ctype.h>

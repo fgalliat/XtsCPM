@@ -1,7 +1,24 @@
 #include "globals.h"
 
+
+
 #include <SPI.h>
-#include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
+#ifdef XTASE_T36_YATL_LAYOUT
+  // auto-provides an 'SD' instance
+  // this pseudo include is just used to specify
+  // (..) the wanted impl. of lib
+  // #include <SD_xts.h>
+
+  // regular teensy SD lib
+  // #include <SD.h>
+
+  // maybe slower but as direct truncate, rename, .... routines that are required by the system
+  #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
+
+#else
+  #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
+#endif
+
 
 // SDCard/LED related definitions
 //
@@ -22,11 +39,27 @@
   #define LEDinv 0
   #define BOARD "TTGO_T1"
 #elif defined CORE_TEENSY // Teensy 3.5 and 3.6
-  SdFatSdio SD;
-  #define SDINIT
-  #define LED 13
-  #define LEDinv 0
-  #define BOARD "TEENSY 3.5"
+  #ifdef XTASE_T36_YATL_LAYOUT
+    // // SD instance is auto-provided by include "SD.h"
+
+    // w/ SdFat lib on a Teensy 3.5/3.6,
+    // (..) SD.begin( BUILTIN_SDCARD ) becomes
+    // (..) SD.begin( )
+    SdFatSdio SD;
+    #define SDINIT
+    
+    // due to YATL SPI conection layout
+    // #define LED 13
+    #define LED 14
+    #define LEDinv 0    
+    #define BOARD "TEENSY 3.6"
+  #else
+    SdFatSdio SD;
+    #define SDINIT
+    #define LED 13
+    #define LEDinv 0
+    #define BOARD "TEENSY 3.5"
+  #endif
 #elif defined ADAFRUIT_GRAND_CENTRAL_M4
   #define USE_SDIO 0
   SdFat SD;

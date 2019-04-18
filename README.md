@@ -20,6 +20,12 @@ Usefull links :
 **Aim** : run interpreters on Teensy 3.6 (& even a small OS)
 
 
+**Current/Initial compilation : **
+Le croquis utilise 73184 octets (6%) de l'espace de stockage de programmes. Le maximum est de 1048576 octets.
+Les variables globales utilisent 72436 octets (27%) de mémoire dynamique, ce qui laisse 189708 octets pour les variables locales. Le maximum est de 262144 octets.
+ 
+
+
 
   - **TODO**
 
