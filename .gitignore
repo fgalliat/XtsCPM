@@ -5,3 +5,4 @@ distro
 RunCPM/RunCPM
 RunCPM/lua/lua
 RunCPM/lua/luac
+RunCPM/lua/liblua.a
