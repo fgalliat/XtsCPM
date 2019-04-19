@@ -39,6 +39,8 @@
 #endif
        }
 
+       void write(char ch) { tft.write( ch ); }
+
        void println(const char* str) { this->println( (char*)str ); }
 
        void println(char* str) {
@@ -54,6 +56,17 @@
 
        int getWidth() { return 320; }
        int getHeight() { return 240; }
+
+       int getTTYWidth() { return this->getWidth() / 6; } // 53
+       int getTTYHeight() { return this->getHeight() / 8; } // 30
+
+       // in TTY char unit (not pixels)
+       void setCursor(int x, int y) {
+#ifndef USE_BUILTIN_LCD
+#else
+         tft.setCursor(x*6, (y+0)*8); 
+#endif
+       }
 
  };
 

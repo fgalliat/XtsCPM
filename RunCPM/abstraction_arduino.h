@@ -1,6 +1,23 @@
 #ifndef ABSTRACT_H
 #define ABSTRACT_H
 
+#ifdef HAS_BUILTIN_LCD
+  bool currentlyUseScreen() {
+	  #ifdef USE_BUILTIN_LCD
+	    bool curStdOutIsScreen = true;
+	    return curStdOutIsScreen;
+	  #else
+	    return false;
+	  #endif
+  }
+#else
+  bool currentlyUseScreen() {
+	  return false;
+  }
+#endif
+
+
+
 #ifdef PROFILE
 #define printf(a, b) Serial.println(b)
 #endif
@@ -390,15 +407,26 @@ uint8 _getch(void) {
 
 uint8 _getche(void) {
 	uint8 ch = _getch();
-	Serial.write(ch);
+	Serial.write(ch); // local echo
+#ifdef HAS_BUILTIN_LCD
+  if ( currentlyUseScreen() ) { screen.write(ch); }
+#endif
 	return(ch);
 }
 
 void _putch(uint8 ch) {
+#ifdef HAS_BUILTIN_LCD
+  if ( currentlyUseScreen() ) { screen.write(ch); }
+	else
+#endif
 	Serial.write(ch);
 }
 
 void _clrscr(void) {
+#ifdef HAS_BUILTIN_LCD
+  if ( currentlyUseScreen() ) { screen.cls(); }
+	else
+#endif
 	Serial.println("\e[H\e[J");
 }
 
