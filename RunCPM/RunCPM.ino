@@ -16,6 +16,17 @@
   // maybe slower but as direct truncate, rename, .... routines that are required by the system
   #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
 
+  #include "xts_yatl.h"
+
+  #define HAS_BUILTIN_LCD 1
+
+  #ifdef HAS_BUILTIN_LCD
+    #define USE_BUILTIN_LCD 1
+    #define BOOT_BUILTIN_LCD 1
+
+    #include "xts_yatl_screen.h"
+  #endif
+
 #else
   #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
 #endif
@@ -117,13 +128,29 @@ int lst_open = FALSE;
 void setup(void) {
   pinMode(LED, OUTPUT);
   digitalWrite(LED, LOW);
+
   Serial.begin(SERIALSPD);
+
+  #ifdef USE_BUILTIN_LCD
+    setupArduinoScreen();
+    #ifdef BOOT_BUILTIN_LCD
+      screen.cls();
+      screen.println("Hello CP/M");
+      screen.println("Wait for Serial terminal...");
+    #endif
+  #endif
+
+
   while (!Serial) {	// Wait until serial is connected
     digitalWrite(LED, HIGH^LEDinv);
     delay(sDELAY);
     digitalWrite(LED, LOW^LEDinv);
     delay(sDELAY);
   }
+
+  #ifdef BOOT_BUILTIN_LCD
+    screen.println("Serial terminal connected.");
+  #endif
 
 #ifdef DEBUGLOG
   _sys_deletefile((uint8 *)LogName);
