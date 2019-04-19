@@ -18,8 +18,6 @@
 
   #include "xts_yatl.h"
 
-  #define HAS_BUILTIN_LCD 1
-
   #ifdef HAS_BUILTIN_LCD
     #define USE_BUILTIN_LCD 1
     #define BOOT_BUILTIN_LCD 1
@@ -132,8 +130,10 @@ void setup(void) {
   Serial.begin(SERIALSPD);
 
   #ifdef USE_BUILTIN_LCD
+    #warning "-USE BUILTIN LCD-"
     setupArduinoScreen();
     #ifdef BOOT_BUILTIN_LCD
+      #warning "-BOOT ON BUILTIN LCD-"
       screen.cls();
       screen.println("Hello CP/M");
       screen.println("Wait for Serial terminal...");
@@ -147,10 +147,6 @@ void setup(void) {
     digitalWrite(LED, LOW^LEDinv);
     delay(sDELAY);
   }
-
-  #ifdef BOOT_BUILTIN_LCD
-    screen.println("Serial terminal connected.");
-  #endif
 
 #ifdef DEBUGLOG
   _sys_deletefile((uint8 *)LogName);
@@ -166,6 +162,10 @@ void setup(void) {
   _puts("\r\nBOARD: ");
   _puts(BOARD);
   _puts("\r\n");
+
+  #ifdef BOOT_BUILTIN_LCD
+    screen.println("Serial terminal connected.");
+  #endif
 
   _puts("Initializing SD card.\r\n");
 #if defined ADAFRUIT_GRAND_CENTRAL_M4
