@@ -83,6 +83,12 @@
    tft.begin();
    tft.setRotation(3);
 
+   //tft.setScrollTextArea(0, 0, 53*6, 30*8);
+   //tft.setTextWrap( true );
+   tft.enableScroll();
+   tft.setScrollTextArea(0,0,53*6, 30*8);
+   // tft.setScrollBackgroundColor(ILI9341_GREEN);
+
    tft.fillScreen(ILI9341_BLACK);
    tft.setTextColor(ILI9341_YELLOW);
    tft.setTextSize(2);
