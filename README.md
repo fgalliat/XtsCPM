@@ -104,6 +104,7 @@ Xtase - fgalliat version @ Apr2109
    - copy CCP/* @ sdcard:/
    - unzip DISK/A.zip to sdcard:/A/
    - then boot (each DISK letter is a folder of ONE letter)
+   - **REMINDER** : Wait until serial is connected (to start emulator)
    - ![Teensy 3.6 booting CP/M 2.2](./pictures/yatlCPM_1_mini.jpg)
   - **'Nux Box**
       - make a ./distro/ directory
@@ -117,12 +118,13 @@ Xtase - fgalliat version @ Apr2109
 **Usefull commands :**
 
 - **EXIT**
-- **FORMAT** D (will create & format a virtual disk w/ user 0)
 - **XMODEM**
 - **TYPE** READ.ME
 - **SUBMIT** TOTO.SUB (to run a ~batch script)
+- **FORMAT** D: (will create & format a virtual disk w/ user 0)
 - **DIR** *.BAS
 - **REN**
+- **ERA** *.TMP (delete one or more files)
 - **SCHED** (to run a program later...)
 - **LOAD** (run a .HEX file or compile it as a .COM file)
 - **Z80ASM** TITI.ASM (to compile a .ASM to a .COM, see INFO.ASM & other samples on DISK A:)
