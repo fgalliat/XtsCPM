@@ -23,14 +23,13 @@ Usefull links :
 
 
 **Current/Initial compilation : **
-  Le croquis utilise 73184 octets (6%) de l'espace de stockage de programmes. Le maximum est de 1048576 octets.
-  Les variables globales utilisent 72436 octets (27%) de mémoire dynamique, ce qui laisse 189708 octets pour les variables locales. Le maximum est de 262144 octets.
+  On a Teensy 3.6
+  Sketch uses 73184 bytes (6%) on 1048576 bytes (+1MB).
+  Global vars uses 72436 bytes (27%) of RAM, still 189708 free for local vars. max is 262144 bytes (~262KB).
 
-  - il reste suffisament de flash et de RAM pour ajouter des fonctions
-    materieles 
-  - **j'ai une carte SD de 8GB avec les fichiers de la distro dessus**
-  - **remonter le Teensy 3.6 avec ce carte SD**
-  - **debugage a 9600bps / default** 
+  - enough RAM & Flash remaining to add some hardware supports 
+
+  - **debug @ 9600bps / default** 
 
 
 
@@ -39,7 +38,7 @@ Usefull links :
 - video
   - start by console (6x8 -> 53x30chars) // (3+1x5+1 -> 80x40chars)
   - the TinyFont mode should be enough (80x25chars required)
-  - VT100 emulation ( for colors + clrscr cmd )
+  - VT100 emulation ( for colors + clrscr cmd + locate cmd )
   - can have gfx (seems that OS itself is text based only)
 
 - audio
@@ -67,11 +66,23 @@ Usefull links :
 
 
 
-**Run on**
+**Runs on**
 
-- Teensy (@ this time : compiles but not yet tested)
-- 'nux (ARM64 - Android's chrooted kali - native cpp) / (x64 ubuntu Linux)
-- Android (Dalvik nor NDK : Not yet Ported)
+  - Teensy (Yeah)
+  - 'nux (ARM64 - Android's chrooted kali - native cpp) / (x64 ubuntu Linux)
+  - Android (Dalvik nor NDK : Not yet Ported)
+
+**How to run**
+ - Teensy
+   - copy CCP/* @ sdcard:/
+   - unzip DISK/A.zip to sdcard:/A/
+   - then boot (each DISK letter is a folder of ONE letter)
+  - 'Nux
+  - make a ./distro/ directory
+   - copy CCP/* @ ./distro/
+   - unzip DISK/A.zip to ./distro/A/
+   - copy RunCPM executable ELF to ./distro/
+   - then boot : cd ./distro && ./RunCPM (each DISK letter is a folder of ONE letter)
 
 
 

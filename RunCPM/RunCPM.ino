@@ -3,6 +3,7 @@
 
 
 #include <SPI.h>
+
 #ifdef XTASE_T36_YATL_LAYOUT
   // auto-provides an 'SD' instance
   // this pseudo include is just used to specify
