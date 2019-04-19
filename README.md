@@ -92,7 +92,7 @@ Xtase - fgalliat version @ Apr2109
 
 **Runs on**
 
-  - Teensy 3.6 (Yeah)
+  - Teensy 3.6 (Yeah !)
   - 'nux (ARM64 - Android's chrooted kali - native cpp) / (PC x64 ubuntu Linux)
   - Android (Dalvik nor NDK : <u>Not yet Ported</u>)
 
@@ -100,11 +100,12 @@ Xtase - fgalliat version @ Apr2109
 
 **How to run**
 
- - Teensy
+ - **Teensy 3.6**
    - copy CCP/* @ sdcard:/
    - unzip DISK/A.zip to sdcard:/A/
    - then boot (each DISK letter is a folder of ONE letter)
-  - 'Nux
+   - ![Teensy 3.6 booting CP/M 2.2](./pictures/yatlCPM_1_mini.jpg)
+  - **'Nux Box**
       - make a ./distro/ directory
        - copy CCP/* to ./distro/
        - unzip DISK/A.zip to ./distro/A/
