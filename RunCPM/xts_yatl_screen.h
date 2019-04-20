@@ -112,6 +112,11 @@
         consoleRenderFull();
       }
 
+      bool __escapeChar = false;
+      char __escapeChar0 = 0x00;
+      char __escapeChar1 = 0x00;
+      char __escapeChar2 = 0x00;
+
       void consoleWrite(char ch) {
          if ( ch == '\r' ) { return; }
 
@@ -124,13 +129,76 @@
             return; 
          }
 
-         // beware w/ '\b' '\t' & esc seqs 
+         // is generally used as '\b'+' '+'\b' so no need to render it
+         if ( ch == '\b' ) { 
+            consoleCursorX--;
+            if ( consoleCursorX < 0 ) {
+               consoleCursorY--;
+               if ( consoleCursorY < 0 ) {
+                  consoleCursorY = 0;
+               }
+            }
+            return; 
+         }
+
+         // beware w/ '\t' & esc seqs 
+         // seems that '\t' is not used ?
+
+         // VT100 escapes
+         if ( ch == 27 ) { 
+            // escape sequence ex. ^B1 ^C1
+            __escapeChar = true;
+            __escapeChar0 = 0x00;
+            __escapeChar1 = 0x00;
+            __escapeChar2 = 0x00;
+         } else if ( ch == 26 ) { 
+            // don't know how to handle that
+            Serial.println("Esc:26 ????");
+            return;
+         }
+
+         if ( __escapeChar ) {
+            if ( __escapeChar0 == 0x00 ) {
+               __escapeChar0 = ch;
+            } else if ( __escapeChar1 == 0x00 ) {
+               __escapeChar1 = ch;
+               Serial.print( "Esc:" );
+               Serial.println( (char)__escapeChar1 );
+            } else if ( __escapeChar2 == 0x00 ) {
+               __escapeChar2 = ch;
+            } else {
+               __escapeChar = false;
+            }
+         }
+
+         if ( __escapeChar ) {
+            return;
+         }
 
          ttyConsoleFrame[ ( consoleCursorY * ttyConsoleWidth ) + consoleCursorX ] = ch;
 
          // direct render
          tft.setCursor(consoleCursorX * TTY_FONT_WIDTH, consoleCursorY * TTY_FONT_HEIGHT);
-         tft.write( ch );
+         if ( ch == ' ' ) {
+            // render spaces Cf '\b'
+            tft.fillRect(consoleCursorX * TTY_FONT_WIDTH, consoleCursorY * TTY_FONT_HEIGHT, TTY_FONT_WIDTH, TTY_FONT_HEIGHT, ILI9341_BLACK);
+         } else {
+
+            if ( ch < 32 || ch >= 127 ) {
+               Serial.write(ch);
+               Serial.write(' ');
+               Serial.print( (int)ch );
+               Serial.write('/');
+            }
+
+            if ( __escapeChar1 == 'C' ) { tft.setTextColor( ILI9341_GREEN ); }
+            else if ( __escapeChar1 == 'B' ) { tft.setTextColor( ILI9341_WHITE ); }
+
+            // tft.write( __escapeChar1 ); // disp Esc char
+
+            tft.write( ch );
+            __escapeChar1 = 0x00;
+         }
 
          consoleCursorX++;
          if ( consoleCursorX >= ttyConsoleWidth ) {

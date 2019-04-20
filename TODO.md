@@ -24,3 +24,45 @@
       - ex. 80x25 on 53x25
       - just for compatibility of softwares display
     - try to find the tinyFont for that lib
+
+
+
+- VT52 emulation
+
+  - http://matthieu.benoit.free.fr/68hc11/vt100.htm
+
+  - not really that ...
+
+  - <ESC> B1  =====> try : will begin color
+
+  - <ESC> C1  =====> try : will end color
+
+  - ##      VT52 Compatable Mode   
+
+    ```
+    ESC A           Cursor up
+    ESC B           Cursor down
+    ESC C           Cursor right
+    ESC D           Cursor left
+    ESC F           Special graphics character set
+    ESC G           Select ASCII character set
+    ESC H           Cursor to home
+    ESC I           Reverse line feed
+    ESC J           Erase to end of screen
+    ESC K           Erase to end of line
+    ESC Ylc         Direct cursor address (See note 1)
+    ESC Z           Identify (See note 2)
+    ESC =           Enter alternate keypad mode
+    ESC >           Exit alternate keypad mode
+    ESC 1           Graphics processor on (See note 3)
+    ESC 2           Graphics processor off (See note 3)
+    ESC <           Enter ANSI mode
+    
+    Note 1:  Line and column numbers for direct cursor addresses are single
+             character codes whose values are the desired number plus 37 octal.
+             Line and column numbers start at 1.
+    
+    Note 2:  Response to ESC Z is ESC/Z.
+    
+    Note 3:  Ignored if no graphics processor stored in the VT100
+    ```
