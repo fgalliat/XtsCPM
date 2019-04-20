@@ -107,9 +107,11 @@ Xtase - fgalliat version @ Apr2109
    - **REMINDER** : Wait until serial is connected (to start emulator)
    - ![Teensy 3.6 booting CP/M 2.2](./pictures/yatlCPM_1_mini.jpg)
   - **'Nux Box**
+      - make posix build
+        - needs libreadline-dev + ncurses-dev
       - make a ./distro/ directory
        - copy CCP/* to ./distro/
-       - unzip DISK/A.zip to ./distro/A/
+       - unzip DISK/A.zip to ./distro/A/0/
        - copy RunCPM executable ELF to ./distro/
        - then boot : cd ./distro && ./RunCPM (each DISK letter is a folder of ONE letter)
 
