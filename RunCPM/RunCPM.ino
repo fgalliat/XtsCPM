@@ -136,11 +136,15 @@ void setup(void) {
       #warning "-BOOT ON BUILTIN LCD-"
 
       #ifdef LCD_MODE_CONSOLE
+      //  #define CONSOLE_SELF_TEST 1
+       #ifdef CONSOLE_SELF_TEST
         _consoleTest();
         while( true ) {
           delay(3000);
         }
+       #endif
       #endif
+
     #endif
   #endif
 

@@ -15,11 +15,11 @@
           - if text has attribs I'll have to store those
           - by spans / by chars :-( => on WSL & ubuntu that chars attrs seems to be ignored ....
     - 1st, try a benchmark : 
-      - allocate memseg (1590 bytes for 53x30)
-      - fill all w/ a character
-      - display whole mem-console
-      - try to scroll
-      - see rendering time 
+      - allocate memseg (1590 bytes for 53x30) **[v]**
+      - fill all w/ a character **[v]**
+      - display whole mem-console **[v]**
+      - try to scroll **[v]**
+      - see rendering time **[nearly good]** 
     - then try bigger memseg that screen caps
       - ex. 80x25 on 53x25
       - just for compatibility of softwares display

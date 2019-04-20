@@ -52,30 +52,42 @@
       int consoleCursorY = 0;
 
       void _consoleFill(char ch, bool resetCursor=true) {
-         memset(ttyConsoleFrame, 0x00, ttyConsoleFrameSize);
+         memset(ttyConsoleFrame, ch, ttyConsoleFrameSize);
          if (resetCursor) {
            consoleCursorX = 0;
            consoleCursorY = 0;
          }
+
+         for(int i=0; i<ttyConsoleWidth; i++) {
+            ttyConsoleFrame[i] = '0'+( i % 10 );
+         }
+
+         for(int i=0; i<ttyConsoleHeight; i++) {
+            ttyConsoleFrame[(i*ttyConsoleWidth)+0] = '0'+( i % 10 );
+         }
+
       }
 
-      void consoleCls() {
+      void consoleCls(bool clearDisplay=true) {
          _consoleFill(0x00, true);
-      }
-
-      void consoleWrite(char ch) {
-         ttyConsoleFrame[ ( consoleCursorY * ttyConsoleWidth ) + consoleCursorX ] = ch;
+         if (clearDisplay) { tft.fillScreen(ILI9341_BLACK); }
+         tft.setCursor(0,0);
       }
 
       void consoleRenderFull(bool clearDisplay=true) {
          if (clearDisplay) { tft.fillScreen(ILI9341_BLACK); }
-         tft.setCursor(0, 0);
-         
+         consoleCursorX = 0;
+         char line[ ttyConsoleWidth + 1 ];
          for(int y=0; y < ttyConsoleHeight; y++) {
-            consoleCursorX = 0;
             consoleCursorY = y;
-            tft.setCursor(0, consoleCursorY * TTY_FONT_HEIGHT);
-            tft.print( &ttyConsoleFrame[ (y*ttyConsoleWidth)+0 ] );
+            if (&ttyConsoleFrame[ (y*ttyConsoleWidth)+0 ] != 0x00) {
+              memset(line, 0x00, ttyConsoleWidth+1);
+              memcpy(line, &ttyConsoleFrame[ (y*ttyConsoleWidth)+0 ], ttyConsoleWidth );
+
+              // beware if not clearDisplay
+              tft.setCursor(0, consoleCursorY * TTY_FONT_HEIGHT);
+              tft.print( line );
+            }
          }
       }
 
@@ -84,12 +96,86 @@
       }
 
       void _scrollUp() {
-         y_dbug("XTS: CON: ScrollUp TODO");
+         // y_dbug("XTS: CON: ScrollUp TODO");
+         // ?????
+         // tft.setScroll( ttyConsoleWidth * TTY_FONT_HEIGHT );
+         /*
+         try to use native text scroller -> too slow
+         consoleCursorY = ttyConsoleHeight - 0;
+         tft.setCursor(0, consoleCursorY * TTY_FONT_HEIGHT);
+         tft.println("COUCOU");
+         */
+        memmove( &ttyConsoleFrame[ 0 ], &ttyConsoleFrame[ ttyConsoleWidth ], ttyConsoleFrameSize - ttyConsoleWidth );
+        memset( &ttyConsoleFrame[ ttyConsoleFrameSize - ttyConsoleWidth ], 0x00, ttyConsoleWidth );
+        consoleCursorX = 0;
+        consoleCursorY = ttyConsoleHeight - 1;
+        consoleRenderFull();
+      }
+
+      void consoleWrite(char ch) {
+         if ( ch == '\r' ) { return; }
+
+         if ( ch == '\n' ) { 
+            consoleCursorX = 0;
+            consoleCursorY++;
+            if ( consoleCursorY >= ttyConsoleHeight ) {
+               _scrollUp();
+            }
+            return; 
+         }
+
+         // beware w/ '\b' '\t' & esc seqs 
+
+         ttyConsoleFrame[ ( consoleCursorY * ttyConsoleWidth ) + consoleCursorX ] = ch;
+
+         // direct render
+         tft.setCursor(consoleCursorX * TTY_FONT_WIDTH, consoleCursorY * TTY_FONT_HEIGHT);
+         tft.write( ch );
+
+         consoleCursorX++;
+         if ( consoleCursorX >= ttyConsoleWidth ) {
+            consoleCursorY++;
+            if ( consoleCursorY >= ttyConsoleHeight ) {
+               _scrollUp();
+            }
+         }
       }
 
       void _consoleTest() {
          _consoleFill('A');
          consoleRenderFull();
+         _consoleFill('b');
+         consoleRenderFull();
+         _consoleFill('X');
+         consoleRenderFull();
+         _consoleFill('M');
+         consoleRenderFull();
+
+         _scrollUp();
+         _scrollUp();
+         _scrollUp();
+
+         consoleWrite('H');
+         consoleWrite('e');
+         consoleWrite('l');
+         consoleWrite('l');
+         consoleWrite('o');
+         consoleWrite(' ');
+         consoleWrite('W');
+         consoleWrite('l');
+         consoleWrite('d');
+
+         consoleWrite('\n');
+
+         consoleWrite('H');
+         consoleWrite('e');
+         consoleWrite('l');
+         consoleWrite('l');
+         consoleWrite('o');
+         consoleWrite(' ');
+         consoleWrite('W');
+         consoleWrite('l');
+         consoleWrite('d');
       }
 
     #endif
@@ -106,12 +192,22 @@
 #ifndef USE_BUILTIN_LCD
            y_dbug( "XTS: Screen cls" );
 #else
+         #ifdef LCD_MODE_CONSOLE
+           consoleCls();
+         #else
            tft.fillScreen(ILI9341_BLACK);
            tft.setCursor(0, 0);
+         #endif
 #endif
        }
 
-       void write(char ch) { tft.write( ch ); }
+       void write(char ch) { 
+          #ifdef LCD_MODE_CONSOLE
+            consoleWrite(ch);
+          #else
+            tft.write( ch ); 
+          #endif
+       }
 
        void println(const char* str) { this->println( (char*)str ); }
 
@@ -121,8 +217,14 @@
            y_dbug( str );
            y_dbug( "XTS: -> /" );
 #else
+          #ifdef LCD_MODE_CONSOLE
+          	while (*str)
+              consoleWrite(*(str++));
+              consoleWrite('\n');
+          #else
            tft.print(str);
            tft.print('\n');
+          #endif
 #endif
        }
 
