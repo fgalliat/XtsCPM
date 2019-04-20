@@ -134,9 +134,13 @@ void setup(void) {
     setupArduinoScreen();
     #ifdef BOOT_BUILTIN_LCD
       #warning "-BOOT ON BUILTIN LCD-"
-      screen.cls();
-      screen.println("Hello CP/M");
-      screen.println("Wait for Serial terminal...");
+
+      #ifdef LCD_MODE_CONSOLE
+        _consoleTest();
+        while( true ) {
+          delay(3000);
+        }
+      #endif
     #endif
   #endif
 
@@ -163,10 +167,6 @@ void setup(void) {
   _puts("\r\nBOARD: ");
   _puts(BOARD);
   _puts("\r\n");
-
-  #ifdef BOOT_BUILTIN_LCD
-    screen.println("Serial terminal connected.");
-  #endif
 
   _puts("Initializing SD card.\r\n");
 #if defined ADAFRUIT_GRAND_CENTRAL_M4
