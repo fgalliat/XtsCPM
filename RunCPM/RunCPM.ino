@@ -140,13 +140,14 @@ void setup(void) {
     #endif
   #endif
 
-
-  while (!Serial) {	// Wait until serial is connected
-    digitalWrite(LED, HIGH^LEDinv);
-    delay(sDELAY);
-    digitalWrite(LED, LOW^LEDinv);
-    delay(sDELAY);
-  }
+  #ifndef BOOT_BUILTIN_LCD
+    while (!Serial) {	// Wait until serial is connected
+      digitalWrite(LED, HIGH^LEDinv);
+      delay(sDELAY);
+      digitalWrite(LED, LOW^LEDinv);
+      delay(sDELAY);
+    }
+  #endif
 
 #ifdef DEBUGLOG
   _sys_deletefile((uint8 *)LogName);
