@@ -79,6 +79,8 @@
         #define LCD_CONSOLE_DEF_COLS LCD_CONSOLE_40_COLS
       #endif
       int consoleMode = LCD_CONSOLE_DEF_COLS;
+      int consoleCurrentFontHeight = -1;
+      int consoleCurrentFontWidth  = -1;
 
       // one of LCD_CONSOLE_xx_COLS
       void _setConsoleMode(int mode) {
@@ -90,6 +92,8 @@
 
          consoleMode = mode;
          if ( mode == LCD_CONSOLE_80_COLS ) {
+            consoleCurrentFontHeight = 5+1;
+            consoleCurrentFontWidth  = 3+1;
             #ifdef LCD_TINYFONT
                // type : ILI9341_t3_font_t 
                tft.setFont( Pixelzim_8 );
@@ -98,6 +102,8 @@
             #endif
          } else {
             tft.setFont();
+            consoleCurrentFontHeight = 8;
+            consoleCurrentFontWidth  = 6;
          }
       }
 
@@ -140,7 +146,7 @@
 
               #ifdef COLORED_CONSOLE
                // beware if not clearDisplay
-               tft.setCursor(0, consoleCursorY * TTY_FONT_HEIGHT);
+               tft.setCursor(0, consoleCursorY * consoleCurrentFontHeight);
                
                int c=0;
                while (line[c] != 0x00) {
@@ -158,14 +164,14 @@
                  
                  #ifdef LCD_TINYFONT
                   // to reduce space between letters
-                  tft.setCursor(c * TTY_FONT_WIDTH, consoleCursorY * TTY_FONT_HEIGHT);
+                  tft.setCursor(c * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight);
                  #endif
 
                }
 
               #else
                // beware if not clearDisplay
-               tft.setCursor(0, consoleCursorY * TTY_FONT_HEIGHT);
+               tft.setCursor(0, consoleCursorY * consoleCurrentFontHeight);
                tft.print( line );
               #endif
 
@@ -175,6 +181,18 @@
 
       void consoleRenderPartial() {
          y_dbug("XTS: CON: RenderPartial TODO");
+      }
+
+      void _toggleConsoleMode(bool rerender=true) {
+         if ( consoleMode == LCD_CONSOLE_80_COLS ) {
+            consoleMode = LCD_CONSOLE_40_COLS;
+         } else {
+            consoleMode = LCD_CONSOLE_80_COLS;
+         }
+         _setConsoleMode(consoleMode);
+         if (rerender) {
+            consoleRenderFull();
+         }
       }
 
       void _scrollUp() {
@@ -206,6 +224,10 @@
       char __escapeChar2 = 0x00;
 
       void consoleWrite(char ch) {
+         // use spe char to toggle console mode for now
+         // 7F is 127 (console seems tobe 127 limited)
+         if ( ch == 0x7F ) { _toggleConsoleMode(); return; }
+
          if ( ch == '\r' ) { return; }
 
          if ( ch == '\n' ) { 
@@ -277,10 +299,10 @@
          ttyConsoleFrame[ ( consoleCursorY * ttyConsoleWidth ) + consoleCursorX ] = ch;
 
          // direct render
-         tft.setCursor(consoleCursorX * TTY_FONT_WIDTH, consoleCursorY * TTY_FONT_HEIGHT);
+         tft.setCursor(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight);
          if ( ch == ' ' ) {
             // render spaces Cf '\b'
-            tft.fillRect(consoleCursorX * TTY_FONT_WIDTH, consoleCursorY * TTY_FONT_HEIGHT, TTY_FONT_WIDTH, TTY_FONT_HEIGHT, ILI9341_BLACK);
+            tft.fillRect(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight, consoleCurrentFontWidth, consoleCurrentFontHeight, ILI9341_BLACK);
          } else {
 
             if ( ch < 32 || ch >= 127 ) {
@@ -437,6 +459,7 @@
    #endif
 
    _setConsoleMode( LCD_CONSOLE_DEF_COLS );
+   //_setConsoleMode( LCD_CONSOLE_40_COLS );
 
    tft.fillScreen(ILI9341_BLACK);
    tft.setTextColor(ILI9341_YELLOW);
