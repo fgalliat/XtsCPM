@@ -11,6 +11,14 @@
     // tty console emulation
     #define LCD_MODE_CONSOLE 1
 
+#define LCD_TINYFONT 1
+
+#ifdef LCD_TINYFONT
+   // tiny 3x5 monospaced ? TTY_FONT_HEIGHT
+   #include "font_pzim3x5.h"
+#endif
+
+
     #include "SPI.h"
     #include "ILI9341_t3n.h"
     // w/ that lib BOTH CS & DC needs to besome CS pins
@@ -33,8 +41,13 @@
 
     #ifdef LCD_MODE_CONSOLE
       // char bounds
-      #define TTY_FONT_WIDTH 6
-      #define TTY_FONT_HEIGHT 8
+      #ifdef LCD_TINYFONT
+         #define TTY_FONT_WIDTH 4
+         #define TTY_FONT_HEIGHT 6
+      #else
+         #define TTY_FONT_WIDTH 6
+         #define TTY_FONT_HEIGHT 8
+      #endif
       // 53
       #define TTY_CON_WIDTH  ( TFT_WIDTH / TTY_FONT_WIDTH )
       // 30
@@ -112,6 +125,12 @@
                  }
                //   tft.write(*(line++));
                  tft.write( line[c] );
+
+                 #ifdef LCD_TINYFONT
+                  // to reduce space between letters
+                  tft.setCursor(c * TTY_FONT_WIDTH, consoleCursorY * TTY_FONT_HEIGHT);
+                 #endif
+
                  c++;
                }
 
@@ -365,6 +384,9 @@
  };
 
 
+
+
+
  // declared in xts_yatl.h
  void setupArduinoScreen() {
 #ifndef USE_BUILTIN_LCD
@@ -377,16 +399,23 @@
    tft.begin();
    tft.setRotation(3);
 
+   #ifndef LCD_MODE_CONSOLE
    //tft.setScrollTextArea(0, 0, 53*6, 30*8);
    //tft.setTextWrap( true );
    tft.enableScroll();
    tft.setScrollTextArea(0,0,53*6, 30*8);
    // tft.setScrollBackgroundColor(ILI9341_GREEN);
+   #endif
+
+   #ifdef LCD_TINYFONT
+     // type : ILI9341_t3_font_t 
+     tft.setFont( Pixelzim_8 );
+   #endif
 
    tft.fillScreen(ILI9341_BLACK);
    tft.setTextColor(ILI9341_YELLOW);
    tft.setTextSize(2);
-   tft.println("Waiting for Arduino Serial Monitor...");
+   tft.println("Teensy 3.6 -YATL- Booting");
 
    tft.setTextSize(1);
    tft.setTextColor(ILI9341_WHITE);
