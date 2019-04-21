@@ -126,12 +126,13 @@
                //   tft.write(*(line++));
                  tft.write( line[c] );
 
+                 c++;
+                 
                  #ifdef LCD_TINYFONT
                   // to reduce space between letters
                   tft.setCursor(c * TTY_FONT_WIDTH, consoleCursorY * TTY_FONT_HEIGHT);
                  #endif
 
-                 c++;
                }
 
               #else
