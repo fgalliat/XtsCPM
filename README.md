@@ -104,7 +104,6 @@ Xtase - fgalliat version @ Apr2109
    - copy CCP/* @ sdcard:/
    - unzip DISK/A.zip to sdcard:/A/
    - then boot (each DISK letter is a folder of ONE letter)
-   - **REMINDER** : Wait until serial is connected (to start emulator)
    - ![Teensy 3.6 booting CP/M 2.2](./pictures/yatlCPM_1_mini.jpg)
   - **'Nux Box**
       - make posix build
@@ -141,6 +140,10 @@ Xtase - fgalliat version @ Apr2109
 - https://fr.wikipedia.org/wiki/Control_Program/Monitor
 
 
+
+**Current stage :**
+
+![CP/M colored console](./pictures/yatlCPM_colored_1_mini.jpg)
 
 
 
