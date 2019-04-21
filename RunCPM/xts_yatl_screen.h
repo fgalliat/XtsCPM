@@ -123,7 +123,7 @@
                  } else {
                     tft.setTextColor( ILI9341_WHITE );
                  }
-               //   tft.write(*(line++));
+               
                  tft.write( line[c] );
 
                  c++;
