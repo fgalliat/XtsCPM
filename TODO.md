@@ -60,6 +60,20 @@
 
 
 
+- **File support**
+  - try **XMODEM** command to send source code to YATL CP/M
+  - @ least while TE doesn't display well
+  - try to make a Pascal prgm to handle console mode switch (? chr$(127) like)
+  - XMODEM toto.pas /R to receive
+    - **start** minicom on PC > Send file by XMODEM
+      - on Nux Box can try "lrzsz" package
+    - **then** A:XMODEM toto.pas /R
+    - but need to input by Serial **+** ChatPad
+    - so unusable for now ...
+  - XMODEM toto.pas /S to send
+
+
+
 - **Keyboard support**
 
   - Microsoft XBOX 360 Chatpad
