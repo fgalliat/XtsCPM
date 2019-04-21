@@ -26,7 +26,7 @@
       - try to scroll **[v]**
       - see rendering time **[nearly good]** 
 
-    - then try bigger memseg that screen caps
+    - then try bigger memseg that screen caps **(DONE)**
       - ex. 80x25 on 53x25
       - just for compatibility of softwares display
 
@@ -40,6 +40,7 @@
     - (80 cols current font doesn't have lowerCase chars)
     - make a BDOS interrupt entry ... (maybe later)
     - or make a specific esc char sequence ( **0x7F** 127 (seems that console is 7bits per default) )
+      - can use \$> ? chr\$(127) with mBASIC
 
   
 
@@ -47,7 +48,7 @@
 
   - http://matthieu.benoit.free.fr/68hc11/vt100.htm
   - https://espterm.github.io/docs/vt100.codes.txt
-  - not really that ...
+  - not really as simple as that ...
   - <ESC> B1  =====> try : will begin color
   - <ESC> C1  =====> try : will end color****
   - **WORKS :** 
@@ -55,5 +56,44 @@
     - **OS** works
   - **DOESN'T WORKS:**
     - **T**ext**E**ditor doesn't works very well
-      - cause not 80chars
       - cause some different escapes
+
+
+
+- **Keyboard support**
+
+  - Microsoft XBOX 360 Chatpad
+
+    - stdIO handling (Serial IN / Chatpad IN -- Serial OUT / TFT OUT)
+
+    - Spe keys
+
+      - will need to have a **CTRL like key** (ex. for **TE**)
+
+      - greenSquare & redCircle are all used to make speChars
+
+      - **no ESC key** // a bckSp key 
+
+      - have a -peopleKey- that could emulate CTRL Key
+
+      - may **-peopleKey- + [<-]** could do **ESC**
+
+      - then **-peopleKey- + [->]** could do another spe key 
+
+        - maybe YATL specific hdl : 
+
+        - [MENU]
+
+          \> TOGGLE CONSOLE MODE
+
+          \> SELF TEST
+
+          \> REBOOT
+
+  
+
+- **Buzzer support**
+
+  
+
+- **LED support**
