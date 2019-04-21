@@ -48,11 +48,11 @@
          #define TTY_FONT_WIDTH 6
          #define TTY_FONT_HEIGHT 8
       #endif
-      // 53
+      // 53 - 80 if tinyFont
       #define TTY_CON_WIDTH  ( TFT_WIDTH / TTY_FONT_WIDTH )
-      // 30
+      // 30 - 40 if tinyFont
       #define TTY_CON_HEIGHT ( TFT_HEIGHT / TTY_FONT_HEIGHT )
-      // 1590
+      // 1590 - 3200 if tinyFont
       #define TTY_CON_SIZE ( TTY_CON_WIDTH * TTY_CON_HEIGHT )
 
       #define COLORED_CONSOLE 1
@@ -71,6 +71,36 @@
       int consoleCursorX = 0;
       int consoleCursorY = 0;
 
+      #define LCD_CONSOLE_40_COLS 0x00
+      #define LCD_CONSOLE_80_COLS 0x01
+      #ifdef LCD_TINYFONT
+        #define LCD_CONSOLE_DEF_COLS LCD_CONSOLE_80_COLS
+      #else
+        #define LCD_CONSOLE_DEF_COLS LCD_CONSOLE_40_COLS
+      #endif
+      int consoleMode = LCD_CONSOLE_DEF_COLS;
+
+      // one of LCD_CONSOLE_xx_COLS
+      void _setConsoleMode(int mode) {
+         #ifndef LCD_TINYFONT
+           if ( mode == LCD_CONSOLE_80_COLS ) {
+              mode = LCD_CONSOLE_40_COLS;
+           }
+         #endif
+
+         consoleMode = mode;
+         if ( mode == LCD_CONSOLE_80_COLS ) {
+            #ifdef LCD_TINYFONT
+               // type : ILI9341_t3_font_t 
+               tft.setFont( Pixelzim_8 );
+            #else
+               tft.setFont();
+            #endif
+         } else {
+            tft.setFont();
+         }
+      }
+
       void _consoleFill(char ch, bool resetCursor=true) {
          #ifdef COLORED_CONSOLE
          memset(ttyConsoleAttrs, ch, ttyConsoleFrameSize);
@@ -86,12 +116,10 @@
          for(int i=0; i<ttyConsoleWidth; i++) {
             ttyConsoleFrame[i] = '0'+( i % 10 );
          }
-
          for(int i=0; i<ttyConsoleHeight; i++) {
             ttyConsoleFrame[(i*ttyConsoleWidth)+0] = '0'+( i % 10 );
          }
          */
-
       }
 
       void consoleCls(bool clearDisplay=true) {
@@ -408,10 +436,7 @@
    // tft.setScrollBackgroundColor(ILI9341_GREEN);
    #endif
 
-   #ifdef LCD_TINYFONT
-     // type : ILI9341_t3_font_t 
-     tft.setFont( Pixelzim_8 );
-   #endif
+   _setConsoleMode( LCD_CONSOLE_DEF_COLS );
 
    tft.fillScreen(ILI9341_BLACK);
    tft.setTextColor(ILI9341_YELLOW);
