@@ -46,6 +46,7 @@
 
       #ifdef COLORED_CONSOLE
       char ttyConsoleAttrs[ TTY_CON_SIZE ];
+      char curTextAttr = 0x00;
       #endif
 
       char ttyConsoleFrame[ TTY_CON_SIZE ];
@@ -60,6 +61,7 @@
       void _consoleFill(char ch, bool resetCursor=true) {
          #ifdef COLORED_CONSOLE
          memset(ttyConsoleAttrs, ch, ttyConsoleFrameSize);
+         curTextAttr = 0x00;
          #endif
          memset(ttyConsoleFrame, ch, ttyConsoleFrameSize);
          if (resetCursor) {
@@ -67,6 +69,7 @@
            consoleCursorY = 0;
          }
 
+         /* - test purposes - 
          for(int i=0; i<ttyConsoleWidth; i++) {
             ttyConsoleFrame[i] = '0'+( i % 10 );
          }
@@ -74,6 +77,7 @@
          for(int i=0; i<ttyConsoleHeight; i++) {
             ttyConsoleFrame[(i*ttyConsoleWidth)+0] = '0'+( i % 10 );
          }
+         */
 
       }
 
@@ -101,6 +105,8 @@
                while (line[c] != 0x00) {
                  if ( ttyConsoleAttrs[ (y*ttyConsoleWidth)+c ] == 0x01 ) {
                     tft.setTextColor( ILI9341_GREEN );
+                 } else if ( ttyConsoleAttrs[ (y*ttyConsoleWidth)+c ] == 0x02 ) {
+                    tft.setTextColor( ILI9341_YELLOW );
                  } else {
                     tft.setTextColor( ILI9341_WHITE );
                  }
@@ -151,8 +157,6 @@
       char __escapeChar1 = 0x00;
       char __escapeChar2 = 0x00;
 
-      char curTextAttr = 0x00;
-
       void consoleWrite(char ch) {
          if ( ch == '\r' ) { return; }
 
@@ -195,12 +199,18 @@
 
          if ( __escapeChar ) {
             if ( __escapeChar0 == 0x00 ) {
+               curTextAttr = 0x00;
                __escapeChar0 = ch;
             } else if ( __escapeChar1 == 0x00 ) {
                __escapeChar1 = ch;
                Serial.print( "Esc:" );
                Serial.println( (char)__escapeChar1 );
-               curTextAttr = (curTextAttr++)%2;
+               // curTextAttr = (curTextAttr++)%2;
+               // curTextAttr++;
+               // curTextAttr %= 2;
+               if ( __escapeChar1 == 'C' ) { curTextAttr = 0x00; }
+               else if ( __escapeChar1 == 'B' ) { curTextAttr = 0x01; }
+               else { curTextAttr = 0x00; }
             } else if ( __escapeChar2 == 0x00 ) {
                __escapeChar2 = ch;
             } else {
@@ -214,10 +224,7 @@
 
 
          #ifdef COLORED_CONSOLE
-            // if ( __escapeChar1 == 'C' ) { curTextAttr = (curTextAttr++)%2;  }
-            // else if ( __escapeChar1 == 'B' ) { curTextAttr = (curTextAttr++)%2; }
-
-            ttyConsoleAttrs[ ( consoleCursorY * ttyConsoleWidth ) + consoleCursorX ] = curTextAttr;
+           ttyConsoleAttrs[ ( consoleCursorY * ttyConsoleWidth ) + consoleCursorX ] = curTextAttr;
          #endif
          ttyConsoleFrame[ ( consoleCursorY * ttyConsoleWidth ) + consoleCursorX ] = ch;
 
@@ -235,8 +242,9 @@
                Serial.write('/');
             }
 
-            if ( __escapeChar1 == 'C' ) { tft.setTextColor( ILI9341_GREEN );  }
-            else if ( __escapeChar1 == 'B' ) { tft.setTextColor( ILI9341_WHITE ); }
+            if ( curTextAttr == 0x01 ) { tft.setTextColor( ILI9341_GREEN );  }
+            else if ( curTextAttr == 0x02 ) { tft.setTextColor( ILI9341_YELLOW ); }
+            else if ( curTextAttr == 0x00 ) { tft.setTextColor( ILI9341_WHITE ); }
 
             // tft.write( __escapeChar1 ); // disp Esc char
 
