@@ -262,8 +262,9 @@
             __escapeChar1 = 0x00;
             __escapeChar2 = 0x00;
          } else if ( ch == 26 ) { 
-            // don't know how to handle that
-            Serial.println("Esc:26 ????");
+            // seems to be the CLS escape sequence
+            // Serial.println("Esc:26 ????");
+            consoleCls();
             return;
          }
 
