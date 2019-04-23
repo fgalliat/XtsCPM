@@ -40,6 +40,8 @@
   - beware if cycles emulation ....
   - for System MENU (rather make CP/M pausing while UI)
   - Ext. Hardware functions ...
+
+  - done **once per operation** (not cycle emulation)
       
 
 - Console Mode Switcher **(DONE)**

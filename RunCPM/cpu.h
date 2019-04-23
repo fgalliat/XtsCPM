@@ -1439,6 +1439,10 @@ static inline void Z80run(void) {
 	/* main instruction fetch/decode loop */
 	while (!Status) {	/* loop until Status != 0 */
 
+#ifdef USE_XTS_HDL
+        xts_hdl();
+#endif
+
 #ifdef DEBUG
 		if (PC == Break) {
 			_puts(":BREAK at ");

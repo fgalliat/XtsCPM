@@ -15,5 +15,13 @@
 
   void setupArduinoScreen();
 
+  // Xtase run-time Handler
+  #define USE_XTS_HDL 1
+  bool ledState = false;
+  void xts_hdl() {
+    // run-time handler function
+    digitalWrite(LED_PIN, ledState ? HIGH : LOW);
+    ledState = !ledState;
+  }
 
 #endif

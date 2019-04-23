@@ -210,6 +210,7 @@ void setup(void) {
         if (lst_dev)
           _sys_fflush(lst_dev);
 #endif
+
       }
     } else {
       _puts("Unable to load CP/M CCP.\r\nCPU halted.\r\n");
