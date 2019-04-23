@@ -32,6 +32,14 @@
 
     - try to find the tinyFont for that lib **(DONE)**
 
+
+- Xtase handle inside CP/M code
+  - find main loop
+  - insert a call to one mine functions xts_hdl()
+  - prevent from need of an Interrupt / Timer...
+  - beware if cycles emulation ....
+  - for System MENU (rather make CP/M pausing while UI)
+  - Ext. Hardware functions ...
       
 
 - Console Mode Switcher **(DONE)**
