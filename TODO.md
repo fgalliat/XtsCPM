@@ -142,6 +142,14 @@
     
     ```
 
+    - for small text files (such as source codes)
+      - did : a:mbasic C:RTEXT
+      - to write a single file on current disk
+        - echo "a:mbasic C:RTEXT" > /dev/ttyACM0
+        - echo "TOTO.PAS" > /dev/ttyACM0
+        - cat ./TOTO.PAS > /dev/ttyACM0
+        - echo "SYSTEM" > /dev/ttyACM0
+
 
 
 - https://archive.org/stream/BASIC-80_MBASIC_Reference_Manual/BASIC-80_MBASIC_Reference_Manual_djvu.txt
