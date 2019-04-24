@@ -201,7 +201,7 @@
   
 
 - **Buzzer support**
-
+  - <Esc> 7 make bell tone
   
 
 - **LED support**

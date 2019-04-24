@@ -266,6 +266,9 @@
             // Serial.println("Esc:26 ????");
             consoleCls();
             return;
+         } else if ( ch == 7 ) { 
+            beep();
+            return;
          }
 
          if ( __escapeChar ) {

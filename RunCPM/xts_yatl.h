@@ -11,6 +11,8 @@
   // 13 is used by SPI LCD
   #define LED_PIN 14
 
+  #define SPEAKER_PIN 6
+
   #define y_dbug(a) Serial.println(a)
 
   void setupArduinoScreen();
@@ -23,5 +25,8 @@
     digitalWrite(LED_PIN, ledState ? HIGH : LOW);
     ledState = !ledState;
   }
+
+  #define HAS_BUILTIN_BUZZER 1
+  void setupArduinoSpeaker();
 
 #endif

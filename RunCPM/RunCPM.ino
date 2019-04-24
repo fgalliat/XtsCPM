@@ -18,6 +18,15 @@
 
   #include "xts_yatl.h"
 
+  #ifdef HAS_BUILTIN_BUZZER
+    #define USE_BUILTIN_BUZZER 1
+    #include "xts_yatl_speaker.h"
+    
+    void beep() { buzzer.beep(); }
+  #else
+    void beep() { ; }
+  #endif
+
   #ifdef HAS_BUILTIN_LCD
     #define USE_BUILTIN_LCD 1
     #define BOOT_BUILTIN_LCD 1
@@ -146,6 +155,11 @@ void setup(void) {
       #endif
 
     #endif
+  #endif
+
+  #ifdef USE_BUILTIN_BUZZER
+    #warning "- BOOT W/ BUILTIN SPEAKER -"
+    setupArduinoSpeaker();
   #endif
 
   #ifndef BOOT_BUILTIN_LCD
