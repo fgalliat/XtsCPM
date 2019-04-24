@@ -208,6 +208,10 @@
   - http://www.z80.eu/adventures.html
   - have Zork1 on D:
 
+- Pascal & realted resources
+  - https://www.pascaland.org/pascall.htm
+  - http://www.retroarchive.org/cpm/lang/lang.htm
+
 - **Buzzer support**
   - <Esc> 7 make bell tone
   
