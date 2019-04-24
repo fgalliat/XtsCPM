@@ -198,6 +198,11 @@
 
           \> REBOOT
 
+- **small BASIC script**
+  - ? chr$(7)   BELL
+  - ? chr$(26)  CLS
+  - ? chr$(127) CONSOLE/MODE
+  - ? chr$(27)+"B1"+"C"chr$(27)+"C1"+"oucou"
   
 
 - **Buzzer support**
