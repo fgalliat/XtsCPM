@@ -2,9 +2,9 @@
 2 REM Use : a:mbasic C:RTEXT
 5 CLS$=chr$(26)
 10 ? CLS$
-15 INPUT "File name : ",FILE$
+15 LINE INPUT "File name : ",FILE$
 20 OPEN "O", #1, FILE$
-30 INPUT ">",L$
+30 LINE INPUT ">",L$
 40 IF L$ = "-EOF-" THEN GOTO 888
 50 ? #1, L$
 60 GOTO 30

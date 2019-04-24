@@ -57,8 +57,10 @@ public class Sender {
   }
 
   static void printLineToCPMSlowly(String line) {
+    // Zzz(50);
     serialOut.print(line+"\r\n");
     // System.out.println("~"+line);
+    // Zzz(50);
   }
 
   static void Zzz(long time) {
