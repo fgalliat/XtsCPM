@@ -206,6 +206,7 @@
   
 - Z machine for CPM
   - http://www.z80.eu/adventures.html
+  - have Zork1 on D:
 
 - **Buzzer support**
   - <Esc> 7 make bell tone
