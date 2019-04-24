@@ -217,14 +217,16 @@
 
 - **Buzzer support**
   - <Esc> 7 make bell tone
-
   - to " play 'a#bbca' " could use a tty escSeq ?
+
   - T5K uses the following format <u8 noteIdx> <u16 duration> => 5KB / 3 => ~1700 notes (have headers)
   - T53 uses => <u16 freq><u16 dur><u16 wait>
+
   - to play "MARIO.T53" could have something like :
     ? chr$(27)+ "$" + "MARIO.T53" +"!"
     ? chr$(27)+ "$" + "MONKEY.T5K" +"!"
-    ? chr$(27)+ "$" + "A#BBCD" +"!"
+    ? chr$(27)+ "$" + "A#BBCD" +"!" **(done)**
+
   - limited this system to 64 bytes !
   - by default : it will lock the system while playing
   - later : make a Threaded version (/!\\ with delay(..) & Timers )
