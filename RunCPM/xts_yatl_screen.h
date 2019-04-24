@@ -253,6 +253,10 @@
       bool __escapeSeq = false; // VT100 escape sequence
       char vt100seq[16+1];
 
+      bool __escapeMSeq = false; // VT-MUSIC escape sequence
+      #define _VT_MUSIC_LEN 64
+      char vtMUSICseq[_VT_MUSIC_LEN+1];
+
       void consoleWrite(char ch) {
          // use spe char to toggle console mode for now
          // 7F is 127 (console seems tobe 127 limited)
@@ -295,6 +299,8 @@
             __escapeSeq = false;
             memset( vt100seq, 0x00, 16+1 );
 
+            __escapeMSeq = false;
+
          } else if ( ch == 26 ) { 
             // seems to be the CLS escape sequence
             // Serial.println("Esc:26 ????");
@@ -318,12 +324,35 @@
                if ( __escapeChar1 == 'C' ) { curTextAttr = 0x00; }
                else if ( __escapeChar1 == 'B' ) { curTextAttr = 0x01; }
                else if ( __escapeChar1 == '[' ) { __escapeSeq = true; }
+               else if ( __escapeChar1 == '$' ) { 
+                  // vt-MUSIC mode
+                  __escapeMSeq = true;
+                  memset(vtMUSICseq, 0x00, _VT_MUSIC_LEN+1); 
+               }
                else { curTextAttr = 0x00; }
-            } else if ( __escapeChar2 == 0x00 && !__escapeSeq ) {
+            } else if ( __escapeChar2 == 0x00 && !__escapeSeq && !__escapeMSeq ) {
                __escapeChar2 = ch;
                Serial.print( (char)__escapeChar2 );
             } else {
                
+               // VT-MUSIC SUPPORT
+               // ex. ^$aac#d! => plays "AAC#D"
+               if ( __escapeMSeq ) {
+                  if ( ch == '!'  ) {
+                     __escapeChar = false;
+                     playTuneString(vtMUSICseq);
+                     return;
+                  } else {
+                     int l = strlen(vtMUSICseq);
+                     if ( l >= _VT_MUSIC_LEN ) {
+                        __escapeChar = false;
+                        playTuneString(vtMUSICseq);
+                        return;
+                     }
+                     vtMUSICseq[ l ] = ch;
+                  }
+               } else 
+
                if ( __escapeSeq ) {
                   if ( ch >= 'A' && ch <= 'z'  ) {
                      vt100seq[ strlen(vt100seq) ] = ch;
