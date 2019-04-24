@@ -214,6 +214,7 @@
 - Pascal & realted resources
   - https://www.pascaland.org/pascall.htm
   - http://www.retroarchive.org/cpm/lang/lang.htm
+  - https://www.pcengines.ch/tp3.htm
 
 - **Buzzer support**
   - <Esc> 7 make bell tone
