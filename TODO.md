@@ -232,3 +232,12 @@
   - BdosCall( uint8_t reg, uint16_t regValue );
 
 - **LED support**
+
+
+- **Usefull commands**
+  - > PIP B:ED.COM=A:ED.COM
+Copy the disk file "ED.COM" from disk "A" to the file "ED.COM" on disk "B". The source file and the destination file will use the current user area code.
+A shorter form of the command could be used because the destination file name is the same as the source file name.
+ 
+  - > PIP B:=A:ED.COM 
+A short version of the previous example.
