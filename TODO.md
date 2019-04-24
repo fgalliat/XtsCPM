@@ -204,6 +204,8 @@
   - ? chr$(127) CONSOLE/MODE
   - ? chr$(27)+"B1"+"C"chr$(27)+"C1"+"oucou"
   
+- Z machine for CPM
+  - http://www.z80.eu/adventures.html
 
 - **Buzzer support**
   - <Esc> 7 make bell tone
