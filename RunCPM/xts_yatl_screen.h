@@ -140,48 +140,56 @@
          _consoleSetCursor(0,0);
       }
 
+      char _c_line[ ttyConsoleWidth + 1 ];
+
+      void _consoleRenderOneLine(int row, bool clearArea=true) {
+         if ( ttyConsoleFrame[ (row*ttyConsoleWidth)+0 ] == 0x00) {
+            // do clear the area ????
+            if ( clearArea ) {
+               tft.fillRect(0, row*consoleCurrentFontHeight, TFT_WIDTH, consoleCurrentFontHeight, ILI9341_BLACK);
+            }
+         }
+
+         memset(_c_line, 0x00, ttyConsoleWidth+1);
+         memcpy(_c_line, &ttyConsoleFrame[ (row*ttyConsoleWidth)+0 ], ttyConsoleWidth );
+
+         #ifdef COLORED_CONSOLE
+            // beware if not clearDisplay
+            tft.setCursor(0, row * consoleCurrentFontHeight);
+            int c=0;
+            while ( _c_line[c] != 0x00 ) {
+               if ( ttyConsoleAttrs[ (row*ttyConsoleWidth)+c ] == 0x01 ) {
+                  tft.setTextColor( ILI9341_GREEN );
+               } else if ( ttyConsoleAttrs[ (row*ttyConsoleWidth)+c ] == 0x02 ) {
+                  tft.setTextColor( ILI9341_YELLOW );
+               } else {
+                  tft.setTextColor( ILI9341_WHITE );
+               }
+            
+               tft.write( _c_line[c] );
+
+               c++;
+               
+               #ifdef LCD_TINYFONT
+                  // to reduce space between letters
+                  tft.setCursor(c * consoleCurrentFontWidth, row * consoleCurrentFontHeight);
+               #endif
+            }
+         #else
+            // beware if not clearDisplay
+            tft.setCursor(0, row * consoleCurrentFontHeight);
+            tft.print( line );
+         #endif
+
+
+      }
+
       void consoleRenderFull(bool clearDisplay=true) {
          if (clearDisplay) { tft.fillScreen(ILI9341_BLACK); }
          consoleCursorX = 0;
-         char line[ ttyConsoleWidth + 1 ];
          for(int y=0; y < ttyConsoleHeight; y++) {
             consoleCursorY = y;
-            if (&ttyConsoleFrame[ (y*ttyConsoleWidth)+0 ] != 0x00) {
-              memset(line, 0x00, ttyConsoleWidth+1);
-              memcpy(line, &ttyConsoleFrame[ (y*ttyConsoleWidth)+0 ], ttyConsoleWidth );
-
-              #ifdef COLORED_CONSOLE
-               // beware if not clearDisplay
-               tft.setCursor(0, consoleCursorY * consoleCurrentFontHeight);
-               
-               int c=0;
-               while (line[c] != 0x00) {
-                 if ( ttyConsoleAttrs[ (y*ttyConsoleWidth)+c ] == 0x01 ) {
-                    tft.setTextColor( ILI9341_GREEN );
-                 } else if ( ttyConsoleAttrs[ (y*ttyConsoleWidth)+c ] == 0x02 ) {
-                    tft.setTextColor( ILI9341_YELLOW );
-                 } else {
-                    tft.setTextColor( ILI9341_WHITE );
-                 }
-               
-                 tft.write( line[c] );
-
-                 c++;
-                 
-                 #ifdef LCD_TINYFONT
-                  // to reduce space between letters
-                  tft.setCursor(c * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight);
-                 #endif
-
-               }
-
-              #else
-               // beware if not clearDisplay
-               tft.setCursor(0, consoleCursorY * consoleCurrentFontHeight);
-               tft.print( line );
-              #endif
-
-            }
+            _consoleRenderOneLine(consoleCursorY, false);
          }
       }
 
@@ -225,7 +233,10 @@
       }
 
       // erase from current position to EndOfLine
-      void _eraseTillEOL() {
+      void _eraseTillEOL(bool clearArea=true) {
+         if ( clearArea ) {
+            tft.fillRect(consoleCursorX*consoleCurrentFontWidth, consoleCursorY*consoleCurrentFontHeight, TFT_WIDTH, consoleCurrentFontHeight, ILI9341_BLACK);
+         }
          int addr = ( consoleCursorY * ttyConsoleWidth) + consoleCursorX;
          int len = (ttyConsoleWidth-consoleCursorX);
          #ifdef COLORED_CONSOLE
@@ -362,8 +373,8 @@
                               if ( _ch == 'H' ) { break; }
                               colStr[_j++] = _ch;
                            }
-                           col = atoi(colStr);
-                           row = atoi(rowStr);
+                           col = atoi(colStr) - 1;
+                           row = atoi(rowStr) - 1;
                            _consoleSetCursor(col,row);
                            return;
                         }
