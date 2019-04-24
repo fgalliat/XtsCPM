@@ -107,10 +107,16 @@
          }
       }
 
+      void _consoleSetCursor(int col, int row) {
+         consoleCursorX = col;
+         consoleCursorY = row;
+         tft.setCursor(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight);
+      }
+
       void _consoleFill(char ch, bool resetCursor=true) {
          #ifdef COLORED_CONSOLE
-         memset(ttyConsoleAttrs, ch, ttyConsoleFrameSize);
-         curTextAttr = 0x00;
+            curTextAttr = 0x00;
+            memset(ttyConsoleAttrs, curTextAttr, ttyConsoleFrameSize);
          #endif
          memset(ttyConsoleFrame, ch, ttyConsoleFrameSize);
          if (resetCursor) {
@@ -131,7 +137,7 @@
       void consoleCls(bool clearDisplay=true) {
          _consoleFill(0x00, true);
          if (clearDisplay) { tft.fillScreen(ILI9341_BLACK); }
-         tft.setCursor(0,0);
+         _consoleSetCursor(0,0);
       }
 
       void consoleRenderFull(bool clearDisplay=true) {
@@ -218,10 +224,23 @@
         consoleRenderFull();
       }
 
+      // erase from current position to EndOfLine
+      void _eraseTillEOL() {
+         int addr = ( consoleCursorY * ttyConsoleWidth) + consoleCursorX;
+         int len = (ttyConsoleWidth-consoleCursorX);
+         #ifdef COLORED_CONSOLE
+           memset( &ttyConsoleAttrs[ addr ], 0x00, len );
+         #endif
+         memset( &ttyConsoleFrame[ addr ], 0x00, len );
+      }
+
       bool __escapeChar = false;
       char __escapeChar0 = 0x00;
       char __escapeChar1 = 0x00;
       char __escapeChar2 = 0x00;
+
+      bool __escapeSeq = false; // VT100 escape sequence
+      char vt100seq[16+1];
 
       void consoleWrite(char ch) {
          // use spe char to toggle console mode for now
@@ -261,6 +280,10 @@
             __escapeChar0 = 0x00;
             __escapeChar1 = 0x00;
             __escapeChar2 = 0x00;
+
+            __escapeSeq = false;
+            memset( vt100seq, 0x00, 16+1 );
+
          } else if ( ch == 26 ) { 
             // seems to be the CLS escape sequence
             // Serial.println("Esc:26 ????");
@@ -278,17 +301,85 @@
             } else if ( __escapeChar1 == 0x00 ) {
                __escapeChar1 = ch;
                Serial.print( "Esc:" );
-               Serial.println( (char)__escapeChar1 );
-               // curTextAttr = (curTextAttr++)%2;
-               // curTextAttr++;
-               // curTextAttr %= 2;
+               //Serial.println( (char)__escapeChar1 );
+               Serial.print( (char)__escapeChar1 );
+
                if ( __escapeChar1 == 'C' ) { curTextAttr = 0x00; }
                else if ( __escapeChar1 == 'B' ) { curTextAttr = 0x01; }
+               else if ( __escapeChar1 == '[' ) { __escapeSeq = true; }
                else { curTextAttr = 0x00; }
-            } else if ( __escapeChar2 == 0x00 ) {
+            } else if ( __escapeChar2 == 0x00 && !__escapeSeq ) {
                __escapeChar2 = ch;
+               Serial.print( (char)__escapeChar2 );
             } else {
-               __escapeChar = false;
+               
+               if ( __escapeSeq ) {
+                  if ( ch >= 'A' && ch <= 'z'  ) {
+                     vt100seq[ strlen(vt100seq) ] = ch;
+                     // Serial.println( ch );
+                     __escapeChar = false;
+
+                     int slen = strlen(vt100seq);
+                     if ( slen == 1 ) {
+                        if ( ch == 'K' ) {
+                           // ^[K
+                           _eraseTillEOL();
+                           return;
+                        } else if ( ch == 'H' ) {
+                           // ^[H
+                           // return to Home
+                           _consoleSetCursor(0,0);
+                           return;
+                        }
+                     } else if ( slen == 2 ) {
+                        if ( ch == 'J' ) {
+                           if ( vt100seq[0] == '2' ) {
+                              // ^[2J
+                              consoleCls();
+                              return;
+                           }
+                        }
+                     } else {
+                        if ( ch == 'H' ) {
+                           // ^[<row>;<col>H
+                           // set location
+                           int row = 0;
+                           int col = 0;
+                           char rowStr[8];
+                           char colStr[8];
+                           memset( rowStr, 0x00, 8 );
+                           memset( colStr, 0x00, 8 );
+                           char _ch;
+                           int _i,_j=0;
+                           for(_i=0; _i < slen; _i++) {
+                              _ch = vt100seq[_i];
+                              if ( _ch == ';' ) { break; }
+                              rowStr[_i] = _ch;
+                           }
+                           _i++;
+                           for(; _i < slen; _i++) {
+                              _ch = vt100seq[_i];
+                              if ( _ch == 'H' ) { break; }
+                              colStr[_j++] = _ch;
+                           }
+                           col = atoi(colStr);
+                           row = atoi(rowStr);
+                           _consoleSetCursor(col,row);
+                           return;
+                        }
+                     }
+
+                     Serial.println( vt100seq );
+
+                  } else {
+                     vt100seq[ strlen(vt100seq) ] = ch;
+                     // Serial.print( ch );
+                  }
+
+               } else {
+                  __escapeChar = false;
+                  Serial.println(  );
+               }
             }
          }
 
