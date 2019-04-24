@@ -198,6 +198,9 @@
 
           \> REBOOT
 
+- cpm.h l. 736
+  - free Bdos hooks (225-229 inclusive are free)
+
 - **small BASIC script**
   - ? chr$(7)   BELL
   - ? chr$(26)  CLS
