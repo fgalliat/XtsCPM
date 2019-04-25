@@ -1,3 +1,21 @@
+TP3 & pointer & addr
+  https://www.tutorialspoint.com/pascal/pascal_pointers.htm
+
+program testPtr;
+
+var
+ str : string;
+
+begin
+ str := 'coucou';
+ 
+ writeln( str );
+ writeln( addr(str) );
+end.
+
+
+// ==================================
+
 #ifdef TEENSY_36
 
 #include <TimerOne.h>
