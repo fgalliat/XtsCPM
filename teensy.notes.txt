@@ -1,0 +1,38 @@
+#ifdef TEENSY_36
+
+#include <TimerOne.h>
+
+bool inIRQ=false;
+int irqCpt=0;
+
+void timer_IRQ(){
+  if (inIRQ) { return; }
+  inIRQ = true;
+
+  if (screen_dirty && irqCpt > 1 ) {
+      screenSync();
+  }
+
+  irqCpt++;
+
+  inIRQ = false;
+}
+
+
+void setupISR() {
+  Timer1.initialize(350000); // 350ms 
+  Timer1.attachInterrupt(timer_IRQ);
+}
+
+
+
+void setup() {
+
+  // ...
+  setupISR();
+  // ...
+
+}
+
+
+#endif
