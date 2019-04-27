@@ -4,7 +4,7 @@ TP3 & pointer & addr
 program testPtr;
 
 var
- str : string;
+ str : string[5];
 
 begin
  str := 'coucou';
