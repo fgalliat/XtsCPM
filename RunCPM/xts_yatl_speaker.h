@@ -88,15 +88,21 @@
 
   // returns nb of bytes readed
   // n = _SD_readBinFile(ftuneStreamName, audiobuff, fileLen);
-  long _SD_readBinFile(char* filename, uint8_t outBuff, long fileLength) {
-      File f = SD.open(filename, FILE_READ);
+  int _SD_readBinFile(char* filename, uint8_t* outBuff, long fileLength) {
+      File f;
+      
+      if (f = SD.open(filename, FILE_READ) ) {
+        // ....
+      } else { return -1; }
 
-      long readed = 0;
+      int readed = 0;
 
       while (f.available())
-			outBuff[readed++] = f.read();
+			outBuff[readed++] = (uint8_t)f.read();
 
       f.close();
+
+      return readed;
   }
   // =========================================================
 

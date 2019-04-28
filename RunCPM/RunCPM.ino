@@ -16,6 +16,9 @@
   // maybe slower but as direct truncate, rename, .... routines that are required by the system
   #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
 
+  // needed here ....
+  SdFatSdio SD;
+
   #include "xts_yatl.h"
 
   #ifdef HAS_BUILTIN_BUZZER
@@ -64,7 +67,10 @@
     // w/ SdFat lib on a Teensy 3.5/3.6,
     // (..) SD.begin( BUILTIN_SDCARD ) becomes
     // (..) SD.begin( )
-    SdFatSdio SD;
+    
+    // done upper ......
+    // SdFatSdio SD;
+
     #define SDINIT
     
     // due to YATL SPI conection layout
