@@ -86,6 +86,9 @@
       return ch;
   }
 
+    bool checkbreak() { return false; }
+    bool anyBtn() { return false; }
+
   // returns nb of bytes readed
   // n = _SD_readBinFile(ftuneStreamName, audiobuff, fileLen);
   int _SD_readBinFile(char* filename, uint8_t* outBuff, long fileLength) {
@@ -160,12 +163,12 @@
 
 
 
-  // #define _MUSIC_TONES_SUPPORT 1
+  #define _MUSIC_TONES_SUPPORT 1
   #ifdef _MUSIC_TONES_SUPPORT
     // T5K Format
-    void __playTune(unsigned char* tuneStream, bool btnStop);
+    bool __playTune(unsigned char* tuneStream, bool btnStop);
     // T53
-    void __playTuneT53(unsigned char* tuneStream, bool btnStop);
+    bool __playTuneT53(unsigned char* tuneStream, bool btnStop);
 
     // 5KB audio buffer
     #define AUDIO_BUFF_SIZE (5 * 1024)
@@ -175,8 +178,14 @@
     void led3(bool state) { /*mcu.led(0, state);*/ }
     void led2(bool state) { /*mcu.led(0, state);*/ }
 
+ typedef struct Note {
+  unsigned char note;
+  unsigned short duration;
+ } Note;
+
+
     bool playTuneFromStorage(char* tuneStreamName, int format = AUDIO_FORMAT_T5K, bool btnStop = true) {
-        buzzer.notTone();
+        buzzer.noTone();
 
         cleanAudioBuff();
         // led3(true);
@@ -230,18 +239,20 @@
         n = _SD_readBinFile(ftuneStreamName, audiobuff, fileLen);
         // led3(false);
 
+        bool ok = false;
         if ( format == AUDIO_FORMAT_T5K ) {
-            __playTune( audiobuff, btnStop );  
+            ok = __playTune( audiobuff, btnStop );  
         } else {
-            __playTuneT53( audiobuff, btnStop );  
+            ok = __playTuneT53( audiobuff, btnStop );  
         }
 
-        buzzer.notTone();
+        buzzer.noTone();
+        return ok;
     }
 
     // where tuneStream is the audio buffer content
     // T5K audio format
-    void __playTune(unsigned char* tuneStream, bool btnStop = false) {
+    bool __playTune(unsigned char* tuneStream, bool btnStop = false) {
         buzzer.noTone();
 
         static short nbNotes = (*tuneStream++ << 8) | (*tuneStream++);
@@ -289,7 +300,7 @@
 
     // T53 Format
     // where tuneStream is the audio buffer content
-    void __playTuneT53(unsigned char* tuneStream, bool btnStop = false) {
+    bool __playTuneT53(unsigned char* tuneStream, bool btnStop = false) {
         buzzer.noTone();
     
         short nbNotes = (*tuneStream++ << 8) | (*tuneStream++);
