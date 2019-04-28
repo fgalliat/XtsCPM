@@ -203,6 +203,13 @@ void setup(void) {
 #else
   if (SD.begin(SDINIT)) {
 #endif
+
+#ifdef USE_BUILTIN_BUZZER
+    // playTuneFromStorage("MONKEY.T5K", 1, true);
+#endif
+
+
+
     if (VersionCCP >= 0x10 || SD.exists(CCPname)) {
       while (true) {
         _puts(CCPHEAD);

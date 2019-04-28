@@ -67,6 +67,7 @@
 
   // forward symbol
   void playTuneString(char* strTune);
+  bool playTuneFromStorage(char* tuneStreamName, int format = AUDIO_FORMAT_T5K, bool btnStop = true);
 
   // declared in xts_yatl.h
   void setupArduinoSpeaker() {
@@ -75,6 +76,7 @@
       buzzer.beep();
 
       // playTuneString( (char*)"aac#d");
+      
   }
 
   // =========================================================
@@ -184,7 +186,7 @@
  } Note;
 
 
-    bool playTuneFromStorage(char* tuneStreamName, int format = AUDIO_FORMAT_T5K, bool btnStop = true) {
+    bool playTuneFromStorage(char* tuneStreamName, int format, bool btnStop) {
         buzzer.noTone();
 
         cleanAudioBuff();
