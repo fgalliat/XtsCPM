@@ -77,6 +77,7 @@
       // playTuneString( (char*)"aac#d");
   }
 
+  // =========================================================
   // to move away...
   char charUpCase(char ch) {
       if ( ch >= 'a' && ch <= 'z' ) {
@@ -85,6 +86,19 @@
       return ch;
   }
 
+  // returns nb of bytes readed
+  // n = _SD_readBinFile(ftuneStreamName, audiobuff, fileLen);
+  long _SD_readBinFile(char* filename, uint8_t outBuff, long fileLength) {
+      File f = SD.open(filename, FILE_READ);
+
+      long readed = 0;
+
+      while (f.available())
+			outBuff[readed++] = f.read();
+
+      f.close();
+  }
+  // =========================================================
 
   // ex. PLAY "aac#d"
   void playTuneString(char* strTune) {
@@ -138,6 +152,8 @@
     buzzer.noTone(); // MANDATORY for ESP32
   } // end of playTuneStreamSTring
 
+
+
   // #define _MUSIC_TONES_SUPPORT 1
   #ifdef _MUSIC_TONES_SUPPORT
     // T5K Format
@@ -189,7 +205,7 @@
         }
 
         static unsigned char preBuff[2];
-        int n = mcu.getFS()->readBinFile(ftuneStreamName, preBuff, 2);
+        int n = _SD_readBinFile(ftuneStreamName, preBuff, 2);
         if ( n <= 0 ) {
             _puts( ftuneStreamName );
             _puts("\n");
@@ -205,7 +221,7 @@
         }
 
         //file.read( audiobuff, fileLen );
-        n = mcu.getFS()->readBinFile(ftuneStreamName, audiobuff, fileLen);
+        n = _SD_readBinFile(ftuneStreamName, audiobuff, fileLen);
         // led3(false);
 
         if ( format == AUDIO_FORMAT_T5K ) {
