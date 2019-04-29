@@ -19,6 +19,27 @@
 #endif
 
 
+void playVTMusic(char* tuneStr) {
+   if ( strlen( tuneStr ) <= 0 ) { return; }
+
+   if ( strlen( tuneStr ) <= 2 ) { playTuneString(tuneStr); return; }
+
+Serial.println(tuneStr);
+
+   char ch = tuneStr[ strlen( tuneStr )-1  ];
+   ch = charUpCase(ch);
+   if ( (ch == '3' || ch == 'K') && tuneStr[ strlen( tuneStr )-2  ] == '5' ) {
+Serial.println("T5?");
+      // playTuneFromStorage("MONKEY.T5K", 1, true);
+      playTuneFromStorage( tuneStr , 1, true);
+   }  else {
+Serial.println("Tones");
+      playTuneString(tuneStr);
+   }
+}
+
+
+
     #include "SPI.h"
     #include "ILI9341_t3n.h"
     // w/ that lib BOTH CS & DC needs to besome CS pins
@@ -340,13 +361,13 @@
                if ( __escapeMSeq ) {
                   if ( ch == '!'  ) {
                      __escapeChar = false;
-                     playTuneString(vtMUSICseq);
+                     playVTMusic(vtMUSICseq);
                      return;
                   } else {
                      int l = strlen(vtMUSICseq);
                      if ( l >= _VT_MUSIC_LEN ) {
                         __escapeChar = false;
-                        playTuneString(vtMUSICseq);
+                        playVTMusic(vtMUSICseq);
                         return;
                      }
                      vtMUSICseq[ l ] = ch;

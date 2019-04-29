@@ -16,6 +16,7 @@
 140 ? "  "+ ABD$+"b"+ANL$+"   Console Mode"
 150 ? "  "+ ABD$+"c"+ANL$+"   Cls"
 160 ? "  "+ ABD$+"d"+ANL$+"   Buzzer Test"
+170 ? "  "+ ABD$+"e"+ANL$+"   Buzzer Tune"
 198 ? ""
 200 ? "  "+ ABD$+"x"+ANL$+"   Exit"
 250 REM INPUT c$
@@ -24,6 +25,7 @@
 270 IF c$ = "b" THEN ? CON$ : GOTO 100
 280 IF c$ = "c" THEN ? CLS$ : GOTO 250
 290 IF c$ = "d" THEN ? MBG$+ "abc#d" +MND$ : GOTO 250
+300 IF c$ = "e" THEN ? MBG$+ "monkey.t5k" +MND$ : GOTO 250
 390 IF c$ = "x" THEN GOTO 999
 400 GOTO 100
 999 SYSTEM
