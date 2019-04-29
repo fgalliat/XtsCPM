@@ -146,26 +146,27 @@ void setup(void) {
 
   #ifdef USE_BUILTIN_LCD
     #warning "-USE BUILTIN LCD-"
-    setupArduinoScreen();
-    #ifdef BOOT_BUILTIN_LCD
-      #warning "-BOOT ON BUILTIN LCD-"
+  //   setupArduinoScreen();
+  //   #ifdef BOOT_BUILTIN_LCD
+  //     #warning "-BOOT ON BUILTIN LCD-"
 
-      #ifdef LCD_MODE_CONSOLE
-      //  #define CONSOLE_SELF_TEST 1
-       #ifdef CONSOLE_SELF_TEST
-        _consoleTest();
-        while( true ) {
-          delay(3000);
-        }
-       #endif
-      #endif
+  //     #ifdef LCD_MODE_CONSOLE
+  //     //  #define CONSOLE_SELF_TEST 1
+  //      #ifdef CONSOLE_SELF_TEST
+  //       _consoleTest();
+  //       while( true ) {
+  //         delay(3000);
+  //       }
+  //      #endif
+  //     #endif
 
-    #endif
-  #endif
+  //   #endif
+  // #endif
 
-  #ifdef USE_BUILTIN_BUZZER
-    #warning "- BOOT W/ BUILTIN SPEAKER -"
-    setupArduinoSpeaker();
+  // #ifdef USE_BUILTIN_BUZZER
+  //   #warning "- BOOT W/ BUILTIN SPEAKER -"
+  //   setupArduinoSpeaker();
+    setupYatl();
   #endif
 
   #ifndef BOOT_BUILTIN_LCD

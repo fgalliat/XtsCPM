@@ -157,8 +157,10 @@
             break;
       }
 
+//noInterrupts();
       buzzer.tone(pitch, defDuration);
       delay(defDuration);
+//interrupts();
     }
     buzzer.noTone(); // MANDATORY for ESP32
   } // end of playTuneStreamSTring

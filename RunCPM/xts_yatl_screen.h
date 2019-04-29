@@ -43,11 +43,18 @@ Serial.println("Tones");
    }
 }
 
+// now defined in xts_yatl.h
+// volatile char buzzerTuneStr[ 256 ];
 
 void playVTMusic(char* tuneStr, bool playInParallel = false) {
    if ( strlen( tuneStr ) <= 0 ) { return; }
-
-   _doPlay( tuneStr );
+   memset( (char*)buzzerTuneStr, 0x00, 256 );
+   memcpy( (char*)buzzerTuneStr, tuneStr, 256 );
+   if ( playInParallel ) {
+      ISR_push( ISR_MODE_PLAY_BUZZER );
+   } else {
+      _doPlay( tuneStr );
+   }
 }
 
 
@@ -372,7 +379,8 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
                // ex. ^$aac#d! => plays "AAC#D"
                if ( __escapeMSeq ) {
 
-                  bool playInParallel = !false;
+                  // bool playInParallel = !false;
+                  bool playInParallel = false;
 
                   if ( ch == '!'  ) {
                      __escapeChar = false;
