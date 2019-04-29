@@ -19,23 +19,35 @@
 #endif
 
 
-void playVTMusic(char* tuneStr) {
-   if ( strlen( tuneStr ) <= 0 ) { return; }
+void _doPlay(char* sequence) {
+   int slen = strlen( sequence );
 
-   if ( strlen( tuneStr ) <= 2 ) { playTuneString(tuneStr); return; }
+   Serial.println("Playing :");
+   Serial.println(sequence);
 
-Serial.println(tuneStr);
+   if ( slen <= 2 ) { 
+      playTuneString(sequence); 
+      return; 
+   }
 
-   char ch = tuneStr[ strlen( tuneStr )-1  ];
+   char ch = sequence[ slen-1  ];
    ch = charUpCase(ch);
-   if ( (ch == '3' || ch == 'K') && tuneStr[ strlen( tuneStr )-2  ] == '5' ) {
+
+   if ( (ch == '3' || ch == 'K') && sequence[ slen-2  ] == '5' ) {
 Serial.println("T5?");
       // playTuneFromStorage("MONKEY.T5K", 1, true);
-      playTuneFromStorage( tuneStr , 1, true);
+      playTuneFromStorage( sequence , 1, true);
    }  else {
 Serial.println("Tones");
-      playTuneString(tuneStr);
+      playTuneString(sequence);
    }
+}
+
+
+void playVTMusic(char* tuneStr, bool playInParallel = false) {
+   if ( strlen( tuneStr ) <= 0 ) { return; }
+
+   _doPlay( tuneStr );
 }
 
 
@@ -359,15 +371,18 @@ Serial.println("Tones");
                // VT-MUSIC SUPPORT
                // ex. ^$aac#d! => plays "AAC#D"
                if ( __escapeMSeq ) {
+
+                  bool playInParallel = !false;
+
                   if ( ch == '!'  ) {
                      __escapeChar = false;
-                     playVTMusic(vtMUSICseq);
+                     playVTMusic(vtMUSICseq, playInParallel);
                      return;
                   } else {
                      int l = strlen(vtMUSICseq);
                      if ( l >= _VT_MUSIC_LEN ) {
                         __escapeChar = false;
-                        playVTMusic(vtMUSICseq);
+                        playVTMusic(vtMUSICseq, playInParallel);
                         return;
                      }
                      vtMUSICseq[ l ] = ch;
