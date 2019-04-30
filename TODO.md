@@ -165,13 +165,13 @@
 - https://archive.org/stream/BASIC-80_MBASIC_Reference_Manual/BASIC-80_MBASIC_Reference_Manual_djvu.txt
 
 
-- Pascal VT100
+- Pascal (VT100Ex) extensions (see XTASE.PAS) 
   - cls **(done)**
   - locate row,col
   - erase till end of line
-  - BeginColor
-  - EndColor
-  - play('abcd')
+  - BeginColor **(done)**
+  - EndColor **(done)**
+  - play('abcd') **(done)**
 
 
 - **Keyboard support**
