@@ -1,7 +1,7 @@
 ## TODOs
 
 
- - TTY emulation on TFT Screen
+ - TTY emulation on TFT Screen **(done)**
    - tinyFont 3x5 => 4x6 => @320x240 => 80x40 chars
 
    - regular font 6x8 => 53x30 chars
@@ -43,6 +43,16 @@
 
   - done **once per operation** (not cycle emulation)
       
+- Pascal (VT100Ex) extensions (see XTASE.PAS) 
+  - cls **(done)**
+  - locate row,col
+  - erase till end of line
+  - BeginColor **(done)**
+  - EndColor **(done)**
+  - play('abcd') **(done)**
+
+
+
 
 - Console Mode Switcher **(DONE)**
 
@@ -164,14 +174,6 @@
 
 - https://archive.org/stream/BASIC-80_MBASIC_Reference_Manual/BASIC-80_MBASIC_Reference_Manual_djvu.txt
 
-
-- Pascal (VT100Ex) extensions (see XTASE.PAS) 
-  - cls **(done)**
-  - locate row,col
-  - erase till end of line
-  - BeginColor **(done)**
-  - EndColor **(done)**
-  - play('abcd') **(done)**
 
 
 - **Keyboard support**
