@@ -735,6 +735,10 @@ void _Bdos(void) {
 		break;
 #endif
 
+#ifdef YATL_PLATFORM
+	case 225:
+	  	testXtsBdosCall(225, DE);
+		break;
 #endif
 		/*
 		C = 230 (E6h) : Set 8 bit masking
@@ -828,5 +832,7 @@ void _Bdos(void) {
 #endif
 
 }
+
+#endif
 
 #endif

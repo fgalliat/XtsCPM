@@ -6,6 +6,8 @@
  * Xtase - fgalliat @Apr2019
  */
 
+  #define YATL_PLATFORM 1
+
   #define HAS_BUILTIN_LCD 1
 
   // 13 is used by SPI LCD
@@ -88,7 +90,15 @@
   }
 
 
-
+  void testXtsBdosCall(int interruptNum, int32 addr) {
+    uint8_t *F = (uint8_t*)_RamSysAddr(addr);
+    char test[256];
+    memset(test, 0x00, 256);
+    strcpy( test, (const char*)F );
+    Serial.println("/===== BDos String call =====\\");
+    Serial.println(test);
+    Serial.println("\\===== BDos String call =====/");
+  }
 
 
 
