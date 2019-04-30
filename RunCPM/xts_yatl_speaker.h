@@ -91,7 +91,7 @@
     bool checkbreak() { return false; }
 
     // TODO : better
-    bool anyBtn() { if (Serial.available() > 0) { Serial.read(); return true; } else { return false; } }
+    bool anyBtn() { if (Serial.available() > 0) { while (Serial.available() > 0) Serial.read(); return true; } else { return false; } }
 
   // returns nb of bytes readed
   // n = _SD_readBinFile(ftuneStreamName, audiobuff, fileLen);
