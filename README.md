@@ -32,7 +32,8 @@ Xtase - fgalliat version @ Apr2109
 
 - see **./ArduinoInterface/** **samples** (.BAS, .PAS, .ASM) that can deal w/ **digital/analog arduino pins** and some other BDOS improvements ...
 
-  
+- from Pascal **BdosCall** :
+  - Hooked interrupt 225, that can receive an address of a String of 255 chars. wide ! **(done)**
 
 
 **Current/Initial compilation :**
