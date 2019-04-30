@@ -380,6 +380,7 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
                if ( __escapeMSeq ) {
 
                   // bool playInParallel = !false;
+                  // SEEMS doesn't work for now
                   bool playInParallel = false;
 
                   if ( ch == '!'  ) {

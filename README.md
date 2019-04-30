@@ -44,6 +44,11 @@ Xtase - fgalliat version @ Apr2109
 
   - **debug @ 9600bps / default** 
 
+  - with VT100 console & BUZZER support
+  Sketch uses 95932 octets (9%) on 1048576 octets.
+  Global vars uses 85148 octets (32%) of RAM,
+
+
 
 
 **Layer impl.**

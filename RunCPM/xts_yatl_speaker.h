@@ -89,7 +89,9 @@
   }
 
     bool checkbreak() { return false; }
-    bool anyBtn() { return false; }
+
+    // TODO : better
+    bool anyBtn() { if (Serial.available() > 0) { Serial.read(); return true; } else { return false; } }
 
   // returns nb of bytes readed
   // n = _SD_readBinFile(ftuneStreamName, audiobuff, fileLen);
@@ -98,6 +100,7 @@
       
       if (f = SD.open(filename, FILE_READ) ) {
         // ....
+        f.seek(0);
       } else { return -1; }
 
       int readed = 0;
@@ -245,9 +248,9 @@
 
         bool ok = false;
         if ( format == AUDIO_FORMAT_T5K ) {
-            ok = __playTune( audiobuff, btnStop );  
+            ok = __playTune( &audiobuff[0], btnStop );  
         } else {
-            ok = __playTuneT53( audiobuff, btnStop );  
+            ok = __playTuneT53( &audiobuff[0], btnStop );  
         }
 
         buzzer.noTone();
