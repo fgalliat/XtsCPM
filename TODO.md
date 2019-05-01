@@ -33,7 +33,7 @@
     - try to find the tinyFont for that lib **(DONE)**
 
 
-- Xtase handle inside CP/M code
+- **Xtase handle** inside CP/M code
   - find main loop
   - insert a call to one mine functions xts_hdl()
   - prevent from need of an Interrupt / Timer...
@@ -43,7 +43,7 @@
 
   - done **once per operation** (not cycle emulation)
 
-- Pascal (VT100Ex) extensions (see XTASE.PAS) 
+- **Pascal (VT100Ex)** extensions (see XTASE.PAS) 
   - cls **(done)**
   - locate row,col **(done)**
   - erase till end of line
@@ -60,7 +60,7 @@
 - Z: Assets filename completion routine **(done)**
   - char* getAssetsFileEntry(char* assetName) 
 
-- BMP Support : 
+- **BMP Support :** 
   - before :
     Le croquis utilise 96188 octets (9%) de l'espace de stockage de programmes. Le maximum est de 1048576 octets.
     Les variables globales utilisent 85148 octets (32%) de mémoire dynamique, ce qui laisse 176996 octets pour les variables locales. Le maximum est de 262144 octets.
@@ -71,7 +71,7 @@
   - done **(minimal)**
   - have to support smaller BMP w/ location (& no screen rotation)
 
-- BPP & PCT support
+- **BPP & PCT support**
   - todo
 
 - Only one showImage() routine w/ file ext. detection (.BMP, .PCT, .BPP)
@@ -276,6 +276,7 @@
   - > PIP B:ED.COM=A:ED.COM
 Copy the disk file "ED.COM" from disk "A" to the file "ED.COM" on disk "B". The source file and the destination file will use the current user area code.
 A shorter form of the command could be used because the destination file name is the same as the source file name.
- 
+
   - > PIP B:=A:ED.COM 
 A short version of the previous example.
+
