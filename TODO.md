@@ -1,6 +1,20 @@
 ## TODOs
 
 
+ - **TODO**
+
+    - TEXT console colorSet definition **(done)**
+    - TEXT console colorSet changing routine
+    - TEXT conditional space char rendering **(done)**
+    - TEXT smoother scrolling (line per line erasing)
+   - lower layout (w/ addditional 328P 3.3v ?)
+   - REFACTO Screen API
+   - REFACTO BdosCalls & VT-EXT
+
+
+
+
+ - **In Progress or Done**
  - TTY emulation on TFT Screen **(done)**
    - tinyFont 3x5 => 4x6 => @320x240 => 80x40 chars
 

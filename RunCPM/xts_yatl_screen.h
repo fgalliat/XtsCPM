@@ -175,19 +175,30 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
          */
       }
 
+      uint16_t rgb(uint8_t r, uint8_t g, uint8_t b) {
+         return tft.color565(r, g, b);
+      }
+
+      uint16_t TTY_COLOR_BG = ILI9341_BLACK;
+      uint16_t TTY_COLOR_FG = ILI9341_WHITE;
+      uint16_t TTY_COLOR_ACCENT = ILI9341_GREEN;
+
+
       void consoleCls(bool clearDisplay=true) {
          _consoleFill(0x00, true);
-         if (clearDisplay) { tft.fillScreen(ILI9341_BLACK); }
+         if (clearDisplay) { tft.fillScreen(TTY_COLOR_BG); }
          _consoleSetCursor(0,0);
       }
 
       char _c_line[ ttyConsoleWidth + 1 ];
 
+
+
       void _consoleRenderOneLine(int row, bool clearArea=true) {
          if ( ttyConsoleFrame[ (row*ttyConsoleWidth)+0 ] == 0x00) {
             // do clear the area ????
             if ( clearArea ) {
-               tft.fillRect(0, row*consoleCurrentFontHeight, TFT_WIDTH, consoleCurrentFontHeight, ILI9341_BLACK);
+               tft.fillRect(0, row*consoleCurrentFontHeight, TFT_WIDTH, consoleCurrentFontHeight, TTY_COLOR_BG);
             }
          }
 
@@ -200,11 +211,11 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
             int c=0;
             while ( _c_line[c] != 0x00 ) {
                if ( ttyConsoleAttrs[ (row*ttyConsoleWidth)+c ] == 0x01 ) {
-                  tft.setTextColor( ILI9341_GREEN );
+                  tft.setTextColor( TTY_COLOR_ACCENT );
                } else if ( ttyConsoleAttrs[ (row*ttyConsoleWidth)+c ] == 0x02 ) {
                   tft.setTextColor( ILI9341_YELLOW );
                } else {
-                  tft.setTextColor( ILI9341_WHITE );
+                  tft.setTextColor( TTY_COLOR_FG );
                }
             
                tft.write( _c_line[c] );
@@ -226,7 +237,7 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
       }
 
       void consoleRenderFull(bool clearDisplay=true) {
-         if (clearDisplay) { tft.fillScreen(ILI9341_BLACK); }
+         if (clearDisplay) { tft.fillScreen(TTY_COLOR_BG); }
          consoleCursorX = 0;
          for(int y=0; y < ttyConsoleHeight; y++) {
             consoleCursorY = y;
@@ -251,14 +262,8 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
       }
 
       void _scrollUp() {
-         // y_dbug("XTS: CON: ScrollUp TODO");
-         // ?????
-         // tft.setScroll( ttyConsoleWidth * TTY_FONT_HEIGHT );
          /*
          try to use native text scroller -> too slow
-         consoleCursorY = ttyConsoleHeight - 0;
-         tft.setCursor(0, consoleCursorY * TTY_FONT_HEIGHT);
-         tft.println("COUCOU");
          */
 
         #ifdef COLORED_CONSOLE
@@ -276,7 +281,7 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
       // erase from current position to EndOfLine
       void _eraseTillEOL(bool clearArea=true) {
          if ( clearArea ) {
-            tft.fillRect(consoleCursorX*consoleCurrentFontWidth, consoleCursorY*consoleCurrentFontHeight, TFT_WIDTH, consoleCurrentFontHeight, ILI9341_BLACK);
+            tft.fillRect(consoleCursorX*consoleCurrentFontWidth, consoleCursorY*consoleCurrentFontHeight, TFT_WIDTH, consoleCurrentFontHeight, TTY_COLOR_BG);
          }
          int addr = ( consoleCursorY * ttyConsoleWidth) + consoleCursorX;
          int len = (ttyConsoleWidth-consoleCursorX);
@@ -474,16 +479,23 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
          }
 
 
+         int consoleAddr = ( consoleCursorY * ttyConsoleWidth ) + consoleCursorX;
+
          #ifdef COLORED_CONSOLE
-           ttyConsoleAttrs[ ( consoleCursorY * ttyConsoleWidth ) + consoleCursorX ] = curTextAttr;
+           ttyConsoleAttrs[ consoleAddr ] = curTextAttr;
          #endif
-         ttyConsoleFrame[ ( consoleCursorY * ttyConsoleWidth ) + consoleCursorX ] = ch;
+
+         char previousChar = ttyConsoleFrame[ consoleAddr ];
+         // assign new char
+         ttyConsoleFrame[ consoleAddr ] = ch;
 
          // direct render
          tft.setCursor(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight);
          if ( ch == ' ' ) {
-            // render spaces Cf '\b'
-            tft.fillRect(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight, consoleCurrentFontWidth, consoleCurrentFontHeight, ILI9341_BLACK);
+            if ( ! (previousChar == 0x00 || previousChar == ' ') ) {
+              // render spaces Cf '\b'
+              tft.fillRect(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight, consoleCurrentFontWidth, consoleCurrentFontHeight, TTY_COLOR_BG);
+            }
          } else {
 
             if ( ch < 32 || ch >= 127 ) {
@@ -493,9 +505,9 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
                Serial.write('/');
             }
 
-            if ( curTextAttr == 0x01 ) { tft.setTextColor( ILI9341_GREEN );  }
+            if ( curTextAttr == 0x01 ) { tft.setTextColor( TTY_COLOR_ACCENT );  }
             else if ( curTextAttr == 0x02 ) { tft.setTextColor( ILI9341_YELLOW ); }
-            else if ( curTextAttr == 0x00 ) { tft.setTextColor( ILI9341_WHITE ); }
+            else if ( curTextAttr == 0x00 ) { tft.setTextColor( TTY_COLOR_FG ); }
 
             // tft.write( __escapeChar1 ); // disp Esc char
 
