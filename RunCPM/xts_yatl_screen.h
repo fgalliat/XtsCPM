@@ -184,6 +184,13 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
       uint16_t TTY_COLOR_ACCENT = ILI9341_GREEN;
 
 
+      void consoleColorSet(uint16_t bg=ILI9341_BLACK, uint16_t fg=ILI9341_WHITE, uint16_t acc=ILI9341_GREEN) {
+         TTY_COLOR_BG = bg;
+         TTY_COLOR_FG = fg;
+         TTY_COLOR_ACCENT = acc;
+      }
+
+
       void consoleCls(bool clearDisplay=true) {
          _consoleFill(0x00, true);
          if (clearDisplay) { tft.fillScreen(TTY_COLOR_BG); }
@@ -661,6 +668,10 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
 
    tft.setTextSize(1);
    tft.setTextColor(ILI9341_WHITE);
+
+   // to reset
+   // consoleColorSet();
+   consoleColorSet( rgb(126, 155, 125), rgb(69,80,110), rgb(108-30,120-30,195-30) );
 #endif
  }
 

@@ -4,12 +4,13 @@
  - **TODO**
 
     - TEXT console colorSet definition **(done)**
-    - TEXT console colorSet changing routine
+    - TEXT console colorSet changing routine**(done)** / made a fake monochrome LCD colorSet
     - TEXT conditional space char rendering **(done)**
     - TEXT smoother scrolling (line per line erasing)
    - lower layout (w/ addditional 328P 3.3v ?)
    - REFACTO Screen API
    - REFACTO BdosCalls & VT-EXT
+   - GFX Pascal Demo (loop for drawing rectangles as ex.)
 
 
 
