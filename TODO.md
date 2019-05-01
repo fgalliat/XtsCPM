@@ -265,7 +265,7 @@
   
   - BdosCall( uint8_t reg, uint16_t regValue );
 
-  - **BUG** : can't play a .T5K twice !!!!
+  - **BUG** : can't play a .T5K twice !!!! **FIXED**
 
 
 

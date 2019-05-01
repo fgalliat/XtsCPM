@@ -255,8 +255,12 @@
     bool __playTune(unsigned char* tuneStream, bool btnStop = false) {
         buzzer.noTone();
 
-        static short nbNotes = (*tuneStream++ << 8) | (*tuneStream++);
+        // BUGFIX -> YES
+        /*static*/ short nbNotes = (*tuneStream++ << 8) | (*tuneStream++);
+
         static char songname[16];
+        memset(songname, 0x00, 16); // BUGFIX -> YES
+
         for(int i=0; i < 16; i++) {
             songname[i] = *tuneStream++;
         }
@@ -305,6 +309,7 @@
     
         short nbNotes = (*tuneStream++ << 8) | (*tuneStream++);
         char songname[16];
+        memset(songname, 0x00, 16); // BUGFIX -> YES
         for(int i=0; i < 16; i++) {
             songname[i] = *tuneStream++;
         }
