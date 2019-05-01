@@ -54,6 +54,15 @@ begin
   write( '!' );
 end;
 
+procedure cursor(x : integer; y : integer);
+begin
+  write( #27 );
+  write( '[' );
+  write( (y+1) );
+  write( ';' );
+  write( (x+1) );
+  write( 'H' );
+end;
 
 var
  str : string[64];
@@ -62,8 +71,9 @@ begin
  str := 'coucou les gens !';
 
  clScr; {* no args > no parent. *}
-
  drawBmp('girl.bmp');
+
+ cursor( 10, 5 );
 
  txtColor;
  writeln( str );

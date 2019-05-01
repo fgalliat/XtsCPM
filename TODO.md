@@ -42,18 +42,23 @@
   - Ext. Hardware functions ...
 
   - done **once per operation** (not cycle emulation)
-      
+
 - Pascal (VT100Ex) extensions (see XTASE.PAS) 
   - cls **(done)**
-  - locate row,col
+  - locate row,col **(done)**
   - erase till end of line
   - BeginColor **(done)**
   - EndColor **(done)**
   - play('abcd') **(done)**
 
-- Z: Assets filename completiion routine
-  - to factorize
-  - char* getAssetsFileEntry(char* assetName) **(done)**
+  - Define a change FG,BG text colors routine
+  - add ifWasChar before rendering 'space' chars  
+
+  - Pascal online compiller + console
+    https://rextester.com/l/pascal_online_compiler
+
+- Z: Assets filename completion routine **(done)**
+  - char* getAssetsFileEntry(char* assetName) 
 
 - BMP Support : 
   - before :
@@ -94,10 +99,10 @@
     - **TURBO** (Pascal) works (even if could be better)
     - **OS** works
   - **DOESN'T WORKS:**
-    - **T**ext**E**ditor doesn't works very well
+      - TURBO inside editor doesn't works very well
       - cause some different escapes
   - **in Progress**
-
+    - **T**ext**E**ditor
 
 
 - **File support**
@@ -259,6 +264,10 @@
   - later : make a Threaded version (/!\\ with delay(..) & Timers )
   
   - BdosCall( uint8_t reg, uint16_t regValue );
+
+  - **BUG** : can't play a .T5K twice !!!!
+
+
 
 - **LED support**
 
