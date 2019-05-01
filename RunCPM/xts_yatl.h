@@ -89,6 +89,8 @@
     Timer1.attachInterrupt(timer_IRQ);
   }
 
+  // =======================================
+
   // I'm now able to send 255 long String to BDos Hook !!!!!
   void testXtsBdosCall(int interruptNum, int32 addr) {
     uint8_t *F = (uint8_t*)_RamSysAddr(addr);
@@ -105,6 +107,13 @@
     Serial.println("\\===== BDos String call =====/");
   }
 
+
+  // =======================================
+  extern void drawBmp(char* filename, bool screenRotate);
+
+  void yatlSDinited(bool inited) {
+    drawBmp("/Z/0/girl.bmp", true);
+  }
 
 
 #endif

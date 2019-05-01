@@ -51,6 +51,13 @@
   - EndColor **(done)**
   - play('abcd') **(done)**
 
+- BMP Support : 
+  - before :
+    Le croquis utilise 96188 octets (9%) de l'espace de stockage de programmes. Le maximum est de 1048576 octets.
+    Les variables globales utilisent 85148 octets (32%) de mémoire dynamique, ce qui laisse 176996 octets pour les variables locales. Le maximum est de 262144 octets.
+  - after : 
+    Le croquis utilise 96364 octets (9%) de l'espace de stockage de programmes. Le maximum est de 1048576 octets.
+    Les variables globales utilisent 85148 octets (32%) de mémoire dynamique, ce qui laisse 176996 octets pour les variables locales. Le maximum est de 262144 octets.
 
 
 

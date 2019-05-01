@@ -215,6 +215,9 @@ void setup(void) {
     // playTuneFromStorage("MONKEY.T5K", 1, true);
 #endif
 
+#ifdef YATL_PLATFORM
+    yatlSDinited(true);
+#endif
 
 
     if (VersionCCP >= 0x10 || SD.exists(CCPname)) {
