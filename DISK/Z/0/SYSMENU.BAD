@@ -1,0 +1,15 @@
+12
+# L -> linenum / P -> PRGM / C -> cmd
+S;Wifi;P;WIFMENU
+S;Volume;L;10000
+S;Hardware Test;P;PADTST
+S;Reset;C;BYE
+A;Raycaster;P;RAYC3
+A;My RPG;P;GAME
+A;Mech RPG;P;MECHS
+A;Maze;P;LABY
+A;Race;P;RACING
+M;Random Song;P;RNDSONG
+M;JukeBox;P;JUKE3
+M;Monkey;C;CLS : DRAWBPP "METI" : PLAYT5K "MONKEY"
+M;Slide Show;P;SLIDESH
