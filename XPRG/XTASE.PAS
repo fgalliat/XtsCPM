@@ -10,6 +10,13 @@ begin
  Bdos(225, addr(text) );
 end;
 
+procedure drawBmp(text : aStr);
+begin
+ {* Xtase specific BdosCall *}
+ {* addr maybe Word / not integer *}
+ Bdos(225, addr(text) );
+end;
+
 {* proc w/o args don't have parent. *}
 procedure clScr;
 begin
@@ -55,12 +62,15 @@ begin
  str := 'coucou les gens !';
 
  clScr; {* no args > no parent. *}
+
+ drawBmp('girl.bmp');
+
  txtColor;
  writeln( str );
  txtNormal;
  bell;
 
- testBdosHook('Salut les cons !');
+ { testBdosHook('Salut les cons !'); }
 
  { play('MARIO.T53'); }
  play('MONKEY.T5K');

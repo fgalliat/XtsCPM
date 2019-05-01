@@ -91,6 +91,33 @@
 
   // =======================================
 
+  // ex. MONKEY.T5K -> /Z/0/MONKEY.T5K
+  // spe DISK for assets : "Z:"
+  // 'cause CP/M supports ONLY up to P:
+
+  const int _fullyQualifiedFileNameSize = 5 + (8+1+3) + 1;
+  char _assetEntry[ _fullyQualifiedFileNameSize ];
+
+  // not ThreadSafe !
+  char* getAssetsFileEntry(char* assetName) {
+    memset(_assetEntry, 0x00, _fullyQualifiedFileNameSize);
+    strcpy( _assetEntry, "/Z/0/" );
+    strcat( _assetEntry, assetName );
+    return _assetEntry;
+  }
+
+  // =======================================
+  extern void drawBmp(char* filename, bool screenRotate);
+
+  void yatlSDinited(bool inited) {
+    // drawBmp( getAssetsFileEntry( (char*)"girl.BMP"), true );
+  }
+
+
+
+  // =======================================
+
+
   // I'm now able to send 255 long String to BDos Hook !!!!!
   void testXtsBdosCall(int interruptNum, int32 addr) {
     uint8_t *F = (uint8_t*)_RamSysAddr(addr);
@@ -105,14 +132,9 @@
     Serial.println("/===== BDos String call =====\\");
     Serial.println(test);
     Serial.println("\\===== BDos String call =====/");
-  }
 
-
-  // =======================================
-  extern void drawBmp(char* filename, bool screenRotate);
-
-  void yatlSDinited(bool inited) {
-    drawBmp("/Z/0/girl.bmp", true);
+    // @ this time used to draw a bmp ....
+    drawBmp( getAssetsFileEntry( test ), true );
   }
 
 

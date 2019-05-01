@@ -204,14 +204,7 @@
             return false;
         }
 
-        // make a routine to clean filenames
-
-        // spe DISK for assets : "Z:"
-        // 'cause CP/M supports ONLY up to P:
-        // so "/Z/0/MARIO.T53"
-        static char ftuneStreamName[1+4+(8+1+3)+1];
-        strcpy(ftuneStreamName, "/Z/0/");
-        strcat(ftuneStreamName, tuneStreamName);
+        char* ftuneStreamName = getAssetsFileEntry( tuneStreamName );
 
         // auto complete filename if ext is not provided
         // ~experimental

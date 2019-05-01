@@ -51,14 +51,25 @@
   - EndColor **(done)**
   - play('abcd') **(done)**
 
+- Z: Assets filename completiion routine
+  - to factorize
+  - char* getAssetsFileEntry(char* assetName) **(done)**
+
 - BMP Support : 
   - before :
     Le croquis utilise 96188 octets (9%) de l'espace de stockage de programmes. Le maximum est de 1048576 octets.
     Les variables globales utilisent 85148 octets (32%) de mémoire dynamique, ce qui laisse 176996 octets pour les variables locales. Le maximum est de 262144 octets.
   - after : 
-    Le croquis utilise 96364 octets (9%) de l'espace de stockage de programmes. Le maximum est de 1048576 octets.
+    Le croquis utilise 97364 octets (9%) de l'espace de stockage de programmes. Le maximum est de 1048576 octets.
     Les variables globales utilisent 85148 octets (32%) de mémoire dynamique, ce qui laisse 176996 octets pour les variables locales. Le maximum est de 262144 octets.
 
+  - done **(minimal)**
+  - have to support smaller BMP w/ location (& no screen rotation)
+
+- BPP & PCT support
+  - todo
+
+- Only one showImage() routine w/ file ext. detection (.BMP, .PCT, .BPP)
 
 
 - Console Mode Switcher **(DONE)**

@@ -51,6 +51,7 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
    memset( (char*)buzzerTuneStr, 0x00, 256 );
    memcpy( (char*)buzzerTuneStr, tuneStr, 256 );
    if ( playInParallel ) {
+      // doesn't work well
       ISR_push( ISR_MODE_PLAY_BUZZER );
    } else {
       _doPlay( tuneStr );
@@ -734,6 +735,7 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
          // Read DIB header
          // Serial.print(F("Header size: "));
 
+         // need to be done @least once
          // Serial.println(read32(bmpFile));
          (void)read32(bmpFile);
 
@@ -800,8 +802,9 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
                } // end pixel
                tft.writeRect(0, row, w, 1, awColors);
             } // end scanline
+            long timeElapsed = millis() - startTime;
             // Serial.print(F("Loaded in "));
-            // Serial.print(millis() - startTime);
+            // Serial.print(timeElapsed);
             // Serial.println(" ms");
             } // end goodBmp
          }
