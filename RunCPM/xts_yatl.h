@@ -120,21 +120,31 @@
 
   // I'm now able to send 255 long String to BDos Hook !!!!!
   void testXtsBdosCall(int interruptNum, int32 addr) {
-    uint8_t *F = (uint8_t*)_RamSysAddr(addr);
-    char test[256];
-    memset(test, 0x00, 256);
+    if ( interruptNum == 225 ) {
 
-    // from TurboPascal 3 strings are 255 long max
-    // & starts @ 1 ( 'cause @0 contains length)
-    uint8_t len = F[0];
-    memcpy(test, &F[1], len);
+      uint8_t *F = (uint8_t*)_RamSysAddr(addr);
+      char test[256];
+      memset(test, 0x00, 256);
 
-    Serial.println("/===== BDos String call =====\\");
-    Serial.println(test);
-    Serial.println("\\===== BDos String call =====/");
+      // from TurboPascal 3 strings are 255 long max
+      // & starts @ 1 ( 'cause @0 contains length)
+      uint8_t len = F[0];
+      memcpy(test, &F[1], len);
 
-    // @ this time used to draw a bmp ....
-    drawBmp( getAssetsFileEntry( test ), true );
+      Serial.println("/===== BDos String call =====\\");
+      Serial.println(test);
+      Serial.println("\\===== BDos String call =====/");
+
+      drawBmp( getAssetsFileEntry( test ), true );
+    } else if ( interruptNum == 226 ) {
+      if ( addr == 0 ) { 
+        // to reset
+        consoleColorSet();
+      } else {
+        consoleColorSet( rgb(126, 155, 125), rgb(69,80,110), rgb(108-30,120-30,195-30) );
+      }
+    }
+    
   }
 
 

@@ -670,8 +670,8 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
    tft.setTextColor(ILI9341_WHITE);
 
    // to reset
-   // consoleColorSet();
-   consoleColorSet( rgb(126, 155, 125), rgb(69,80,110), rgb(108-30,120-30,195-30) );
+   consoleColorSet();
+   // consoleColorSet( rgb(126, 155, 125), rgb(69,80,110), rgb(108-30,120-30,195-30) );
 #endif
  }
 
