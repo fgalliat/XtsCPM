@@ -41,6 +41,14 @@
   #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
 #endif
 
+// Serial port speed
+#ifdef YATL_PLATFORM
+  #define SERIALSPD 115200
+#else
+  #define SERIALSPD 9600
+#endif
+
+
 
 // SDCard/LED related definitions
 //
@@ -113,8 +121,6 @@
   #include "stm32.h"
 #endif
 
-// Serial port speed
-#define SERIALSPD 9600
 
 // PUN: device configuration
 #ifdef USE_PUN
