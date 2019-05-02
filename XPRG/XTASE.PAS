@@ -3,18 +3,16 @@ program testPtr;
 type aStr = string[255];
 
 
-procedure testBdosHook(text : aStr);
-begin
- {* Xtase specific BdosCall *}
- {* addr maybe Word / not integer *}
- Bdos(225, addr(text) );
-end;
-
 procedure drawBmp(text : aStr);
 begin
  {* Xtase specific BdosCall *}
- {* addr maybe Word / not integer *}
  Bdos(225, addr(text) );
+end;
+
+procedure setConsoleColors(mode : integer);
+begin
+ {* Xtase specific BdosCall *}
+ Bdos(226, mode );
 end;
 
 {* proc w/o args don't have parent. *}
@@ -66,21 +64,33 @@ end;
 
 var
  str : string[64];
+ choice : integer;
 
 begin
  str := 'coucou les gens !';
 
+ setConsoleColors(1); {* LCD mono *}
  clScr; {* no args > no parent. *}
- drawBmp('girl.bmp');
-
  cursor( 10, 5 );
-
- txtColor;
- writeln( str );
- txtNormal;
+ writeln( 'How, I m a poor lcd mono display' );
+ cursor( 10, 7 );
+ writeln( 'Hit Enter ....' );
  bell;
+ readln( choice );
 
- { testBdosHook('Salut les cons !'); }
+ setConsoleColors(0); {* phosphore mode *}
+ clScr;
+ drawBmp('girl.bmp');
+ cursor( 10, 5 );
+ txtColor;
+ writeln( 'Maybe a colorfull screen !!!!' );
+ txtNormal;
+
+ cursor( 10, 7 );
+ writeln( str );
+
+ cursor( 0, 9 );
+ 
 
  { play('MARIO.T53'); }
  play('MONKEY.T5K');
