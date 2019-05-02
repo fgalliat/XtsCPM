@@ -737,7 +737,11 @@ void _Bdos(void) {
 
 #ifdef YATL_PLATFORM
 	case 225:
-	  	testXtsBdosCall(225, DE);
+	case 226:
+	case 227:
+	case 228:
+	case 229:
+	  	XtsBdosCall(ch, DE);
 		break;
 #endif
 		/*

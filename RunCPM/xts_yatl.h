@@ -117,12 +117,15 @@
 
   // =======================================
 
+  // forward symbols
+  void consoleColorSet(uint16_t bg, uint16_t fg, uint16_t acc);
+  uint16_t rgb(uint8_t r, uint8_t g, uint8_t b);
 
   // I'm now able to send 255 long String to BDos Hook !!!!!
-  void testXtsBdosCall(int interruptNum, int32 addr) {
-    if ( interruptNum == 225 ) {
+  void XtsBdosCall(uint8 regNum, int32 value) {
+    if ( regNum == 225 ) {
 
-      uint8_t *F = (uint8_t*)_RamSysAddr(addr);
+      uint8_t *F = (uint8_t*)_RamSysAddr(value);
       char test[256];
       memset(test, 0x00, 256);
 
@@ -136,10 +139,38 @@
       Serial.println("\\===== BDos String call =====/");
 
       drawBmp( getAssetsFileEntry( test ), true );
-    } else if ( interruptNum == 226 ) {
-      if ( addr == 0 ) { 
+    } else if ( regNum == 226 ) {
+      if ( value == 0 ) { 
         // to reset
-        consoleColorSet();
+        // consoleColorSet();
+
+        /*
+        // Color definitions
+#define ILI9341_BLACK       0x0000  ///<   0,   0,   0
+#define ILI9341_NAVY        0x000F  ///<   0,   0, 123
+#define ILI9341_DARKGREEN   0x03E0  ///<   0, 125,   0
+#define ILI9341_DARKCYAN    0x03EF  ///<   0, 125, 123
+#define ILI9341_MAROON      0x7800  ///< 123,   0,   0
+#define ILI9341_PURPLE      0x780F  ///< 123,   0, 123
+#define ILI9341_OLIVE       0x7BE0  ///< 123, 125,   0
+#define ILI9341_LIGHTGREY   0xC618  ///< 198, 195, 198
+#define ILI9341_DARKGREY    0x7BEF  ///< 123, 125, 123
+#define ILI9341_BLUE        0x001F  ///<   0,   0, 255
+#define ILI9341_GREEN       0x07E0  ///<   0, 255,   0
+#define ILI9341_CYAN        0x07FF  ///<   0, 255, 255
+#define ILI9341_RED         0xF800  ///< 255,   0,   0
+#define ILI9341_MAGENTA     0xF81F  ///< 255,   0, 255
+#define ILI9341_YELLOW      0xFFE0  ///< 255, 255,   0
+#define ILI9341_WHITE       0xFFFF  ///< 255, 255, 255
+#define ILI9341_ORANGE      0xFD20  ///< 255, 165,   0
+#define ILI9341_GREENYELLOW 0xAFE5  ///< 173, 255,  41
+#define ILI9341_PINK 0xFC18 ///< 255, 130, 198
+        */
+        const uint16_t black = 0x0000;
+        const uint16_t white = 0xFFFF;
+        const uint16_t green = 0x07E0;
+
+        consoleColorSet(black, white, green);
       } else {
         consoleColorSet( rgb(126, 155, 125), rgb(69,80,110), rgb(108-30,120-30,195-30) );
       }
