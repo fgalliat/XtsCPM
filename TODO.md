@@ -6,7 +6,7 @@
     - TEXT console colorSet definition **(done)**
     - TEXT console colorSet changing routine **(done)** / made a fake monochrome LCD colorSet 
 
-       - make a BdosCall to change colorset ...
+       - make a BdosCall to change colorset ... **(done)**
     - TEXT conditional space char rendering **(done)**
     - TEXT smoother scrolling (line per line erasing)
    - lower layout (w/ addditional 328P 3.3v ?)
