@@ -29,6 +29,35 @@
 
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+  int32 xbdos_console(int32 value) {
+     int a0 = HIGH_REGISTER( value );
+     int a1 = LOW_REGISTER( value ); 
+
+     if ( a0 == 0 ) {
+         // set the console colorSet
+         if ( a1 == 0 ) {
+            // to reset
+            consoleColorSet(); 
+         } else {
+            // set as old monochrome LCD (no backlight) 
+            consoleColorSet( rgb(126, 155, 125), rgb(69,80,110), rgb(108-30,120-30,195-30) );
+         }
+     } else if ( a0 == 1 ) {
+         // set the console font size & cols mode
+         if ( a1 == 0 ) {
+            // to reset
+            _setConsoleMode(LCD_CONSOLE_80_COLS);
+            consoleRenderFull();
+         } else {
+            // set as 53 cols (big font)
+            _setConsoleMode(LCD_CONSOLE_40_COLS);
+            consoleRenderFull();
+         }
+     }
+     return 0;
+  }
+
+
   int32 XtsBdosCall(uint8 regNum, int32 value) {
     if ( regNum == 225 ) {
 
@@ -41,10 +70,7 @@
 
       drawBmp( getAssetsFileEntry( test ), true );
     } else if ( regNum == 226 ) {
-      int a0 = HIGH_REGISTER( value );
-      int a1 = LOW_REGISTER( value );
-      // use a0 & a1 .... for subOp. dispatch
-
+      /*
       if ( value == 0 ) {
         // to reset
         consoleColorSet();
@@ -52,6 +78,8 @@
         // set as old monochrome LCD (no backlight) 
         consoleColorSet( rgb(126, 155, 125), rgb(69,80,110), rgb(108-30,120-30,195-30) );
       }
+      */
+     return xbdos_console(value);
     }
     
     return 0;
