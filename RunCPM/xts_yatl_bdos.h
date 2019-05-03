@@ -66,19 +66,26 @@
 
       Serial.println("/===== BDos PString call =====\\");
       Serial.println(test);
-      Serial.println("\\===== BDos PString call =====/");
 
-      drawBmp( getAssetsFileEntry( test ), true );
-    } else if ( regNum == 226 ) {
-      /*
-      if ( value == 0 ) {
-        // to reset
-        consoleColorSet();
+      upper(test);
+
+      if ( endsWith(test, (char*)".BMP") ) {
+        Serial.println("|  Wanna draw a BMP wallpaper |");
+        drawBmp( getAssetsFileEntry( test ), true );
+      } else if ( endsWith(test, (char*)".PCT") ) {
+        Serial.println("|  Wanna draw a PCT wallpaper |");
+        Serial.println("|  NYI                        |");
+      } else if ( endsWith(test, (char*)".BPP") ) {
+        Serial.println("|  Wanna draw a BPP wallpaper |");
+        Serial.println("|  NYI                        |");
       } else {
-        // set as old monochrome LCD (no backlight) 
-        consoleColorSet( rgb(126, 155, 125), rgb(69,80,110), rgb(108-30,120-30,195-30) );
+        Serial.print("| Wanna draw a ");
+        Serial.print( test );
+        Serial.println(" wallpaper? |");
       }
-      */
+
+      Serial.println("\\===== BDos PString call =====/");
+    } else if ( regNum == 226 ) {
      return xbdos_console(value);
     }
     

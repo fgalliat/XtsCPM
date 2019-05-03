@@ -1,6 +1,6 @@
 #include "globals.h"
 
-
+#include "xts_string.h"
 
 #include <SPI.h>
 
