@@ -2,17 +2,21 @@ program testPtr;
 
 type aStr = string[255];
 
+{* Xtase specific BdosCall : [225..229] *}
 
 procedure drawBmp(text : aStr);
 begin
- {* Xtase specific BdosCall *}
  Bdos(225, addr(text) );
 end;
 
 procedure setConsoleColors(mode : integer);
 begin
- {* Xtase specific BdosCall *}
- Bdos(226, mode );
+ Bdos(226, (0 shl 8) + mode );
+end;
+
+procedure setConsoleCols(mode : integer);
+begin
+ Bdos(226, (1 shl 8) + mode );
 end;
 
 {* proc w/o args don't have parent. *}
@@ -70,6 +74,7 @@ begin
  str := 'coucou les gens !';
 
  setConsoleColors(1); {* LCD mono *}
+ setConsoleCols(1); {* 40 cols *}
  clScr; {* no args > no parent. *}
  cursor( 10, 5 );
  writeln( 'How, I m a poor lcd mono display' );
@@ -79,6 +84,7 @@ begin
  readln( choice );
 
  setConsoleColors(0); {* phosphore mode *}
+ setConsoleCols(0); {* 80 cols *}
  clScr;
  drawBmp('girl.bmp');
  cursor( 10, 5 );
@@ -90,8 +96,6 @@ begin
  writeln( str );
 
  cursor( 0, 9 );
- 
-
  { play('MARIO.T53'); }
  play('MONKEY.T5K');
 end.
