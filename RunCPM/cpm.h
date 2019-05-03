@@ -741,7 +741,7 @@ void _Bdos(void) {
 	case 227:
 	case 228:
 	case 229:
-	  	XtsBdosCall(ch, DE);
+	  	HL = XtsBdosCall(ch, DE);
 		break;
 #endif
 		/*

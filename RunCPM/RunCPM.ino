@@ -37,6 +37,8 @@
     #include "xts_yatl_screen.h"
   #endif
 
+  #include "xts_yatl_bdos.h"
+
 #else
   #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
 #endif

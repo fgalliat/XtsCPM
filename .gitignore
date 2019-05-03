@@ -8,3 +8,4 @@ RunCPM/lua/luac
 RunCPM/lua/liblua.a
 .vscode
 *.class
+*.exe
