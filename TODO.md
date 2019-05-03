@@ -9,9 +9,9 @@
        - make a BdosCall to change colorset ... **(done)**
     - TEXT conditional space char rendering **(done)**
     - TEXT smoother scrolling (line per line erasing)
-   - lower layout (w/ addditional 328P 3.3v ?)
+   - lower layout (w/ addditional Teensy3.2 3.3v ?)
    - REFACTO Screen API
-   - REFACTO BdosCalls & VT-EXT
+   - REFACTO BdosCalls & VT-EXT **(done)**
    - GFX Pascal Demo (benchmark : loop for drawing rectangles as ex.)
 
 
@@ -59,7 +59,6 @@
   - Ext. Hardware functions ...
 
   - done **once per operation** (not cycle emulation)
-
 - **Pascal (VT100Ex)** extensions (see XTASE.PAS) 
   - cls **(done)**
   - locate row,col **(done)**
@@ -73,10 +72,8 @@
 
   - Pascal online compiller + console
     https://rextester.com/l/pascal_online_compiler
-
 - Z: Assets filename completion routine **(done)**
   - char* getAssetsFileEntry(char* assetName) 
-
 - **BMP Support :** 
   - before :
     Le croquis utilise 96188 octets (9%) de l'espace de stockage de programmes. Le maximum est de 1048576 octets.
@@ -87,11 +84,11 @@
 
   - done **(minimal)**
   - have to support smaller BMP w/ location (& no screen rotation)
-
 - **BPP & PCT support**
   - todo
-
 - Only one showImage() routine w/ file ext. detection (.BMP, .PCT, .BPP)
+
+  - started in Bdoscall for drawing wallpapers
 
 
 - Console Mode Switcher **(DONE)**
@@ -247,8 +244,9 @@
           \> REBOOT
 
 - cpm.h l. 736
-  - free Bdos hooks (225-229 inclusive are free)
-
+  
+- free Bdos hooks (225-229 inclusive are free)
+  
 - **small BASIC script**
   - ? chr$(7)   BELL
   - ? chr$(26)  CLS
@@ -280,9 +278,6 @@
   - by default : it will lock the system while playing
   - later : make a Threaded version (/!\\ with delay(..) & Timers )
   
-  - BdosCall( uint8_t reg, uint16_t regValue );
-
-  - **BUG** : can't play a .T5K twice !!!! **FIXED**
 
 
 
