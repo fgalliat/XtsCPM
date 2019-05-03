@@ -1,2 +1,3 @@
 @echo off
-java -cp ./bin;./libs/jssc.jar TerminalFrame %*
+rem java -cp ./bin;./libs/jssc.jar TerminalFrame %*
+java -cp ./bin;./libs/jssc.jar SimpleSender %*

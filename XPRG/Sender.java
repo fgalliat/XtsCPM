@@ -6,6 +6,9 @@ import java.io.PrintStream;
 
 public class Sender {
 
+  static String port = "/dev/ttyACM0";
+  // static String port = "/dev/ttyS15"; // COM16 w/ Cygwin -> but translated as "\\dev\\ttyS15"
+
   public static void main(String[] args) throws Exception{
       if ( args == null || args.length != 1 ) {
         System.out.println("Usage : ");
@@ -27,7 +30,7 @@ public class Sender {
         throw new IllegalArgumentException("not found filename !");
       }
 
-      serialOut = new PrintStream( new FileOutputStream("/dev/ttyACM0") );
+      serialOut = new PrintStream( new FileOutputStream(port) );
 
       printLineToCPM("a:mBASIC c:RTEXT.BAS");
       Zzz(2000);
