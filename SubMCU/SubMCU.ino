@@ -13,6 +13,8 @@
  * Xtase - fgalliat @May2019
  */
 
+#include <DFRobotDFPlayerMini.h>
+
 #include "ChatpadInputStream.h"
 
 ChatpadInputStream keyboard0(Serial1);
