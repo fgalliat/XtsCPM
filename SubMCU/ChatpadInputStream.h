@@ -172,6 +172,7 @@ class ChatpadInputStream : public InputStream
   private:
     HardwareSerial _serial;
     Chatpad pad;
+    bool autoPoll = true;
 
   public:
     ChatpadInputStream(HardwareSerial &serial)
@@ -183,6 +184,10 @@ class ChatpadInputStream : public InputStream
     void init() {
         pad.init(_serial, __print_keys);
         memset(keyBuff, 0x00, KEYPAD_BUFF_LEN + 1);
+    }
+
+    void disableAutoPoll() {
+        this->autoPoll = false;
     }
 
     void poll()
@@ -198,7 +203,7 @@ class ChatpadInputStream : public InputStream
 
     int available()
     {
-        pad.poll(); // because millis() can't be used inside an ISR
+        if (this->autoPoll) pad.poll(); // because millis() can't be used inside an ISR
         return strlen(keyBuff);
     }
 
@@ -211,8 +216,9 @@ class ChatpadInputStream : public InputStream
         }
         // read 1st then shift buff
         char ch = keyBuff[0];
-        memmove(keyBuff + 0, keyBuff + 1, 1);
-        keyBuff[avail] = 0x00;
+        // memmove(keyBuff + 0, keyBuff + 1, 1); // TODO : check that !!
+        memmove( &keyBuff[0], &keyBuff[1], avail-1); // OK that works
+        keyBuff[avail-1] = 0x00;
         return ch;
     }
 
