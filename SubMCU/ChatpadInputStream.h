@@ -14,7 +14,8 @@
 
 #include "./InputStream.h"
 
-#include <Chatpad.h>
+// #include <Chatpad.h>
+#include "XtsChatpad.h"
 
 // static Chatpad pad;
 #define KEYPAD_BUFF_LEN 128
@@ -178,12 +179,13 @@ class ChatpadInputStream : public InputStream
     ChatpadInputStream(HardwareSerial &serial)
     {
         this->_serial = serial;
-        init();
+        this->init(true);
     }
 
-    void init() {
+    void init(bool reinitBuffer=true) {
         pad.init(_serial, __print_keys);
-        memset(keyBuff, 0x00, KEYPAD_BUFF_LEN + 1);
+        if (reinitBuffer) memset(keyBuff, 0x00, KEYPAD_BUFF_LEN + 1);
+        __k_reading = false;
     }
 
     void disableAutoPoll() {

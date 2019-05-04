@@ -12,7 +12,7 @@
 
 class InputStream {
   public:
-    virtual void init();
+    virtual void init(bool reinitBuffer=true);
     virtual void poll();
 
     virtual int available();
