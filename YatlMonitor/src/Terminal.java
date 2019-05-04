@@ -36,6 +36,10 @@ public class Terminal {
 		return commPort;
 	}
 
+	public void setCommPort(String port) {
+		this.commPort = port;
+	}
+
 	public boolean reconnect() {
 		return reconnect(false);
 	}
@@ -248,11 +252,14 @@ public class Terminal {
 //		System.out.println("-EOF-");
 //	}
 
-	void serPrintln(String str) throws Exception {
+	void serPrint(String str) throws Exception {
 		System.out.println(">>> " + str);
+		serWrite(str.getBytes(), str.length());
+	}
 
+	void serPrintln(String str) throws Exception {
 		String str2 = str + "\n";
-		serWrite(str2.getBytes(), str2.length());
+		serPrint(str2);
 	}
 
 	void serWrite(byte[] arry, int bteCount) throws Exception {
