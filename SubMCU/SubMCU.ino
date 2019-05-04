@@ -13,11 +13,42 @@
  * Xtase - fgalliat @May2019
  */
 
-#include <DFRobotDFPlayerMini.h>
+// #include "DFRobotDFPlayerMini.h"
+// SoftwareSerial mySoftwareSerial(10, 11); // RX, TX
 
-#include "ChatpadInputStream.h"
+#define HAS_MP3 1
+#define HAS_KEYB 1
 
-ChatpadInputStream keyboard0(Serial1);
+#ifdef HAS_MP3
+ #include <DFRobotDFPlayerMini.h>
+ DFRobotDFPlayerMini myDFPlayer;
+ #define SerialMP3 Serial2
+#endif
+
+#ifdef HAS_KEYB
+ #include "ChatpadInputStream.h"
+ ChatpadInputStream keyboard0(Serial1);
+
+ int _chatPadErrorCounter = 0;
+
+ void _handleChatPadError(int value) {
+    if ( value < 0 ) {
+    //   Serial.print("CheckSum error");
+    //   Serial.println("");
+       return;
+    }
+    // Serial.print("Unexpected packet type: ");
+    // Serial.println(value, HEX);
+    led(true); delay(10);
+    led(false); delay(10);
+
+    _chatPadErrorCounter++;
+    if ( _chatPadErrorCounter >= 10 ) {
+        keyboard0.init(false);
+    }
+ }
+
+#endif
 
 #define LED 13
 void led(bool state) { digitalWrite( LED, state ? HIGH : LOW ); }
@@ -32,30 +63,78 @@ void setup() {
 
    Serial.begin(115200);
 
-   keyboard0.init();
-   // keyboard0.disableAutoPoll();
-   delay(300); // to let keyboard enough time to init...
+   // + system info
+   // > logging info
 
-   led(true);
+   // ===== Ms ChatPad for XBOX 360 =====
+   #ifdef HAS_KEYB
+    delay(600); // to let keyboard enough time to init...
+    keyboard0.init();
+    keyboard0.disableAutoPoll();
+    delay(300); // to let keyboard enough time to init...
+    Serial.println("+k:OK"); // keyboard is OK
+   #else
+    Serial.println("+k:NOK"); // keyboard is NOK
+   #endif
+
+   // ===== DFPlayer mini MP3 =====
+   #ifdef HAS_MP3
+    SerialMP3.begin(9600);
+    if (!myDFPlayer.begin(SerialMP3)) {
+        Serial.println(F("> Unable to begin:"));
+        Serial.println(F("> 1.Please recheck the connection!"));
+        Serial.println(F("> 2.Please insert the SD card!"));
+        Serial.println("+m:NOK");
+    }
+    else {
+        Serial.println("+m:OK");
+        myDFPlayer.volume(20);  //Set volume value. From 0 to 30
+        // myDFPlayer.play(1);  //Play the first mp3
+    }
+   #else
+    Serial.println("+m:NOK");
+   #endif
+
+
+
+
+   led(true); delay(300);
+   led(!true); delay(300);
+   led(true); delay(300);
+   led(!true); delay(300);
    Serial.println("> Ready to work");
 }
 
 int loopCounter = 0;
 
 void loop() {
-    // if ( keyboard0.available() > 0 ) {
-    //     Serial.write('K');
-    //     Serial.write( keyboard0.read() );
-    // }
-    keyboard0.poll();
+    #ifdef HAS_KEYB
+     keyboard0.poll();
+    #endif
 
     if ( _avail() ) {
         char ch = _read();
         if ( ch == 'k' ) {
-            if ( !keyboard0.available() ) { _send(0x00); }
-            else {
-                while( keyboard0.available() >= 1 ) { _send( keyboard0.read() ); }
-            }
+            #ifdef HAS_KEYB
+                if ( !keyboard0.available() ) { 
+                    // Serial.println("> <Empty Buffer>"); 
+                    _send(0x00); 
+                }
+                else {
+                    while( keyboard0.available() >= 1 ) { _send( keyboard0.read() ); }
+                    _send(0x00);
+                }
+            #else
+                _send(0x00);
+            #endif
+        } else if ( ch == 'm' ) {
+            // MP3 subCommands to dispatch
+            #ifdef HAS_MP3
+              myDFPlayer.play(65); // THEC64-MENU-Theme
+            #endif
+        } else if ( ch == '\n' || ch == '\r' ) {
+            // may be some dusty end of line due to terminal 
+            // that was used
         } else {
             Serial.print("> Command ");
             Serial.print(ch);
@@ -64,7 +143,15 @@ void loop() {
     }
 
 
-    delay(5);
-    loopCounter %= 50;
-    // if ( loopCounter == 0 ) { Serial.print('.'); }
+    loopCounter++;
+    loopCounter %= 200;
+    if ( loopCounter == 0 ) { 
+        // Serial.print('.'); 
+        #ifdef HAS_KEYB
+          // due to a frequent read bug ...
+          // keyboard0.init(false);
+          // now done only if error handled
+        #endif
+    }
+    delay(2);
 }
