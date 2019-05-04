@@ -33,6 +33,12 @@ public class SubMCUTester {
         }
 
         // write("m"); // launch an MP3
+
+        write("i"); // read System infos
+        while( (line = readLine()) != null ) {
+          System.out.println("? "+line);
+        }
+
         write("j"); // read Joypad state
         while( (line = readLine()) != null ) {
           System.out.println("? "+line);

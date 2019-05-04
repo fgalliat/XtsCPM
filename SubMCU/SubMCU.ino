@@ -103,6 +103,9 @@ int _avail() { return Serial.available(); }
 int _read() { return Serial.read(); }
 void _send(char ch) { Serial.write(ch); }
 
+bool mp3ok = false;
+bool kbdok = false;
+
 void setup() {
    pinMode( LED, OUTPUT );
    digitalWrite( LED, LOW );
@@ -120,9 +123,9 @@ void setup() {
     keyboard0.init();
     keyboard0.disableAutoPoll();
     delay(300); // to let keyboard enough time to init...
-    Serial.println("+k:OK"); // keyboard is OK
+    kbdok = true; // keyboard is OK
    #else
-    Serial.println("+k:NOK"); // keyboard is NOK
+    kbdok = false; // keyboard is NOK
    #endif
 
    // ===== DFPlayer mini MP3 =====
@@ -132,15 +135,15 @@ void setup() {
         Serial.println(F("> Unable to begin:"));
         Serial.println(F("> 1.Please recheck the connection!"));
         Serial.println(F("> 2.Please insert the SD card!"));
-        Serial.println("+m:NOK");
+        mp3ok = false;
     }
     else {
-        Serial.println("+m:OK");
+        mp3ok = true;
         myDFPlayer.volume(20);  //Set volume value. From 0 to 30
         // myDFPlayer.play(1);  //Play the first mp3
     }
    #else
-    Serial.println("+m:NOK");
+    mp3ok = false;
    #endif
 
 
@@ -164,7 +167,13 @@ void loop() {
 
     if ( _avail() ) {
         char ch = _read();
-        if ( ch == 'k' ) {
+
+        if ( ch == 'i' ) {
+            if (!mp3ok) Serial.println("+m:NOK");
+            else Serial.println("+m:OK");
+            if (!kbdok) Serial.println("+k:NOK");
+            else Serial.println("+k:OK");
+        } else if ( ch == 'k' ) {
             #ifdef HAS_KEYB
                 if ( !keyboard0.available() ) { 
                     // Serial.println("> <Empty Buffer>"); 
