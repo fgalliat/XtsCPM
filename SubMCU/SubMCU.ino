@@ -54,8 +54,10 @@
 void led(bool state) { digitalWrite( LED, state ? HIGH : LOW ); }
 
 // ===== Joypad Section ======
+// 0..1023 analogRead
 #define PAD_AXIS_X 14
 #define PAD_AXIS_Y 15
+// used in pullup mode
 #define PAD_BTN_1 16
 #define PAD_BTN_2 17
 
@@ -64,21 +66,32 @@ uint8_t joypadY = 127;
 uint8_t joypadB1 = 0;
 uint8_t joypadB2 = 0;
 
+void setupJoypad() {
+   pinMode( PAD_AXIS_X, INPUT );
+   pinMode( PAD_AXIS_Y, INPUT );
+   pinMode( PAD_BTN_1, INPUT_PULLUP );
+   pinMode( PAD_BTN_2, INPUT_PULLUP );
+}
+
 void pollJoypad() {
     int x = analogRead(PAD_AXIS_X);
     int y = analogRead(PAD_AXIS_Y);
 
     // map x,y
+    joypadX = map(x, 0, 1023, 0, 255);
+    joypadY = map(y, 0, 1023, 0, 255);
 
     // beware INPUT_PULLUP
     joypadB1 = ( digitalRead(PAD_BTN_1) == LOW ) ? 1 : 0;
     joypadB2 = ( digitalRead(PAD_BTN_2) == LOW ) ? 1 : 0;
+}
 
-    Serial.print("Pad : ");
-    Serial.print(x);
-    Serial.print(" ");
-    Serial.print(y);
-    Serial.print(" ");
+void debugJoypad() {
+    Serial.print("> Pad : ");
+    Serial.print(joypadX);
+    Serial.print("\t");
+    Serial.print(joypadY);
+    Serial.print("\t");
     Serial.print(joypadB1);
     Serial.print(joypadB2);
     Serial.println("");
@@ -94,10 +107,7 @@ void setup() {
    pinMode( LED, OUTPUT );
    digitalWrite( LED, LOW );
 
-   pinMode( PAD_AXIS_X, INPUT );
-   pinMode( PAD_AXIS_Y, INPUT );
-   pinMode( PAD_BTN_1, INPUT_PULLUP );
-   pinMode( PAD_BTN_2, INPUT_PULLUP );
+   setupJoypad();
 
    Serial.begin(115200);
 
@@ -172,6 +182,13 @@ void loop() {
             #ifdef HAS_MP3
               myDFPlayer.play(65); // THEC64-MENU-Theme
             #endif
+        } else if ( ch == 'j' ) {
+            debugJoypad();
+
+            _send( joypadX );
+            _send( joypadY );
+            _send( joypadB1 );
+            _send( joypadB2 );
         } else if ( ch == '\n' || ch == '\r' ) {
             // may be some dusty end of line due to terminal 
             // that was used
