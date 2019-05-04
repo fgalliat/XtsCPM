@@ -53,6 +53,39 @@
 #define LED 13
 void led(bool state) { digitalWrite( LED, state ? HIGH : LOW ); }
 
+// ===== Joypad Section ======
+#define PAD_AXIS_X 14
+#define PAD_AXIS_Y 15
+#define PAD_BTN_1 16
+#define PAD_BTN_2 17
+
+uint8_t joypadX = 127;
+uint8_t joypadY = 127;
+uint8_t joypadB1 = 0;
+uint8_t joypadB2 = 0;
+
+void pollJoypad() {
+    int x = analogRead(PAD_AXIS_X);
+    int y = analogRead(PAD_AXIS_Y);
+
+    // map x,y
+
+    // beware INPUT_PULLUP
+    joypadB1 = ( digitalRead(PAD_BTN_1) == LOW ) ? 1 : 0;
+    joypadB2 = ( digitalRead(PAD_BTN_2) == LOW ) ? 1 : 0;
+
+    Serial.print("Pad : ");
+    Serial.print(x);
+    Serial.print(" ");
+    Serial.print(y);
+    Serial.print(" ");
+    Serial.print(joypadB1);
+    Serial.print(joypadB2);
+    Serial.println("");
+}
+
+
+// ===== MCU Bridge Section == 
 int _avail() { return Serial.available(); }
 int _read() { return Serial.read(); }
 void _send(char ch) { Serial.write(ch); }
@@ -60,6 +93,11 @@ void _send(char ch) { Serial.write(ch); }
 void setup() {
    pinMode( LED, OUTPUT );
    digitalWrite( LED, LOW );
+
+   pinMode( PAD_AXIS_X, INPUT );
+   pinMode( PAD_AXIS_Y, INPUT );
+   pinMode( PAD_BTN_1, INPUT_PULLUP );
+   pinMode( PAD_BTN_2, INPUT_PULLUP );
 
    Serial.begin(115200);
 
@@ -108,6 +146,8 @@ void setup() {
 int loopCounter = 0;
 
 void loop() {
+    pollJoypad();
+
     #ifdef HAS_KEYB
      keyboard0.poll();
     #endif
