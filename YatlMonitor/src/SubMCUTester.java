@@ -30,6 +30,12 @@ public class SubMCUTester {
       write( 'p' ); write( 'p' ); write( d0 );write( d1 );
     }
 
+    static void loopMp3(int num) throws Exception {
+      char d0 = (char)(num >> 8);
+      char d1 = (char)(num % 256);
+      write( 'p' ); write( 'l' ); write( d0 );write( d1 );
+    }
+
     static void nextMp3() throws Exception {
       write( 'p' ); write( 'n' );
     }
@@ -67,8 +73,9 @@ public class SubMCUTester {
 
         // write("m"); // launch an MP3
         // playMp3( 32 );
-        // nextMp3();
-        pauseMp3();
+        nextMp3();
+        // pauseMp3();
+        // loopMp3(11);
 
         write("i"); // read System infos
         while( (line = readLine()) != null ) {

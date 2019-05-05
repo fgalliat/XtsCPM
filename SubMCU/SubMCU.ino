@@ -206,6 +206,16 @@ void loop() {
                   uint8_t d1 = ch;
                   int trackNumber = (d0<<8)+d1;
                   myDFPlayer.play(trackNumber);
+              } else if ( ch == 'l' ) {
+                  // loop an MP3
+                  while( _avail() <= 0 ) { delay(2); }
+                  ch = _read();
+                  uint8_t d0 = ch;
+                  while( _avail() <= 0 ) { delay(2); }
+                  ch = _read();
+                  uint8_t d1 = ch;
+                  int trackNumber = (d0<<8)+d1;
+                  myDFPlayer.loop(trackNumber);
               } else if ( ch == 'n' ) {
                   myDFPlayer.next();
               } else if ( ch == 'v' ) {
