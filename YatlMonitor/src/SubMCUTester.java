@@ -19,6 +19,39 @@ public class SubMCUTester {
       Terminal.getInstance().serPrint(str);
     }
 
+    public static void write(char ch) throws Exception {
+      Terminal.getInstance().serWrite(ch);
+    }
+
+    // ====================
+    static void playMp3(int num) throws Exception {
+      char d0 = (char)(num >> 8);
+      char d1 = (char)(num % 256);
+      write( 'p' ); write( 'p' ); write( d0 );write( d1 );
+    }
+
+    static void nextMp3() throws Exception {
+      write( 'p' ); write( 'n' );
+    }
+
+    static void prevMp3() throws Exception {
+      write( 'p' ); write( 'v' );
+    }
+
+    static void pauseMp3() throws Exception {
+      write( 'p' ); write( 'P' );
+    }
+
+    static void stopMp3() throws Exception {
+      write( 'p' ); write( 's' );
+    }
+
+    static void volumeMp3(int howMany) throws Exception {
+      write( 'p' ); write( 'V' ); write( (char)howMany );
+    }
+    // ======================
+
+
     static void process() throws Exception {
         String subMCUCommPort = "COM13";
         Terminal.getInstance().setCommPort( subMCUCommPort );
@@ -33,6 +66,9 @@ public class SubMCUTester {
         }
 
         // write("m"); // launch an MP3
+        // playMp3( 32 );
+        // nextMp3();
+        pauseMp3();
 
         write("i"); // read System infos
         while( (line = readLine()) != null ) {

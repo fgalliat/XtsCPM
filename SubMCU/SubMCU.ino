@@ -23,6 +23,7 @@
  #include <DFRobotDFPlayerMini.h>
  DFRobotDFPlayerMini myDFPlayer;
  #define SerialMP3 Serial2
+ bool mp3InPause = false;
 #endif
 
 #ifdef HAS_KEYB
@@ -190,6 +191,40 @@ void loop() {
             // MP3 subCommands to dispatch
             #ifdef HAS_MP3
               myDFPlayer.play(65); // THEC64-MENU-Theme
+            #endif
+        } else if ( ch == 'p' ) {
+            #ifdef HAS_MP3
+              while( _avail() <= 0 ) { delay(2); }
+              ch = _read();
+              if ( ch == 'p' ) {
+                  // play an MP3
+                  while( _avail() <= 0 ) { delay(2); }
+                  ch = _read();
+                  uint8_t d0 = ch;
+                  while( _avail() <= 0 ) { delay(2); }
+                  ch = _read();
+                  uint8_t d1 = ch;
+                  int trackNumber = (d0<<8)+d1;
+                  myDFPlayer.play(trackNumber);
+              } else if ( ch == 'n' ) {
+                  myDFPlayer.next();
+              } else if ( ch == 'v' ) {
+                  myDFPlayer.previous();
+              } else if ( ch == 'P' ) {
+                  if ( mp3InPause ) {
+                      myDFPlayer.start();
+                      mp3InPause = false;
+                  } else {
+                    myDFPlayer.pause();
+                    mp3InPause = true;
+                  }
+              } else if ( ch == 's' ) {
+                  myDFPlayer.stop();
+              } else if ( ch == 'V' ) {
+                  while( _avail() <= 0 ) { delay(2); }
+                  ch = _read();
+                  myDFPlayer.volume(ch);
+              }
             #endif
         } else if ( ch == 'j' ) {
             debugJoypad();
