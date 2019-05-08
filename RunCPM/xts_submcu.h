@@ -73,6 +73,8 @@
   }
 
   uint8_t mp3BdosCall(int32 value) {
+      // int trckNum += (128+64) << 8
+
       uint8_t a0 = HIGH_REGISTER(value);
       uint8_t a1 = LOW_REGISTER(value);
 
