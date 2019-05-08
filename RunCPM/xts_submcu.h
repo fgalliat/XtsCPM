@@ -71,6 +71,35 @@
       serialBridge.write('p');
       serialBridge.write('v');
   }
+
+  uint8_t mp3BdosCall(int32 value) {
+      uint8_t a0 = HIGH_REGISTER(value);
+      uint8_t a1 = LOW_REGISTER(value);
+
+      if ( a0 >= (1 << 6) ) {
+         // 11000000 -> 11 play+loop -> 64(10)
+         // still 16000 addressable songs
+         bool loopMode = a0 >= (1 << 7);
+
+         a0 = a0 % (1 << 6);
+         int trkNum = (a0<<8) + a1;
+
+         if ( loopMode ) { loopMp3(trkNum); }
+         else { playMp3(trkNum); }
+      } else if (a0 == 0x00) {
+          stopMp3();
+      } else if (a0 == 0x01) {
+          pauseMp3();
+      } else if (a0 == 0x02) {
+          nextMp3();
+      } else if (a0 == 0x03) {
+          prevMp3();
+      } else if (a0 == 0x04) {
+          volumeMp3( a1 );
+      }
+  }
+
+
   // ====================================
 
 
