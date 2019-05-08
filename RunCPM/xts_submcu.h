@@ -15,6 +15,12 @@
   #define serialBridge Serial1
   bool bridgeLocked = false;
 
+  void bridge_write(uint8_t ch) { serialBridge.write(ch); }
+  int bridge_readUntil(uint8_t until, char* dest, int maxLen) {
+      // TODO : write it
+  return 0;
+  }
+
   void initKeyb() {
       memset(keybBuffer, 0x00, keybBufferLen);
   }
@@ -35,12 +41,18 @@
       serialBridge.write(d0);
       serialBridge.write(d1);
   }
-  void volumeMp3(int num) {
+  void loopMp3(int num) {
       uint8_t d0 = num >> 8;
       uint8_t d1 = num % 256;
       serialBridge.write('p');
-      serialBridge.write('V');
+      serialBridge.write('l');
       serialBridge.write(d0);
+      serialBridge.write(d1);
+  }
+  void volumeMp3(int num) {
+      uint8_t d1 = num % 256;
+      serialBridge.write('p');
+      serialBridge.write('V');
       serialBridge.write(d1);
   }
   void pauseMp3() {
@@ -78,7 +90,7 @@
           bridge_write('k');
           char tmp[32];
           bridge_readUntil(0x00, tmp, 32);
-          if ( str_len(tmp) == 0 ) { return -1; }
+          if ( strlen(tmp) == 0 ) { return -1; }
           // beware w/ overflow...
           // but len == 0 should not occur...
           strcat(keybBuffer, tmp);

@@ -10,12 +10,23 @@
 
   #define HAS_BUILTIN_LCD 1
 
+  #define HAS_SUB_MCU 1
+
   // 13 is used by SPI LCD
   #define LED_PIN 14
 
   #define SPEAKER_PIN 6
 
   #define y_dbug(a) Serial.println(a)
+
+  // ===============================================
+  #ifdef HAS_SUB_MCU
+
+   #include "xts_submcu.h"
+
+  #endif
+  // ===============================================
+
 
   void setupArduinoScreen();
 
@@ -37,6 +48,9 @@
     setupArduinoScreen();
     setupArduinoSpeaker();
     setupISR();
+    #ifdef HAS_SUB_MCU
+      setupBridge();
+    #endif
   }
 
 
