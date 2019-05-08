@@ -87,6 +87,8 @@
       Serial.println("\\===== BDos PString call =====/");
     } else if ( regNum == 226 ) {
      return xbdos_console(value);
+    } else if ( regNum == 227 ) {
+     return mp3BdosCall(value);
     }
     
     return 0;

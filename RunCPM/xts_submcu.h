@@ -96,6 +96,9 @@
           prevMp3();
       } else if (a0 == 0x04) {
           volumeMp3( a1 );
+      } else if (a0 == 0x05) {
+          // for now : just for demo
+          playMp3( 65 );
       }
   }
 
