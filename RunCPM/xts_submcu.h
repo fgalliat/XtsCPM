@@ -12,9 +12,55 @@
   const int keybBufferLen = 64; 
   char keybBuffer[keybBufferLen];
 
+  #define serialBridge Serial1
+  bool bridgeLocked = false;
+
   void initKeyb() {
       memset(keybBuffer, 0x00, keybBufferLen);
   }
+
+  void setupBridge() {
+      serialBridge.begin(115200);
+      initKeyb();
+  }
+
+  // ====================================
+  void playMp3(int num) {
+      // if ( bridgeLocked ) ... wait or queue
+      // no matter : has no return value
+      uint8_t d0 = num >> 8;
+      uint8_t d1 = num % 256;
+      serialBridge.write('p');
+      serialBridge.write('p');
+      serialBridge.write(d0);
+      serialBridge.write(d1);
+  }
+  void volumeMp3(int num) {
+      uint8_t d0 = num >> 8;
+      uint8_t d1 = num % 256;
+      serialBridge.write('p');
+      serialBridge.write('V');
+      serialBridge.write(d0);
+      serialBridge.write(d1);
+  }
+  void pauseMp3() {
+      serialBridge.write('p');
+      serialBridge.write('P');
+  }
+  void stopMp3() {
+      serialBridge.write('p');
+      serialBridge.write('s');
+  }
+  void nextMp3() {
+      serialBridge.write('p');
+      serialBridge.write('n');
+  }
+  void prevMp3() {
+      serialBridge.write('p');
+      serialBridge.write('v');
+  }
+  // ====================================
+
 
   int kbAvailable() {
       return strlen( keybBuffer );
