@@ -25,6 +25,7 @@ end;
 
 procedure playMp3(track : integer);
 begin
+ { track := track + (128*256); loop }
  track := track + (64*256);
  Bdos(227, track );
 end;
@@ -116,5 +117,7 @@ begin
  readln( choice );
 
  setConsoleCols(0); {* 80 cols *}
+ clScr;
+ writeln('Bye.');
  stopMp3;
 end.
