@@ -29,6 +29,9 @@ void _puts(const char *str)	// Puts a \0 terminated string
 {
 	while (*str)
 		_putcon(*(str++));
+	// int t = strlen(str);
+	// if ( t <= 0 ) { return; }
+	// for(int i=0; i < t; i++) { _putcon( str[i] ); }
 }
 
 void _puthex8(uint8 c)		// Puts a HH hex string

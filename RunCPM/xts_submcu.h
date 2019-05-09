@@ -73,6 +73,7 @@
   }
 
   uint8_t mp3BdosCall(int32 value) {
+      Serial.println("mp3 Bdos call");
       // int trckNum += (128+64) << 8
 
       uint8_t a0 = HIGH_REGISTER(value);
@@ -102,6 +103,8 @@
           // for now : just for demo
           playMp3( 65 );
       }
+
+    return 0;
   }
 
 

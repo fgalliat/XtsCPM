@@ -36,7 +36,7 @@ void _doPlay(char* sequence) {
    if ( (ch == '3' || ch == 'K') && sequence[ slen-2  ] == '5' ) {
 Serial.println("T5?");
       // playTuneFromStorage("MONKEY.T5K", 1, true);
-      playTuneFromStorage( sequence , 1, true);
+      playTuneFromStorage( sequence , (ch == '3') ? AUDIO_FORMAT_T53 : AUDIO_FORMAT_T5K, true);
    }  else {
 Serial.println("Tones");
       playTuneString(sequence);
