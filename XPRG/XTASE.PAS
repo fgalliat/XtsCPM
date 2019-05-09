@@ -98,7 +98,6 @@ begin
  play('MONKEY.T5K');
 
  setConsoleColors(0); {* phosphore mode *}
- setConsoleCols(0); {* 80 cols *}
  clScr;
  drawBmp('girl.bmp');
  cursor( 10, 5 );
@@ -116,5 +115,6 @@ begin
  bell;
  readln( choice );
 
+ setConsoleCols(0); {* 80 cols *}
  stopMp3;
 end.
