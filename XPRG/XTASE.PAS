@@ -3,6 +3,10 @@ program testPtr;
 type aStr = string[255];
 
 {* Xtase specific BdosCall : [225..229] *}
+{* procedure Bdos(reg: integer; val: word);
+begin
+end; *}
+
 
 procedure drawBmp(text : aStr);
 begin
@@ -17,6 +21,17 @@ end;
 procedure setConsoleCols(mode : integer);
 begin
  Bdos(226, (1 shl 8) + mode );
+end;
+
+procedure playMp3(track : integer);
+begin
+ track := track + (64*256);
+ Bdos(227, track );
+end;
+
+procedure stopMp3;
+begin
+ Bdos(227, 0 );
 end;
 
 {* proc w/o args don't have parent. *}
@@ -78,10 +93,9 @@ begin
  clScr; {* no args > no parent. *}
  cursor( 10, 5 );
  writeln( 'How, I m a poor lcd mono display' );
- cursor( 10, 7 );
- writeln( 'Hit Enter ....' );
- bell;
- readln( choice );
+ {* wait keyPress *}
+ cursor( 0, 9 );
+ play('MONKEY.T5K');
 
  setConsoleColors(0); {* phosphore mode *}
  setConsoleCols(0); {* 80 cols *}
@@ -95,7 +109,12 @@ begin
  cursor( 10, 7 );
  writeln( str );
 
- cursor( 0, 9 );
- { play('MARIO.T53'); }
- play('MONKEY.T5K');
+ playMp3(65);
+
+ cursor( 10, 7 );
+ writeln( 'Hit Enter ....' );
+ bell;
+ readln( choice );
+
+ stopMp3;
 end.

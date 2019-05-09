@@ -72,6 +72,8 @@
 
   - Pascal online compiller + console
     https://rextester.com/l/pascal_online_compiler
+    https://www.jdoodle.com/execute-pascal-online
+
 - Z: Assets filename completion routine **(done)**
   - char* getAssetsFileEntry(char* assetName) 
 - **BMP Support :** 
