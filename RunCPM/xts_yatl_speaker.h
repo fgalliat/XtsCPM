@@ -105,8 +105,12 @@
 
       int readed = 0;
 
-      while (f.available())
+      while (f.available()) {
 			outBuff[readed++] = (uint8_t)f.read();
+            if ( fileLength > -1 && readed >= fileLength ) {
+                break;
+            }
+      }
 
       f.close();
 
@@ -221,6 +225,7 @@ y_dbug("playTuneFromStorage.4");
                 strcat(ftuneStreamName, ".T53");
             }
         }
+y_dbug( ftuneStreamName );
 y_dbug("playTuneFromStorage.5");
         /*static*/ unsigned char preBuff[2];
         memset(preBuff, 0x00, 2);
