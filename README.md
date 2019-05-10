@@ -72,7 +72,7 @@ Xtase - fgalliat version @ Apr2109
   - EXT : HobbyTronics USB Host board for Keyboard
 - audio
   - PCSpeaker-like to play tunes (ex. play "MONKEY.T5K", play "aa#cd" ) **done**
-  - EXT : MP3 tracks playback via DFPlayer (w/ pause, volume settings, ...)
+  - EXT : MP3 tracks playback via DFPlayer (w/ pause, volume settings, ...) **done**
 - WiFi
   - start / stop AP/client
   - manage a telnet server
@@ -97,6 +97,7 @@ Xtase - fgalliat version @ Apr2109
   - tpas30.zip
   - http://www.z80.eu/pas-compiler.html
   - online compiller : https://rextester.com/l/pascal_online_compiler
+  - another one : https://www.jdoodle.com/execute-pascal-online
 - mBASIC
   - 40KB RAM available when launched
   - https://archive.org/stream/BASIC-80_MBASIC_Reference_Manual/BASIC-80_MBASIC_Reference_Manual_djvu.txt
@@ -158,6 +159,8 @@ Xtase - fgalliat version @ Apr2109
 
 
 **Current stage :**
+
+![BOTH Layouts](./pictures/yatlBothLayouts_1_mini.jpg)
 
 ![CP/M colored console](./pictures/yatlCPM_colored_1_mini.jpg)
 

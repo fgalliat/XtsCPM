@@ -105,8 +105,12 @@
 
       int readed = 0;
 
-      while (f.available())
+      while (f.available()) {
 			outBuff[readed++] = (uint8_t)f.read();
+            if ( fileLength > -1 && readed >= fileLength ) {
+                break;
+            }
+      }
 
       f.close();
 
@@ -192,10 +196,12 @@
 
 
     bool playTuneFromStorage(char* tuneStreamName, int format, bool btnStop) {
+// y_dbug("playTuneFromStorage.1");
         buzzer.noTone();
 
         cleanAudioBuff();
         // led3(true);
+// y_dbug("playTuneFromStorage.2");
 
         int tlen = strlen(tuneStreamName);
         if ( tlen < 1 ) {
@@ -205,12 +211,13 @@
         }
 
         char* ftuneStreamName = getAssetsFileEntry( tuneStreamName );
+// y_dbug("playTuneFromStorage.3");
 
         // auto complete filename if ext is not provided
         // ~experimental
         char lastCh = tuneStreamName[ tlen-1 ];
         lastCh = charUpCase(lastCh);
-
+// y_dbug("playTuneFromStorage.4");
         if ( !(( lastCh == 'K' || lastCh == '3') && (tlen >= 2 && tuneStreamName[ tlen-2 ] == '5') ) ) {
             if ( format == AUDIO_FORMAT_T5K ) {
                 strcat(ftuneStreamName, ".T5K");
@@ -218,8 +225,10 @@
                 strcat(ftuneStreamName, ".T53");
             }
         }
-
-        static unsigned char preBuff[2];
+// y_dbug( ftuneStreamName );
+// y_dbug("playTuneFromStorage.5");
+        /*static*/ unsigned char preBuff[2];
+        memset(preBuff, 0x00, 2);
         int n = _SD_readBinFile(ftuneStreamName, preBuff, 2);
         if ( n <= 0 ) {
             _puts( ftuneStreamName );
@@ -227,25 +236,27 @@
             _puts("ZIK File not ready\n");
             return false;
         }
-
+// y_dbug("playTuneFromStorage.6");
         int nbNotes = (preBuff[0]<<8)|preBuff[1];
 
         int fileLen = (nbNotes*sizeof(Note))+2+16+2;
         if ( format == AUDIO_FORMAT_T53 ) {
             fileLen = (nbNotes*(3+3+3))+2+16+2;
         }
-
+// y_dbug("playTuneFromStorage.7");
         //file.read( audiobuff, fileLen );
         n = _SD_readBinFile(ftuneStreamName, audiobuff, fileLen);
         // led3(false);
 
         bool ok = false;
         if ( format == AUDIO_FORMAT_T5K ) {
+// y_dbug("playTuneFromStorage.8");
             ok = __playTune( &audiobuff[0], btnStop );  
         } else {
+// y_dbug("playTuneFromStorage.9");
             ok = __playTuneT53( &audiobuff[0], btnStop );  
         }
-
+// y_dbug("playTuneFromStorage.A");
         buzzer.noTone();
         return ok;
     }
@@ -254,27 +265,32 @@
     // T5K audio format
     bool __playTune(unsigned char* tuneStream, bool btnStop = false) {
         buzzer.noTone();
-
+// y_dbug("playT5K.1");
         // BUGFIX -> YES
         /*static*/ short nbNotes = (*tuneStream++ << 8) | (*tuneStream++);
-
-        static char songname[16];
-        memset(songname, 0x00, 16); // BUGFIX -> YES
-
+// y_dbug("playT5K.2");
+        /*static*/ char songname[16+1];
+        memset(songname, 0x00, 16+1); // BUGFIX -> YES
+// y_dbug("playT5K.3");
         for(int i=0; i < 16; i++) {
             songname[i] = *tuneStream++;
         }
         short tempoPercent = (*tuneStream++ << 8) | (*tuneStream++);
-
+// y_dbug("playT5K.4");
         //printfln("nbN:%d title:'%s' tmp:%d", nbNotes, (const char*)songname, tempoPercent);
+        // Serial.print("   -= Playing =-\n");
         _puts("   -= Playing =-\n");
-        _puts( songname );
+// y_dbug("playT5K.4.1");
+        // Serial.print(songname);
+        _puts( (const char*)songname );
+// y_dbug("playT5K.4.2");
+        // Serial.print("\n");
         _puts("\n");
-
+// y_dbug("playT5K.5");
         float tempo = (float)tempoPercent / 100.0;
         // cf a bit too slow (Cf decoding)
         tempo *= 0.97;
-
+// y_dbug("playT5K.6");
         for (int thisNote = 0; thisNote < nbNotes; thisNote++) {
             int note = *tuneStream++;
             short duration = (*tuneStream++ << 8) | (*tuneStream++);
@@ -284,7 +300,7 @@
                 //   led2( note > 30 );
                 //   led3( note > 36 );
             }
-
+// y_dbug("playT5K.7");
             // to distinguish the notes, set a minimum time between them.
             // the note's duration + 10% seems to work well => 1.10:
             int pauseBetweenNotes = duration * tempo;
@@ -295,10 +311,12 @@
             if (btnStop && ( anyBtn() || checkbreak() ) ) {
                 return true;
             }
+// y_dbug("playT5K.8");
         } // end of note loop
 
         led2(false);
         led3(false);
+// y_dbug("playT5K.9");
         return true;
     } // end of play T5K function
 
