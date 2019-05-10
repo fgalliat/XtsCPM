@@ -87,16 +87,17 @@ var
  choice : integer;
 
 begin
- str := 'coucou les gens !';
+ str := 'Let s play an MP3 now !';
 
  setConsoleColors(1); {* LCD mono *}
  setConsoleCols(1); {* 40 cols *}
  clScr; {* no args > no parent. *}
  cursor( 10, 5 );
  writeln( 'How, I m a poor lcd mono display' );
- {* wait keyPress *}
+ cursor( 10, 7 );
+ writeln( 'Let s play with Buzzer' );
  cursor( 0, 9 );
- play('MONKEY.T5K');
+ play('MONKEY.T5K'); {* wait keyPress *}
 
  setConsoleColors(0); {* phosphore mode *}
  clScr;
@@ -105,15 +106,14 @@ begin
  txtColor;
  writeln( 'Maybe a colorfull screen !!!!' );
  txtNormal;
-
  cursor( 10, 7 );
  writeln( str );
 
- playMp3(65);
+ { 60-duHast / 65-C64MENU }
+ playMp3(60);
 
  cursor( 10, 9 );
  writeln( 'Hit Enter ....' );
- bell;
  readln( choice );
 
  setConsoleCols(0); {* 80 cols *}
