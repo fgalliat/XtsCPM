@@ -101,12 +101,15 @@ void debugJoypad() {
 
 // ===== MCU Bridge Section == 
 // because pin labelled RX/TX on Teensy3.2 are CAN Bus
-const int txPin = 12;
-const int rxPin = 11;
-#include <SoftwareSerial.h>
-SoftwareSerial serialBridge(rxPin,txPin);
-// #include <AltSoftSerial.h>
-// AltSoftSerial serialBridge(rxPin,txPin, false);
+// & because SoftwareSerial doesn't work even
+// if it compiles
+const int txPin = 21;
+const int rxPin = 20;
+// #include <SoftwareSerial.h>
+// SoftwareSerial serialBridge(rxPin,txPin);
+// AltSoftSerial pins are IMMUTABLE & uses Timers
+#include <AltSoftSerial.h>
+AltSoftSerial serialBridge;
 
 
 // #define SerialBridge Serial
@@ -122,16 +125,11 @@ void setup() {
    pinMode( LED, OUTPUT );
    digitalWrite( LED, LOW );
 
-   // SerialBridge.begin(115200);
-   // because SoftwareSerial...
-//    pinMode(rxPin, INPUT);
-//    pinMode(txPin, OUTPUT);
-   serialBridge.begin(9600);
-//    SerialBridge.listen();
-
+   
    setupJoypad();
 
    Serial.begin(115200);
+   serialBridge.begin(115200);
 
 
    // + system info
