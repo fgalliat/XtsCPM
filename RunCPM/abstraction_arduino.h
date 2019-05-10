@@ -397,11 +397,25 @@ uint8 _sys_makedisk(uint8 drive) {
 /*===============================================================================*/
 
 int _kbhit(void) {
+	#ifdef HAS_KEYBOARD
+	  int kavail = kbAvailable();
+	  if ( kavail > 0 ) {
+			return kavail;
+		}
+	#endif
 	return(Serial.available());
 }
 
 uint8 _getch(void) {
-	while (!Serial.available());
+	#ifdef HAS_KEYBOARD
+		while (!Serial.available()) {
+			if ( kbAvailable() > 0 ) {
+				return kbRead();
+			}
+		}
+	#else
+		while (!Serial.available());
+	#endif
 	return(Serial.read());
 }
 

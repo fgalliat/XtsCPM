@@ -90,8 +90,13 @@
 
     bool checkbreak() { return false; }
 
+    // forward symbols
+    int _kbhit(void);
+    uint8 _getch(void);
+
     // TODO : better
-    bool anyBtn() { if (Serial.available() > 0) { while (Serial.available() > 0) Serial.read(); return true; } else { return false; } }
+    // bool anyBtn() { if (Serial.available() > 0) { while (Serial.available() > 0) Serial.read(); return true; } else { return false; } }
+    bool anyBtn() { if (_kbhit() > 0) { _getch(); return true; } else { return false; } }
 
   // returns nb of bytes readed
   // n = _SD_readBinFile(ftuneStreamName, audiobuff, fileLen);

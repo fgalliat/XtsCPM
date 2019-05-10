@@ -9,20 +9,33 @@
   */
   #include "Arduino.h"
 
+
+  #define HAS_BRIDGED_KEYBOARD 1
+  #define HAS_KEYBOARD 1
+
+  #define HAS_BRIDGED_MP3 1
+  #define HAS_MP3 1
+
   const int keybBufferLen = 64; 
-  char keybBuffer[keybBufferLen];
+  char keybBuffer[keybBufferLen+1];
 
   #define serialBridge Serial1
   bool bridgeLocked = false;
 
   void bridge_write(uint8_t ch) { serialBridge.write(ch); }
   int bridge_readUntil(uint8_t until, char* dest, int maxLen) {
-      // TODO : write it
-  return 0;
+      int readed = serialBridge.readBytesUntil((char)until, dest, maxLen);
+    return readed;
+  }
+  int bridge_available() {
+    return serialBridge.available();
+  }
+  int bridge_read() {
+    return serialBridge.read();
   }
 
   void initKeyb() {
-      memset(keybBuffer, 0x00, keybBufferLen);
+      memset(keybBuffer, 0x00, keybBufferLen+1);
   }
 
   void setupBridge() {
@@ -30,7 +43,7 @@
       initKeyb();
   }
 
-  // ====================================
+  // ======] MP3 Section [===========================
   void playMp3(int num) {
       // if ( bridgeLocked ) ... wait or queue
       // no matter : has no return value
@@ -117,36 +130,64 @@ Serial.println("mp3 demo");
   }
 
 
-  // ====================================
+  // ======] Keyboard Section [======================
 
+  bool firstKeybUse = true;
+
+  void kbPoll() {
+    if ( firstKeybUse ) {
+        // clean the buffer garbage ....
+        while ( bridge_available() > 0 ) {
+            bridge_read();
+        }
+        firstKeybUse = false;
+    }
+
+    if ( strlen( keybBuffer ) >= keybBufferLen ) {
+        return;
+    }
+
+    bridge_write('k');
+    char tmp[32+1];
+    memset(tmp, 0x00, 32+1);
+    int tlen = bridge_readUntil(0x00, tmp, 32);
+    if ( tlen == 0 ) { return; }
+    // beware w/ overflow...
+    // but len == 0 should not occur...
+    strcat(keybBuffer, tmp);
+  }
 
   int kbAvailable() {
-      return strlen( keybBuffer );
+      int tlen = strlen( keybBuffer );
+      if ( tlen == 0 ) {
+          kbPoll();
+      }
+      return tlen;
+  }
+
+  uint8_t kbMap(uint8_t code) {
+      if ( code == '\n' ) { code = '\r'; }
+      return code;
   }
 
   int kbRead() {
-      if ( kbAvailable() > 0 ) {
-          int len = kbAvailable();
-          char ch = keybBuffer[0];
-          memmove(&keybBuffer[0], &keybBuffer[1], len-1);
-          keybBuffer[len-1] = 0x00;
-          return (int)ch;
-      } else {
-          // send('k') ....
-          bridge_write('k');
-          char tmp[32];
-          bridge_readUntil(0x00, tmp, 32);
-          if ( strlen(tmp) == 0 ) { return -1; }
-          // beware w/ overflow...
-          // but len == 0 should not occur...
-          strcat(keybBuffer, tmp);
-          
-          int len = kbAvailable();
-          char ch = keybBuffer[0];
-          memmove(&keybBuffer[0], &keybBuffer[1], len-1);
-          keybBuffer[len-1] = 0x00;
-          return (int)ch;
-      }
+    int len = kbAvailable();
+    if ( len > 0 ) {
+        char ch = keybBuffer[0];
+        memmove(&keybBuffer[0], &keybBuffer[1], len-1);
+        keybBuffer[len-1] = 0x00;
+        return (int) kbMap(ch);
+    } else {
+        // kbPoll();
+        len = kbAvailable(); // will do poll
+        if ( len == 0 ) {
+            return -1; // no byte to read
+        }
+        char ch = keybBuffer[0];
+        memmove(&keybBuffer[0], &keybBuffer[1], len-1);
+        keybBuffer[len-1] = 0x00;
+        return (int) kbMap(ch);
+    }
   }
 
 #endif
