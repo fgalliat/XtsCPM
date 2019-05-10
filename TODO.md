@@ -9,3 +9,4 @@
 - [x] manage Keyboard
 - [ ] manage Joystick
 - [ ] manage LEDs
+- [ ] XTASE.PAS as mp3 JUKEBOX demo too (play/pause/next)
