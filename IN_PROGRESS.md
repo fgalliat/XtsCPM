@@ -9,7 +9,7 @@
        - make a BdosCall to change colorset ... **(done)**
     - TEXT conditional space char rendering **(done)**
     - TEXT smoother scrolling (line per line erasing)
-   - lower layout (w/ addditional Teensy3.2 3.3v ?)
+   - lower layout (w/ addditional Teensy3.2 3.3v) **(in progress)**
    - REFACTO Screen API
    - REFACTO BdosCalls & VT-EXT **(done)**
    - GFX Pascal Demo (benchmark : loop for drawing rectangles as ex.)
@@ -116,7 +116,7 @@
     - **TURBO** (Pascal) works (even if could be better)
     - **OS** works
   - **DOESN'T WORKS:**
-      
+    
       - TURBO inside editor doesn't works very well (try **Ctrl k + d** to exit)
       - cause some different escapes
   - **in Progress**
