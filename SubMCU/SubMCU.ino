@@ -100,9 +100,20 @@ void debugJoypad() {
 
 
 // ===== MCU Bridge Section == 
-int _avail() { return Serial.available(); }
-int _read() { return Serial.read(); }
-void _send(char ch) { Serial.write(ch); }
+// because pin labelled RX/TX on Teensy3.2 are CAN Bus
+const int txPin = 12;
+const int rxPin = 11;
+#include <SoftwareSerial.h>
+SoftwareSerial serialBridge(rxPin,txPin);
+// #include <AltSoftSerial.h>
+// AltSoftSerial serialBridge(rxPin,txPin, false);
+
+
+// #define SerialBridge Serial
+
+int _avail() { return serialBridge.available(); }
+int _read() { return serialBridge.read(); }
+void _send(char ch) { serialBridge.write(ch); }
 
 bool mp3ok = false;
 bool kbdok = false;
@@ -111,9 +122,17 @@ void setup() {
    pinMode( LED, OUTPUT );
    digitalWrite( LED, LOW );
 
+   // SerialBridge.begin(115200);
+   // because SoftwareSerial...
+//    pinMode(rxPin, INPUT);
+//    pinMode(txPin, OUTPUT);
+   serialBridge.begin(9600);
+//    SerialBridge.listen();
+
    setupJoypad();
 
    Serial.begin(115200);
+
 
    // + system info
    // > logging info
@@ -148,13 +167,12 @@ void setup() {
    #endif
 
 
-
-
    led(true); delay(300);
    led(!true); delay(300);
    led(true); delay(300);
    led(!true); delay(300);
    Serial.println("> Ready to work");
+   serialBridge.println("> Ready to work");
 }
 
 int loopCounter = 0;

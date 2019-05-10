@@ -84,14 +84,22 @@
          // still 16000 addressable songs
          bool loopMode = a0 >= (1 << 7);
 
-         a0 = a0 % (1 << 6);
+         if ( a0 >= 128 ) { a0 -= 128; }
+
+         a0 -= 64;
          int trkNum = (a0<<8) + a1;
+
+if ( loopMode ) Serial.println("mp3 LOOP");
+Serial.println("mp3 play");
+Serial.println(trkNum);
 
          if ( loopMode ) { loopMp3(trkNum); }
          else { playMp3(trkNum); }
       } else if (a0 == 0x00) {
+Serial.println("mp3 stop");
           stopMp3();
       } else if (a0 == 0x01) {
+Serial.println("mp3 pause");
           pauseMp3();
       } else if (a0 == 0x02) {
           nextMp3();
@@ -100,6 +108,7 @@
       } else if (a0 == 0x04) {
           volumeMp3( a1 );
       } else if (a0 == 0x05) {
+Serial.println("mp3 demo");          
           // for now : just for demo
           playMp3( 65 );
       }

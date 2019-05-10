@@ -111,7 +111,7 @@ begin
 
  playMp3(65);
 
- cursor( 10, 7 );
+ cursor( 10, 9 );
  writeln( 'Hit Enter ....' );
  bell;
  readln( choice );
