@@ -3,4 +3,4 @@
 - [x] compile MainMCU code
 - [x] upload & test MainMCU code (failure on playT5K files **FIXED** the bug was in _SD_readBinFile() )
 - [x] upload XTASE.PAS demo (tested **W/O** SubMCU module)
-- [ ] test MainMCU + SubMCU layouts connection
+- [x] test MainMCU + SubMCU layouts connection (had to use pins 20&21 on SubMCU for Bridge RX/TX)
