@@ -135,9 +135,11 @@
 
 - **Keyboard support**
 
-- - Microsoft XBOX 360 Chatpad
+- - Microsoft XBOX 360 Chatpad **(now works - french layout)**
 
     - stdIO handling (Serial IN / Chatpad IN -- Serial OUT / TFT OUT)
+
+      - BOTH are treated w/ **same priority** for now
 
     - Spe keys
 
@@ -160,7 +162,7 @@
           \> TOGGLE CONSOLE MODE
 
           \> SELF TEST
-
+    
           \> REBOOT
 
 - cpm.h l. 736
