@@ -16,3 +16,12 @@
 - [ ] Make Docs about pinout
 - [ ] Make Docs about VT-Ext + BdosCall extension mapping **(in Progress)**
 - [ ] GFX Drawing routines (@least to make a TP3 benchmark)
+  - beware : as screen coords are > 255 need uint16_t
+  - can PString contains 0x00 w/ trimming (Cf [0] contains length)
+  - have to bench on Testing BdosCall
+  - else will have to use ASCII coords + atoi() but it will be slower
+  - [drawShape][shapeType][fillMode][color][x][y][w][h]
+     0x7F        0x01       0x00     65535  310(16), 230(16), 10(16),10(16)
+     to draw a WHITE Rect lower-right
+     could still use Pseudo palette color if color < 16
+     
