@@ -13,6 +13,27 @@ begin
  Bdos(225, addr(text) );
 end;
 
+procedure drawRect(x,y,w,h:integer);
+ var buffer : string[16];
+begin
+ { remember starts @[1] ! }
+ buffer = buffer + #127;
+ buffer = buffer + #1;
+ buffer = buffer + #0; { ? }
+ buffer = buffer + #255; { color }
+ buffer = buffer + #255;
+ buffer = buffer + #0;
+ buffer = buffer + #10; { x=10 }
+ buffer = buffer + #0;
+ buffer = buffer + #10; { y=10 }
+ buffer = buffer + #0;
+ buffer = buffer + #50; { w=10 }
+ buffer = buffer + #0;
+ buffer = buffer + #50; { h=10 }
+
+ Bdos(229, addr(buffer) );
+end;
+
 {* Mp3 device section *}
 procedure playMp3(track : integer);
 begin
