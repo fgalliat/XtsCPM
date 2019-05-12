@@ -13,16 +13,7 @@ begin
  Bdos(225, addr(text) );
 end;
 
-procedure setConsoleColors(mode : integer);
-begin
- Bdos(226, (0 shl 8) + mode );
-end;
-
-procedure setConsoleCols(mode : integer);
-begin
- Bdos(226, (1 shl 8) + mode );
-end;
-
+{* Mp3 device section *}
 procedure playMp3(track : integer);
 begin
  { track := track + (128*256); loop }
@@ -32,7 +23,33 @@ end;
 
 procedure stopMp3;
 begin
- Bdos(227, 0 );
+ Bdos(227, 0 shl 8 );
+end;
+
+procedure pauseMp3;
+begin
+ Bdos(227, 1 shl 8 );
+end;
+
+procedure nextMp3;
+begin
+ Bdos(227, 2 shl 8 );
+end;
+
+procedure prevMp3;
+begin
+ Bdos(227, 3 shl 8 );
+end;
+
+{* Console Section *}
+procedure setConsoleColors(mode : integer);
+begin
+ Bdos(226, (0 shl 8) + mode );
+end;
+
+procedure setConsoleCols(mode : integer);
+begin
+ Bdos(226, (1 shl 8) + mode );
 end;
 
 {* proc w/o args don't have parent. *}

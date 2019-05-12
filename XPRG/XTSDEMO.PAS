@@ -7,6 +7,7 @@ program testPtr;
 var
  str : string[64];
  choice : string[1];
+ trk: integer;
 
 begin
  str := 'Let s play an MP3 now !';
@@ -35,15 +36,23 @@ begin
  playMp3(60);
 
  cursor( 10, 9 );
- writeln( 'Hit Enter ....' );
+ writeln( 'Choose Action (m,s,p,n,c,q) ...' );
  repeat 
    readln( choice );
    if ( choice = 'm' ) then 
-    begin
-     playMp3(65);
-    end;
+    playMp3(65);
    if ( choice = 's' ) then
     stopMp3;
+   if ( choice = 'p' ) then
+    pauseMp3;
+   if ( choice = 'n' ) then
+    nextMp3;
+   if ( choice = 'c' ) then
+    begin
+     writeln('TrackNum ?');
+     readln(trk);
+     playMp3(trk);
+    end;
  until ( choice = 'q') or (choice = '' );
 
  setConsoleCols(0); {* 80 cols *}
