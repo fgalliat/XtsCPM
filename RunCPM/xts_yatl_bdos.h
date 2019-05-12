@@ -13,17 +13,17 @@
 
   // from TurboPascal 3 strings are 255 long max
   // & starts @ 1 ( 'cause @0 contains length)
-  char* getPascalStringFromRam(int32 addr, char* dest, int maxLen) {
+  int getPascalStringFromRam(int32 addr, char* dest, int maxLen) {
       memset(dest, 0x00, maxLen);
       uint8_t *F = (uint8_t*)_RamSysAddr(addr);
 
       uint8_t len = F[0];
       memcpy(dest, &F[1], len);
 
-      return dest;
+      return len;
   } 
 
-  char* getStringFromRam(int32 addr, char* dest, int maxLen) {
+  int getStringFromRam(int32 addr, char* dest, int maxLen) {
       return getPascalStringFromRam(addr, dest, maxLen);
   }
 
@@ -55,6 +55,27 @@
          }
      }
      return 0;
+  }
+
+  int32 BdosTest229(int32 value) {
+    Serial.println("/===== BDos 229 call =====\\");
+    char test[32+1];
+    int len = getStringFromRam(value, test, 32+1);
+    Serial.print("TP3 len= ");Serial.print(len);Serial.print("\n");
+    int i=1;
+    Serial.print("OpT ");Serial.print( (int)test[i++] );Serial.print("\n");
+    Serial.print("Sht ");Serial.print( (int)test[i++] );Serial.print("\n");
+    Serial.print("Fll ");Serial.print( (int)test[i++] );Serial.print("\n");
+
+    Serial.print("cb0 ");Serial.print( (int)test[i++] );Serial.print("\n");
+    Serial.print("cb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
+
+    Serial.print("xb0 ");Serial.print( (int)test[i++] );Serial.print("\n");
+    Serial.print("xb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
+
+    // then y,w,h
+
+    return 0;
   }
 
 
@@ -89,6 +110,10 @@
      return xbdos_console(value);
     } else if ( regNum == 227 ) {
      return mp3BdosCall(value);
+    } else if ( regNum == 228 ) {
+      Serial.println( "BdosCall 228 NYI" );
+    } else if ( regNum == 229 ) {
+      BdosTest229(value);
     }
     
     return 0;
