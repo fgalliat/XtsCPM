@@ -16,6 +16,8 @@ end;
 {* Mp3 device section *}
 procedure playMp3(track : integer);
 begin
+ if ( track < 1 ) then
+   exit;
  { track := track + (128*256); loop }
  track := track + (64*256);
  Bdos(227, track );
