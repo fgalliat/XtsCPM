@@ -7,6 +7,7 @@
 - [x] manage MP3 module (add missing commands in XTASE.PAS demo)
 - [ ] make an include for XTSDEMO.PAS demo (split BdosCalls & VT-Ext routines from code) **(in Progress)**
 - [x] manage Keyboard
+- [ ] manage Keyboard Ctrl Key (cf TE.COM & TURBO.COM inner editor)
 - [ ] manage Joystick
 - [ ] manage LEDs
 - [ ] XTSDEMO.PAS as mp3 JUKEBOX demo too (play/pause/next)
