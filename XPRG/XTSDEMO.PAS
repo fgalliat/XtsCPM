@@ -25,6 +25,9 @@ begin
  setConsoleColors(0); {* phosphore mode *}
  clScr;
  drawBmp('girl.bmp');
+ 
+ drawRect(10,10,100,100);
+
  cursor( 10, 5 );
  txtColor;
  writeln( 'Maybe a colorfull screen !!!!' );
