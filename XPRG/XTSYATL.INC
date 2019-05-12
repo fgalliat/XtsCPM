@@ -16,20 +16,15 @@ end;
 procedure drawRect(x,y,w,h:integer);
  var buffer : string[16];
 begin
- { remember starts @[1] ! }
- buffer = buffer + #127;
- buffer = buffer + #1;
- buffer = buffer + #0; { ? }
- buffer = buffer + #255; { color }
- buffer = buffer + #255;
- buffer = buffer + #0;
- buffer = buffer + #10; { x=10 }
- buffer = buffer + #0;
- buffer = buffer + #10; { y=10 }
- buffer = buffer + #0;
- buffer = buffer + #50; { w=10 }
- buffer = buffer + #0;
- buffer = buffer + #50; { h=10 }
+ { remember starts @[2] ? [0] nominal len }
+ buffer[2] := #127;
+ buffer[3] := #1;
+ buffer[4] := #0;
+ buffer[5] := #255; { color }
+ buffer[6] := #255; { color }
+ buffer[7] := #0;   { x }
+ buffer[8] := #10;  { x }
+ { y,w,h }
 
  Bdos(229, addr(buffer) );
 end;

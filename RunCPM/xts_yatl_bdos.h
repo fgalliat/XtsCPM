@@ -17,8 +17,8 @@
       memset(dest, 0x00, maxLen);
       uint8_t *F = (uint8_t*)_RamSysAddr(addr);
 
-      uint8_t len = F[0];
-      memcpy(dest, &F[1], len);
+      uint8_t len = F[0]; // maybe not if always 205
+      memcpy(dest, &F[1], min(len,maxLen) );
 
       return len;
   } 
