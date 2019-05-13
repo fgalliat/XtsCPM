@@ -63,17 +63,55 @@
     int len = getStringFromRam(value, test, 32+1);
     Serial.print("TP3 len= ");Serial.print(len);Serial.print("\n");
     int i=1;
-    Serial.print("OpT ");Serial.print( (int)test[i++] );Serial.print("\n");
+    Serial.print("OpT ");Serial.print( (int)test[i++] );Serial.print("\n"); // 1
     Serial.print("Sht ");Serial.print( (int)test[i++] );Serial.print("\n");
     Serial.print("Fll ");Serial.print( (int)test[i++] );Serial.print("\n");
 
-    Serial.print("cb0 ");Serial.print( (int)test[i++] );Serial.print("\n");
+    Serial.print("cb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 4
     Serial.print("cb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
 
-    Serial.print("xb0 ");Serial.print( (int)test[i++] );Serial.print("\n");
+    Serial.print("xb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 6
     Serial.print("xb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
 
-    // then y,w,h
+    Serial.print("yb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 8
+    Serial.print("yb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
+
+    Serial.print("wb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 10
+    Serial.print("wb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
+
+    Serial.print("hb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 12
+    Serial.print("hb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
+
+    // then draw it !!!!
+    uint8_t OpType = test[1];
+    uint8_t shapeType = test[2];
+    uint8_t fillType = test[3]; // 0 draw / 1 fill
+
+    uint16_t color = ((uint16_t)test[4] << 8) + test[5];
+
+    if ( OpType == 0x7F ) {
+      // drawShapes
+      if ( shapeType == 0x01 ) {
+        // Shape : rectangle
+        if ( fillType == 0x00 ) {
+          // draw outlines
+          uint16_t x = ((uint16_t)test[6] << 8) + test[7];
+          uint16_t y = ((uint16_t)test[8] << 8) + test[9];
+          uint16_t w = ((uint16_t)test[10] << 8) + test[11];
+          uint16_t h = ((uint16_t)test[12] << 8) + test[13];
+
+          tft.drawRect( x, y, w, h, color );
+        } else if ( fillType == 0x01 ) {
+          // fills the rect
+          uint16_t x = ((uint16_t)test[6] << 8) + test[7];
+          uint16_t y = ((uint16_t)test[8] << 8) + test[9];
+          uint16_t w = ((uint16_t)test[10] << 8) + test[11];
+          uint16_t h = ((uint16_t)test[12] << 8) + test[13];
+
+          tft.fillRect( x, y, w, h, color );
+        }
+      }
+    }
 
     return 0;
   }

@@ -16,15 +16,21 @@ end;
 procedure drawRect(x,y,w,h:integer);
  var buffer : string[16];
 begin
- { remember starts @[2] ? [0] nominal len }
- buffer[2] := #127;
- buffer[3] := #1;
- buffer[4] := #0;
+ buffer[1] := chr(16); { cause not ass. as a reg. str. }
+ { remember starts @[2] ? [1]Pas nominal len => [0]C++ }
+ buffer[2] := #127; { readed as Str[1] }
+ buffer[3] := #1; { rect }
+ buffer[4] := #0; { draw }
  buffer[5] := #255; { color }
  buffer[6] := #255; { color }
- buffer[7] := #0;   { x }
- buffer[8] := #10;  { x }
- { y,w,h }
+ buffer[7] := Chr( x shr 8 );
+ buffer[8] := Chr( x mod 256 );  { x }
+ buffer[9] := Chr( y shr 8 );
+ buffer[10] := Chr( y mod 256 );  { y }
+ buffer[11] := Chr( w shr 8 );
+ buffer[12] := Chr( w mod 256 );  { w }
+ buffer[13] := Chr( h shr 8 );
+ buffer[14] := Chr( h mod 256 );  { h }
 
  Bdos(229, addr(buffer) );
 end;
