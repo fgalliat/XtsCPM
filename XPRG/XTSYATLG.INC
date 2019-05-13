@@ -13,7 +13,7 @@ begin
  Bdos(225, addr(text) );
 end;
 
-procedure drawRect(x,y,w,h:integer; stroke: integer; color: Word);
+procedure drawRect(x,y,w,h: integer; stroke: integer; color: word);
  var 
    buffer : string[16];
    c0,c1: integer;
