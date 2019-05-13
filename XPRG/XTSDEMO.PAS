@@ -2,7 +2,9 @@ program testPtr;
 
 { Xtase YATL demo @May 2019 }
 
-{$I XTSYATL.INC device control routines}
+{$I XTSYATLG.INC gfx control routines}
+{$I XTSYATLC.INC console control routines}
+{$I XTSYATLM.INC music control routines}
 
 var
  str : string[64];
@@ -26,7 +28,7 @@ begin
  clScr;
  drawBmp('girl.bmp');
  
- drawRect(10,10,100,100);
+ drawRect(10,10,100,100, 1, 65535);
 
  cursor( 10, 5 );
  txtColor;
