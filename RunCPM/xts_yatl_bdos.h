@@ -88,6 +88,7 @@
     uint8_t fillType = test[3]; // 0 draw / 1 fill
 
     uint16_t color = ((uint16_t)test[4] << 8) + test[5];
+    color = mapColor( color );
 
     if ( OpType == 0x7F ) {
       // drawShapes

@@ -183,6 +183,23 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
       uint16_t TTY_COLOR_FG = ILI9341_WHITE;
       uint16_t TTY_COLOR_ACCENT = ILI9341_GREEN;
 
+      uint16_t mapColor(uint16_t color) {
+        if ( color >= 16 ) { return color; }
+        
+        if ( color == 0 ) { return ILI9341_BLACK; }
+        if ( color == 1 ) { return ILI9341_WHITE; }
+        if ( color == 1 ) { return ILI9341_RED; }
+        if ( color == 3 ) { return ILI9341_GREEN; }
+        if ( color == 4 ) { return ILI9341_BLUE; }
+        if ( color == 4 ) { return ILI9341_YELLOW; }
+        if ( color == 6 ) { return ILI9341_PURPLE; }
+        if ( color == 7 ) { return ILI9341_CYAN; }
+        if ( color == 8 ) { return ILI9341_ORANGE; }
+        if ( color == 9 ) { return ILI9341_MAGENTA; }
+
+        return ILI9341_PINK;
+      }
+
 
       void consoleColorSet(uint16_t bg=ILI9341_BLACK, uint16_t fg=ILI9341_WHITE, uint16_t acc=ILI9341_GREEN) {
          TTY_COLOR_BG = bg;
