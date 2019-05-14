@@ -81,7 +81,10 @@
 
     Serial.print("hb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 12
     Serial.print("hb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
+    return 0;
+  }
 
+  int32 drawRoutine(char* test) {
     // then draw it !!!!
     uint8_t OpType = test[1];
     uint8_t shapeType = test[2];
@@ -133,6 +136,11 @@
       getStringFromRam(value, test, 256);
 
       Serial.println("/===== BDos PString call =====\\");
+
+      if ( test[1] >= 0x7F ) {
+        return drawRoutine( test );
+      }
+
       Serial.println(test);
 
       upper(test);
@@ -160,7 +168,8 @@
     } else if ( regNum == 228 ) {
       Serial.println( "BdosCall 228 NYI" );
     } else if ( regNum == 229 ) {
-      BdosTest229(value);
+      Serial.println( "BdosCall 229 NYI" );
+      // BdosTest229(value);
     }
     
     return 0;

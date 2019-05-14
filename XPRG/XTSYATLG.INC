@@ -33,7 +33,7 @@ begin
  buffer[13] := Chr( h div 256 );
  buffer[14] := Chr( h mod 256 );
 
- Bdos(229, addr(buffer) );
+ Bdos(225, addr(buffer) );
 end;
 
 procedure drawRect(x,y,w,h,stroke: integer; color: integer);
