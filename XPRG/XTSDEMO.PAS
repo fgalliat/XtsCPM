@@ -28,7 +28,8 @@ begin
  clScr;
  drawBmp('girl.bmp');
  
- drawRect(10,10,100,100, 1, 65535);
+ { drawRect(10,10,100,100, 1, 65535); }
+ drawRect(10,10,100,100, 1, 8);
 
  cursor( 10, 5 );
  txtColor;
