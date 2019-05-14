@@ -30,16 +30,10 @@ begin
  drawBmp('girl.bmp');
  
  { drawRect(10,10,100,100, 1, 65535); }
- i := 0;
- drawRect(10,10,100,100, 1, 8);
- i := i + 10;
- drawRect(10+i,10+i,100,100, 1, 6);
- i := i + 10;
- drawRect(10+i,10+i,100,100, 1, 4);
- i := i + 10;
- drawRect(10+i,10+i,100,100, 1, 1);
- i := i + 10;
- drawRect(10+i,10+i,100,100, 1, 3);
+ for i := 0 to 30 do
+ begin
+   drawRect(10+(i*2),10+(i*2),100,50, 1, i mod 9);
+ end;
 
  cursor( 10, 5 );
  txtColor;

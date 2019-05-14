@@ -24,4 +24,4 @@
      0x7F        0x01       0x00     65535  310(16), 230(16), 10(16),10(16)
      to draw a WHITE Rect lower-right
      could still use Pseudo palette color if color < 16 => \<have TODO that 'cause can't use Word w/ TP3>
-  - 100x100 filled rect is immediate !!! 5x is still immediate !!!
+  - 100x100 filled rect is immediate !!! 5x is still immediate !!! 30x is ~ immediate !!
