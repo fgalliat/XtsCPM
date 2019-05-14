@@ -92,26 +92,34 @@
 
     if ( OpType == 0x7F ) {
       // drawShapes
+      uint16_t x = ((uint16_t)test[6] << 8) + test[7];
+      uint16_t y = ((uint16_t)test[8] << 8) + test[9];
       if ( shapeType == 0x01 ) {
         // Shape : rectangle
+        uint16_t w = ((uint16_t)test[10] << 8) + test[11];
+        uint16_t h = ((uint16_t)test[12] << 8) + test[13];
         if ( fillType == 0x00 ) {
           // draw outlines
-          uint16_t x = ((uint16_t)test[6] << 8) + test[7];
-          uint16_t y = ((uint16_t)test[8] << 8) + test[9];
-          uint16_t w = ((uint16_t)test[10] << 8) + test[11];
-          uint16_t h = ((uint16_t)test[12] << 8) + test[13];
-
           tft.drawRect( x, y, w, h, color );
         } else if ( fillType == 0x01 ) {
           // fills the rect
-          uint16_t x = ((uint16_t)test[6] << 8) + test[7];
-          uint16_t y = ((uint16_t)test[8] << 8) + test[9];
-          uint16_t w = ((uint16_t)test[10] << 8) + test[11];
-          uint16_t h = ((uint16_t)test[12] << 8) + test[13];
-
           tft.fillRect( x, y, w, h, color );
         }
-      }
+      } else if ( shapeType == 0x02 ) {
+        // Shape : circle
+        uint16_t r = ((uint16_t)test[10] << 8) + test[11];
+        if ( fillType == 0x00 ) {
+          // draw outlines
+          tft.drawCircle( x,y,r, color );
+        } else {
+          tft.fillCircle( x,y,r, color );
+        }
+      } else if ( shapeType == 0x03 ) {
+        // Shape : line
+        uint16_t x2 = ((uint16_t)test[10] << 8) + test[11];
+        uint16_t y2 = ((uint16_t)test[12] << 8) + test[13];
+        tft.drawLine( x, y, x2, y2, color );
+      } 
     }
 
     return 0;

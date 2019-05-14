@@ -30,9 +30,11 @@ begin
  drawBmp('girl.bmp');
  
  { drawRect(10,10,100,100, 1, 65535); }
+ drawRect(280,10,30,30, 1, 8);
+ drawCircle(280+15,10+15,15, 1, 3);
  for i := 0 to 30 do
  begin
-   drawRect(10+(i*2),10+(i*2),100,50, 1, i mod 9);
+   drawLine(10+(i*2),10+(i*2),100,50, i mod 9);
  end;
 
  cursor( 10, 5 );

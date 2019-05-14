@@ -14,19 +14,16 @@ begin
 end;
 
 { color: word doesn't work on TP3 CP/M }
-procedure drawRect(x,y,w,h,stroke: integer; color: integer);
+procedure _drawShape(shape, x,y,w,h,stroke: integer; color: integer);
  var 
    buffer : string[16];
-   c0,c1: integer;
 begin
- buffer[1] := Chr(16); { cause not ass. as a reg. str. }
+ buffer[0] := Chr(16); { cause not ass. as a reg. str. }
  buffer[2] := #127; { readed as Str[1] }
- buffer[3] := #1; { rect }
+ buffer[3] := Chr( shape );
  buffer[4] := Chr( stroke ); { 0-draw/1-fill }
- c0 := color div 256;
- c1 := color mod 256;
- buffer[5] := Chr( c0 );
- buffer[6] := Chr( c1 );
+ buffer[5] := Chr( color div 256 );
+ buffer[6] := Chr( color mod 256 );
  buffer[7] := Chr( x div 256 );
  buffer[8] := Chr( x mod 256 );
  buffer[9] := Chr( y div 256 );
@@ -38,5 +35,21 @@ begin
 
  Bdos(229, addr(buffer) );
 end;
+
+procedure drawRect(x,y,w,h,stroke: integer; color: integer);
+begin
+ _drawShape(1, x,y,w,h,stroke,color);
+end;
+
+procedure drawCircle(x,y,r,stroke: integer; color: integer);
+begin
+ _drawShape(2, x,y,r,0,stroke,color);
+end;
+
+procedure drawLine(x,y,x2,y2: integer; color: integer);
+begin
+ _drawShape(3, x,y,x2,y2,0,color);
+end;
+
 
 {* -EOF- *}
