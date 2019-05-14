@@ -5,6 +5,8 @@
 - can set terminal type w/ TINST.COM
 - Ctrl K D to exit
 
+**Word 0..65535 doesn't exists in TP3 !**
+
 **Exit (from subroutine or main Program)**
 
 Exit exits the current subroutine, and returns control to the calling routine. If invoked in the main program routine, exit stops the program. The optional argument X allows to specify a return value, in the case Exit is invoked in a function. The function result will then be equal to X.
