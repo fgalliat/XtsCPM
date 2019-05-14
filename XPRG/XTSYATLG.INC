@@ -13,13 +13,13 @@ begin
  Bdos(225, addr(text) );
 end;
 
-{ procedure drawRect(x,y,w,h: integer; stroke: integer; color: word); }
+{ color: word doesn't work on TP3 CP/M }
 procedure drawRect(x,y,w,h,stroke: integer; color: integer);
  var 
    buffer : string[16];
    c0,c1: integer;
 begin
- { buffer[1] := Chr(16); } { cause not ass. as a reg. str. }
+ buffer[1] := Chr(16); { cause not ass. as a reg. str. }
  buffer[2] := #127; { readed as Str[1] }
  buffer[3] := #1; { rect }
  buffer[4] := Chr( stroke ); { 0-draw/1-fill }

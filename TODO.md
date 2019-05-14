@@ -15,7 +15,7 @@
 - [ ] add **native JUKE.BAD reading** to make displayable the SongName
 - [ ] Make Docs about pinout
 - [ ] Make Docs about VT-Ext + BdosCall extension mapping **(in Progress)**
-- [ ] GFX Drawing routines (@least to make a TP3 benchmark)
+- [x] GFX Drawing routines (@least to make a TP3 benchmark)
   - beware : as screen coords are > 255 need uint16_t
   - can PString contains 0x00 w/ trimming (Cf [0] contains length -init or current ?)
   - have to bench on Testing BdosCall
@@ -24,3 +24,4 @@
      0x7F        0x01       0x00     65535  310(16), 230(16), 10(16),10(16)
      to draw a WHITE Rect lower-right
      could still use Pseudo palette color if color < 16 => \<have TODO that 'cause can't use Word w/ TP3>
+  - 100x100 filled rect is immediate !!! 5x is still immediate !!!

@@ -10,6 +10,7 @@ var
  str : string[64];
  choice : string[1];
  trk: integer;
+ i: integer;
 
 begin
  str := 'Let s play an MP3 now !';
@@ -29,7 +30,16 @@ begin
  drawBmp('girl.bmp');
  
  { drawRect(10,10,100,100, 1, 65535); }
+ i := 0;
  drawRect(10,10,100,100, 1, 8);
+ i := i + 10;
+ drawRect(10+i,10+i,100,100, 1, 6);
+ i := i + 10;
+ drawRect(10+i,10+i,100,100, 1, 4);
+ i := i + 10;
+ drawRect(10+i,10+i,100,100, 1, 1);
+ i := i + 10;
+ drawRect(10+i,10+i,100,100, 1, 3);
 
  cursor( 10, 5 );
  txtColor;
