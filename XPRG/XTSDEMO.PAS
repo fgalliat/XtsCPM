@@ -50,10 +50,13 @@ begin
 
  cursor( 10, 9 );
  writeln( 'Choose Action (m,s,p,n,c,q) ...' );
- choiceCh := '*';
+ 
  repeat 
    {readln( choice );}
-   if ( KeyPressed ) then choiceCh := ReadKey;
+   choiceCh := '*';
+   if ( KeyPressed ) then 
+     { choiceCh := ReadKey; }
+     Read(Kbd,choiceCh);
 
    drawLine(10+(i*2),10+(i*2),100,50, i mod 9);
    i:=i+1;
@@ -73,7 +76,7 @@ begin
      readln(trk);
      playMp3(trk);
     end;
- until ( choiceCh = 'q'); { or ... }
+ until ( choiceCh = 'q' ); { or ... }
 
  setConsoleCols(0); {* 80 cols *}
  clScr;
