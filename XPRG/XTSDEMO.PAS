@@ -11,6 +11,7 @@ var
  choice : string[1];
  trk: integer;
  i: integer;
+ choiceCh: char;
 
 begin
  str := 'Let s play an MP3 now !';
@@ -49,23 +50,30 @@ begin
 
  cursor( 10, 9 );
  writeln( 'Choose Action (m,s,p,n,c,q) ...' );
+ choiceCh := '*';
  repeat 
-   readln( choice );
-   if ( choice = 'm' ) then 
+   {readln( choice );}
+   if ( KeyPressed ) then choiceCh := ReadKey;
+
+   drawLine(10+(i*2),10+(i*2),100,50, i mod 9);
+   i:=i+1;
+   if ( i > 50 ) then i := 0;
+
+   if ( choiceCh = 'm' ) then 
     playMp3(65);
-   if ( choice = 's' ) then
+   if ( choiceCh = 's' ) then
     stopMp3;
-   if ( choice = 'p' ) then
+   if ( choiceCh = 'p' ) then
     pauseMp3;
-   if ( choice = 'n' ) then
+   if ( choiceCh = 'n' ) then
     nextMp3;
-   if ( choice = 'c' ) then
+   if ( choiceCh = 'c' ) then
     begin
      writeln('TrackNum ?');
      readln(trk);
      playMp3(trk);
     end;
- until ( choice = 'q') or (choice = '' );
+ until ( choiceCh = 'q'); { or ... }
 
  setConsoleCols(0); {* 80 cols *}
  clScr;
