@@ -45,8 +45,8 @@ begin
  cursor( 10, 7 );
  writeln( str );
 
- { 60-duHast / 65-C64MENU }
- playMp3(60);
+ { 60-duHast / 65-C64MENU / 23-AUTOMATION }
+ playMp3(23);
 
  cursor( 10, 9 );
  writeln( 'Choose Action (m,s,p,n,c,q) ...' );
@@ -58,7 +58,7 @@ begin
      Read(Kbd,choiceCh);
 
    drawLine(10+(i*2),10+(i*2),100,50, i mod 9);
-   drawRect(300,220,15,15, 1, i mod 9);
+   drawRect(300-(i*2),220,15,15, 1, Random(9) );
 
    i:=i+1;
    if ( i > 50 ) then i := 0;

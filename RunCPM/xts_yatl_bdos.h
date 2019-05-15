@@ -135,12 +135,12 @@
       char test[256];
       getStringFromRam(value, test, 256);
 
-      Serial.println("/===== BDos PString call =====\\");
 
       if ( test[1] >= 0x7F ) {
         return drawRoutine( test );
       }
 
+      Serial.println("/===== BDos PString call =====\\");
       Serial.println(test);
 
       upper(test);
