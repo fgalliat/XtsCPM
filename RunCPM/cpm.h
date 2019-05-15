@@ -744,6 +744,7 @@ void _Bdos(void) {
 	  	HL = XtsBdosCall(ch, DE);
 		break;
 #endif
+#endif
 		/*
 		C = 230 (E6h) : Set 8 bit masking
 		*/
@@ -839,4 +840,4 @@ void _Bdos(void) {
 
 #endif
 
-#endif
+//#endif
