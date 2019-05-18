@@ -30,8 +30,11 @@ const byte ARDUINO_INTERRUPT_PIN = 2;
 // NB Vs BeGin
 #define ROWS_NB 5
 #define ROWS_BG 0
-#define COLS_NB 10
-#define COLS_BG 6
+
+// #define COLS_NB 10
+// #define COLS_BG 6
+#define COLS_NB 9
+#define COLS_BG 7
 
 void setup() 
 {
@@ -44,18 +47,22 @@ void setup()
     Serial.println("Failed to communicate.");
     while (1) ; // If we fail to communicate, loop forever.
   }
+  delay(300);
 
-  
-  for(int i=0; i < COLS_NB; i++) {
+  int i=0;
+  for(; i < COLS_NB; i++) {
     // io.pinMode( i, INPUT_PULLUP );
     io.pinMode( COLS_BG+i, INPUT );
   }
 
-  for(int i=0; i < ROWS_NB; i++) {
+
+  i=0;
+  for(; i < ROWS_NB; i++) {
     io.pinMode( ROWS_BG+i, OUTPUT );
     io.digitalWrite(ROWS_BG+i, LOW);
   }
 
+  delay(300);
 
   // Set up the Arduino interrupt pin as an input w/ 
   // internal pull-up. (The SX1509 interrupt is active-low.)
@@ -64,13 +71,16 @@ void setup()
 
 int scanLine(int row) {
     io.digitalWrite(ROWS_BG+row, HIGH);
+    delay(2);
     int result = -1;
-    int col;
-    for(col=0; col < COLS_NB; col++) {
+    int col = 0;
+    // col = 1; // ignore 1st col for now
+    for(; col < COLS_NB; col++) {
         int c = io.digitalRead( COLS_BG+col ) == HIGH ? 1 : 0;
         if (c > 0) { result = col; break; }
     }
     io.digitalWrite(ROWS_BG+row, LOW);
+    delay(2);
     return result;
 }
 
