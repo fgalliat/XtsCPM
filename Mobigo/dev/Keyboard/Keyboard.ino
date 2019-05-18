@@ -27,6 +27,11 @@ SX1509 io; // Create an SX1509 object to be used throughout
 // { '*', '0', '#'}};
 
 const byte ARDUINO_INTERRUPT_PIN = 2;
+// NB Vs BeGin
+#define ROWS_NB 5
+#define ROWS_BG 0
+#define COLS_NB 10
+#define COLS_BG 6
 
 void setup() 
 {
@@ -39,15 +44,16 @@ void setup()
     Serial.println("Failed to communicate.");
     while (1) ; // If we fail to communicate, loop forever.
   }
+
   
-  for(int i=7; i < 16; i++) {
+  for(int i=0; i < COLS_NB; i++) {
     // io.pinMode( i, INPUT_PULLUP );
-    io.pinMode( i, INPUT );
+    io.pinMode( COLS_BG+i, INPUT );
   }
 
-  for(int i=0; i < 4; i++) {
-    io.pinMode( i, OUTPUT );
-    io.digitalWrite(i, LOW);
+  for(int i=0; i < ROWS_NB; i++) {
+    io.pinMode( ROWS_BG+i, OUTPUT );
+    io.digitalWrite(ROWS_BG+i, LOW);
   }
 
 
@@ -57,19 +63,19 @@ void setup()
 }
 
 int scanLine(int row) {
-    io.digitalWrite(row, HIGH);
+    io.digitalWrite(ROWS_BG+row, HIGH);
     int result = -1;
     int col;
-    for(col=0; col < 9; col++) {
-        int c = io.digitalRead( 7+col ) == HIGH ? 1 : 0;
+    for(col=0; col < COLS_NB; col++) {
+        int c = io.digitalRead( COLS_BG+col ) == HIGH ? 1 : 0;
         if (c > 0) { result = col; break; }
     }
-    io.digitalWrite(row, LOW);
+    io.digitalWrite(ROWS_BG+row, LOW);
     return result;
 }
 
 
-char disp[9+1];
+char disp[COLS_NB+1];
 
 
 void dispRow(int row) {
@@ -77,7 +83,7 @@ void dispRow(int row) {
 
     if (res < 0) return;
 
-    memset(disp, ' ', 16);
+    memset(disp, ' ', COLS_NB);
     if ( res > -1 ) { disp[res] = '#'; }
     Serial.print( row );
     Serial.print( " | " );
@@ -90,11 +96,9 @@ void loop()
 {
     disp[16] = 0x00;
 
-    dispRow(0);
-    dispRow(1);
-    dispRow(2);
-    dispRow(3);
-
+    for(int row=0; row < ROWS_NB; row++) {
+        dispRow(row);
+    }
 
 //   // If the SX1509 INT pin goes low, a keypad button has
 //   // been pressed:
