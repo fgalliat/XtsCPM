@@ -9,6 +9,14 @@
  * SCL : A5
  */
 
+// #define TEMP_CODE 1
+#ifdef TEMP_CODE
+  const char asciichars[5][10] = {
+    
+  };
+#endif
+
+
 #include <Wire.h> // Include the I2C library (required)
 #include <SparkFunSX1509.h> // Include SX1509 library
 
