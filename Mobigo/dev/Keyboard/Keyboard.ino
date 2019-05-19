@@ -9,14 +9,6 @@
  * SCL : A5
  */
 
-// #define TEMP_CODE 1
-#ifdef TEMP_CODE
-  const char asciichars[5][10] = {
-    
-  };
-#endif
-
-
 #include <Wire.h> // Include the I2C library (required)
 #include <SparkFunSX1509.h> // Include SX1509 library
 
@@ -43,6 +35,19 @@ const byte ARDUINO_INTERRUPT_PIN = 2;
 // #define COLS_BG 6
 #define COLS_NB 9
 #define COLS_BG 7
+
+// #define TEMP_CODE 1
+#ifdef TEMP_CODE
+#endif
+
+  // for ABCDEF layout
+  const char regularMap[ROWS_NB][COLS_NB] = {
+    { 0x00, 'a', 0x00, 0x00, 0x00, ' ', 0x00, 0x00, 0x00 },
+    { '\b', 0x00, 't', 'u', 'v', 'w', 'x', 'y', 'z' },
+    { 's', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r' },
+    { 'j', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' },
+    { 0x00, 0x00, 0x00, 0x00, 0x00, '\n', 0x00, 0x00, 0x00 },
+  };
 
 void setup() 
 {
@@ -107,7 +112,11 @@ void dispRow(int row) {
     Serial.print( " | " );
     Serial.print( disp );
     Serial.print( " | " );
-    Serial.println( res );
+    Serial.print( res );
+    Serial.print( " | (" );
+    Serial.print( regularMap[row][res] );
+    Serial.print( ")" );
+    Serial.println();
 }
 
 void loop() 
