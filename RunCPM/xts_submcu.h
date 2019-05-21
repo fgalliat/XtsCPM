@@ -11,10 +11,8 @@
 
 
   #define HAS_BRIDGED_KEYBOARD 1
-  #define HAS_KEYBOARD 1
-
   #define HAS_BRIDGED_MP3 1
-  #define HAS_MP3 1
+
 
   const int keybBufferLen = 64; 
   char keybBuffer[keybBufferLen+1];

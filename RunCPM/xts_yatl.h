@@ -10,7 +10,24 @@
 
   #define HAS_BUILTIN_LCD 1
 
-  #define HAS_SUB_MCU 1
+  // for Foldable Laptop Layout
+  #define LAYOUT_FOLDABLE 1 
+
+  // for Mobigo Console Layout
+  // #define LAYOUT_MOBIGO 1 
+
+  #ifdef LAYOUT_FOLDABLE
+    #warning "-- USING FOLDABLE SUBMCU LAYOUT --"
+    #define HAS_SUB_MCU 1
+
+    #define HAS_KEYBOARD 1
+    #define HAS_MP3 1
+  #elif defined LAYOUT_MOBIGO
+    #warning "-- USING HACKED Vtech MOBIGO LAYOUT --"
+
+    #define HAS_KEYBOARD 1
+    // #define HAS_MP3 1
+  #endif
 
   // 13 is used by SPI LCD
   #define LED_PIN 14
@@ -21,10 +38,13 @@
 
   // ===============================================
   #ifdef HAS_SUB_MCU
-
    #include "xts_submcu.h"
-
   #endif
+
+  #ifdef HAS_KEYBOARD
+    #include "xts_dev_keyboard.h"
+  #endif
+
   // ===============================================
 
 
@@ -50,6 +70,10 @@
     setupISR();
     #ifdef HAS_SUB_MCU
       setupBridge();
+    #endif
+
+    #ifdef HAS_KEYBOARD
+      setupKeyb();
     #endif
   }
 
