@@ -43,7 +43,7 @@
 
 **Teensy 3.6 Yatl pinout** 
 
-**I2C : ** 0 -> 18 & 19 (not used by SPI TFT)
+**I2C : ** 0 -> 18(sda) & 19(scl) (not used by SPI TFT)
 
 **SPI Screen :**
 
