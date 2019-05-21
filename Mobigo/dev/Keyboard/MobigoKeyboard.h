@@ -35,6 +35,14 @@
     { 0x00, 0x00, 0x00, 0x00, 0x00, '\n', 0x00, 0x00, 0x00 },
   };
 
+  static const char shiftMap[KB_ROWS_NB][KB_COLS_NB] = {
+    { 0x00, 'A', 0x00, 0x00, 0x00, ' ', 0x00, 0x00, 0x00 },
+    { '\b', 0x00, 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' },
+    { 'S', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R' },
+    { 'J', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I' },
+    { 0x00, 0x00, 0x00, 0x00, 0x00, '\n', 0x00, 0x00, 0x00 },
+  };
+
   #define KEYB_BUFF_LEN 16
 
   class MobigoKeyboard

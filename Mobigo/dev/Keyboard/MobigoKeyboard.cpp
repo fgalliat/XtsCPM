@@ -74,36 +74,66 @@
     }
 
     // read the metaKeys
-    this->_kbdShift = this->isKeyPressed(1,1);
-    this->_kbdNums  = this->isKeyPressed(0,2);
-    this->_kbdSymbs = this->isKeyPressed(0,3);
+    // toggle style
+
+    bool loclShift = this->isKeyPressed(1,1);
+    bool loclNums  = this->isKeyPressed(0,2);
+    bool loclSymbs = this->isKeyPressed(0,3);
+
+    bool eject = false;
+
+    if ( loclShift ) {
+      this->_kbdShift = !this->_kbdShift;  
+      eject = true;
+    }
+    if ( loclNums ) {
+      this->_kbdNums = !this->_kbdNums;  
+      eject = true;
+    }
+    if ( loclSymbs ) {
+      this->_kbdSymbs = !this->_kbdSymbs;  
+      eject = true;
+    }
 
     bool oneFoundOnKbd = false;
     bool oneFoundOnRow = false;
 
-    // read char
-    for(int row=0; row < KB_ROWS_NB; row++) {
-      this->activateRow(row);
-      oneFoundOnRow = false;
 
-      for(int col=0; col < KB_COLS_NB; col++) {
-        if ( this->isColPressed(col) ) {
-          oneFoundOnKbd = true;
-          oneFoundOnRow = true;
-          char ch = this->getKeychar(row, col);
-          if ( ch != 0x00 ) {
-            int avail = strlen(this->_keyBuff);
-            if ( avail <= KEYB_BUFF_LEN ) {
-              strcat(this->_keyBuff, &ch);
-            } else {
-              // Overflow
+    if ( eject ) { 
+      oneFoundOnKbd = true;
+    } else { 
+      // read char
+      for(int row=0; row < KB_ROWS_NB; row++) {
+        this->activateRow(row);
+        oneFoundOnRow = false;
+
+        for(int col=0; col < KB_COLS_NB; col++) {
+          if ( this->isColPressed(col) ) {
+            oneFoundOnKbd = true;
+            oneFoundOnRow = true;
+            char ch = this->getKeychar(row, col);
+            if ( ch != 0x00 ) {
+              int avail = strlen(this->_keyBuff);
+              if ( avail <= KEYB_BUFF_LEN ) {
+                strcat(this->_keyBuff, &ch);
+              } else {
+                // Overflow
+              }
             }
           }
         }
+
+        this->deactivateRow(row);
+        if ( oneFoundOnRow ) { break; }
       }
 
-      this->deactivateRow(row);
-      if ( oneFoundOnRow ) { break; }
+      if ( oneFoundOnKbd ) {
+        // Cf remanant style meta keys
+        this->_kbdShift = false;
+        this->_kbdNums = false;
+        this->_kbdSymbs = false;
+      }
+      
     }
 
     lastTimeKeyReleased = !oneFoundOnKbd;
@@ -135,7 +165,7 @@
   }
 
   char MobigoKeyboard::getKeychar(int row, int col) {
-    // if ( _kbdShift ) { return shiftedMap[row][col]; }
+    if ( this->_kbdShift ) { return shiftMap[row][col]; }
     return regularMap[row][col];
   }
 

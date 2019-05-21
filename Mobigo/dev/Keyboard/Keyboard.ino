@@ -43,10 +43,7 @@ const byte ARDUINO_INTERRUPT_PIN = 2;
 
 void setup() 
 {
-  // Serial is used to display the keypad button pressed:
   Serial.begin(9600);
-  // Call io.begin(<address>) to initialize the SX1509. If it
-  // successfully communicates, it'll return 1.
   if (!io.begin(SX1509_ADDRESS))
   {
     Serial.println("Failed to communicate.");
