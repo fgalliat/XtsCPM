@@ -133,7 +133,7 @@
         this->_kbdNums = false;
         this->_kbdSymbs = false;
       }
-      
+
     }
 
     lastTimeKeyReleased = !oneFoundOnKbd;
@@ -165,7 +165,9 @@
   }
 
   char MobigoKeyboard::getKeychar(int row, int col) {
-    if ( this->_kbdShift ) { return shiftMap[row][col]; }
+    if ( this->_kbdNums ) { return numsMap[row][col]; }
+    else if ( this->_kbdSymbs ) { return symbolMap[row][col]; }
+    else if ( this->_kbdShift ) { return shiftMap[row][col]; }
     return regularMap[row][col];
   }
 

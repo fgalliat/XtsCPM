@@ -27,4 +27,10 @@
     - distinct pollKey Vs readKey **(done)**
     - re-use fold/open detector push  contact -> wire it on SX1509
     - not able to scan combos yet -> make as remanant ????
+    - nums should be toggle instead of remanant ????
+    - **Symbols for CP/M**
+      - : . \n \b \s 
+      - Symb + Z -> ':' **(done)**
+      - Symb + Y -> '.' **(done)**
+      - now able to type c:xtsdemo.pas
     
