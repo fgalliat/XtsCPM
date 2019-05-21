@@ -24,23 +24,6 @@ const byte ARDUINO_INTERRUPT_PIN = 2;
   #include "MobigoKeyboard.h"
   MobigoKeyboard kbd(&io);
 
-  void pollKbd() {
-    kbd.poll();
-  }
-
-  int availableKbd() {
-    return kbd.available();
-  }
-
-  int readKbd() {
-    return kbd.read();
-  }
-
-  void setupKbd() {
-    kbd.setup();
-  }
-
-
 void setup() 
 {
   Serial.begin(9600);
@@ -51,64 +34,19 @@ void setup()
   }
   delay(300);
 
-  setupKbd();
+  kbd.setup();
 
   // Set up the Arduino interrupt pin as an input w/ 
   // internal pull-up. (The SX1509 interrupt is active-low.)
   pinMode(ARDUINO_INTERRUPT_PIN, INPUT_PULLUP);
 }
 
-/*
-int scanLine(int row) {
-    io.digitalWrite(ROWS_BG+row, HIGH);
-    delay(2);
-    int result = -1;
-    int col = 0;
-    // col = 1; // ignore 1st col for now
-    for(; col < COLS_NB; col++) {
-        int c = io.digitalRead( COLS_BG+col ) == HIGH ? 1 : 0;
-        if (c > 0) { result = col; break; }
-    }
-    io.digitalWrite(ROWS_BG+row, LOW);
-    delay(2);
-    return result;
-}
-
-
-char disp[COLS_NB+1];
-
-
-void dispRow(int row) {
-    int res = scanLine(row);
-
-    if (res < 0) return;
-
-    memset(disp, ' ', COLS_NB);
-    if ( res > -1 ) { disp[res] = '#'; }
-    Serial.print( row );
-    Serial.print( " | " );
-    Serial.print( disp );
-    Serial.print( " | " );
-    Serial.print( res );
-    Serial.print( " | (" );
-    Serial.print( regularMap[row][res] );
-    Serial.print( ")" );
-    Serial.println();
-}
-*/
-
 void loop() 
 {
-  /*
-    disp[16] = 0x00;
-    for(int row=0; row < ROWS_NB; row++) {
-        dispRow(row);
-    }
-  */
-  pollKbd();
+  kbd.poll();
 
-  if ( availableKbd() > 0 ) {
-    Serial.print( (char)readKbd() );
+  if ( kbd.available() > 0 ) {
+    Serial.print( (char)kbd.read() );
   }
 
 
