@@ -11,6 +11,9 @@
  * SCL : A5
  */
 
+#define LED 13
+
+
 #include <Wire.h> // Include the I2C library (required)
 #include <SparkFunSX1509.h> // Include SX1509 library
 
@@ -26,6 +29,9 @@ const byte ARDUINO_INTERRUPT_PIN = 2;
 
 void setup() 
 {
+  pinMode(LED, OUTPUT);
+  digitalWrite(LED, LOW);
+
   Serial.begin(9600);
   if (!io.begin(SX1509_ADDRESS))
   {
@@ -34,7 +40,7 @@ void setup()
   }
   delay(300);
 
-  kbd.setup();
+  kbd.setup(LED, LED, LED);
 
   // Set up the Arduino interrupt pin as an input w/ 
   // internal pull-up. (The SX1509 interrupt is active-low.)

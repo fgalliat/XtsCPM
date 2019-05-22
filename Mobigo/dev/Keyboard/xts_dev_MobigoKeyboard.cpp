@@ -24,7 +24,16 @@
   {
   }
 
-  void MobigoKeyboard::setup() {
+  void MobigoKeyboard::led(int num, bool state) {
+    if ( num == 0 && led0 > -1 ) { digitalWrite(led0, state ? HIGH : LOW); }
+    if ( num == 1 && led1 > -1 ) { digitalWrite(led1, state ? HIGH : LOW); }
+    if ( num == 2 && led2 > -1 ) { digitalWrite(led2, state ? HIGH : LOW); }
+  }
+
+  void MobigoKeyboard::setup(int led0, int led1, int led2) {
+    this->led0 = led0;
+    this->led1 = led1;
+    this->led2 = led2;
     int i=0;
     for(; i < KB_COLS_NB; i++) {
       this->io->pinMode( KB_COLS_BG+i, INPUT );
@@ -69,11 +78,11 @@
     if ( lastPollTime == -1L ) {
       lastPollTime = millis();
     } else {
-      if ( millis() - lastPollTime < 50 ) { return; }
+      if ( millis() - lastPollTime < 10 ) { return; }
 
       // filter + auto repeat
       if ( !lastTimeKeyReleased ) { 
-        lastTimeKeyReleased = ( millis() - lastPollTime > 300 ); 
+        lastTimeKeyReleased = ( millis() - lastPollTime > 200 ); 
         return; 
       }
     }
@@ -88,15 +97,18 @@
     bool eject = false;
 
     if ( loclShift ) {
-      this->_kbdShift = !this->_kbdShift;  
+      this->_kbdShift = !this->_kbdShift;
+      led(0, this->_kbdShift);
       eject = true;
     }
     if ( loclNums ) {
-      this->_kbdNums = !this->_kbdNums;  
+      this->_kbdNums = !this->_kbdNums;
+      led(1, this->_kbdNums);
       eject = true;
     }
     if ( loclSymbs ) {
-      this->_kbdSymbs = !this->_kbdSymbs;  
+      this->_kbdSymbs = !this->_kbdSymbs;
+      led(2, this->_kbdSymbs);
       eject = true;
     }
 
@@ -137,8 +149,11 @@
       if ( oneFoundOnKbd ) {
         // Cf remanant style meta keys
         this->_kbdShift = false;
+        led(0, this->_kbdShift);
         this->_kbdNums = false;
+        led(1, this->_kbdNums);
         this->_kbdSymbs = false;
+        led(2, this->_kbdSymbs);
       }
 
     }

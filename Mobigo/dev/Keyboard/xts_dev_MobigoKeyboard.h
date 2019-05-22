@@ -77,6 +77,12 @@
 
       bool _autoPoll = false;
 
+      int led0=-1;
+      int led1=-1;
+      int led2=-1;
+
+      void led(int num, bool state);
+
       void activateRow(int row);
       void deactivateRow(int row);
       void deactivateAllRows();
@@ -91,7 +97,7 @@
       MobigoKeyboard(SX1509* gpio, bool autoPoll=false);
       ~MobigoKeyboard();
 
-      void setup();
+      void setup(int led0=-1, int led1=-1, int led2=-1);
 
       void setAutoPoll(bool _auto);
 
