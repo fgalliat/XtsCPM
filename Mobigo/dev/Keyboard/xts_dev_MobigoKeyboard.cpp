@@ -97,18 +97,15 @@
     bool eject = false;
 
     if ( loclShift ) {
-      this->_kbdShift = !this->_kbdShift;
-      led(0, this->_kbdShift);
+      this->setShift( !this->_kbdShift );
       eject = true;
     }
     if ( loclNums ) {
-      this->_kbdNums = !this->_kbdNums;
-      led(1, this->_kbdNums);
+      this->setNums( !this->_kbdNums );
       eject = true;
     }
     if ( loclSymbs ) {
-      this->_kbdSymbs = !this->_kbdSymbs;
-      led(2, this->_kbdSymbs);
+      this->setSymb( !this->_kbdSymbs );
       eject = true;
     }
 
@@ -148,12 +145,10 @@
 
       if ( oneFoundOnKbd ) {
         // Cf remanant style meta keys
-        this->_kbdShift = false;
-        led(0, this->_kbdShift);
-        this->_kbdNums = false;
-        led(1, this->_kbdNums);
-        this->_kbdSymbs = false;
-        led(2, this->_kbdSymbs);
+        this->setShift(false);
+        this->setNums(false);
+        this->setSymb(false);
+        this->setCtrl(false);
       }
 
     }
@@ -187,9 +182,10 @@
   }
 
   char MobigoKeyboard::getKeychar(int row, int col) {
-    if ( this->_kbdNums ) { return numsMap[row][col]; }
-    else if ( this->_kbdSymbs ) { return symbolMap[row][col]; }
-    else if ( this->_kbdShift ) { return shiftMap[row][col]; }
+    if ( this->isNums() ) { return numsMap[row][col]; }
+    else if ( this->isSymb() ) { return symbolMap[row][col]; }
+    else if ( this->isShift() ) { return shiftMap[row][col]; }
+    // else if ( this->isCtrl() ) { return ctrlMap[row][col]; }
     return regularMap[row][col];
   }
 

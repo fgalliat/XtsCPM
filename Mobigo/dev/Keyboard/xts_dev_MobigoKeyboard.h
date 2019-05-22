@@ -83,6 +83,15 @@
 
       void led(int num, bool state);
 
+      void setShift(bool state) { this->_kbdShift = state; this->led(0, state); }
+      void setNums(bool state)  { this->_kbdNums  = state; this->led(1, state); }
+      void setSymb(bool state)  { this->_kbdSymbs = state; this->led(2, state); }
+      void setCtrl(bool state)  { this->setNums(state); this->setSymb(state); }
+      bool isShift() { return this->_kbdShift; }
+      bool isNums()  { return this->_kbdNums && !this->_kbdSymbs; }
+      bool isSymb()  { return !this->_kbdNums && this->_kbdSymbs; }
+      bool isCtrl()  { return this->_kbdNums && this->_kbdSymbs; }
+
       void activateRow(int row);
       void deactivateRow(int row);
       void deactivateAllRows();
