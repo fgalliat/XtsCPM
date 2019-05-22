@@ -15,16 +15,16 @@
       - send HIGH for only 1 ROW
       
       - read each COL input
-      
+    
   - send LOW for that ROW
-      
+    
       - gives a ROW,COL address
       
         
     
   - TODO :
     - make some key maps (regular, shift, ...) **(in Progress)**
-    - change layout from ABCDEF (french edition) to AZERTY or QWERTY
+    - change layout from ABCDEF (french edition) to AZERTY **(done)** 
     - make buffer for keys **(done)**
     - handle key combos (nums, symbols, Ctrl) **(made as remanant state)**
     - find missing key : [ ? ] **(not found for now)**
@@ -36,8 +36,11 @@
     - nums should be toggle instead of remanant ????
     - **Symbols for CP/M**
       - : . \n \b \s + " ? / "
-      - Symb + Z -> ':' **(done)**
-      - Symb + Y -> '.' **(done)**
+      - Symb + N -> ':' **(done)**
+      - Symb + B -> '.' **(done)**
+      - Symb + V -> '?' **(done)**
+      - Symb + < -> 'Esc' **(done)**
+      - Symb + > -> 'Tab' **(done)**
       - now able to type c:xtsdemo.pas
     
 
