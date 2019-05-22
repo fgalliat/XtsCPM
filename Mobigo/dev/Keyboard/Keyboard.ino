@@ -22,7 +22,7 @@ const byte ARDUINO_INTERRUPT_PIN = 2;
 
   // ========================================
   #include "MobigoKeyboard.h"
-  MobigoKeyboard kbd(&io);
+  MobigoKeyboard kbd(&io, true);
 
 void setup() 
 {
@@ -43,9 +43,9 @@ void setup()
 
 void loop() 
 {
-  kbd.poll();
+  // kbd.poll();
 
-  if ( kbd.available() > 0 ) {
+  while ( kbd.available() > 0 ) {
     Serial.print( (char)kbd.read() );
   }
 

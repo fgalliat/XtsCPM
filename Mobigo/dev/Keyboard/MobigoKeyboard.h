@@ -75,6 +75,8 @@
       bool _kbdNums  = false;
       bool _kbdSymbs = false;
 
+      bool _autoPoll = false;
+
       void activateRow(int row);
       void deactivateRow(int row);
       void deactivateAllRows();
@@ -86,10 +88,12 @@
       char getKeychar(int row, int col);
 
   public:
-      MobigoKeyboard(SX1509* gpio);
+      MobigoKeyboard(SX1509* gpio, bool autoPoll=false);
       ~MobigoKeyboard();
 
       void setup();
+
+      void setAutoPoll(bool _auto);
 
       void poll();
       int available();

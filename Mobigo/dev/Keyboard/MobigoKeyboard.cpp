@@ -14,9 +14,10 @@
 #include "MobigoKeyboard.h"
 
 
-  MobigoKeyboard::MobigoKeyboard(SX1509* gpio)
+  MobigoKeyboard::MobigoKeyboard(SX1509* gpio, bool autoPoll)
   {
       this->io = gpio;
+      this->setAutoPoll(autoPoll);
   }
   
   MobigoKeyboard::~MobigoKeyboard()
@@ -41,10 +42,14 @@
   }
 
   int MobigoKeyboard::available() {
+    if ( this->_autoPoll ) { this->poll(); }
+
     return strlen( this->_keyBuff );
   }
 
   int MobigoKeyboard::read() {
+    if ( this->_autoPoll ) { this->poll(); }
+
     int avail = strlen( this->_keyBuff );
     if ( avail <= 0 ) { return -1; }
 
@@ -115,7 +120,9 @@
             if ( ch != 0x00 ) {
               int avail = strlen(this->_keyBuff);
               if ( avail <= KEYB_BUFF_LEN ) {
-                strcat(this->_keyBuff, &ch);
+                // strcat(this->_keyBuff, &ch);
+                this->_keyBuff[avail] = ch;
+                this->_keyBuff[avail+1] = 0x00;
               } else {
                 // Overflow
               }
@@ -142,7 +149,7 @@
 
   void MobigoKeyboard::activateRow(int row) {
       this->io->digitalWrite(KB_ROWS_BG+row, HIGH);
-      delay(2);
+      delay(1);
   }
 
   void MobigoKeyboard::deactivateRow(int row) {
@@ -171,3 +178,6 @@
     return regularMap[row][col];
   }
 
+  void MobigoKeyboard::setAutoPoll(bool _auto) {
+    this->_autoPoll = _auto;
+  }
