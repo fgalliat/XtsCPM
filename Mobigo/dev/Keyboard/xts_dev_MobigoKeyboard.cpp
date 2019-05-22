@@ -11,7 +11,7 @@
  */
 
 
-#include "MobigoKeyboard.h"
+#include "xts_dev_MobigoKeyboard.h"
 
 
   MobigoKeyboard::MobigoKeyboard(SX1509* gpio, bool autoPoll)

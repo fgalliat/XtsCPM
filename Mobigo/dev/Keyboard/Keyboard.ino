@@ -21,7 +21,7 @@ SX1509 io; // Create an SX1509 object to be used throughout
 const byte ARDUINO_INTERRUPT_PIN = 2;
 
   // ========================================
-  #include "MobigoKeyboard.h"
+  #include "xts_dev_MobigoKeyboard.h"
   MobigoKeyboard kbd(&io, true);
 
 void setup() 
