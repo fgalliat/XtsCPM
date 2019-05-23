@@ -21,11 +21,17 @@
    int  availableKeyb() { return kbAvailable(); }
    int  readKeyb() { return kbRead(); }
  #elif defined LAYOUT_MOBIGO
+    #include "xts_dev_MobigoKeyboard.h"
+    MobigoKeyboard kbd(&io, true);
+
    // from xts_lay_mobigo.h -- forced to autoPoll mode
-   bool setupKeyb() { xxxx(); return true; }
-   void pollKeyb() { xxx(); }
-   int  availableKeyb() { pollKeyb(); return xxx(); }
-   int  readKeyb() { pollKeyb(); return xxx(); }
+   bool setupKeyb() { 
+      kbd.setup(LED_PIN, LED_PIN, LED_PIN);
+      return true; 
+   }
+   void pollKeyb() { kbd.poll(); }
+   int  availableKeyb() { return kbd.available(); }
+   int  readKeyb() { return kbd.read(); }
  #endif
 
 #endif

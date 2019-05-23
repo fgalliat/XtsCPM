@@ -24,6 +24,10 @@
     #define HAS_MP3 1
   #elif defined LAYOUT_MOBIGO
     #warning "-- USING HACKED Vtech MOBIGO LAYOUT --"
+    #include <Wire.h> // Include the I2C library (required)
+    #include <SparkFunSX1509.h> // Include SX1509 library
+    const byte SX1509_ADDRESS = 0x3E;  // SX1509 I2C address
+    SX1509 io;
 
     #define HAS_KEYBOARD 1
     // #define HAS_MP3 1
@@ -72,6 +76,17 @@
       setupBridge();
     #endif
 
+
+    #ifdef LAYOUT_MOBIGO
+      if (!io.begin(SX1509_ADDRESS))
+      {
+        Serial.println("Failed to communicate.");
+        _puts("Failed to communicate.");
+        while (1) ; // If we fail to communicate, loop forever.
+      }
+      delay(300);
+    #endif
+    
     #ifdef HAS_KEYBOARD
       setupKeyb();
     #endif
