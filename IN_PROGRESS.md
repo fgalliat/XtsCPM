@@ -135,6 +135,14 @@
 
 - **Keyboard support**
 
+
+  - Vtech Mobigo Keyboard
+
+
+    - integrate it in XtsCPM
+
+    
+
 - - Microsoft XBOX 360 Chatpad **(now works - french layout)**
 
     - stdIO handling (Serial IN / Chatpad IN -- Serial OUT / TFT OUT)
@@ -181,9 +189,11 @@
 - **Buzzer support**
   
   - <Esc> 7 make bell tone
+  
 - to " play 'a#bbca' " could use a tty escSeq ?
   
   - T5K uses the following format <u8 noteIdx> <u16 duration> => 5KB / 3 => ~1700 notes (have headers)
+  
 - T53 uses => <u16 freq><u16 dur><u16 wait>
   
   - to play "MARIO.T53" could have something like :
