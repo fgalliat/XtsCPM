@@ -23,13 +23,13 @@
         
     
   - TODO :
-    - make some key maps (regular, shift, ...) **(in Progress)**
+    - make some key maps (regular, shift, ...) **(done)**
     - change layout from ABCDEF (french edition) to AZERTY **(done)** 
     - make buffer for keys **(done)**
     - handle key combos (nums, symbols, Ctrl) **(made as remanant state)**
     - find missing key : [ ? ] **(not found for now)**
       - could act as Ctrl, else have to find another combo
-      - **use [123] + [SYM] => Ctrl Key (to be finished....)**
+      - **use [123] + [SYM] => Ctrl Key (works)**
     - allow multiple key read on same row **(doesn't works for now)**
     - distinct pollKey Vs readKey **(done)**
     - re-use fold/open detector push  contact -> wire it on SX1509
@@ -43,7 +43,7 @@
       - Symb + < -> 'Esc' **(done)**
       - Symb + > -> 'Tab' **(done)**
       - now able to type c:xtsdemo.pas
-    - add RGB led for 3 metaKeys states (added 3 leds config)
+    - add RGB led for 3 metaKeys states (**added 3 leds config**)
     
 
 **Teensy 3.6 Yatl pinout** 
