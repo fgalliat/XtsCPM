@@ -26,7 +26,7 @@
 #define KB_COLS_NB 9
 #define KB_COLS_BG 7
 
-  // for ABCDEF layout
+  // for AZERTY layout
   static const char regularMap[KB_ROWS_NB][KB_COLS_NB] = {
     { 0x00, 'a', 0x00, 0x00, 0x00, ' ', 0x00, 0x00, 0x00 },
     { 'm', 0x00, 'w', 'x', 'c', 'v', 'b', 'n', '\b' },
@@ -59,6 +59,14 @@
     { 'l', 'q', 's', 'd', 'f', 'g', 'h', 'j', 'k' },
     { 'p', 'z', 'e', 'r', 't', 'y', 'u', 'i', 'o' },
     { 0x00, 0x00, 0x00, 0x00, 0x09, '\n', 0x00, 0x00, 0x00 },
+  };
+
+  static const char ctrlMap[KB_ROWS_NB][KB_COLS_NB] = {
+    { 0x00, (char)1, 0x00, 0x00, 0x00, ' ', 0x00, 0x00, 0x00 },
+    { (char)13, 0x00, (char)23, (char)24, (char)3, (char)22, (char)2, (char)14, '\b' },
+    { (char)12, (char)17, (char)19, (char)4, (char)6, (char)7, (char)8, (char)10, (char)11 },
+    { (char)16, (char)26, (char)5, (char)18, (char)20, (char)25, (char)21, (char)9, (char)15 },
+    { 0x00, 0x00, 0x00, 0x00, 0x00, '\n', 0x00, 0x00, 0x00 },
   };
 
   #define KEYB_BUFF_LEN 16

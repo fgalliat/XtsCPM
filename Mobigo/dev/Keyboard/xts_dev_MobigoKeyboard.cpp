@@ -185,7 +185,11 @@
     if ( this->isNums() ) { return numsMap[row][col]; }
     else if ( this->isSymb() ) { return symbolMap[row][col]; }
     else if ( this->isShift() ) { return shiftMap[row][col]; }
-    // else if ( this->isCtrl() ) { return ctrlMap[row][col]; }
+    else if ( this->isCtrl() ) { 
+      // Serial.print("Ctrl"); 
+      // Serial.println( regularMap[row][col] );
+      return ctrlMap[row][col]; 
+    }
     return regularMap[row][col];
   }
 
