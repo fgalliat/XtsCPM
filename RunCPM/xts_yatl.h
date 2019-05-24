@@ -129,9 +129,6 @@
       #endif
     #endif
 
-    // if ( irqCpt > 1 ) {
-    //     screenSync();
-    // }
     if ( nextISR == ISR_MODE_NONE ) {
       // ...
     } else if ( nextISR == ISR_MODE_PLAY_BUZZER ) {
@@ -149,8 +146,8 @@
 
 
   void setupISR() {
-    // Timer1.initialize(350000); // 350ms 
-    Timer1.initialize(50000); // 50ms 
+    Timer1.initialize(350000); // 350ms 
+    //Timer1.initialize(50000); // 50ms 
     Timer1.attachInterrupt(timer_IRQ);
   }
 

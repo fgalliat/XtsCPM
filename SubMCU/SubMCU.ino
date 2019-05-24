@@ -158,8 +158,8 @@ const int rxPin = 20;
 AltSoftSerial ats_serialBridge;
 
 // Set the Brigde Serial port
-#define serialBridge Serial
-// #define serialBridge ats_serialBridge
+// #define serialBridge Serial
+#define serialBridge ats_serialBridge
 
 int _avail() { return serialBridge.available(); }
 int _read() { return serialBridge.read(); }

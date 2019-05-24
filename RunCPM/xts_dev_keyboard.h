@@ -17,7 +17,7 @@
  #ifdef LAYOUT_FOLDABLE
    // from xts_submcu.h -- autoPoll mode
    bool setupKeyb() { initKeyb(); return true; }
-   void pollKeyb() { kbPoll(); }
+   void pollKeyb() { /* kbPoll();*/ }
    int  availableKeyb() { return kbAvailable(); }
    int  readKeyb() { return kbRead(); }
  #elif defined LAYOUT_MOBIGO
