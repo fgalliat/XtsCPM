@@ -1,3 +1,9 @@
+
+use a bigger ESP as SubMCU (I2C + Serial Bridge & MP3 ????)
+ESP12 en devkit ???
+
+// ==================================
+
 TP3 & pointer & addr
   https://www.tutorialspoint.com/pascal/pascal_pointers.htm
 
