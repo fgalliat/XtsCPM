@@ -2,51 +2,41 @@
 
 ### Sliding console with Keyboard
 
+![Vtech Mobigo 1](./pictures/mobigo_slided_mini.jpg)
+
 **Keyboard**
 
   - 10 cols x 5 rows matrix Keyboard w/ 35 keys
   - @ this time : 9x5 really useable for 34 keys
-
   - driven by an SX1509 GPIO I2C expander
     - 5rows as OUTPUT
     - 10cols as INPUT (no pullUp)
-
+- ![Key wiring](./pictures/keywiring.png)
     - Behavior to read 1 key :
       - send HIGH for only 1 ROW
-      
       - read each COL input
-    
-  - send LOW for that ROW
-    
+        - send LOW for that ROW
       - gives a ROW,COL address
-      
-        
-    
-  - TODO :
-    - make some key maps (regular, shift, ...) **(done)**
-    - change layout from ABCDEF (french edition) to AZERTY **(done)** 
-    - make buffer for keys **(done)**
-    - handle key combos (nums, symbols, Ctrl) **(made as remanant state)**
-    - find missing key : [ ? ] **(not found for now)**
-      - could act as Ctrl, else have to find another combo
-      - **use [123] + [SYM] => Ctrl Key (works)**
-    - allow multiple key read on same row **(doesn't works for now)**
-    - distinct pollKey Vs readKey **(done)**
-    - re-use fold/open detector push  contact -> wire it on SX1509
-    - not able to scan combos yet -> make as remanant ????
-    - nums should be toggle instead of remanant ????
-    - **Symbols for CP/M**
-      - : . \n \b \s + " ? / "
-      - Symb + N -> ':' **(done)**
-      - Symb + B -> '.' **(done)**
-      - Symb + V -> '?' **(done)**
-      - Symb + < -> 'Esc' **(done)**
-      - Symb + > -> 'Tab' **(done)**
-      - now able to type c:xtsdemo.pas
+- ![Key mapping](./pictures/keymap.png)
+- **Symbols for CP/M**
+     - : . \n \b \s + " ? / "
+     - Symb + N -> ':' **(done)**
+     - Symb + B -> '.' **(done)**
+     - Symb + V -> '?' **(done)**
+     - Symb + < -> 'Esc' **(done)**
+     - Symb + > -> 'Tab' **(done)**
+     - now able to type c:xtsdemo.pas
+  - TODO : 
     - add RGB led for 3 metaKeys states (**added 3 leds config**)
     
 
-**Teensy 3.6 Yatl pinout** 
+
+
+
+
+
+
+**Teensy 3.6/3.2 Yatl pinout** 
 
 **I2C : ** 0 -> 18(sda) & 19(scl) (not used by SPI TFT)
 
