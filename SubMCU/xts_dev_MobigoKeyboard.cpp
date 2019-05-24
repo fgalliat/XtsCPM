@@ -15,6 +15,52 @@
 
 #include "xts_dev_MobigoKeyboard.h"
 
+#define HARDCORE_SX_READ 1
+
+#ifdef HARDCORE_SX_READ
+  #include <Wire.h> // Include the I2C library (required)
+  #define REG_DATA_B				0x10	//	RegDataB Data register _ I/O[15_8] (Bank B) 1111 1111*
+  #define deviceAddress 0x3E
+
+  // readWord(byte registerAddress)
+  //	This function will read a two-byte word beginning at registerAddress
+  //	- A 16-bit unsigned int will be returned.
+  //		- The msb of the return value will contain the value read from registerAddress
+  //		- The lsb of the return value will contain the value read from registerAddress + 1
+  unsigned int readWord(byte registerAddress)
+  {
+    unsigned int readValue;
+    unsigned int msb, lsb;
+    unsigned int timeout = RECEIVE_TIMEOUT_VALUE * 2;
+
+    Wire.beginTransmission(deviceAddress);
+    Wire.write(registerAddress);
+    Wire.endTransmission();
+    Wire.requestFrom(deviceAddress, (byte) 2);
+
+    while ((Wire.available() < 2) && (timeout != 0))
+      timeout--;
+      
+    if (timeout == 0)
+      return 0;
+    
+    msb = (Wire.read() & 0x00FF) << 8;
+    lsb = (Wire.read() & 0x00FF);
+    readValue = msb | lsb;
+
+    return readValue;
+  }
+
+  unsigned int SX_readBanks() {
+    return readWord(REG_DATA_B);
+  }
+
+  byte SX_readPin(unsigned int banksValue, byte pin) {
+    if (banksValue & (1<<pin))
+			return 1;
+    return 0; 
+  }
+#endif
 
   MobigoKeyboard::MobigoKeyboard(SX1509* gpio, bool autoPoll)
   {
@@ -123,8 +169,16 @@
         this->activateRow(row);
         oneFoundOnRow = false;
 
+        #ifdef HARDCORE_SX_READ
+          unsigned int banks = SX_readBanks();
+        #endif
+
         for(int col=0; col < KB_COLS_NB; col++) {
+          #ifdef HARDCORE_SX_READ
+          if ( SX_readPin(banks, col+KB_COLS_BG) ) {
+          #else
           if ( this->isColPressed(col) ) {
+          #endif
             oneFoundOnKbd = true;
             oneFoundOnRow = true;
             char ch = this->getKeychar(row, col);
@@ -161,7 +215,7 @@
 
   void MobigoKeyboard::activateRow(int row) {
       this->io->digitalWrite(KB_ROWS_BG+row, HIGH);
-      delay(1);
+      // delay(1);
   }
 
   void MobigoKeyboard::deactivateRow(int row) {

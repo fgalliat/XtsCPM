@@ -60,10 +60,14 @@ void led(bool state) { digitalWrite( LED, state ? HIGH : LOW ); }
     }
  }
 
+ #define KB_AUTO_POLL false
+
  bool setupKeyboard() {
     delay(600); // to let keyboard enough time to init...
     keyboard0.init();
-    keyboard0.disableAutoPoll();
+    if ( !KB_AUTO_POLL ) {
+      keyboard0.disableAutoPoll();
+    }
     delay(300); // to let keyboard enough time to init...
     return true;
  }
@@ -76,7 +80,8 @@ void led(bool state) { digitalWrite( LED, state ? HIGH : LOW ); }
    SX1509 io;
 
    #include "xts_dev_MobigoKeyboard.h"
-   #define KB_AUTO_POLL false
+//    #define KB_AUTO_POLL false
+#define KB_AUTO_POLL true
    MobigoKeyboard kbd(&io, KB_AUTO_POLL);
 
    #define keyboard0 kbd
@@ -222,7 +227,7 @@ void loop() {
     pollJoypad();
 
     #ifdef HAS_KEYB
-     keyboard0.poll();
+     if (!KB_AUTO_POLL) { keyboard0.poll(); }
     #endif
 
     if ( _avail() ) {
