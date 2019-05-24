@@ -68,7 +68,7 @@ Xtase - fgalliat version @ Apr2109
   - EXT : HobbyTronics Serial-To-VGA (text-only) board
   - EXT : Teensy ++2 (5v) as TVOut device (gfx + text w/ enough RAM to handle descent resolutions)
 - keyboard
-  - **Vetch Mobigo** console builtin keyboard
+  - **Vetch Mobigo** console builtin keyboard [see docs here](./Mobigo/README.md)
   - **XBOX 360 Chatpad** Serial builtin keyboard
   - EXT : HobbyTronics USB Host board for Keyboard
 - audio
