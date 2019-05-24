@@ -65,11 +65,14 @@
   void setupArduinoSpeaker();
 
   void setupISR();
+  bool keybReady = false;
+
 
   void setupYatl() {
     setupArduinoScreen();
     setupArduinoSpeaker();
     setupISR();
+
     #ifdef HAS_SUB_MCU
       setupBridge();
     #endif
@@ -86,7 +89,9 @@
     #endif
     
     #ifdef HAS_KEYBOARD
+      #warning "We have a keyboard ..."
       setupKeyb();
+      keybReady = true;
     #endif
   }
 
@@ -116,6 +121,14 @@
     if (inIRQ) { return; }
     inIRQ = true;
 
+    #ifdef HAS_KEYBOARD
+      #ifdef LAYOUT_MOBIGO
+        if ( !KB_AUTO_POLL && keybReady ) {
+          kbd.poll();
+        }
+      #endif
+    #endif
+
     // if ( irqCpt > 1 ) {
     //     screenSync();
     // }
@@ -136,7 +149,8 @@
 
 
   void setupISR() {
-    Timer1.initialize(350000); // 350ms 
+    // Timer1.initialize(350000); // 350ms 
+    Timer1.initialize(50000); // 50ms 
     Timer1.attachInterrupt(timer_IRQ);
   }
 

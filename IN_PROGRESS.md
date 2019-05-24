@@ -138,12 +138,15 @@
 
   - Vtech Mobigo Keyboard
 
+      - integrate it in XtsCPM **(done)**
+      - done but too slow
+      - may be do the poll on TimerInterrupt ???? (tried... : to improve...)
 
-    - integrate it in XtsCPM
+          - better times but buzzer ~blinks
 
-    
 
-- - Microsoft XBOX 360 Chatpad **(now works - french layout)**
+
+  - Microsoft XBOX 360 Chatpad **(now works - french layout)**
 
     - stdIO handling (Serial IN / Chatpad IN -- Serial OUT / TFT OUT)
 

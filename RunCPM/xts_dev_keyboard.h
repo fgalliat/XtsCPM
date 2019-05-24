@@ -22,7 +22,10 @@
    int  readKeyb() { return kbRead(); }
  #elif defined LAYOUT_MOBIGO
     #include "xts_dev_MobigoKeyboard.h"
-    MobigoKeyboard kbd(&io, true);
+
+    #define KB_AUTO_POLL false
+
+    MobigoKeyboard kbd(&io, KB_AUTO_POLL);
 
    // from xts_lay_mobigo.h -- forced to autoPoll mode
    bool setupKeyb() { 
