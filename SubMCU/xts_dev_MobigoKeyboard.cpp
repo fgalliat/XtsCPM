@@ -15,6 +15,7 @@
 
 #include "xts_dev_MobigoKeyboard.h"
 
+// higher speed R/W for SX1509 
 #define HARDCORE_SX_READ 1
 
 #ifdef HARDCORE_SX_READ
@@ -22,12 +23,29 @@
   #define REG_DATA_B				0x10	//	RegDataB Data register _ I/O[15_8] (Bank B) 1111 1111*
   #define deviceAddress 0x3E
 
+  // writeWord(byte registerAddress, ungisnged int writeValue)
+  //	This function writes a two-byte word to registerAddress and registerAddress + 1
+  //	- the upper byte of writeValue is written to registerAddress
+  //		- the lower byte of writeValue is written to registerAddress + 1
+  //	- No return value.
+  void SX1509_writeWord(byte registerAddress, unsigned int writeValue)
+  {
+    byte msb, lsb;
+    msb = ((writeValue & 0xFF00) >> 8);
+    lsb = (writeValue & 0x00FF);
+    Wire.beginTransmission(deviceAddress);
+    Wire.write(registerAddress);
+    Wire.write(msb);
+    Wire.write(lsb);
+    Wire.endTransmission();	
+  }
+
   // readWord(byte registerAddress)
   //	This function will read a two-byte word beginning at registerAddress
   //	- A 16-bit unsigned int will be returned.
   //		- The msb of the return value will contain the value read from registerAddress
   //		- The lsb of the return value will contain the value read from registerAddress + 1
-  unsigned int readWord(byte registerAddress)
+  unsigned int SX1509_readWord(byte registerAddress)
   {
     unsigned int readValue;
     unsigned int msb, lsb;
@@ -52,14 +70,45 @@
   }
 
   unsigned int SX_readBanks() {
-    return readWord(REG_DATA_B);
+    return SX1509_readWord(REG_DATA_B);
   }
 
+  // U have to ensure that Ur pin is really an INPUT !!!!
   byte SX_readPin(unsigned int banksValue, byte pin) {
     if (banksValue & (1<<pin))
 			return 1;
     return 0; 
   }
+
+  // U have to ensure that Ur pin is really an OUTPUT !!!!
+  void SX_writePin(byte pin, byte highLow) {
+    // the gain is of @least one transaction
+    unsigned int tempRegData = SX1509_readWord(REG_DATA_B);
+		if (highLow)	tempRegData |= (1<<pin);
+		else			tempRegData &= ~(1<<pin);
+		SX1509_writeWord(REG_DATA_B, tempRegData);
+  }
+
+  // U have to ensure that Ur pin is really an OUTPUT !!!!
+  void SX_writeBank(unsigned int curRegData, byte pin, byte highLow) {
+    // the gain is of @least two transaction
+		if (highLow)	curRegData |= (1<<pin);
+		else			curRegData &= ~(1<<pin);
+		SX1509_writeWord(REG_DATA_B, curRegData);
+  }
+
+  // U have to ensure that Ur pin is really an OUTPUT !!!!
+  unsigned int SX_alterBanks(unsigned int curRegData, byte pin, byte highLow) {
+    if (highLow)	curRegData |= (1<<pin);
+		else			curRegData &= ~(1<<pin);
+    return curRegData;
+  }
+
+  // U have to ensure that Ur pins are really an OUTPUTs !!!!
+  void SX_writeBanks(unsigned int curRegData) {
+		SX1509_writeWord(REG_DATA_B, curRegData);
+  }
+
 #endif
 
   MobigoKeyboard::MobigoKeyboard(SX1509* gpio, bool autoPoll)
@@ -214,20 +263,42 @@
   }
 
   void MobigoKeyboard::activateRow(int row) {
+    #ifdef HARDCORE_SX_READ
+      SX_writePin(KB_ROWS_BG+row, HIGH);
+    #else
       this->io->digitalWrite(KB_ROWS_BG+row, HIGH);
       // delay(1);
+    #endif
   }
 
   void MobigoKeyboard::deactivateRow(int row) {
+    #ifdef HARDCORE_SX_READ
+      SX_writePin(KB_ROWS_BG+row, LOW);
+    #else
       this->io->digitalWrite(KB_ROWS_BG+row, LOW);
+    #endif
   }
 
   void MobigoKeyboard::deactivateAllRows() {
+    #ifdef HARDCORE_SX_READ
+      unsigned int banks = SX_readBanks();
+      for(int i=0; i < KB_ROWS_NB; i++) {
+        banks = SX_alterBanks(banks, KB_ROWS_BG+i, LOW);
+      }
+      SX_writeBanks(banks);
+    #else
       for(int i=0; i < KB_ROWS_NB; i++) { this->deactivateRow(i); }
+    #endif
   }
 
   bool MobigoKeyboard::isColPressed(int col) {
+    #ifdef HARDCORE_SX_READ
+          // gain is 1 I2C transaction (no inputModePin test)
+          unsigned int banks = SX_readBanks();
+          return SX_readPin(banks, KB_COLS_BG+col) == HIGH;
+    #else
       return this->io->digitalRead( KB_COLS_BG+col ) == HIGH;
+    #endif
   }
 
   bool MobigoKeyboard::isKeyPressed(int row, int col) {
