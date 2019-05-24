@@ -15,10 +15,10 @@
   #define HAS_BUILTIN_LCD 1
 
   // for Foldable Laptop Layout
-//   #define LAYOUT_FOLDABLE 1 
+  #define LAYOUT_FOLDABLE 1 
 
   // for Mobigo Console Layout
-  #define LAYOUT_MOBIGO 1 
+  // #define LAYOUT_MOBIGO 1 
 
 
 #endif
