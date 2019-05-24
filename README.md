@@ -68,11 +68,12 @@ Xtase - fgalliat version @ Apr2109
   - EXT : HobbyTronics Serial-To-VGA (text-only) board
   - EXT : Teensy ++2 (5v) as TVOut device (gfx + text w/ enough RAM to handle descent resolutions)
 - keyboard
-  - XBOX 360 Chatpad Serial builtin keyboard
+  - **Vetch Mobigo** console builtin keyboard
+  - **XBOX 360 Chatpad** Serial builtin keyboard
   - EXT : HobbyTronics USB Host board for Keyboard
 - audio
   - PCSpeaker-like to play tunes (ex. play "MONKEY.T5K", play "aa#cd" ) **done**
-  - EXT : MP3 tracks playback via DFPlayer (w/ pause, volume settings, ...) **done**
+  - MP3 tracks playback via DFPlayer (w/ pause, volume settings, ...) **done**
 - WiFi
   - start / stop AP/client
   - manage a telnet server
