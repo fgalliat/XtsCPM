@@ -16,8 +16,13 @@
 // #include "DFRobotDFPlayerMini.h"
 // SoftwareSerial mySoftwareSerial(10, 11); // RX, TX
 
+#include "xts_yatl_settings.h"
+
 #define HAS_MP3 1
 #define HAS_KEYB 1
+
+
+
 
 #ifdef HAS_MP3
  #include <DFRobotDFPlayerMini.h>
@@ -26,7 +31,13 @@
  bool mp3InPause = false;
 #endif
 
+#define LED 13
+void led(bool state) { digitalWrite( LED, state ? HIGH : LOW ); }
+
 #ifdef HAS_KEYB
+
+ #ifdef KEYB_CHATPAD
+
  #include "ChatpadInputStream.h"
  ChatpadInputStream keyboard0(Serial1);
 
@@ -49,10 +60,45 @@
     }
  }
 
+ bool setupKeyboard() {
+    delay(600); // to let keyboard enough time to init...
+    keyboard0.init();
+    keyboard0.disableAutoPoll();
+    delay(300); // to let keyboard enough time to init...
+    return true;
+ }
+
+ #else
+
+   #include <Wire.h> // Include the I2C library (required)
+   #include <SparkFunSX1509.h> // Include SX1509 library
+   const byte SX1509_ADDRESS = 0x3E;  // SX1509 I2C address
+   SX1509 io;
+
+   #include "xts_dev_MobigoKeyboard.h"
+   #define KB_AUTO_POLL false
+   MobigoKeyboard kbd(&io, KB_AUTO_POLL);
+
+   #define keyboard0 kbd
+
+   bool setupKeyboard() {
+      if (!io.begin(SX1509_ADDRESS))
+      {
+        Serial.println("Failed to communicate.");
+        // while (1) ; // If we fail to communicate, loop forever.
+        return false;
+      }
+      delay(300);
+      
+      kbd.setup(LED, LED, LED);
+      return true;
+   }
+
+ #endif
+
 #endif
 
-#define LED 13
-void led(bool state) { digitalWrite( LED, state ? HIGH : LOW ); }
+
 
 // ===== Joypad Section ======
 // 0..1023 analogRead
@@ -109,10 +155,11 @@ const int rxPin = 20;
 // SoftwareSerial serialBridge(rxPin,txPin);
 // AltSoftSerial pins are IMMUTABLE & uses Timers
 #include <AltSoftSerial.h>
-AltSoftSerial serialBridge;
+AltSoftSerial ats_serialBridge;
 
-
-// #define SerialBridge Serial
+// Set the Brigde Serial port
+#define serialBridge Serial
+// #define serialBridge ats_serialBridge
 
 int _avail() { return serialBridge.available(); }
 int _read() { return serialBridge.read(); }
@@ -137,11 +184,7 @@ void setup() {
 
    // ===== Ms ChatPad for XBOX 360 =====
    #ifdef HAS_KEYB
-    delay(600); // to let keyboard enough time to init...
-    keyboard0.init();
-    keyboard0.disableAutoPoll();
-    delay(300); // to let keyboard enough time to init...
-    kbdok = true; // keyboard is OK
+    kbdok = setupKeyboard();
    #else
     kbdok = false; // keyboard is NOK
    #endif
