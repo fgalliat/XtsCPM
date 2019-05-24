@@ -10,6 +10,8 @@
  * 
  */
 
+#include "xts_yatl_settings.h"
+#ifdef LAYOUT_MOBIGO
 
 #include "xts_dev_MobigoKeyboard.h"
 
@@ -196,3 +198,5 @@
   void MobigoKeyboard::setAutoPoll(bool _auto) {
     this->_autoPoll = _auto;
   }
+
+#endif

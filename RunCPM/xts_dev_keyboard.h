@@ -31,7 +31,19 @@
    }
    void pollKeyb() { kbd.poll(); }
    int  availableKeyb() { return kbd.available(); }
-   int  readKeyb() { return kbd.read(); }
+
+   uint8_t kbMap(uint8_t code) {
+      if ( code == '\n' ) { code = '\r'; }
+      return code;
+   }
+
+   int  readKeyb() { 
+     int ch = kbd.read();
+     if ( ch > -1 ) {
+       ch = kbMap(ch);
+     }
+     return ch; 
+   }
  #endif
 
 #endif

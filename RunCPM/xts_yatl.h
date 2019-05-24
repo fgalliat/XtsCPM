@@ -6,15 +6,7 @@
  * Xtase - fgalliat @Apr2019
  */
 
-  #define YATL_PLATFORM 1
-
-  #define HAS_BUILTIN_LCD 1
-
-  // for Foldable Laptop Layout
-  #define LAYOUT_FOLDABLE 1 
-
-  // for Mobigo Console Layout
-  // #define LAYOUT_MOBIGO 1 
+  #include "xts_yatl_settings.h"
 
   #ifdef LAYOUT_FOLDABLE
     #warning "-- USING FOLDABLE SUBMCU LAYOUT --"
@@ -31,6 +23,12 @@
 
     #define HAS_KEYBOARD 1
     // #define HAS_MP3 1
+    int32 mp3BdosCall(int32 regValue) {
+      Serial.print("MP3 Bdos Call for mobigo ");
+      Serial.println(regValue);
+      return 0;
+    }
+
   #endif
 
   // 13 is used by SPI LCD
