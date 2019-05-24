@@ -143,6 +143,7 @@
     }
 
     this->flushBuffer();
+    this->deactivateAllRows();
 
     delay(300);
   }
@@ -170,7 +171,9 @@
   bool lastTimeKeyReleased = true;
 
   void MobigoKeyboard::poll() {
-      this->deactivateAllRows();
+    #ifndef HARDCORE_SX_READ
+    this->deactivateAllRows();
+    #endif
 
     if ( lastPollTime == -1L ) {
       lastPollTime = millis();
@@ -185,11 +188,19 @@
     }
 
     // read the metaKeys
-    // toggle style
+    // remanant style
 
     bool loclShift = this->isKeyPressed(1,1);
-    bool loclNums  = this->isKeyPressed(0,2);
-    bool loclSymbs = this->isKeyPressed(0,3);
+    #ifdef HARDCORE_SX_READ
+      activateRow(0);
+      unsigned int tbank = SX_readBanks();
+      bool loclNums  = SX_readPin(tbank, KB_COLS_BG+2);
+      bool loclSymbs = SX_readPin(tbank, KB_COLS_BG+3);
+      deactivateRow(0);
+    #else
+      bool loclNums  = this->isKeyPressed(0,2);
+      bool loclSymbs = this->isKeyPressed(0,3);
+    #endif
 
     bool eject = false;
 
