@@ -12,10 +12,16 @@
 
 #include <algorithm> // std::min
 
+// =============] YATL [===================
+#include "xts_yatl_settings.h"
+
+
 // =============] Devices [================
 
 // NodeMCU led GPIO16
 // ESP led GPIO2
+
+
 #define LED 2
 bool ledState = false;
 
@@ -26,6 +32,11 @@ void led(bool state) {
 
 void toogleLed() {
     led( !ledState );
+}
+
+#define LED2 16
+void led2(bool state) {
+    digitalWrite(LED2, state ? HIGH : LOW);
 }
 
 #define HAS_KEYB 1
@@ -40,6 +51,29 @@ void toogleLed() {
     const byte SX1509_ADDRESS = 0x3E;  // SX1509 I2C address
     SX1509 io;
     // TODO : io.begin()..
+    #ifdef KEYB_MOBIGO
+        #warning "-= Has Keyboard =-"
+
+        #include "xts_dev_MobigoKeyboard.h"
+        // #define KB_AUTO_POLL false
+        #define KB_AUTO_POLL true
+        MobigoKeyboard kbd(&io, KB_AUTO_POLL);
+
+        #define keyboard0 kbd
+
+        bool setupKeyboard() {
+            if (!io.begin(SX1509_ADDRESS))
+            {
+                Serial.println("Failed to communicate.");
+                // while (1) ; // If we fail to communicate, loop forever.
+                return false;
+            }
+            delay(300);
+            
+            kbd.setup(LED2, LED2, LED2);
+            return true;
+        }
+    #endif
 #endif
 
 // =============] UART [================
@@ -87,17 +121,27 @@ WiFiClient serverClients[MAX_SRV_CLIENTS];
 
 
 void setup() {
-    pinMode(LED, OUTPUT);
-    led(false);
+    pinMode(LED, OUTPUT);  led(false);
+    pinMode(LED2, OUTPUT); led2(false);
 
     Serial.begin(BAUD_SERIAL);
     Serial.setRxBufferSize(RXBUFFERSIZE);
     Serial.println("ESP is ON");
 
+    bool kbOk = false;
+    bool mp3Ok = false;
+
+    led2(!false);
+    #ifdef HAS_KEYB
+      kbOk = setupKeyboard();
+    #endif
+
+    #if 0
     logger->begin(BAUD_LOGGER);
     // logger->listen(); // till logger is a SoftwareSerial
-
     logger->println("\n\nUsing Serial1 for logging");
+    #endif
+
     logger->println(ESP.getFullVersion());
     logger->printf("Serial baud: %d (8n1: %d KB/s)\n", BAUD_SERIAL, BAUD_SERIAL * 8 / 10 / 1024);
     logger->printf("Serial receive buffer size: %d bytes\n", RXBUFFERSIZE);
@@ -121,7 +165,7 @@ void setup() {
     logger->print("Ready! Use 'telnet ");
     logger->print(WiFi.localIP());
     logger->printf(" %d' to connect\n", port);
-
+    led2(false);
 }
 
 void loop() {
@@ -184,7 +228,15 @@ void loop() {
             }
         }
     #endif
-        
+    
+    while ( keyboard0.available() > 0 ) {
+        // only for 1st connected client
+        if (serverClients[0]) {
+            serverClients[0].write( keyboard0.read() );
+        }
+    }
+
+
     // determine maximum output size "fair TCP use"
     // client.availableForWrite() returns 0 when !client.connected()
     size_t maxToTcp = 0;
