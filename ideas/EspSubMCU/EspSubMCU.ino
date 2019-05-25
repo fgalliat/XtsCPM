@@ -4,16 +4,15 @@
  * Xtase - fgalliat @May 2019
  * 
  * 
- * Le croquis utilise 224317 octets (21%) de l'espace de stockage de programmes. Le maximum est de 1044464 octets.
- * Les variables globales utilisent 31740 octets (38%) de mémoire dynamique, ce qui laisse 50180 octets pour les variables locales. Le maximum est de 81920 octets.
- * 
+ * Le croquis utilise 277344 octets (26%) de l'espace de stockage de programmes. Le maximum est de 1044464 octets.
+ * Les variables globales utilisent 27416 octets (33%) de mémoire dynamique, ce qui laisse 54504 octets pour les variables locales. Le maximum est de 81920 octets.
  */
 
 #include <ESP8266WiFi.h>
 
 #include <algorithm> // std::min
 
-
+// =============] Devices [================
 
 // NodeMCU led GPIO16
 // ESP led GPIO2
@@ -25,12 +24,29 @@ void led(bool state) {
     ledState = state;
 }
 
-#include "ssid_psk.h"
-#ifndef STASSID
- #define STASSID "your-ssid"
- #define STAPSK  "your-password"
+void toogleLed() {
+    led( !ledState );
+}
+
+#define HAS_KEYB 1
+#define HAS_MP3  1
+
+
+// =============] I2C [=================
+#include <Wire.h>
+
+#ifdef HAS_KEYB
+    #include <SparkFunSX1509.h> // Include SX1509 library
+    const byte SX1509_ADDRESS = 0x3E;  // SX1509 I2C address
+    SX1509 io;
+    // TODO : io.begin()..
 #endif
 
+// =============] UART [================
+
+#include <SoftwareSerial.h>
+SoftwareSerial SerialX(14,12);
+#define mp3Serial SerialX
 
 #define BAUD_SERIAL 115200
 #define BAUD_LOGGER 115200
@@ -38,6 +54,24 @@ void led(bool state) {
 
 // #define logger (&Serial1)
 #define logger (&Serial)
+// #define logger (&SerialX)
+
+// =============] MP3 [=================
+#ifdef HAS_MP3
+ #include <DFRobotDFPlayerMini.h>
+ DFRobotDFPlayerMini myDFPlayer;
+ #define SerialMP3 SerialX
+ bool mp3InPause = false;
+ // TODO myDFPlayer.begin()
+#endif
+
+// =============] WiFi [================
+
+#include "ssid_psk.h"
+#ifndef STASSID
+ #define STASSID "your-ssid"
+ #define STAPSK  "your-password"
+#endif
 
 #define STACK_PROTECTOR  512 // bytes
 
@@ -46,8 +80,8 @@ void led(bool state) {
 const char* ssid = STASSID;
 const char* password = STAPSK;
 
+// =============] Server [================
 const int port = 23;
-
 WiFiServer server(port);
 WiFiClient serverClients[MAX_SRV_CLIENTS];
 
@@ -57,12 +91,14 @@ void setup() {
     led(false);
 
     Serial.begin(BAUD_SERIAL);
-    // Serial.setRxBufferSize(RXBUFFERSIZE);
+    Serial.setRxBufferSize(RXBUFFERSIZE);
     Serial.println("ESP is ON");
 
     logger->begin(BAUD_LOGGER);
+    // logger->listen(); // till logger is a SoftwareSerial
+
     logger->println("\n\nUsing Serial1 for logging");
-    // logger->println(ESP.getFullVersion());
+    logger->println(ESP.getFullVersion());
     logger->printf("Serial baud: %d (8n1: %d KB/s)\n", BAUD_SERIAL, BAUD_SERIAL * 8 / 10 / 1024);
     logger->printf("Serial receive buffer size: %d bytes\n", RXBUFFERSIZE);
 
@@ -89,8 +125,8 @@ void setup() {
 }
 
 void loop() {
-    led( !ledState );
-    Serial.print(".");
+    toogleLed();
+    // Serial.print(".");
     delay(500);
 
     //check if there are any new clients
@@ -107,12 +143,12 @@ void loop() {
 
         //no free/disconnected spot so reject
         if (i == MAX_SRV_CLIENTS) {
-        server.available().println("busy");
-        // hints: server.available() is a WiFiClient with short-term scope
-        // when out of scope, a WiFiClient will
-        // - flush() - all data will be sent
-        // - stop() - automatically too
-        logger->printf("server is busy with %d active connections\n", MAX_SRV_CLIENTS);
+            server.available().println("busy");
+            // hints: server.available() is a WiFiClient with short-term scope
+            // when out of scope, a WiFiClient will
+            // - flush() - all data will be sent
+            // - stop() - automatically too
+            logger->printf("server is busy with %d active connections\n", MAX_SRV_CLIENTS);
         }
     }
 
@@ -122,9 +158,17 @@ void loop() {
     // loopback/3000000baud average 348KB/s
     for (int i = 0; i < MAX_SRV_CLIENTS; i++)
         while (serverClients[i].available() && Serial.availableForWrite() > 0) {
-        // while (serverClients[i].available() ) {
             // working char by char is not very efficient
-            Serial.write(serverClients[i].read());
+            char ch = serverClients[i].read();
+            if ( ch == ':' ) {
+                ch = serverClients[i].read();
+                if ( ch == 'q' ) {
+                    serverClients[i].stop();
+                    break;
+                }
+                Serial.write( ch );
+            }
+            Serial.write( ch );
         }
     #else
     // loopback/3000000baud average: 312KB/s
@@ -173,7 +217,7 @@ void loop() {
         if (serverClients[i].availableForWrite() >= serial_got) {
             size_t tcp_sent = serverClients[i].write(sbuf, serial_got);
             if (tcp_sent != len) {
-            logger->printf("len mismatch: available:%zd serial-read:%zd tcp-write:%zd\n", len, serial_got, tcp_sent);
+              logger->printf("len mismatch: available:%zd serial-read:%zd tcp-write:%zd\n", len, serial_got, tcp_sent);
             }
         }
     }
