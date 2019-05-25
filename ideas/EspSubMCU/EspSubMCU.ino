@@ -50,7 +50,7 @@ void led2(bool state) {
     #include <SparkFunSX1509.h> // Include SX1509 library
     const byte SX1509_ADDRESS = 0x3E;  // SX1509 I2C address
     SX1509 io;
-    // TODO : io.begin()..
+    
     #ifdef KEYB_MOBIGO
         #warning "-= Has Keyboard =-"
 
