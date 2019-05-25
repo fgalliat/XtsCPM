@@ -46,8 +46,7 @@ void led2(bool state) {
 // =============] I2C [=================
 
 // infos
-// Your diagram is wrong. D2 = A4 (SDA) and D1 = A5 (SCL)
-// Right > SCL > D5 | SDA > D7 | GND > GND | VCC > 3.3V
+// D1 & D2 because SX1509 lib does Wire.begin() w/ specifing SDA,SCL pins ...
 
 #include <Wire.h>
 
@@ -141,6 +140,8 @@ void setup() {
 
     led2(!false);
     #ifdef HAS_KEYB
+      // Wire.begin(4,5);
+      // Wire.begin(); is done by SX1509 begin() -> init();
       kbOk = setupKeyboard();
     #endif
 
@@ -237,14 +238,17 @@ void loop() {
         }
     #endif
     
+    yield(); // ESP8266 specific -- else keeps on rebooting
     while ( keyboard0.available() > 0 ) {
+        int ch = keyboard0.read(); // unconditional read else will make an inf. loop
+        Serial.write( (char)ch );
         // only for 1st connected client
         if (serverClients[0]) {
-            int ch = keyboard0.read();
-            Serial.write( (char)ch );
             serverClients[0].write( (char)ch );
         }
+        yield(); // ESP8266 specific
     }
+    yield(); // ESP8266 specific
 
 
     // determine maximum output size "fair TCP use"
