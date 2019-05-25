@@ -80,8 +80,8 @@ void led(bool state) { digitalWrite( LED, state ? HIGH : LOW ); }
    SX1509 io;
 
    #include "xts_dev_MobigoKeyboard.h"
-//    #define KB_AUTO_POLL false
-#define KB_AUTO_POLL true
+   // #define KB_AUTO_POLL false
+   #define KB_AUTO_POLL true
    MobigoKeyboard kbd(&io, KB_AUTO_POLL);
 
    #define keyboard0 kbd
