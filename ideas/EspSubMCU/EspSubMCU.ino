@@ -44,6 +44,11 @@ void led2(bool state) {
 
 
 // =============] I2C [=================
+
+// infos
+// Your diagram is wrong. D2 = A4 (SDA) and D1 = A5 (SCL)
+// Right > SCL > D5 | SDA > D7 | GND > GND | VCC > 3.3V
+
 #include <Wire.h>
 
 #ifdef HAS_KEYB
