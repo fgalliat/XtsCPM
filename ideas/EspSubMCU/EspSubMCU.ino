@@ -46,7 +46,7 @@ void led2(bool state) {
 // =============] I2C [=================
 
 // infos
-// D1 & D2 because SX1509 lib does Wire.begin() w/ specifing SDA,SCL pins ...
+// D1 & D2 (A4 & A5) because SX1509 lib does Wire.begin() w/ specifing SDA,SCL pins ...
 
 #include <Wire.h>
 
