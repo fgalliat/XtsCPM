@@ -126,6 +126,9 @@ void setup() {
 
     Serial.begin(BAUD_SERIAL);
     Serial.setRxBufferSize(RXBUFFERSIZE);
+
+    while(!Serial) { delay(1); }
+
     Serial.println("ESP is ON");
 
     bool kbOk = false;
@@ -232,7 +235,9 @@ void loop() {
     while ( keyboard0.available() > 0 ) {
         // only for 1st connected client
         if (serverClients[0]) {
-            serverClients[0].write( keyboard0.read() );
+            int ch = keyboard0.read();
+            Serial.write( (char)ch );
+            serverClients[0].write( (char)ch );
         }
     }
 
