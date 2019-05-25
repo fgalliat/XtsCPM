@@ -180,7 +180,7 @@ void setup() {
 void loop() {
     toogleLed();
     // Serial.print(".");
-    delay(500);
+    // delay(500);
 
     //check if there are any new clients
     if (server.hasClient()) {

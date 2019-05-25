@@ -2,7 +2,7 @@
 
 - **Esp12 as SubMCU**
   - needs :
-    - I2C for SX1509 (Keyb) **(GPIO 4&5)**
+    - I2C for SX1509 (Keyb) **(GPIO 4&5 D1&D2)**
     - Serial for bridge **(GPIO 1&3)**
     - SoftwareSerial for DFPlayer (MP3) **(GPIO 12&14 ?)** - <https://github.com/plerup/espsoftwareserial>
     - WiFi
