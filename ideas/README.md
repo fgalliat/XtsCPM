@@ -11,7 +11,9 @@
         - <https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/examples/WiFiTelnetToSerial/WiFiTelnetToSerial.ino>
   - can't :
     - use **GPIO 0,2,15** cf flashing/running mode
-
+- programming
+    - <https://www.fais-le-toi-meme.fr/fr/electronique/tutoriel/programmes-arduino-executes-sur-esp8266-arduino-ide>
+  
 - **328P as screen pad controller**
   - needs :
     - Serial for bridge (/!\\ if 5v : need a voltage divider on TX)
