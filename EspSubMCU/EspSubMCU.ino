@@ -59,8 +59,8 @@ void led2(bool state) {
         #warning "-= Has Keyboard =-"
 
         #include "xts_dev_MobigoKeyboard.h"
-        // #define KB_AUTO_POLL false
-        #define KB_AUTO_POLL true
+        #define KB_AUTO_POLL false
+        // #define KB_AUTO_POLL true
         MobigoKeyboard kbd(&io, KB_AUTO_POLL);
 
         #define keyboard0 kbd
@@ -181,7 +181,7 @@ int loopCounter = 0;
 void _yield() {
     // deadlock when not using WiFi
     // prevent from deadlock when using WiFi
-    // yield();
+    yield();
 }
 
 void loop() {
