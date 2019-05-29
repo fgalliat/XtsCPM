@@ -20,8 +20,6 @@
 
 // NodeMCU led GPIO16
 // ESP led GPIO2
-
-
 #define LED 2
 bool ledState = false;
 
@@ -81,7 +79,7 @@ void led2(bool state) {
 #endif
 
 // =============] UART [================
-
+// D5 (GPIO14) & D6 (GPIO12) ???
 #include <SoftwareSerial.h>
 SoftwareSerial SerialX(14,12);
 #define mp3Serial SerialX
