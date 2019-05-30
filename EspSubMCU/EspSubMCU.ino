@@ -45,6 +45,10 @@ void led2(bool state) {
 #define LED_G 16
 #define LED_B 13
 
+void red(bool state) { digitalWrite(LED_R, state ? HIGH : LOW); }
+void green(bool state) { digitalWrite(LED_G, state ? HIGH : LOW); }
+void blue(bool state) { digitalWrite(LED_B, state ? HIGH : LOW); }
+
 // A0 -- default linked to Esp.getVcc() function
 
 // D8 -- DFPlayer is playing ?
@@ -101,7 +105,7 @@ void setupAddPins() {
 #endif
 
 // =============] UART [================
-// D5 (GPIO14) & D6 (GPIO12) ???
+// D5 (GPIO14) & D6 (GPIO12)
 #include <SoftwareSerial.h>
 SoftwareSerial SerialX(14,12);
 #define mp3Serial SerialX
@@ -144,6 +148,88 @@ void _send(char ch) { serialBridge.write(ch); }
 
 bool mp3ok = false;
 bool kbdok = false;
+
+
+// =============] WiFi [================
+
+#define ACTIVE_WIFI 1
+
+#ifdef ACTIVE_WIFI
+    #include "ssid_psk.h"
+    #ifndef STASSID
+        #define STASSID "your-ssid"
+        #define STAPSK  "your-password"
+    #endif
+
+    #define STACK_PROTECTOR  512 // bytes
+
+    //how many clients should be able to telnet to this ESP8266
+    #define MAX_SRV_CLIENTS 2
+    const char* ssid = STASSID;
+    const char* password = STAPSK;
+
+// =============] Server [================
+    const int port = 23;
+    WiFiServer server(port);
+    WiFiClient serverClients[MAX_SRV_CLIENTS];
+
+    bool wifiStarted = false;
+    bool telnetdStarted = false;
+
+    bool startWiFi(bool staMode=true) {
+        wifiStarted = false;
+        WiFi.mode(WIFI_STA);
+        WiFi.begin(ssid, password);
+        // logger->print("\nConnecting to ");
+        // logger->println(ssid);
+        red(true); green(false);
+        int retry = 0;
+        while (WiFi.status() != WL_CONNECTED) {
+            // logger->print('.');
+            delay(500);
+            if (retry > 10) { return false; }
+            retry++;
+        }
+        red(false); green(true);
+        // logger->println();
+        // logger->print("connected, address=");
+        // logger->println(WiFi.localIP());
+        wifiStarted = true;
+        return true;
+    }
+
+    void stopWiFi() {
+        WiFi.disconnect();
+        wifiStarted = false;
+    }
+
+    char* getLocalIP() {
+        return (char*) WiFi.localIP().toString().c_str();
+    }
+
+    bool startTelnetd() {
+        if ( !wifiStarted ) { return false; }
+        telnetdStarted = false;
+        server.begin();
+        server.setNoDelay(true);
+        telnetdStarted = true;
+        return true;
+    }
+
+    void stopTelnetd() {
+        if ( !telnetdStarted ) { return; }
+        server.close();
+        telnetdStarted = false;
+    }
+#else
+    bool startWiFi() { return false; }
+    void stopWiFi() {}
+    char* getLocalIP() { return (char*)"0.0.0.0"; }
+    bool startTelnetd() { return false; }
+    void stopTelnetd() {}
+#endif
+
+// =============] Core Code [=============
 
 void setup() {
     pinMode(LED, OUTPUT);  led(false);
