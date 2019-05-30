@@ -45,15 +45,21 @@ void led2(bool state) {
 #define LED_G 16
 #define LED_B 13
 
-// A0 -- DFPlayer is playing ?
-#define MP3_PLAYING A0
+// A0 -- default linked to Esp.getVcc() function
+
+// D8 -- DFPlayer is playing ?
+// BEWARE : can be used while flashing ...
+// #define MP3_PLAYING 15
+#define MP3_PLAYING -1
 
 void setupAddPins() {
     pinMode(LED_R, OUTPUT); digitalWrite(LED_R, LOW);
     pinMode(LED_G, OUTPUT); digitalWrite(LED_G, LOW);
     pinMode(LED_B, OUTPUT); digitalWrite(LED_B, LOW);
 
-    // pinMode(MP3_PLAYING, INPUT);
+    if (MP3_PLAYING > -1) {
+        pinMode(MP3_PLAYING, INPUT);
+    }
 }
 
 // =============] I2C [=================
@@ -202,6 +208,12 @@ void _yield() {
 
 void loop() {
     pollJoypad();
+
+    if (mp3ok) {
+        if (MP3_PLAYING > -1 && digitalRead(MP3_PLAYING) == HIGH ) {
+            Serial.println("MP3 Playing");
+        }
+    }
 
     #ifdef HAS_KEYB
      _yield();
