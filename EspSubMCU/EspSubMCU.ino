@@ -18,6 +18,9 @@
 
 // =============] Devices [================
 
+#define HAS_KEYB 1
+#define HAS_MP3  1
+
 // NodeMCU led GPIO16
 // ESP led GPIO2
 #define LED 2
@@ -37,9 +40,21 @@ void led2(bool state) {
     digitalWrite(LED2, state ? HIGH : LOW);
 }
 
-#define HAS_KEYB 1
-#define HAS_MP3  1
+// D4,D0,D7 -- RGB LED
+#define LED_R 2
+#define LED_G 16
+#define LED_B 13
 
+// A0 -- DFPlayer is playing ?
+#define MP3_PLAYING A0
+
+void setupAddPins() {
+    pinMode(LED_R, OUTPUT); digitalWrite(LED_R, LOW);
+    pinMode(LED_G, OUTPUT); digitalWrite(LED_G, LOW);
+    pinMode(LED_B, OUTPUT); digitalWrite(LED_B, LOW);
+
+    // pinMode(MP3_PLAYING, INPUT);
+}
 
 // =============] I2C [=================
 
@@ -72,7 +87,8 @@ void led2(bool state) {
             }
             delay(300);
             
-            kbd.setup(LED2, LED2, LED2);
+            // kbd.setup(LED2, LED2, LED2);
+            kbd.setup(LED_R, LED_G, LED_B);
             return true;
         }
     #endif
@@ -126,6 +142,8 @@ bool kbdok = false;
 void setup() {
     pinMode(LED, OUTPUT);  led(false);
     pinMode(LED2, OUTPUT); led2(false);
+
+    setupAddPins();
 
     // Serial.begin(BAUD_SERIAL);
     // Serial.setRxBufferSize(RXBUFFERSIZE);
@@ -186,7 +204,8 @@ void loop() {
     pollJoypad();
 
     #ifdef HAS_KEYB
-     if (!KB_AUTO_POLL) { keyboard0.poll(); }
+     _yield();
+     if (!KB_AUTO_POLL) { keyboard0.poll(); _yield(); }
     #endif
 
     if ( _avail() ) {
