@@ -40,7 +40,7 @@ void loop() {
 - w -> WiFi **(TODO)**
   - c : connect
     - s  : STA mode ( w/ SSID[] ) **(done)**
-    - a : AP mode **(TODO)**
+    - a : AP mode **(done)**
   - s : stop **(done)**
   - i : getIP **(tested)**
   - e : getESSID
