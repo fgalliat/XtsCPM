@@ -154,9 +154,7 @@ void _send(const char* str) { serialBridge.print(str); }
 void _send(char* str) { serialBridge.print(str); }
 void _send(char ch) { serialBridge.write(ch); }
 void _send(int ch) { serialBridge.write( (char) ch); } // !!!! BEWARE : to look
-
-
-
+void _send(float val) { serialBridge.print(val); }
 
 // =============] WiFi [================
 
@@ -314,6 +312,10 @@ void _send(int ch) { serialBridge.write( (char) ch); } // !!!! BEWARE : to look
 #endif
 
 // =============] Core Code [=============
+
+// to read MCU voltage internal way
+// allows ESP.getVcc()
+ADC_MODE(ADC_VCC);
 
 void setup() {
     pinMode(LED, OUTPUT);  led(false);
@@ -511,6 +513,29 @@ void loop() {
             #else
                 _send("NO Joypad");
             #endif
+        } else if ( ch == 'v' ) {
+            // Voltage Control
+            float  voltage = (ESP.getVcc() / 1000.0); // + 0.2 ;// avec offset empirique
+            _send( voltage );
+            _send( '\n' );
+            // if (voltage < 3.0) {   // a 3V l'accu LiFePo4 est quasiment vide; le protéger d'une décharge excessive
+            //     ESP.deepSleep(0);   // = arret définitif si 'LOW BATT'
+            // }
+        } else if ( ch == 'l' ) {
+            // RGB led control [XXX] where X can be '0' or '1' else ignored
+            while( _avail() < 3 ) { delay(2); _yield(); }
+            char chR = _read();
+            char chG = _read();
+            char chB = _read();
+            
+            if ( chR == '0' ) red(false);
+            else if ( chR == '1' ) red(true);
+            // else ignore
+            if ( chG == '0' ) green(false);
+            else if ( chG == '1' ) green(true);
+            if ( chB == '0' ) blue(false);
+            else if ( chB == '1' ) blue(true);
+
         } else if ( ch == 't' ) {
             testRoutine();
         } else if ( ch == '\n' || ch == '\r' ) {

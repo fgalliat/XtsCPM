@@ -25,7 +25,7 @@ void setup() {
   Serial.begin(115200);
 }
 void loop() {
-  Serial.print(« Alimention(mV): « );
+  Serial.print(" Alimention(mV): ");
   Serial.println(ESP.getVcc());
   delay(300);
 }
@@ -35,19 +35,23 @@ void loop() {
 
 **c) commands**
 
-- i -> infos
-- k -> read keyb buffer
-- w -> WiFi
+- i -> infos **(to finish)**
+- k -> read keyb buffer **(done)**
+- w -> WiFi **(TODO)**
   - c : connect
-    - s  : STA mode ( w/ SSID[] )
+    - s  : STA mode ( w/ SSID[] ) **(tested)**
     - a : AP mode
-  - s : stop
-  - i : getIP
+  - s : stop **(tested)**
+  - i : getIP **(tested)**
   - e : getESSID
   - t : telnet
-    - o : open
+    - o : open **(tested)**
     - c : close
-  - g : get URL content (wget/curl like)
-- p -> mp3 control
+  - g : get URL content (wget/curl like) **(tested)**
+- l -> led control **(to finish : kbPoll deactivates LEDs for now)**
+  - 000 -> RGB all OFF
+  - 010 -> -G- only green is ON
+- v -> Voltage Control **(to finish : calibrate)**
+- p -> mp3 control **(to finish)**
   - p -> play track
   - ...
