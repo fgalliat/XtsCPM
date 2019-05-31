@@ -12,6 +12,11 @@
 
 #include <algorithm> // std::min
 
+void _yield() {
+    // prevent from deadlock (specific to ESP8266)
+    yield();
+}
+
 // =============] YATL [===================
 #include "xts_yatl_settings.h"
 
@@ -20,6 +25,9 @@
 
 #define HAS_KEYB 1
 #define HAS_MP3  1
+
+bool mp3ok = false;
+bool kbdok = false;
 
 // NodeMCU led GPIO16
 // ESP led GPIO2
@@ -33,11 +41,6 @@ void led(bool state) {
 
 void toogleLed() {
     led( !ledState );
-}
-
-#define LED2 16
-void led2(bool state) {
-    digitalWrite(LED2, state ? HIGH : LOW);
 }
 
 // D4,D0,D7 -- RGB LED
@@ -91,13 +94,11 @@ void setupAddPins() {
         bool setupKeyboard() {
             if (!io.begin(SX1509_ADDRESS))
             {
-                Serial.println("Failed to communicate.");
-                // while (1) ; // If we fail to communicate, loop forever.
+                Serial.println("SX1509 Failed.");
                 return false;
             }
             delay(300);
             
-            // kbd.setup(LED2, LED2, LED2);
             kbd.setup(LED_R, LED_G, LED_B);
             return true;
         }
@@ -138,23 +139,33 @@ void debugJoypad() {
 }
 
 // ===========] Bridge [===============
+
+#define BRIDGE_ON_SERIAL 1
+
 // Set the Brigde Serial port
-#define serialBridge Serial
-// #define serialBridge ats_serialBridge
+#if BRIDGE_ON_SERIAL
+    #define serialBridge Serial
+#else
+    // #define serialBridge ats_serialBridge
+#endif
 
 int _avail() { return serialBridge.available(); }
 int _read() { return serialBridge.read(); }
+void _send(const char* str) { serialBridge.print(str); }
+void _send(char* str) { serialBridge.print(str); }
 void _send(char ch) { serialBridge.write(ch); }
+void _send(int ch) { serialBridge.write( (char) ch); } // !!!! BEWARE : to look
 
-bool mp3ok = false;
-bool kbdok = false;
+
 
 
 // =============] WiFi [================
 
 #define ACTIVE_WIFI 1
 
-#ifdef ACTIVE_WIFI
+#if ACTIVE_WIFI
+    #warning "WiFi Active code"
+
     #include "ssid_psk.h"
     #ifndef STASSID
         #define STASSID "your-ssid"
@@ -233,8 +244,6 @@ bool kbdok = false;
 
 void setup() {
     pinMode(LED, OUTPUT);  led(false);
-    pinMode(LED2, OUTPUT); led2(false);
-
     setupAddPins();
 
     // Serial.begin(BAUD_SERIAL);
@@ -243,7 +252,7 @@ void setup() {
     setupJoypad();
 
     Serial.begin(115200);
-    serialBridge.begin(115200);
+    // serialBridge.begin(115200);
 
 
    // + system info
@@ -276,25 +285,51 @@ void setup() {
 
 
    led(true); delay(300);
-   led(!true); delay(300);
-   led(true); delay(300);
-   led(!true); delay(300);
-   Serial.println("> Ready to work");
-   serialBridge.println("> Ready to work");
-   led2(false);
+   toogleLed(); delay(300);
+   toogleLed(); delay(300);
+   toogleLed(); delay(300);
+
+   #if not BRIDGE_ON_SERIAL
+     Serial.println("> Ready to work");
+   #endif
+   _send("> Ready to work");
+}
+
+void testWiFi() {
+    _send("Connecting to WiFi ...");
+    bool ok = startWiFi();
+    if ( ok ) {
+        _send("Connected to WiFi");
+
+        _send("Starting telnetd ...");
+        bool ok2 = startTelnetd();
+        if ( ok2 ) {
+            _send("Started telnetd");
+        } else {
+            _send("Could not start telnetd");
+            _send("Closing WiFi...");
+            stopWiFi();
+        }
+    } else {
+        _send("Could not Connect to WiFi");
+    }
+}
+
+
+void testRoutine() {
+    // here the code to be tested ...
+    Serial.println("Enter in tests");
+
+    testWiFi();
+
+    Serial.println("Exit from tests");
 }
 
 int loopCounter = 0;
-
-void _yield() {
-    // deadlock when not using WiFi
-    // prevent from deadlock when using WiFi
-    yield();
-}
-
 void loop() {
     pollJoypad();
 
+    // TMP
     if (mp3ok) {
         if (MP3_PLAYING > -1 && digitalRead(MP3_PLAYING) == HIGH ) {
             Serial.println("MP3 Playing");
@@ -383,6 +418,8 @@ void loop() {
             _send( joypadY );
             _send( joypadB1 );
             _send( joypadB2 );
+        } else if ( ch == 't' ) {
+            testRoutine();
         } else if ( ch == '\n' || ch == '\r' ) {
             // may be some dusty end of line due to terminal 
             // that was used
