@@ -188,6 +188,9 @@ void _send(int ch) { serialBridge.write( (char) ch); } // !!!! BEWARE : to look
     bool telnetdStarted = false;
 
     bool startWiFi(bool staMode=true) {
+        if ( wifiStarted ) {
+            return false;
+        }
         wifiStarted = false;
         WiFi.mode(WIFI_STA);
         WiFi.begin(ssid, password);
@@ -219,6 +222,7 @@ void _send(int ch) { serialBridge.write( (char) ch); } // !!!! BEWARE : to look
     }
 
     bool startTelnetd() {
+        if ( telnetdStarted ) { return false; }
         if ( !wifiStarted ) { return false; }
         telnetdStarted = false;
         server.begin();
@@ -292,26 +296,29 @@ void setup() {
    #if not BRIDGE_ON_SERIAL
      Serial.println("> Ready to work");
    #endif
-   _send("> Ready to work");
+   _send("> Ready to work\n");
 }
 
 void testWiFi() {
-    _send("Connecting to WiFi ...");
+    _send("Connecting to WiFi ...\n");
     bool ok = startWiFi();
     if ( ok ) {
-        _send("Connected to WiFi");
+        _send("Connected to WiFi\n");
 
-        _send("Starting telnetd ...");
+        _send("Starting telnetd ...\n");
         bool ok2 = startTelnetd();
         if ( ok2 ) {
-            _send("Started telnetd");
+            _send("Started telnetd\n");
+            _send("IP: ");
+            _send( getLocalIP() );
+            _send("\n");
         } else {
-            _send("Could not start telnetd");
-            _send("Closing WiFi...");
+            _send("Could not start telnetd\n");
+            _send("Closing WiFi...\n");
             stopWiFi();
         }
     } else {
-        _send("Could not Connect to WiFi");
+        _send("Could not Connect to WiFi\n");
     }
 }
 
