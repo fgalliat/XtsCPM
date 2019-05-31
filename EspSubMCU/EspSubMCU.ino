@@ -165,6 +165,18 @@ void _send(int ch) { serialBridge.write( (char) ch); } // !!!! BEWARE : to look
 #if ACTIVE_WIFI
     #warning "WiFi Active code"
 
+    #define WIFI_CONN_MODE_NONE 0
+    #define WIFI_CONN_MODE_STA  1
+    #define WIFI_CONN_MODE_AP   2
+
+    #define WIFI_USE_MODE_NONE    0
+    #define WIFI_USE_MODE_TELNETD 1
+    #define WIFI_USE_MODE_WGET    2
+
+    uint8_t wifiConnMode = WIFI_CONN_MODE_NONE;
+    uint8_t wifiUseMode  = WIFI_USE_MODE_NONE;
+
+
     #include "ssid_psk.h"
     #ifndef STASSID
         #define STASSID "your-ssid"
@@ -191,6 +203,7 @@ void _send(int ch) { serialBridge.write( (char) ch); } // !!!! BEWARE : to look
             return false;
         }
         wifiStarted = false;
+        wifiConnMode = WIFI_CONN_MODE_NONE;
         WiFi.mode(WIFI_STA);
         WiFi.begin(ssid, password);
         // logger->print("\nConnecting to ");
@@ -208,25 +221,31 @@ void _send(int ch) { serialBridge.write( (char) ch); } // !!!! BEWARE : to look
         // logger->print("connected, address=");
         // logger->println(WiFi.localIP());
         wifiStarted = true;
+        wifiConnMode = WIFI_CONN_MODE_STA;
         return true;
     }
 
     void stopWiFi() {
         WiFi.disconnect();
         wifiStarted = false;
+        wifiConnMode = WIFI_CONN_MODE_NONE;
     }
 
     char* getLocalIP() {
         return (char*) WiFi.localIP().toString().c_str();
     }
 
+    // ===] Server Mode[===
+
     bool startTelnetd() {
         if ( telnetdStarted ) { return false; }
         if ( !wifiStarted ) { return false; }
         telnetdStarted = false;
+        wifiUseMode = WIFI_USE_MODE_NONE;
         server.begin();
         server.setNoDelay(true);
         telnetdStarted = true;
+        wifiUseMode = WIFI_USE_MODE_TELNETD;
         return true;
     }
 
@@ -234,6 +253,56 @@ void _send(int ch) { serialBridge.write( (char) ch); } // !!!! BEWARE : to look
         if ( !telnetdStarted ) { return; }
         server.close();
         telnetdStarted = false;
+        wifiUseMode = WIFI_USE_MODE_NONE;
+    }
+
+    // ===] Client Mode[===
+    /**
+     * BEFORE :
+     * Le croquis utilise 289808 octets (27%) de l'espace de stockage de programmes. Le maximum est de 1044464 octets.
+     * Les variables globales utilisent 28644 octets (34%) de mémoire dynamique, ce qui laisse 53276 octets pour les variables locales. Le maximum est de 81920 octets.
+     * 
+     * AFTER :
+     * Le croquis utilise 299800 octets (28%) de l'espace de stockage de programmes. Le maximum est de 1044464 octets.
+     * Les variables globales utilisent 28948 octets (35%) de mémoire dynamique, ce qui laisse 52972 octets pour les variables locales. Le maximum est de 81920 octets.
+     */
+    #include <ESP8266HTTPClient.h>
+    #include <WiFiClient.h>
+
+    // ex. StarWars API https://swapi.co/api/people/1/ (BEWARE uses https)
+    // ex. http://jigsaw.w3.org/HTTP/connection.html
+    char* wget(char* url) {
+        if ( !wifiStarted ) { return "! Wifi not Started"; }
+
+        WiFiClient client;
+        HTTPClient http;
+
+        Serial.print("[HTTP] begin...\n");
+        if ( http.begin(client, url) ) {
+            Serial.print("[HTTP] GET...\n");
+            // start connection and send HTTP header
+            int httpCode = http.GET();
+
+            // httpCode will be negative on error
+            if (httpCode > 0) {
+                // HTTP header has been send and Server response header has been handled
+                Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+
+                // file found at server
+                if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+                    String payload = http.getString();
+                    Serial.println(payload);
+                }
+            } else {
+                Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+            }
+
+            http.end();
+        } else {
+            Serial.printf("[HTTP] Unable to connect\n");
+        }
+
+        return (char*)"Oups wget return is NYI for now";
     }
 #else
     bool startWiFi() { return false; }
@@ -241,6 +310,7 @@ void _send(int ch) { serialBridge.write( (char) ch); } // !!!! BEWARE : to look
     char* getLocalIP() { return (char*)"0.0.0.0"; }
     bool startTelnetd() { return false; }
     void stopTelnetd() {}
+    char* wget(char* url) { return "404"; }
 #endif
 
 // =============] Core Code [=============
@@ -274,6 +344,7 @@ void setup() {
    // ===== DFPlayer mini MP3 =====
    #if HAS_MP3
     SerialMP3.begin(9600);
+    delay(100);
     if (!myDFPlayer.begin(SerialMP3)) {
         Serial.println(F("> Unable to begin:"));
         Serial.println(F("> 1.Please recheck the connection!"));
@@ -307,18 +378,25 @@ void testWiFi() {
     if ( ok ) {
         _send("Connected to WiFi\n");
 
-        _send("Starting telnetd ...\n");
-        bool ok2 = startTelnetd();
-        if ( ok2 ) {
-            _send("Started telnetd\n");
-            _send("IP: ");
-            _send( getLocalIP() );
-            _send("\n");
-        } else {
-            _send("Could not start telnetd\n");
-            _send("Closing WiFi...\n");
-            stopWiFi();
-        }
+        // _send("Starting telnetd ...\n");
+        // bool ok2 = startTelnetd();
+        // if ( ok2 ) {
+        //     _send("Started telnetd\n");
+        //     _send("IP: ");
+        //     _send( getLocalIP() );
+        //     _send("\n");
+        // } else {
+        //     _send("Could not start telnetd\n");
+        //     _send("Closing WiFi...\n");
+        //     stopWiFi();
+        // }
+
+        _send("Starting httpClient ...\n");
+        char* result = wget("http://jigsaw.w3.org/HTTP/connection.html");
+        _send(result);
+        _send("\n");
+        stopWiFi();
+
     } else {
         _send("Could not Connect to WiFi\n");
     }
