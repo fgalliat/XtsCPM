@@ -23,8 +23,9 @@ void _yield() {
 
 // =============] Devices [================
 
-#define HAS_KEYB 1
-#define HAS_MP3  1
+#define HAS_KEYB    1
+#define HAS_MP3     1
+#define HAS_JOYPAD  0
 
 bool mp3ok = false;
 bool kbdok = false;
@@ -120,24 +121,22 @@ SoftwareSerial SerialX(14,12);
 #endif
 
 // ===========] Joypad [===============
+#if HAS_JOYPAD
+    uint8_t joypadX = 127;
+    uint8_t joypadY = 127;
+    uint8_t joypadB1 = 0;
+    uint8_t joypadB2 = 0;
 
-uint8_t joypadX = 127;
-uint8_t joypadY = 127;
-uint8_t joypadB1 = 0;
-uint8_t joypadB2 = 0;
+    void setupJoypad() {
+    }
 
-void setupJoypad() {
+    void pollJoypad() {
+    }
 
-}
-
-void pollJoypad() {
-
-}
-
-void debugJoypad() {
-    Serial.println("DBUGing Joypad");
-}
-
+    void debugJoypad() {
+        Serial.println("DBUGing Joypad");
+    }
+#endif
 // ===========] Bridge [===============
 
 #define BRIDGE_ON_SERIAL 1
@@ -252,25 +251,28 @@ void setup() {
 
     // Serial.begin(BAUD_SERIAL);
     // Serial.setRxBufferSize(RXBUFFERSIZE);
-
-    setupJoypad();
+    #if HAS_JOYPAD
+        setupJoypad();
+    #endif
 
     Serial.begin(115200);
-    // serialBridge.begin(115200);
+    #if not BRIDGE_ON_SERIAL
+        serialBridge.begin(115200);
+    #endif
 
 
    // + system info
    // > logging info
 
    // ===== Ms ChatPad for XBOX 360 =====
-   #ifdef HAS_KEYB
+   #if HAS_KEYB
     kbdok = setupKeyboard();
    #else
     kbdok = false; // keyboard is NOK
    #endif
 
    // ===== DFPlayer mini MP3 =====
-   #ifdef HAS_MP3
+   #if HAS_MP3
     SerialMP3.begin(9600);
     if (!myDFPlayer.begin(SerialMP3)) {
         Serial.println(F("> Unable to begin:"));
@@ -334,7 +336,9 @@ void testRoutine() {
 
 int loopCounter = 0;
 void loop() {
-    pollJoypad();
+    #if HAS_JOYPAD
+        pollJoypad();
+    #endif
 
     // TMP
     if (mp3ok) {
@@ -419,12 +423,16 @@ void loop() {
               }
             #endif
         } else if ( ch == 'j' ) {
-            debugJoypad();
+            #if HAS_JOYPAD
+                debugJoypad();
 
-            _send( joypadX );
-            _send( joypadY );
-            _send( joypadB1 );
-            _send( joypadB2 );
+                _send( joypadX );
+                _send( joypadY );
+                _send( joypadB1 );
+                _send( joypadB2 );
+            #else
+                _send("NO Joypad");
+            #endif
         } else if ( ch == 't' ) {
             testRoutine();
         } else if ( ch == '\n' || ch == '\r' ) {
