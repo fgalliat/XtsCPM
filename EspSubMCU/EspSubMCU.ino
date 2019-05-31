@@ -150,6 +150,13 @@ SoftwareSerial SerialX(14,12);
 
 int _avail() { return serialBridge.available(); }
 int _read() { return serialBridge.read(); }
+
+int _waitCh() {
+   // _yield() ????
+   while( _avail() <= 0 ) { delay(2); }
+   return _read();
+}
+
 void _send(const char* str) { serialBridge.print(str); }
 void _send(char* str) { serialBridge.print(str); }
 void _send(char ch) { serialBridge.write(ch); }
@@ -195,6 +202,9 @@ void _send(float val) { serialBridge.print(val); }
 
     bool wifiStarted = false;
     bool telnetdStarted = false;
+
+    bool isWiFiStarted() { return wifiStarted; }
+    bool isTelnetdStarted() { return telnetdStarted; }
 
     bool startWiFi(bool staMode=true) {
         if ( wifiStarted ) {
@@ -303,6 +313,8 @@ void _send(float val) { serialBridge.print(val); }
         return (char*)"Oups wget return is NYI for now";
     }
 #else
+    bool isWiFiStarted() { return false; }
+    bool isTelnetdStarted() { return false; }
     bool startWiFi() { return false; }
     void stopWiFi() {}
     char* getLocalIP() { return (char*)"0.0.0.0"; }
@@ -376,7 +388,7 @@ void setup() {
 
 void testWiFi() {
     _send("Connecting to WiFi ...\n");
-    bool ok = startWiFi();
+    bool ok = isWiFiStarted() || startWiFi();
     if ( ok ) {
         _send("Connected to WiFi\n");
 
@@ -440,6 +452,8 @@ void loop() {
             else Serial.println("+m:OK");
             if (!kbdok) Serial.println("+k:NOK");
             else Serial.println("+k:OK");
+            if (!wifiStarted) Serial.println("+w:OFF");
+            else Serial.println("+w:ON");
         } else if ( ch == 'k' ) {
             #ifdef HAS_KEYB
                 if ( !keyboard0.available() ) { 
@@ -536,6 +550,26 @@ void loop() {
             if ( chB == '0' ) blue(false);
             else if ( chB == '1' ) blue(true);
 
+        } else if ( ch == 'w' ) {
+            // WiFi Control
+            int bte = _waitCh();
+            if ( bte >= -1 ) {
+                char subCmd = (char)bte;
+                if ( subCmd == 'c' ) {
+                    char mode = (char)_waitCh();
+                    // 's' -> STA mode
+                    // 'a' -> AP mode
+                    bool ok = isWiFiStarted() || startWiFi( mode != 'a' );
+                    if ( ok ) { _send("Wifi connected : ");_send((const char*) getLocalIP() );_send('\n'); }
+                    else { _send("Wifi not connected\n"); }
+                } else if ( subCmd == 's' ) {
+                    stopWiFi();
+                    _send("Wifi disconnected\n");
+                } else {
+                    Serial.print("WiFi SubComand NYI");
+                    Serial.print('\n');
+                }
+            }
         } else if ( ch == 't' ) {
             testRoutine();
         } else if ( ch == '\n' || ch == '\r' ) {

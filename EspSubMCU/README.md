@@ -39,9 +39,9 @@ void loop() {
 - k -> read keyb buffer **(done)**
 - w -> WiFi **(TODO)**
   - c : connect
-    - s  : STA mode ( w/ SSID[] ) **(tested)**
-    - a : AP mode
-  - s : stop **(tested)**
+    - s  : STA mode ( w/ SSID[] ) **(done)**
+    - a : AP mode **(TODO)**
+  - s : stop **(done)**
   - i : getIP **(tested)**
   - e : getESSID
   - t : telnet
@@ -52,6 +52,6 @@ void loop() {
   - 000 -> RGB all OFF
   - 010 -> -G- only green is ON
 - v -> Voltage Control **(to finish : calibrate)**
-- p -> mp3 control **(to finish)**
+- p -> mp3 control **(to finish : isPlaying() )**
   - p -> play track
   - ...
