@@ -212,35 +212,54 @@ void _send(float val) { serialBridge.print(val); }
         }
         wifiStarted = false;
         wifiConnMode = WIFI_CONN_MODE_NONE;
-        WiFi.mode(WIFI_STA);
-        WiFi.begin(ssid, password);
-        // logger->print("\nConnecting to ");
-        // logger->println(ssid);
-        red(true); green(false);
-        int retry = 0;
-        while (WiFi.status() != WL_CONNECTED) {
-            // logger->print('.');
-            delay(500);
-            if (retry > 10) { return false; }
-            retry++;
+        if ( staMode ) {
+            WiFi.mode(WIFI_STA);
+            WiFi.begin(ssid, password);
+            red(true); green(false);
+            int retry = 0;
+            while (WiFi.status() != WL_CONNECTED) {
+                delay(500);
+                if (retry > 10) { return false; }
+                retry++;
+            }
+            red(false); green(true);
+            wifiConnMode = WIFI_CONN_MODE_STA;
+            wifiStarted = true;
+        } else {
+            WiFi.mode(WIFI_AP);
+            const char* ssid = "YatlShift";
+            const char* password = "yatl";
+            red(true); green(false); 
+            WiFi.softAP(ssid, password);
+            red(false); green(true);
+            wifiConnMode = WIFI_CONN_MODE_AP;
+            wifiStarted = true;
         }
-        red(false); green(true);
-        // logger->println();
-        // logger->print("connected, address=");
-        // logger->println(WiFi.localIP());
-        wifiStarted = true;
-        wifiConnMode = WIFI_CONN_MODE_STA;
-        return true;
+        return wifiStarted;
     }
 
     void stopWiFi() {
+        if (wifiConnMode == WIFI_CONN_MODE_AP) {
+            WiFi.softAPdisconnect();
+        } // else ?
         WiFi.disconnect();
         wifiStarted = false;
         wifiConnMode = WIFI_CONN_MODE_NONE;
     }
 
+    // TODO : finish char* return
+    const int IPlen = 3+1+3+1+3+1+3;
+    char ip[IPlen+1];
     char* getLocalIP() {
-        return (char*) WiFi.localIP().toString().c_str();
+        memset(ip, 0x00, IPlen+1);
+        if (wifiConnMode == WIFI_CONN_MODE_STA) {
+            strcpy(ip, WiFi.localIP().toString().c_str() );
+        } else if (wifiConnMode == WIFI_CONN_MODE_AP) {
+            strcpy(ip, WiFi.softAPIP().toString().c_str() );
+        } else {
+            strcpy(ip, "0.0.0.0");
+        }
+        return ip;
     }
 
     // ===] Server Mode[===
