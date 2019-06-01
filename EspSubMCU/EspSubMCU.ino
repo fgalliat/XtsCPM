@@ -227,10 +227,15 @@ void _send(float val) { serialBridge.print(val); }
             wifiStarted = true;
         } else {
             WiFi.mode(WIFI_AP);
-            const char* ssid = "YatlShift";
-            const char* password = "yatl";
+            delay(200);
+            const char* _ssid = "YatlShift";
+            // must be longer then 8 chars
+            const char* _password = "yatlshift";
             red(true); green(false); 
-            WiFi.softAP(ssid, password);
+            bool ok = WiFi.softAP(_ssid, _password);
+            if ( !ok ) {
+                return false;
+            }
             red(false); green(true);
             wifiConnMode = WIFI_CONN_MODE_AP;
             wifiStarted = true;
