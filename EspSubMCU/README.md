@@ -48,10 +48,14 @@ void loop() {
     - o : open **(tested)**
     - c : close
   - g : get URL content (wget/curl like) **(tested)**
+    - 2 ways returning result :
+      - by KbdLine
+      - by WriteRam of a pre-allocated string (passed as input param of BdosCall)
 - l -> led control **(to finish : kbPoll deactivates LEDs for now)**
   - 000 -> RGB all OFF
   - 010 -> -G- only green is ON
 - v -> Voltage Control **(to finish : calibrate)**
+  - 2.98 on Pocket w/o pwr supply -> 2.96 w/ (Pocket & surfacePro3...)
 - p -> mp3 control **(to finish : isPlaying() )**
   - p -> play track
   - ...
