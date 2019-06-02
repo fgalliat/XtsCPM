@@ -252,7 +252,6 @@ void _send(float val) { serialBridge.print(val); }
         wifiConnMode = WIFI_CONN_MODE_NONE;
     }
 
-    // TODO : finish char* return
     const int IPlen = 3+1+3+1+3+1+3;
     char ip[IPlen+1];
     char* getLocalIP() {
@@ -265,6 +264,20 @@ void _send(float val) { serialBridge.print(val); }
             strcpy(ip, "0.0.0.0");
         }
         return ip;
+    }
+
+    char currentSsid[32+1]
+    char* getSSID() {
+        memset(currentSsid, 0x00, 32+1);
+        if (wifiConnMode == WIFI_CONN_MODE_STA) {
+            strcpy(currentSsid, ssid );
+        } else if (wifiConnMode == WIFI_CONN_MODE_AP) {
+            // TODO : finish that
+            strcpy(currentSsid, "YatlShift" );
+        } else {
+            strcpy(currentSsid, "None");
+        }
+        return currentSsid;
     }
 
     // ===] Server Mode[===
@@ -342,6 +355,7 @@ void _send(float val) { serialBridge.print(val); }
     bool startWiFi() { return false; }
     void stopWiFi() {}
     char* getLocalIP() { return (char*)"0.0.0.0"; }
+    char* getSSID() { return (char*)"None"; }
     bool startTelnetd() { return false; }
     void stopTelnetd() {}
     char* wget(char* url) { return "404"; }
@@ -589,6 +603,12 @@ void loop() {
                 } else if ( subCmd == 's' ) {
                     stopWiFi();
                     _send("Wifi disconnected\n");
+                } else if ( subCmd == 'i' ) {
+                    // getIP
+                    _send((const char*) getLocalIP() );_send('\n');
+                } else if ( subCmd == 'e' ) {
+                    // getESSID
+                    _send((const char*) getSSID() );_send('\n');
                 } else {
                     Serial.print("WiFi SubComand NYI");
                     Serial.print('\n');

@@ -42,8 +42,8 @@ void loop() {
     - s  : STA mode ( w/ SSID[] ) **(done)**
     - a : AP mode **(done)**
   - s : stop **(done)**
-  - i : getIP **(tested)**
-  - e : getESSID
+  - i : getIP **(written to be tested)**
+  - e : getESSID **(written to be tested)**
   - t : telnet
     - o : open **(tested)**
     - c : close
