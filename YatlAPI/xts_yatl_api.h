@@ -23,6 +23,7 @@ class YatlSubMCU {
       void send(const char* ch);
       void send(char* ch);
 
+      int available();
       int read();
       char* readLine();
 };
@@ -43,6 +44,7 @@ class YatlBuzzer {
     public:
       YatlBuzzer(Yatl* yatl) { this->yatl = yatl; }
       void tone(int freq, int duration);
+      void beep(int freq, int duration);
       void noTone();
 };
 
@@ -70,8 +72,20 @@ class YatlFS {
 
 class YatlWiFi {
     private:
+    Yatl* yatl;
     public:
-      YatlWiFi();
+      YatlWiFi(Yatl* yatl) { this->yatl = yatl; }
+
+      bool beginSTA();
+      bool beginAP();
+      void close();
+
+      char* getIP();
+      char* getSSID();
+
+      bool startTelnetd();
+      bool stopTelnetd();
+      char* wget(char* url);
 };
 
 class YatlScreen {
@@ -94,8 +108,13 @@ class YatlKeyboard {
 
 class YatlLEDs {
     private:
+      Yatl* yatl;
     public:
-      YatlLEDs();
+      YatlLEDs(Yatl* yatl) { this->yatl = yatl; }
+      void red(bool state=true);
+      void green(bool state=true);
+      void blue(bool state=true);
+      void builtin(bool state=true);
 };
 
 
@@ -103,6 +122,9 @@ class Yatl {
     private:
       YatlSubMCU* subMcu;
       YatlBuzzer* buzzer;
+      YatlPWRManager* pwrManager;
+      YatlLEDs* leds;
+      YatlWiFi* wifi;
     public:
       Yatl();
       ~Yatl();
@@ -124,14 +146,17 @@ class Yatl {
       void led(bool state);
       void blink(int times);
 
-      YatlPWRManager* getPWRManager();
+      // TODO : look at protected
+      YatlSubMCU* getSubMCU() { return this->subMcu; }
 
-      YatlBuzzer* getBuzzer();
+      YatlPWRManager* getPWRManager() { return this->pwrManager; }
+
+      YatlBuzzer* getBuzzer() { return this->buzzer; }
       YatlMusicPlayer* getMusicPlayer();
 
       YatlClock* getClock();
 
-      YatlLEDs* getLEDs();
+      YatlLEDs* getLEDs() { return this->leds; }
 
       YatlScreen* getScreen();
       YatlKeyboard* getKeyboard();
@@ -139,7 +164,7 @@ class Yatl {
 
       YatlFS* getFS();
 
-      YatlWiFi* getWiFi();
+      YatlWiFi* getWiFi() { return this->wifi; }
 
 };
 

@@ -20,6 +20,7 @@ void setup() {
 }
 
 void loop() {
-    
+    Serial.print("Voltage : ");
+    Serial.println( yatl.getPWRManager()->getVoltage() );
     delay(2);
 }
