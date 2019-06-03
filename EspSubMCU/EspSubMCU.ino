@@ -266,7 +266,7 @@ void _send(float val) { serialBridge.print(val); }
         return ip;
     }
 
-    char currentSsid[32+1]
+    char currentSsid[32+1];
     char* getSSID() {
         memset(currentSsid, 0x00, 32+1);
         if (wifiConnMode == WIFI_CONN_MODE_STA) {
