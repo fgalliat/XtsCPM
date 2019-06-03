@@ -1,3 +1,7 @@
+// just for devl purposes
+#define ARDUINO 1
+
+
 #ifdef ARDUINO
  /**
  * Xtase - fgalliat @Jun2019
@@ -19,6 +23,7 @@
     YatlPWRManager _pwrManager(&yatl);
     YatlLEDs _leds(&yatl);
     YatlWiFi _wifi(&yatl);
+    YatlMusicPlayer _mp3(&yatl);
 
     Yatl::Yatl() {
         this->subMcu = &_subMcu;
@@ -26,6 +31,7 @@
         this->pwrManager = &_pwrManager;
         this->leds = &_leds;
         this->wifi = &_wifi;
+        this->mp3 = &_mp3;
     }
 
     Yatl::~Yatl() {
@@ -156,4 +162,30 @@
     // bool YatlWiFi::startTelnetd();
     // bool YatlWiFi::stopTelnetd();
     // char* YatlWiFi::wget(char* url);
+
+    // ==============] MP3 [==================
+
+    void YatlMusicPlayer::play(int trackNum) { 
+        uint8_t d0 = trackNum / 256;
+        uint8_t d1 = trackNum % 256;
+        this->yatl->getSubMCU()->send("pp");
+        this->yatl->getSubMCU()->send(d0);
+        this->yatl->getSubMCU()->send(d1);
+    }
+    void YatlMusicPlayer::loop(int trackNum) {
+        uint8_t d0 = trackNum / 256;
+        uint8_t d1 = trackNum % 256;
+        this->yatl->getSubMCU()->send("pl");
+        this->yatl->getSubMCU()->send(d0);
+        this->yatl->getSubMCU()->send(d1);
+    }
+    void YatlMusicPlayer::stop() { this->yatl->getSubMCU()->send("ps"); }
+    void YatlMusicPlayer::pause() { this->yatl->getSubMCU()->send("pP"); }
+    void YatlMusicPlayer::next() { this->yatl->getSubMCU()->send("pn"); }
+    void YatlMusicPlayer::prev() { this->yatl->getSubMCU()->send("pv"); }
+    void YatlMusicPlayer::volume(uint8_t vol) {
+        this->yatl->getSubMCU()->send("pV");
+        this->yatl->getSubMCU()->send(vol%256);
+    }
+
 #endif

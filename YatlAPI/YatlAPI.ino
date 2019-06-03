@@ -17,10 +17,14 @@ void setup() {
         Serial.println("Yatl failed to initialize !");
         while( true ) { delay(2000); }
     }
+
+    yatl.dbug("Wait for SubMcu ready....");
+    yatl.delay(3000);
+    yatl.getMusicPlayer()->play(65);
 }
 
 void loop() {
     Serial.print("Voltage : ");
     Serial.println( yatl.getPWRManager()->getVoltage() );
-    delay(2);
+    yatl.delay(200);
 }

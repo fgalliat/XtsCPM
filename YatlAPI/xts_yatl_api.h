@@ -50,10 +50,16 @@ class YatlBuzzer {
 
 class YatlMusicPlayer {
     private:
+      Yatl* yatl;
     public:
-      YatlMusicPlayer();
+      YatlMusicPlayer(Yatl* yatl) { this->yatl = yatl; }
       void play(int trackNum);
+      void loop(int trackNum);
       void stop();
+      void pause();
+      void next();
+      void prev();
+      void volume(uint8_t vol);
 };
 
 class YatlClock {
@@ -125,6 +131,7 @@ class Yatl {
       YatlPWRManager* pwrManager;
       YatlLEDs* leds;
       YatlWiFi* wifi;
+      YatlMusicPlayer* mp3;
     public:
       Yatl();
       ~Yatl();
@@ -152,7 +159,7 @@ class Yatl {
       YatlPWRManager* getPWRManager() { return this->pwrManager; }
 
       YatlBuzzer* getBuzzer() { return this->buzzer; }
-      YatlMusicPlayer* getMusicPlayer();
+      YatlMusicPlayer* getMusicPlayer() { return this->mp3; }
 
       YatlClock* getClock();
 
