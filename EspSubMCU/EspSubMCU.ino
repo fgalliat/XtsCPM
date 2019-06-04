@@ -6,6 +6,11 @@
  * 
  * Le croquis utilise 277344 octets (26%) de l'espace de stockage de programmes. Le maximum est de 1044464 octets.
  * Les variables globales utilisent 27416 octets (33%) de mémoire dynamique, ce qui laisse 54504 octets pour les variables locales. Le maximum est de 81920 octets.
+ * 
+ * wca -> WiFi Connect Apmode
+ * wto -> WiFi Telnetd Open
+ * wtc -> WiFi Telnetd Close
+ * ws  -> WiFi Stop
  */
 
 #include <ESP8266WiFi.h>
@@ -301,6 +306,59 @@ void _send(float val) { serialBridge.print(val); }
         wifiUseMode = WIFI_USE_MODE_NONE;
     }
 
+    #define logger (&Serial)
+
+    void loopTelnetd() {
+        if (!telnetdStarted) { return; }
+
+        //check if there are any new clients
+        if (server.hasClient()) {
+            //find free/disconnected spot
+            int i;
+            for (i = 0; i < MAX_SRV_CLIENTS; i++)
+            if (!serverClients[i]) { // equivalent to !serverClients[i].connected()
+                serverClients[i] = server.available();
+                logger->print("New client: index ");
+                logger->print(i);
+                break;
+            }
+
+            //no free/disconnected spot so reject
+            if (i == MAX_SRV_CLIENTS) {
+                server.available().println("busy");
+                // hints: server.available() is a WiFiClient with short-term scope
+                // when out of scope, a WiFiClient will
+                // - flush() - all data will be sent
+                // - stop() - automatically too
+                logger->printf("server is busy with %d active connections\n", MAX_SRV_CLIENTS);
+            }
+        }
+
+        // ---------------------
+
+        // === telnet as Keyb Mode ===
+
+        //check TCP clients for data
+        for (int i = 0; i < MAX_SRV_CLIENTS; i++) {
+            while (serverClients[i].available() && Serial.availableForWrite() > 0) {
+                // working char by char is not very efficient
+                char ch = serverClients[i].read();
+                if ( ch == ':' ) {
+                    ch = serverClients[i].read();
+                    if ( ch == 'q' ) {
+                        serverClients[i].stop();
+                        break;
+                    }
+                    // Serial.write( ch );
+                    _send(ch);
+                }
+                // Serial.write( ch );
+                _send(ch);
+            }
+        }
+
+    }
+
     // ===] Client Mode[===
     /**
      * BEFORE :
@@ -470,6 +528,10 @@ void loop() {
         pollJoypad();
     #endif
 
+    #if ACTIVE_WIFI
+        if (telnetdStarted) { loopTelnetd(); }
+    #endif
+
     // TMP
     if (mp3ok) {
         if (MP3_PLAYING > -1 && digitalRead(MP3_PLAYING) == HIGH ) {
@@ -609,6 +671,19 @@ void loop() {
                 } else if ( subCmd == 'e' ) {
                     // getESSID
                     _send((const char*) getSSID() );_send('\n');
+                } else if ( subCmd == 't' ) {
+                    // telnet control
+                    char mode = (char)_waitCh();
+                    if ( mode == 'o' ) {
+                        // Open - "wto"
+                        bool ok = isWiFiStarted() && startTelnetd();
+                        if ( ok ) { _send("Telnetd opened : ");_send((const char*) getLocalIP() );_send(":23\n"); }
+                        else { _send("Telnetd not opened\n"); }
+                    } else if ( mode == 'c' ) {
+                        // Close - "wtc"
+                        stopTelnetd();
+                    } 
+                    
                 } else {
                     Serial.print("WiFi SubComand NYI");
                     Serial.print('\n');
