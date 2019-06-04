@@ -321,6 +321,11 @@ void _send(float val) { serialBridge.print(val); }
 
     #define logger (&Serial)
 
+    #define TELNET_MODE_NONE 0
+    #define TELNET_MODE_KEYB 1 
+
+    int telnetMode = TELNET_MODE_NONE;
+
     void loopTelnetd() {
         if (!telnetdStarted) { return; }
 
@@ -332,7 +337,8 @@ void _send(float val) { serialBridge.print(val); }
             if (!serverClients[i]) { // equivalent to !serverClients[i].connected()
                 serverClients[i] = server.available();
                 logger->print("New client: index ");
-                logger->print(i);
+                logger->println(i);
+                telnetMode = TELNET_MODE_KEYB;
                 break;
             }
 
@@ -353,6 +359,7 @@ void _send(float val) { serialBridge.print(val); }
 
         //check TCP clients for data
         for (int i = 0; i < MAX_SRV_CLIENTS; i++) {
+            bool hadSome = false;
             while (serverClients[i].available() && Serial.availableForWrite() > 0) {
                 // working char by char is not very efficient
                 char ch = serverClients[i].read();
@@ -367,6 +374,10 @@ void _send(float val) { serialBridge.print(val); }
                 }
                 // Serial.write( ch );
                 _send(ch);
+                hadSome = true;
+            }
+            if (hadSome && telnetMode == TELNET_MODE_KEYB) {
+                    _send( 0x00 );
             }
         }
 
