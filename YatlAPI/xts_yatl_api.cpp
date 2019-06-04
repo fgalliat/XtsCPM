@@ -134,7 +134,7 @@
     // ===============] PWR [=================
 
     float YatlPWRManager::getVoltage() {
-        this->yatl->getSubMCU()->send('i');
+        this->yatl->getSubMCU()->send('v');
         float volt = -1.0f;
         volt = atof( this->yatl->getSubMCU()->readLine() );
         return volt;
