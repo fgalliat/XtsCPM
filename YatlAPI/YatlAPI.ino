@@ -46,6 +46,11 @@ void setup() {
     yatl.getMusicPlayer()->next();
 
     yatl.getBuzzer()->playTuneFile("mario.t53");
+    for(int i=0; i < 10; i++) {
+        // TODO : cleanBuffer
+        while( yatl.getSubMCU()->available() ) { yatl.getSubMCU()->read(); }
+        delay(100);
+    }
 }
 
 int loopCpt = 0;
