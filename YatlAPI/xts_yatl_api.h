@@ -41,11 +41,27 @@ class YatlPWRManager {
 class YatlBuzzer {
     private:
       Yatl* yatl;
+      bool _mute = false;
     public:
       YatlBuzzer(Yatl* yatl) { this->yatl = yatl; }
+      void setup();
+
+      void mute(bool _mute=true) { this->_mute = _mute; }
+
       void tone(int freq, int duration);
       void beep(int freq, int duration);
       void noTone();
+
+      /**
+       * plays a note or pseudo freq.
+       * duration is a 1/50th
+       */
+      void playNote(int noteOrFreq, int duration);
+
+      // ex. "AC#B"
+      void playTuneString(const char* notes);
+      // ex. "MONKEY.T5K"
+      bool playTuneFile(const char* tuneFileName);
 };
 
 class YatlMusicPlayer {
@@ -72,13 +88,16 @@ class YatlClock {
 
 class YatlFS {
     private:
+      Yatl* yatl;
     public:
-      YatlFS();
+      YatlFS(Yatl* yatl) { this->yatl = yatl; }
+      bool setup();
+      char* getAssetsFileEntry(char* entryName);
 };
 
 class YatlWiFi {
     private:
-    Yatl* yatl;
+      Yatl* yatl;
     public:
       YatlWiFi(Yatl* yatl) { this->yatl = yatl; }
 
@@ -132,6 +151,7 @@ class Yatl {
       YatlLEDs* leds;
       YatlWiFi* wifi;
       YatlMusicPlayer* mp3;
+      YatlFS* fs;
     public:
       Yatl();
       ~Yatl();
@@ -169,7 +189,7 @@ class Yatl {
       YatlKeyboard* getKeyboard();
       YatlJoypad* getJoypad();
 
-      YatlFS* getFS();
+      YatlFS* getFS() { return this->fs; }
 
       YatlWiFi* getWiFi() { return this->wifi; }
 

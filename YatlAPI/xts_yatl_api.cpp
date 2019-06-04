@@ -1,5 +1,5 @@
 // just for devl purposes
-#define ARDUINO 1
+// #define ARDUINO 1
 
 
 #ifdef ARDUINO
@@ -17,6 +17,8 @@
     #include "xts_yatl_settings.h"
     #include "xts_yatl_api.h"
 
+    #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
+
     extern Yatl yatl;
     YatlSubMCU _subMcu(&yatl);
     YatlBuzzer _buzzer(&yatl);
@@ -24,6 +26,7 @@
     YatlLEDs _leds(&yatl);
     YatlWiFi _wifi(&yatl);
     YatlMusicPlayer _mp3(&yatl);
+    YatlFS _fs(&yatl);
 
     Yatl::Yatl() {
         this->subMcu = &_subMcu;
@@ -32,6 +35,7 @@
         this->leds = &_leds;
         this->wifi = &_wifi;
         this->mp3 = &_mp3;
+        this->fs = &_fs;
     }
 
     Yatl::~Yatl() {
@@ -44,7 +48,13 @@
         pinMode( BUILTIN_LED, OUTPUT );
         this->led(false);
 
-        bool ok = this->subMcu->setup();
+        this->buzzer->setup();
+
+        bool ok;
+        ok = this->getFS()->setup();
+        if (!ok) { this->warn("SD not ready !"); }
+
+        ok = this->subMcu->setup();
         if (!ok) { this->warn("SubMCU Setup Failed"); }
 
         this->delay(200);
@@ -95,15 +105,26 @@
         // TODO : screen warning box
     }
 
-    // ===============] BUZZER [===============
+    // ===============] FileSystem [===========
+    // ex. MONKEY.T5K -> /Z/0/MONKEY.T5K
+    // spe DISK for assets : "Z:"
+    // 'cause CP/M supports ONLY up to P:
 
-    void YatlBuzzer::noTone() { ::noTone( BUILTIN_BUZZER ); }
-    void YatlBuzzer::tone(int freq, int duration) { ::tone( BUILTIN_BUZZER, freq, duration ); }
+    const int _fullyQualifiedFileNameSize = 5 + (8+1+3) + 1;
+    char _assetEntry[ _fullyQualifiedFileNameSize ];
 
-    void YatlBuzzer::beep(int freq, int duration) { 
-        ::tone( BUILTIN_BUZZER, freq, duration ); 
-        this->yatl->delay( duration );
-        ::noTone( BUILTIN_BUZZER );
+    SdFatSdio SD;
+
+    bool YatlFS::setup() {
+        return SD.begin();
+    }
+
+    // not ThreadSafe !
+    char* YatlFS::getAssetsFileEntry(char* assetName) {
+        memset(_assetEntry, 0x00, _fullyQualifiedFileNameSize);
+        strcpy( _assetEntry, "/Z/0/" );
+        strcat( _assetEntry, assetName );
+        return _assetEntry;
     }
 
     // ===============] SubMCU [===============

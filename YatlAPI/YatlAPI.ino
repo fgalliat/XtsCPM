@@ -44,6 +44,8 @@ void setup() {
     while( yatl.getSubMCU()->available() ) { yatl.getSubMCU()->read(); }
 
     yatl.getMusicPlayer()->next();
+
+    yatl.getBuzzer()->playTuneFile("mario.t53");
 }
 
 int loopCpt = 0;
