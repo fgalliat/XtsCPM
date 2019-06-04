@@ -393,32 +393,37 @@ void _send(float val) { serialBridge.print(val); }
         WiFiClient client;
         HTTPClient http;
 
-        Serial.print("[HTTP] begin...\n");
+        // Serial.print("[HTTP] begin...\n");
         if ( http.begin(client, url) ) {
-            Serial.print("[HTTP] GET...\n");
+            // Serial.print("[HTTP] GET...\n");
             // start connection and send HTTP header
             int httpCode = http.GET();
 
             // httpCode will be negative on error
             if (httpCode > 0) {
                 // HTTP header has been send and Server response header has been handled
-                Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+                // Serial.printf("[HTTP] GET... code: %d\n", httpCode);
 
                 // file found at server
                 if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
                     String payload = http.getString();
+                    // print directly on Brigde
                     Serial.println(payload);
                 }
             } else {
-                Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+                char ret[64+1];
+                memset(ret, 0x00, 64+1); 
+                sprintf( ret, "-NOK HTTP %s", http.errorToString(httpCode).c_str() );
+                return ret;
             }
 
             http.end();
+            return "+OK";
         } else {
-            Serial.printf("[HTTP] Unable to connect\n");
+            return (char*)"-NOK Could not connect";
         }
 
-        return (char*)"Oups wget return is NYI for now";
+        return (char*)"-NOK Something went wrong";
     }
 #else
     bool isWiFiStarted() { return false; }
@@ -699,9 +704,10 @@ void loop() {
                 } else if ( subCmd == 'g' ) {
                     // wget '....\n' - beware w/ EOL & Arduino Serial Monitor ....
                     char* url = _readLine();
-                    Serial.println("Will fetch ");
-                    Serial.println(url);
+                    // Serial.println("Will fetch ");
+                    // Serial.println(url);
                     _send( (const char*)wget(url) );
+                    _send( '\n' );
                 } else {
                     Serial.print("WiFi SubComand NYI");
                     Serial.print('\n');
