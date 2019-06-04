@@ -10,6 +10,11 @@
  * wca -> WiFi Connect Apmode
  * wto -> WiFi Telnetd Open
  * wtc -> WiFi Telnetd Close
+ * 
+ * wghttp://jigsaw.w3.org/HTTP/connection.html\n
+ * **                                         **
+ *  -> will fetch that URL
+ * 
  * ws  -> WiFi Stop
  */
 
@@ -160,6 +165,14 @@ int _waitCh() {
    // _yield() ????
    while( _avail() <= 0 ) { delay(2); }
    return _read();
+}
+
+#define MAX_BRIDGE_LINE_LEN 255
+char lastBridgeLine[MAX_BRIDGE_LINE_LEN+1];
+char* _readLine() {
+    memset(lastBridgeLine, 0x00, MAX_BRIDGE_LINE_LEN+1);
+    serialBridge.readBytesUntil( '\n', lastBridgeLine, MAX_BRIDGE_LINE_LEN );
+    return lastBridgeLine;
 }
 
 void _send(const char* str) { serialBridge.print(str); }
@@ -683,7 +696,12 @@ void loop() {
                         // Close - "wtc"
                         stopTelnetd();
                     } 
-                    
+                } else if ( subCmd == 'g' ) {
+                    // wget '....\n' - beware w/ EOL & Arduino Serial Monitor ....
+                    char* url = _readLine();
+                    Serial.println("Will fetch ");
+                    Serial.println(url);
+                    _send( (const char*)wget(url) );
                 } else {
                     Serial.print("WiFi SubComand NYI");
                     Serial.print('\n');
