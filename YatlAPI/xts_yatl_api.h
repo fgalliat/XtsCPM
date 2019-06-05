@@ -18,6 +18,7 @@ class YatlSubMCU {
       YatlSubMCU(Yatl* yatl) { this->yatl = yatl; }
 
       bool setup();
+      void reboot(bool waitFor=true);
 
       void send(char ch);
       void send(const char* ch);
@@ -26,6 +27,8 @@ class YatlSubMCU {
       int available();
       int read();
       char* readLine();
+
+      void cleanBuffer();
 };
 
 class YatlPWRManager {

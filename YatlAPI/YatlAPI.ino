@@ -18,8 +18,9 @@ void setup() {
         while( true ) { delay(2000); }
     }
 
-    // TODO : cleanBuffer
-    while( yatl.getSubMCU()->available() ) { yatl.getSubMCU()->read(); }
+    yatl.getSubMCU()->reboot(); // reboot SubMCU
+
+    yatl.getSubMCU()->cleanBuffer();
 
     yatl.getBuzzer()->beep(440, 200);
 
@@ -30,25 +31,29 @@ void setup() {
     yatl.getMusicPlayer()->next();
     yatl.getMusicPlayer()->volume(15);
 
-    // remember that SubMCU might not reseted ...
-    yatl.getWiFi()->close();
-    // TODO : cleanBuffer
-    while( yatl.getSubMCU()->available() ) { yatl.getSubMCU()->read(); }
+    // // remember that SubMCU might not be reseted ...
+    // yatl.getWiFi()->close();
+    // delay(500);
+    // yatl.getSubMCU()->cleanBuffer();
 
+    bool ok;
     yatl.dbug("Wait for WiFi STA....");
-    yatl.getWiFi()->beginSTA();
+    ok = yatl.getWiFi()->beginSTA();
     // yatl.dbug("Wait for WiFi AP....");
-    // yatl.getWiFi()->beginAP();
+    // ok = yatl.getWiFi()->beginAP();
 
-    // TODO : cleanBuffer
-    while( yatl.getSubMCU()->available() ) { yatl.getSubMCU()->read(); }
+    if (ok) {
+        Serial.println("WiFi OK");
+    } else {
+        Serial.println("WiFi Failed");
+    }
 
     yatl.getMusicPlayer()->next();
 
     yatl.getBuzzer()->playTuneFile("mario.t53");
+
     for(int i=0; i < 10; i++) {
-        // TODO : cleanBuffer
-        while( yatl.getSubMCU()->available() ) { yatl.getSubMCU()->read(); }
+        yatl.getSubMCU()->cleanBuffer();
         delay(100);
     }
 }
@@ -56,6 +61,14 @@ void setup() {
 int loopCpt = 0;
 
 void loop() {
+    if ( Serial.available() ) {
+        char ch = (char)Serial.read();
+        if ( ch == 'r' ) {
+            yatl.getPWRManager()->reset();
+        }
+    }
+
+
     Serial.print("Voltage : ");
     Serial.println( yatl.getPWRManager()->getVoltage() );
     yatl.delay(100);

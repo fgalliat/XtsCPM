@@ -137,6 +137,11 @@
         return true;
     }
 
+    void YatlSubMCU::reboot(bool waitFor) {
+        this->send('r');
+        if (waitFor) { delay(1000); }
+    }
+
     void YatlSubMCU::send(char ch) { BRIDGE_MCU_SERIAL.write( ch ); }
     void YatlSubMCU::send(const char* str) { BRIDGE_MCU_SERIAL.print( str ); }
     void YatlSubMCU::send(char* str) { BRIDGE_MCU_SERIAL.print( str ); }
@@ -152,6 +157,10 @@
         return lastSubMCULine;
     }
 
+    void YatlSubMCU::cleanBuffer() {
+        while( this->available() ) { this->read(); }
+    }
+
     // ===============] PWR [=================
 
     float YatlPWRManager::getVoltage() {
@@ -160,9 +169,23 @@
         volt = atof( this->yatl->getSubMCU()->readLine() );
         return volt;
     }
+
+    #define RESTART_ADDR 0xE000ED0C
+    #define READ_RESTART() (*(volatile uint32_t *)RESTART_ADDR)
+    #define WRITE_RESTART(val) ((*(volatile uint32_t *)RESTART_ADDR) = (val))
+    void softReset() {
+        WRITE_RESTART(0x5FA0004);
+    }
+
+
     // wholeSystem -> BOTH Main & SubMCU
-    void YatlPWRManager::reset(bool wholeSystem) { /*TODO*/ this->yatl->warn("RESET NYI"); }
-    void YatlPWRManager::deepSleep(bool wholeSystem) { /*TODO*/ this->yatl->warn("DEEPSLEEP NYI"); }
+    void YatlPWRManager::reset(bool wholeSystem) { 
+        this->yatl->warn("Rebooting !");
+        this->yatl->getSubMCU()->reboot(!false);
+        softReset();
+    }
+
+    void YatlPWRManager::deepSleep(bool wholeSystem) { /*TODO*/ this->yatl->warn("DEEPSLEEP NYI"); this->yatl->getSubMCU()->send("h"); }
 
     // ==============] LEDs [==================
 
@@ -173,9 +196,39 @@
 
     // ==============] WiFi [==================
 
-    bool YatlWiFi::beginSTA() { this->yatl->getSubMCU()->send("wcs"); /*TODO*/ return true; }
-    bool YatlWiFi::beginAP() { this->yatl->getSubMCU()->send("wca"); /*TODO*/ return true; }
-    void YatlWiFi::close() { this->yatl->getSubMCU()->send("ws"); }
+    bool YatlWiFi::beginSTA() { 
+        this->yatl->getSubMCU()->send("wcs");
+        int cpt = 0;
+        while( this->yatl->getSubMCU()->available() == 0 ) {
+            delay(100);
+            if ( cpt >= 999 ) { break; }
+            cpt++;
+        }
+        char* resp = this->yatl->getSubMCU()->readLine();
+        ::delay(200);
+        // Serial.println("----------->");
+        // Serial.println(resp);
+        // Serial.println("----------->");
+        return strlen(resp) > 0 && resp[0] == '+';
+    }
+    bool YatlWiFi::beginAP() { 
+        this->yatl->getSubMCU()->send("wca");
+        int cpt = 0;
+        while( this->yatl->getSubMCU()->available() == 0 ) {
+            delay(100);
+            if ( cpt >= 999 ) { break; }
+            cpt++;
+        }
+        ::delay(200);
+        char* resp = this->yatl->getSubMCU()->readLine();
+        return strlen(resp) > 0 && resp[0] == '+';
+    }
+
+    void YatlWiFi::close() { 
+        this->yatl->getSubMCU()->send("ws"); 
+        ::delay(200);
+        this->yatl->getSubMCU()->readLine(); 
+    }
 
     char* YatlWiFi::getIP() { this->yatl->getSubMCU()->send("wi"); return this->yatl->getSubMCU()->readLine(); }
     char* YatlWiFi::getSSID() { this->yatl->getSubMCU()->send("we"); return this->yatl->getSubMCU()->readLine(); }
