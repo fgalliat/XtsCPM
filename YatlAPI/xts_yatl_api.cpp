@@ -1,5 +1,5 @@
 // just for devl purposes
-// #define ARDUINO 1
+#define ARDUINO 1
 
 
 #ifdef ARDUINO
@@ -27,6 +27,7 @@
     YatlWiFi _wifi(&yatl);
     YatlMusicPlayer _mp3(&yatl);
     YatlFS _fs(&yatl);
+    YatlKeyboard _keyb(&yatl);
 
     Yatl::Yatl() {
         this->subMcu = &_subMcu;
@@ -36,6 +37,7 @@
         this->wifi = &_wifi;
         this->mp3 = &_mp3;
         this->fs = &_fs;
+        this->keyb = &_keyb;
     }
 
     Yatl::~Yatl() {
@@ -56,6 +58,9 @@
 
         ok = this->subMcu->setup();
         if (!ok) { this->warn("SubMCU Setup Failed"); }
+
+        ok = this->keyb->setup();
+        if (!ok) { this->warn("Keyb Setup Failed"); }
 
         this->delay(200);
 
@@ -148,6 +153,11 @@
 
     int YatlSubMCU::available() { return BRIDGE_MCU_SERIAL.available(); }
     int YatlSubMCU::read() { return BRIDGE_MCU_SERIAL.read(); }
+
+    int YatlSubMCU::readUntil(uint8_t until, char* dest, int maxLen) {
+      int readed = BRIDGE_MCU_SERIAL.readBytesUntil((char)until, dest, maxLen);
+    return readed;
+  }
 
     #define MAX_SUBMCU_LINE_LEN 255
     char lastSubMCULine[MAX_SUBMCU_LINE_LEN+1];

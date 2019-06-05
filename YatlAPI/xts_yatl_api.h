@@ -27,6 +27,7 @@ class YatlSubMCU {
       int available();
       int read();
       char* readLine();
+      int readUntil(uint8_t until, char* dest, int maxLen);
 
       void cleanBuffer();
 };
@@ -130,8 +131,13 @@ class YatlJoypad {
 
 class YatlKeyboard {
     private:
+      Yatl* yatl;
     public:
-      YatlKeyboard();
+      YatlKeyboard(Yatl* yatl) { this->yatl = yatl; }
+      bool setup();
+      void poll();
+      int available();
+      int read();
 };
 
 class YatlLEDs {
@@ -155,6 +161,7 @@ class Yatl {
       YatlWiFi* wifi;
       YatlMusicPlayer* mp3;
       YatlFS* fs;
+      YatlKeyboard* keyb;
     public:
       Yatl();
       ~Yatl();
@@ -189,7 +196,7 @@ class Yatl {
       YatlLEDs* getLEDs() { return this->leds; }
 
       YatlScreen* getScreen();
-      YatlKeyboard* getKeyboard();
+      YatlKeyboard* getKeyboard() { return this->keyb; }
       YatlJoypad* getJoypad();
 
       YatlFS* getFS() { return this->fs; }

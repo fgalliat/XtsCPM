@@ -11,6 +11,9 @@
 Yatl yatl;
 
 
+// bool muteMode = false;
+bool muteMode = true;
+
 void setup() {
     if ( !yatl.setup() ) {
         Serial.begin(115200);
@@ -26,10 +29,12 @@ void setup() {
 
     yatl.dbug("Wait for SubMcu ready....");
     yatl.delay(3000);
-    yatl.getMusicPlayer()->play(60);
-    yatl.delay(700);
-    yatl.getMusicPlayer()->next();
-    yatl.getMusicPlayer()->volume(15);
+    if ( !muteMode ) {
+        yatl.getMusicPlayer()->play(60);
+        yatl.delay(700);
+        yatl.getMusicPlayer()->next();
+        yatl.getMusicPlayer()->volume(15);
+    }
 
     // // remember that SubMCU might not be reseted ...
     // yatl.getWiFi()->close();
@@ -37,10 +42,10 @@ void setup() {
     // yatl.getSubMCU()->cleanBuffer();
 
     bool ok;
-    yatl.dbug("Wait for WiFi STA....");
-    ok = yatl.getWiFi()->beginSTA();
-    // yatl.dbug("Wait for WiFi AP....");
-    // ok = yatl.getWiFi()->beginAP();
+    // yatl.dbug("Wait for WiFi STA....");
+    // ok = yatl.getWiFi()->beginSTA();
+    yatl.dbug("Wait for WiFi AP....");
+    ok = yatl.getWiFi()->beginAP();
 
     if (ok) {
         Serial.println("WiFi OK");
@@ -48,9 +53,10 @@ void setup() {
         Serial.println("WiFi Failed");
     }
 
-    yatl.getMusicPlayer()->next();
-
-    yatl.getBuzzer()->playTuneFile("mario.t53");
+    if ( !muteMode ) {
+        yatl.getMusicPlayer()->next();
+        yatl.getBuzzer()->playTuneFile("mario.t53");
+    }
 
     for(int i=0; i < 10; i++) {
         yatl.getSubMCU()->cleanBuffer();
@@ -61,6 +67,8 @@ void setup() {
 int loopCpt = 0;
 
 void loop() {
+    yatl.getKeyboard()->poll();
+
     if ( Serial.available() ) {
         char ch = (char)Serial.read();
         if ( ch == 'r' ) {
@@ -68,16 +76,27 @@ void loop() {
         }
     }
 
+    bool atLeastOneKey = false;
+    while ( yatl.getKeyboard()->available() ) {
+        atLeastOneKey = true;
+        char ch = (char)yatl.getKeyboard()->read();
+        Serial.write( ch );
+    }
+    if ( atLeastOneKey ) {
+        Serial.write( '\n' );
+    }
 
-    Serial.print("Voltage : ");
-    Serial.println( yatl.getPWRManager()->getVoltage() );
-    yatl.delay(100);
+    if ( !atLeastOneKey ) {
+        Serial.print("Voltage : ");
+        Serial.println( yatl.getPWRManager()->getVoltage() );
+        yatl.delay(100);
 
-    Serial.println( yatl.getWiFi()->getIP() );
-    yatl.delay(100);
-    Serial.println( yatl.getWiFi()->getSSID() );
+        Serial.println( yatl.getWiFi()->getIP() );
+        yatl.delay(100);
+        Serial.println( yatl.getWiFi()->getSSID() );
 
-    yatl.delay(200);
+        yatl.delay(200);
+    }
 
     int led = loopCpt % 3;
     if ( led == 0 ) { yatl.getLEDs()->red(true); yatl.getLEDs()->green(false); yatl.getLEDs()->blue(false); }
