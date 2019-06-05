@@ -120,8 +120,11 @@
     uint8_t _getch(void);
 
     // TMP impl.
-    int _kbhit(void) { return Serial.available(); }
-    uint8_t _getch(void) { return Serial.read(); }
+    // int _kbhit(void) { return Serial.available(); }
+    // uint8_t _getch(void) { return Serial.read(); }
+
+    int _kbhit(void) { return yatl.getKeyboard()->available(); }
+    uint8_t _getch(void) { return yatl.getKeyboard()->read(); }
 
     #define _puts Serial.print
 

@@ -77,6 +77,9 @@ void loop() {
         char ch = (char)Serial.read();
         if ( ch == 'r' ) {
             yatl.getPWRManager()->reset();
+        } else if ( ch == 'm' ) {
+            yatl.getScreen()->write((char)27);
+            yatl.getScreen()->println("$MONKEY.T5K!");
         }
     }
 
