@@ -212,17 +212,27 @@ void _send(float val) { serialBridge.print(val); }
 
 
     #include "ssid_psk.h"
-    #ifndef STASSID
-        #define STASSID "your-ssid"
-        #define STAPSK  "your-password"
+    #ifndef STANB
+    // #ifndef STASSID
+        // #define STASSID "your-ssid"
+        // #define STAPSK  "your-password"
+
+        #define STANB 1
+        const char* ssids[STANB] = {
+            "your-ssid"
+        };
+        const char* pwds[STANB] = {
+            "your-password"
+        };
+
     #endif
 
     #define STACK_PROTECTOR  512 // bytes
 
     //how many clients should be able to telnet to this ESP8266
     #define MAX_SRV_CLIENTS 2
-    const char* ssid = STASSID;
-    const char* password = STAPSK;
+    /*const*/ char* ssid = "None Yet";
+    /*const*/ char* password = "None Yet";
 
 // =============] Server [================
     const int port = 23;
@@ -243,15 +253,35 @@ void _send(float val) { serialBridge.print(val); }
         wifiConnMode = WIFI_CONN_MODE_NONE;
         if ( staMode ) {
             WiFi.mode(WIFI_STA);
-            WiFi.begin(ssid, password);
-            red(true); green(false);
-            int retry = 0;
-            while (WiFi.status() != WL_CONNECTED) {
-                toggleLed();
-                delay(500);
-                if (retry > 10) { return false; }
-                retry++;
+            bool foundAsta = false;
+            int ssidIdx = 0;
+
+            while( !foundAsta ) {
+
+                ssid = (char*)ssids[ssidIdx];
+                password = (char*)pwds[ssidIdx];
+
+                WiFi.begin(ssid, password);
+                red(true); green(false);
+                int retry = 0;
+                while (WiFi.status() != WL_CONNECTED) {
+                    toggleLed();
+                    delay(500);
+                    if (retry > 6) { break; }
+                    retry++;
+                }
+
+                if (WiFi.status() == WL_CONNECTED) {
+                    foundAsta = true;
+                    break;
+                }
+
+                ssidIdx++;
+                if (ssidIdx >= STANB) {
+                    return false;
+                } 
             }
+
             red(false); green(true);
             wifiConnMode = WIFI_CONN_MODE_STA;
             wifiStarted = true;
