@@ -348,6 +348,7 @@ void _send(float val) { serialBridge.print(val); }
             for (i = 0; i < MAX_SRV_CLIENTS; i++)
             if (!serverClients[i]) { // equivalent to !serverClients[i].connected()
                 serverClients[i] = server.available();
+                serverClients[i].flush();
                 // logger->print("New client: index ");
                 // logger->println(i);
                 blink(4);
@@ -373,7 +374,7 @@ void _send(float val) { serialBridge.print(val); }
         //check TCP clients for data
         for (int i = 0; i < MAX_SRV_CLIENTS; i++) {
             bool hadSome = false;
-            while (serverClients[i].available() && Serial.availableForWrite() > 0) {
+            while (serverClients[i].available() /*&& Serial.availableForWrite() > 0*/ ) {
                 // working char by char is not very efficient
                 char ch = serverClients[i].read();
                 if ( ch == ':' ) {
