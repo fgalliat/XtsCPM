@@ -20,6 +20,8 @@
     #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
     extern SdFatSdio SD;
 
+    // tiny 3x5 monospaced ? TTY_FONT_HEIGHT
+    #include "font_pzim3x5.h"
 
     #include "SPI.h"
     #include "ILI9341_t3n.h"
@@ -55,7 +57,11 @@
       tft.setTextSize(1);
       tft.setTextColor(ILI9341_WHITE);
 
+      tft.setFont(); // default 53cols font
       tft.println("Teensy 3.6 -YATL- Booting");
+
+      tft.setFont( Pixelzim_8 );
+      tft.println("Teensy 3.6 -YATL- Booting mini font");
 
       return true;
   }
