@@ -651,7 +651,8 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
 
  };
 
-
+// #define TFT_ROT 3
+#define TFT_ROT 1
 
 
 
@@ -665,7 +666,7 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
    digitalWrite(TFT_LED, HIGH);    
 
    tft.begin();
-   tft.setRotation(3);
+   tft.setRotation(TFT_ROT);
 
    #ifndef LCD_MODE_CONSOLE
    //tft.setScrollTextArea(0, 0, 53*6, 30*8);
@@ -699,9 +700,13 @@ void playVTMusic(char* tuneStr, bool playInParallel = false) {
   #ifdef BMP_SUPPORT
    void _drawBmp(char* filename, int x, int y);
    void drawBmp(char* filename, bool screenRotate=true) {
-      if ( screenRotate ) tft.setRotation(0);
+      if (TFT_ROT == 3) {
+         if ( screenRotate ) tft.setRotation(0);
+      } else {
+         if ( screenRotate ) tft.setRotation(2);
+      }
       _drawBmp( filename, 0, 0 );
-      if ( screenRotate ) tft.setRotation(3);
+      if ( screenRotate ) tft.setRotation(TFT_ROT);
    }
 
    // TODO : move away
