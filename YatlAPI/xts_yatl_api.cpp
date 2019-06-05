@@ -45,6 +45,8 @@
     Yatl::~Yatl() {
     }
 
+    bool screenReady = false;
+
     bool Yatl::setup() {
         Serial.begin(115200);
         this->dbug("Yatl setuping ...");
@@ -56,6 +58,7 @@
 
         bool ok;
         ok = this->getScreen()->setup();
+        screenReady = ok;
         if (!ok) { this->warn("Screen not ready !"); }
 
         ok = this->getFS()->setup();
@@ -104,6 +107,9 @@
         Serial.println("*****************************");
         this->buzzer->beep(440, 200);
         // TODO : screen alert box
+        if ( screenReady ) {
+            this->getScreen()->drawTextBox( "ALERT", msg );
+        }
     }
     void Yatl::warn(const char* msg) {
         this->blink(5);
@@ -113,6 +119,9 @@
         Serial.println(msg);
         Serial.println("*****************************");
         // TODO : screen warning box
+        if ( screenReady ) {
+            this->getScreen()->drawTextBox( "WARNING", msg );
+        }
     }
 
     // ===============] FileSystem [===========

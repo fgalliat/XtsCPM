@@ -126,6 +126,8 @@ class YatlScreen {
       void drawWallpaper(char* assetName);
 
       void write(char ch);
+
+      void drawTextBox(const char* title, const char* msg);
 };
 
 class YatlJoypad {

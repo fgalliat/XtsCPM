@@ -51,8 +51,10 @@ void setup() {
 
     if (ok) {
         Serial.println("WiFi OK");
+        // yatl.warn("WiFi OK");
     } else {
-        Serial.println("WiFi Failed");
+        yatl.alert("WiFi Failed !");
+        Serial.println("WiFi Failed !");
     }
 
     if ( !muteMode ) {

@@ -72,6 +72,16 @@
       tft.write(ch);
   }
 
+  void YatlScreen::drawTextBox(const char* title, const char* msg) {
+      tft.fillRect( 20, 20, TFT_WIDTH-40, TFT_HEIGHT-40, ILI9341_RED );
+      tft.drawRect( 20, 20, TFT_WIDTH-40, TFT_HEIGHT-40, ILI9341_WHITE );
+      tft.setTextColor(ILI9341_WHITE);
+      tft.setCursor( 40, 30 );
+      tft.print( title );
+      tft.setCursor( 40, 30+30 );
+      tft.print( msg );
+  }
+
   // ==========] Draw Bmp Routines [==========
    void _drawBmp(char* filename, int x, int y);
 
