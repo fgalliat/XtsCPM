@@ -50,7 +50,7 @@ void led(bool state) {
     ledState = state;
 }
 
-void toogleLed() {
+void toggleLed() {
     led( !ledState );
 }
 
@@ -62,6 +62,16 @@ void toogleLed() {
 void red(bool state) { digitalWrite(LED_R, state ? HIGH : LOW); }
 void green(bool state) { digitalWrite(LED_G, state ? HIGH : LOW); }
 void blue(bool state) { digitalWrite(LED_B, state ? HIGH : LOW); }
+
+void blink(int times, bool fast=true) {
+    long time = fast ? 100 : 400;
+    for(int i=0; i < times; i++) {
+        red(true);
+        delay(time);
+        red(false);
+        delay(time);
+    }
+}
 
 // A0 -- default linked to Esp.getVcc() function
 
@@ -105,7 +115,8 @@ void setupAddPins() {
         bool setupKeyboard() {
             if (!io.begin(SX1509_ADDRESS))
             {
-                Serial.println("SX1509 Failed.");
+                // Serial.println("SX1509 Failed.");
+                blink(4);
                 return false;
             }
             delay(300);
@@ -236,6 +247,7 @@ void _send(float val) { serialBridge.print(val); }
             red(true); green(false);
             int retry = 0;
             while (WiFi.status() != WL_CONNECTED) {
+                toggleLed();
                 delay(500);
                 if (retry > 10) { return false; }
                 retry++;
@@ -336,8 +348,9 @@ void _send(float val) { serialBridge.print(val); }
             for (i = 0; i < MAX_SRV_CLIENTS; i++)
             if (!serverClients[i]) { // equivalent to !serverClients[i].connected()
                 serverClients[i] = server.available();
-                logger->print("New client: index ");
-                logger->println(i);
+                // logger->print("New client: index ");
+                // logger->println(i);
+                blink(4);
                 telnetMode = TELNET_MODE_KEYB;
                 break;
             }
@@ -349,7 +362,7 @@ void _send(float val) { serialBridge.print(val); }
                 // when out of scope, a WiFiClient will
                 // - flush() - all data will be sent
                 // - stop() - automatically too
-                logger->printf("server is busy with %d active connections\n", MAX_SRV_CLIENTS);
+                // logger->printf("server is busy with %d active connections\n", MAX_SRV_CLIENTS);
             }
         }
 
@@ -369,15 +382,18 @@ void _send(float val) { serialBridge.print(val); }
                         serverClients[i].stop();
                         break;
                     }
-                    // Serial.write( ch );
+                    if (telnetMode == TELNET_MODE_KEYB) {
+                        keyboard0.injectChar(ch);
+                    } else {
+                        _send(ch);
+                    }
+                }
+                if (telnetMode == TELNET_MODE_KEYB) {
+                    keyboard0.injectChar(ch);
+                } else {
                     _send(ch);
                 }
-                // Serial.write( ch );
-                _send(ch);
                 hadSome = true;
-            }
-            if (hadSome && telnetMode == TELNET_MODE_KEYB) {
-                    _send( 0x00 );
             }
         }
 
@@ -448,6 +464,28 @@ void _send(float val) { serialBridge.print(val); }
     char* wget(char* url) { return "404"; }
 #endif
 
+// =============] APM Code [==============
+
+void reboot() {
+    if ( telnetdStarted ) { stopTelnetd(); }
+    if ( wifiStarted ) { stopWiFi(); }
+
+    if ( kbdok ) { keyboard0.reboot(); }
+    if ( mp3ok ) { myDFPlayer.stop(); myDFPlayer.reset(); }
+
+    ESP.restart();
+}
+
+void shutdown() {
+    if ( telnetdStarted ) { stopTelnetd(); }
+    if ( wifiStarted ) { stopWiFi(); }
+
+    if ( kbdok ) { keyboard0.reboot(); }
+    if ( mp3ok ) { myDFPlayer.stop(); myDFPlayer.reset(); }
+
+    ESP.deepSleep(0);
+}
+
 // =============] Core Code [=============
 
 // to read MCU voltage internal way
@@ -485,9 +523,10 @@ void setup() {
     SerialMP3.begin(9600);
     delay(100);
     if (!myDFPlayer.begin(SerialMP3)) {
-        Serial.println(F("> Unable to begin:"));
-        Serial.println(F("> 1.Please recheck the connection!"));
-        Serial.println(F("> 2.Please insert the SD card!"));
+        // Serial.println(F("> Unable to begin:"));
+        // Serial.println(F("> 1.Please recheck the connection!"));
+        // Serial.println(F("> 2.Please insert the SD card!"));
+        blink(5);
         mp3ok = false;
     }
     else {
@@ -500,15 +539,12 @@ void setup() {
    #endif
 
 
-   led(true); delay(300);
-   toogleLed(); delay(300);
-   toogleLed(); delay(300);
-   toogleLed(); delay(300);
+   blink(3, false);
 
    #if not BRIDGE_ON_SERIAL
      Serial.println("> Ready to work");
    #endif
-   _send("> Ready to work\n");
+//    _send("> Ready to work\n");
 }
 
 void testWiFi() {
@@ -654,7 +690,7 @@ void loop() {
                 _send( joypadB1 );
                 _send( joypadB2 );
             #else
-                _send("NO Joypad");
+                _send("-NO Joypad");
             #endif
         } else if ( ch == 'v' ) {
             // Voltage Control
@@ -689,11 +725,11 @@ void loop() {
                     // 's' -> STA mode
                     // 'a' -> AP mode
                     bool ok = isWiFiStarted() || startWiFi( mode != 'a' );
-                    if ( ok ) { _send("Wifi connected : ");_send((const char*) getLocalIP() );_send('\n'); }
-                    else { _send("Wifi not connected\n"); }
+                    if ( ok ) { _send("+OK Wifi connected : ");_send((const char*) getLocalIP() );_send('\n'); }
+                    else { _send("-NOK Wifi not connected\n"); }
                 } else if ( subCmd == 's' ) {
                     stopWiFi();
-                    _send("Wifi disconnected\n");
+                    _send("+OK Wifi disconnected\n");
                 } else if ( subCmd == 'i' ) {
                     // getIP
                     _send((const char*) getLocalIP() );_send('\n');
@@ -706,11 +742,12 @@ void loop() {
                     if ( mode == 'o' ) {
                         // Open - "wto"
                         bool ok = isWiFiStarted() && startTelnetd();
-                        if ( ok ) { _send("Telnetd opened : ");_send((const char*) getLocalIP() );_send(":23\n"); }
-                        else { _send("Telnetd not opened\n"); }
+                        if ( ok ) { _send("+OK Telnetd opened : ");_send((const char*) getLocalIP() );_send(":23\n"); }
+                        else { _send("-NOK Telnetd not opened\n"); }
                     } else if ( mode == 'c' ) {
                         // Close - "wtc"
                         stopTelnetd();
+                        _send("+OK Telnetd closed\n");
                     } 
                 } else if ( subCmd == 'g' ) {
                     // wget '....\n' - beware w/ EOL & Arduino Serial Monitor ....
@@ -726,6 +763,10 @@ void loop() {
             }
         } else if ( ch == 't' ) {
             testRoutine();
+        } else if ( ch == 'r' ) {
+            reboot();
+        } else if ( ch == 'h' ) {
+            shutdown();
         } else if ( ch == '\n' || ch == '\r' ) {
             // may be some dusty end of line due to terminal 
             // that was used

@@ -115,12 +115,16 @@
       ~MobigoKeyboard();
 
       void setup(int led0=-1, int led1=-1, int led2=-1);
+      void reboot();
 
       void setAutoPoll(bool _auto);
 
       void poll();
       int available();
       int read();
+
+      // for another device that emulates Keyb (ex. telnetd)
+      void injectChar(char ch);
   };
   
   

@@ -115,10 +115,19 @@
   {
       this->io = gpio;
       this->setAutoPoll(autoPoll);
+
+      // Cf SX could not respond, then uses telnetd
+      // so needs a cleaned buffer
+      this->flushBuffer();
   }
   
   MobigoKeyboard::~MobigoKeyboard()
   {
+  }
+
+  void MobigoKeyboard::reboot() {
+    bool hard = false;
+    this->io->reset(hard);
   }
 
   void MobigoKeyboard::led(int num, bool state) {
@@ -243,14 +252,7 @@
             oneFoundOnRow = true;
             char ch = this->getKeychar(row, col);
             if ( ch != 0x00 ) {
-              int avail = strlen(this->_keyBuff);
-              if ( avail <= KEYB_BUFF_LEN ) {
-                // strcat(this->_keyBuff, &ch);
-                this->_keyBuff[avail] = ch;
-                this->_keyBuff[avail+1] = 0x00;
-              } else {
-                // Overflow
-              }
+              this->injectChar(ch);
             }
           }
         }
@@ -271,6 +273,18 @@
 
     lastTimeKeyReleased = !oneFoundOnKbd;
     lastPollTime = millis();
+  }
+
+  // for another device that emulates Keyb (ex. telnetd)
+  void MobigoKeyboard::injectChar(char ch) {
+    int avail = strlen(this->_keyBuff);
+    if ( avail <= KEYB_BUFF_LEN ) {
+      // strcat(this->_keyBuff, &ch);
+      this->_keyBuff[avail] = ch;
+      this->_keyBuff[avail+1] = 0x00;
+    } else {
+      // Overflow
+    }
   }
 
   void MobigoKeyboard::activateRow(int row) {
