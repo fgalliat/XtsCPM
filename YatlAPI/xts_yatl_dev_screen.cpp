@@ -67,6 +67,11 @@
       drawBmp(fileName, true);
   }
 
+  void YatlScreen::write(char ch) {
+      // TODO : console emulation
+      tft.write(ch);
+  }
+
   // ==========] Draw Bmp Routines [==========
    void _drawBmp(char* filename, int x, int y);
 

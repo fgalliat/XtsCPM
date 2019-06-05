@@ -82,6 +82,8 @@ void loop() {
     while ( yatl.getKeyboard()->available() ) {
         atLeastOneKey = true;
         char ch = (char)yatl.getKeyboard()->read();
+        if ( ch == '\r' ) { ch = '\n'; }
+        yatl.getScreen()->write( ch );
         Serial.write( ch );
     }
     if ( atLeastOneKey ) {

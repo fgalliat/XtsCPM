@@ -124,6 +124,8 @@ class YatlScreen {
       YatlScreen(Yatl* yatl) { this->yatl = yatl; }
       bool setup();
       void drawWallpaper(char* assetName);
+
+      void write(char ch);
 };
 
 class YatlJoypad {
