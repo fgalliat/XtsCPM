@@ -28,6 +28,7 @@
     YatlMusicPlayer _mp3(&yatl);
     YatlFS _fs(&yatl);
     YatlKeyboard _keyb(&yatl);
+    YatlScreen _screen(&yatl);
 
     Yatl::Yatl() {
         this->subMcu = &_subMcu;
@@ -38,6 +39,7 @@
         this->mp3 = &_mp3;
         this->fs = &_fs;
         this->keyb = &_keyb;
+        this->screen = &_screen;
     }
 
     Yatl::~Yatl() {
@@ -53,6 +55,9 @@
         this->buzzer->setup();
 
         bool ok;
+        ok = this->getScreen()->setup();
+        if (!ok) { this->warn("Screen not ready !"); }
+
         ok = this->getFS()->setup();
         if (!ok) { this->warn("SD not ready !"); }
 

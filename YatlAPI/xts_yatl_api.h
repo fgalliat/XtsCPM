@@ -119,8 +119,10 @@ class YatlWiFi {
 
 class YatlScreen {
     private:
+      Yatl* yatl;
     public:
-      YatlScreen();
+      YatlScreen(Yatl* yatl) { this->yatl = yatl; }
+      bool setup();
 };
 
 class YatlJoypad {
@@ -162,6 +164,7 @@ class Yatl {
       YatlMusicPlayer* mp3;
       YatlFS* fs;
       YatlKeyboard* keyb;
+      YatlScreen* screen;
     public:
       Yatl();
       ~Yatl();
@@ -195,7 +198,7 @@ class Yatl {
 
       YatlLEDs* getLEDs() { return this->leds; }
 
-      YatlScreen* getScreen();
+      YatlScreen* getScreen() { return this->screen; }
       YatlKeyboard* getKeyboard() { return this->keyb; }
       YatlJoypad* getJoypad();
 
