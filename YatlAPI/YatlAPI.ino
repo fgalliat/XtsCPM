@@ -50,7 +50,7 @@ void setup() {
     ok = yatl.getWiFi()->beginAP();
 
     if (ok) {
-        Serial.println("WiFi OK");
+        yatl.dbug("WiFi OK");
         // yatl.warn("WiFi OK");
     } else {
         yatl.alert("WiFi Failed !");
@@ -93,13 +93,12 @@ void loop() {
     }
 
     if ( !atLeastOneKey ) {
-        Serial.print("Voltage : ");
-        Serial.println( yatl.getPWRManager()->getVoltage() );
+        yatl.dbug("Voltage : ", yatl.getPWRManager()->getVoltage() );
         yatl.delay(100);
 
-        Serial.println( yatl.getWiFi()->getIP() );
+        yatl.dbug( yatl.getWiFi()->getIP() );
         yatl.delay(100);
-        Serial.println( yatl.getWiFi()->getSSID() );
+        yatl.dbug( yatl.getWiFi()->getSSID() );
 
         yatl.delay(200);
     }

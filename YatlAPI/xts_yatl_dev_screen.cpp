@@ -44,6 +44,12 @@
 
     #define TFT_ROTATION 1
 
+   #define LCD_CONSOLE_40_COLS 0x00
+   #define LCD_CONSOLE_80_COLS 0x01
+   #define LCD_CONSOLE_DEF_COLS LCD_CONSOLE_80_COLS
+
+  // forward symbols
+  void _setConsoleMode(int mode);
 
   bool YatlScreen::setup() {
       // ensure TFT backlight
@@ -57,11 +63,13 @@
       tft.setTextSize(1);
       tft.setTextColor(ILI9341_WHITE);
 
-      tft.setFont(); // default 53cols font
-      tft.println("Teensy 3.6 -YATL- Booting");
+      // tft.setFont(); // default 53cols font
+      // tft.println("Teensy 3.6 -YATL- Booting");
 
-      tft.setFont( Pixelzim_8 );
-      tft.println("Teensy 3.6 -YATL- Booting mini font");
+      // tft.setFont( Pixelzim_8 );
+      // tft.println("Teensy 3.6 -YATL- Booting mini font");
+      _setConsoleMode(LCD_CONSOLE_DEF_COLS);
+      this->println("Teensy 3.6 -YATL- Booting mini font");
 
       return true;
   }
@@ -73,10 +81,490 @@
       drawBmp(fileName, true);
   }
 
-  void YatlScreen::write(char ch) {
-      // TODO : console emulation
-      tft.write(ch);
-  }
+  // ==========] Console Routines [==========
+
+   void _doPlay(char* sequence) {
+      int slen = strlen( sequence );
+
+      Serial.println("Playing :");
+      Serial.println(sequence);
+
+      if ( slen <= 2 ) { 
+         yatl.getBuzzer()->playTuneString(sequence); 
+         return; 
+      }
+
+      char ch = sequence[ slen-1  ];
+      ch = charUpCase(ch);
+
+      if ( (ch == '3' || ch == 'K') && sequence[ slen-2  ] == '5' ) {
+         yatl.getBuzzer()->playTuneFile(sequence);
+      }  else {
+         yatl.getBuzzer()->playTuneString(sequence);
+      }
+   }
+
+   // playInParallel Not Supported
+   void playVTMusic(char* tuneStr, bool playInParallel = false) {
+      if ( strlen( tuneStr ) <= 0 ) { return; }
+      _doPlay(tuneStr);
+   }
+
+   #define TTY_FONT_WIDTH 4
+   #define TTY_FONT_HEIGHT 6
+  
+   // 53 - 80 if tinyFont
+   #define TTY_CON_WIDTH  ( TFT_WIDTH / TTY_FONT_WIDTH )
+   // 30 - 40 if tinyFont
+   #define TTY_CON_HEIGHT ( TFT_HEIGHT / TTY_FONT_HEIGHT )
+   // 1590 - 3200 if tinyFont
+   #define TTY_CON_SIZE ( TTY_CON_WIDTH * TTY_CON_HEIGHT )
+
+   #define COLORED_CONSOLE 1
+   #define LCD_TINYFONT 1
+
+   #ifdef COLORED_CONSOLE
+      char ttyConsoleAttrs[ TTY_CON_SIZE ];
+      char curTextAttr = 0x00;
+   #endif
+
+   char ttyConsoleFrame[ TTY_CON_SIZE ];
+   // just to prevent from recomputing each time
+   const int ttyConsoleFrameSize = TTY_CON_SIZE;
+   const int ttyConsoleWidth     = TTY_CON_WIDTH;
+   const int ttyConsoleHeight    = TTY_CON_HEIGHT;
+
+   int consoleCursorX = 0;
+   int consoleCursorY = 0;
+
+   int consoleMode = LCD_CONSOLE_DEF_COLS;
+   int consoleCurrentFontHeight = -1;
+   int consoleCurrentFontWidth  = -1;
+
+   // one of LCD_CONSOLE_xx_COLS
+   void _setConsoleMode(int mode) {
+      consoleMode = mode;
+      if ( mode == LCD_CONSOLE_80_COLS ) {
+         consoleCurrentFontHeight = 5+1;
+         consoleCurrentFontWidth  = 3+1;
+         // type : ILI9341_t3_font_t 
+         tft.setFont( Pixelzim_8 );
+      } else {
+         tft.setFont();
+         consoleCurrentFontHeight = 8;
+         consoleCurrentFontWidth  = 6;
+      }
+   }
+
+   void _consoleSetCursor(int col, int row) {
+      consoleCursorX = col;
+      consoleCursorY = row;
+      tft.setCursor(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight);
+   }
+
+   void _consoleFill(char ch, bool resetCursor=true) {
+      #ifdef COLORED_CONSOLE
+         curTextAttr = 0x00;
+         memset(ttyConsoleAttrs, curTextAttr, ttyConsoleFrameSize);
+      #endif
+      memset(ttyConsoleFrame, ch, ttyConsoleFrameSize);
+      if (resetCursor) {
+         consoleCursorX = 0;
+         consoleCursorY = 0;
+      }
+
+      /* - test purposes - 
+      for(int i=0; i<ttyConsoleWidth; i++) {
+         ttyConsoleFrame[i] = '0'+( i % 10 );
+      }
+      for(int i=0; i<ttyConsoleHeight; i++) {
+         ttyConsoleFrame[(i*ttyConsoleWidth)+0] = '0'+( i % 10 );
+      }
+      */
+   }
+
+   uint16_t rgb(uint8_t r, uint8_t g, uint8_t b) {
+      return tft.color565(r, g, b);
+   }
+
+   uint16_t TTY_COLOR_BG = ILI9341_BLACK;
+   uint16_t TTY_COLOR_FG = ILI9341_WHITE;
+   uint16_t TTY_COLOR_ACCENT = ILI9341_GREEN;
+
+   uint16_t mapColor(uint16_t color) {
+      if ( color >= 16 ) { return color; }
+      
+      if ( color == 0 ) { return ILI9341_BLACK; }
+      if ( color == 1 ) { return ILI9341_WHITE; }
+      if ( color == 1 ) { return ILI9341_RED; }
+      if ( color == 3 ) { return ILI9341_GREEN; }
+      if ( color == 4 ) { return ILI9341_BLUE; }
+      if ( color == 4 ) { return ILI9341_YELLOW; }
+      if ( color == 6 ) { return ILI9341_PURPLE; }
+      if ( color == 7 ) { return ILI9341_CYAN; }
+      if ( color == 8 ) { return ILI9341_ORANGE; }
+      if ( color == 9 ) { return ILI9341_MAGENTA; }
+
+      return ILI9341_PINK;
+   }
+
+
+   void consoleColorSet(uint16_t bg=ILI9341_BLACK, uint16_t fg=ILI9341_WHITE, uint16_t acc=ILI9341_GREEN) {
+      TTY_COLOR_BG = bg;
+      TTY_COLOR_FG = fg;
+      TTY_COLOR_ACCENT = acc;
+   }
+
+
+   void consoleCls(bool clearDisplay=true) {
+      _consoleFill(0x00, true);
+      if (clearDisplay) { tft.fillScreen(TTY_COLOR_BG); }
+      _consoleSetCursor(0,0);
+   }
+
+   char _c_line[ ttyConsoleWidth + 1 ];
+
+   void _consoleRenderOneLine(int row, bool clearArea=true) {
+      if ( ttyConsoleFrame[ (row*ttyConsoleWidth)+0 ] == 0x00) {
+         // do clear the area ????
+         if ( clearArea ) {
+            tft.fillRect(0, row*consoleCurrentFontHeight, TFT_WIDTH, consoleCurrentFontHeight, TTY_COLOR_BG);
+         }
+      }
+
+      memset(_c_line, 0x00, ttyConsoleWidth+1);
+      memcpy(_c_line, &ttyConsoleFrame[ (row*ttyConsoleWidth)+0 ], ttyConsoleWidth );
+
+      #ifdef COLORED_CONSOLE
+         // beware if not clearDisplay
+         tft.setCursor(0, row * consoleCurrentFontHeight);
+         int c=0;
+         while ( _c_line[c] != 0x00 ) {
+            if ( ttyConsoleAttrs[ (row*ttyConsoleWidth)+c ] == 0x01 ) {
+               tft.setTextColor( TTY_COLOR_ACCENT );
+            } else if ( ttyConsoleAttrs[ (row*ttyConsoleWidth)+c ] == 0x02 ) {
+               tft.setTextColor( ILI9341_YELLOW );
+            } else {
+               tft.setTextColor( TTY_COLOR_FG );
+            }
+         
+            tft.write( _c_line[c] );
+
+            c++;
+            
+            #ifdef LCD_TINYFONT
+               // to reduce space between letters
+               tft.setCursor(c * consoleCurrentFontWidth, row * consoleCurrentFontHeight);
+            #endif
+         }
+      #else
+         // beware if not clearDisplay
+         tft.setCursor(0, row * consoleCurrentFontHeight);
+         tft.print( line );
+      #endif
+   }
+
+   void consoleRenderFull(bool clearDisplay=true) {
+      if (clearDisplay) { tft.fillScreen(TTY_COLOR_BG); }
+      consoleCursorX = 0;
+      for(int y=0; y < ttyConsoleHeight; y++) {
+         consoleCursorY = y;
+         _consoleRenderOneLine(consoleCursorY, false);
+      }
+   }
+
+   void _toggleConsoleMode(bool rerender=true) {
+      if ( consoleMode == LCD_CONSOLE_80_COLS ) {
+         consoleMode = LCD_CONSOLE_40_COLS;
+      } else {
+         consoleMode = LCD_CONSOLE_80_COLS;
+      }
+      _setConsoleMode(consoleMode);
+      if (rerender) {
+         consoleRenderFull();
+      }
+   }
+
+   void _scrollUp() {
+      /*
+      try to use native text scroller -> too slow
+      */
+
+      #ifdef COLORED_CONSOLE
+         memmove( &ttyConsoleAttrs[ 0 ], &ttyConsoleAttrs[ ttyConsoleWidth ], ttyConsoleFrameSize - ttyConsoleWidth );
+         memset( &ttyConsoleAttrs[ ttyConsoleFrameSize - ttyConsoleWidth ], 0x00, ttyConsoleWidth );
+      #endif
+
+      memmove( &ttyConsoleFrame[ 0 ], &ttyConsoleFrame[ ttyConsoleWidth ], ttyConsoleFrameSize - ttyConsoleWidth );
+      memset( &ttyConsoleFrame[ ttyConsoleFrameSize - ttyConsoleWidth ], 0x00, ttyConsoleWidth );
+      consoleCursorX = 0;
+      consoleCursorY = ttyConsoleHeight - 1;
+      consoleRenderFull();
+   }
+
+   // erase from current position to EndOfLine
+   void _eraseTillEOL(bool clearArea=true) {
+      if ( clearArea ) {
+         tft.fillRect(consoleCursorX*consoleCurrentFontWidth, consoleCursorY*consoleCurrentFontHeight, TFT_WIDTH, consoleCurrentFontHeight, TTY_COLOR_BG);
+      }
+      int addr = ( consoleCursorY * ttyConsoleWidth) + consoleCursorX;
+      int len = (ttyConsoleWidth-consoleCursorX);
+      #ifdef COLORED_CONSOLE
+         memset( &ttyConsoleAttrs[ addr ], 0x00, len );
+      #endif
+      memset( &ttyConsoleFrame[ addr ], 0x00, len );
+   }
+
+   bool __escapeChar = false;
+   char __escapeChar0 = 0x00;
+   char __escapeChar1 = 0x00;
+   char __escapeChar2 = 0x00;
+
+   bool __escapeSeq = false; // VT100 escape sequence
+   char vt100seq[16+1];
+
+   bool __escapeMSeq = false; // VT-MUSIC escape sequence
+   #define _VT_MUSIC_LEN 64
+   char vtMUSICseq[_VT_MUSIC_LEN+1];
+
+   void consoleWrite(char ch) {
+      // use spe char to toggle console mode for now
+      // 7F is 127 (console seems tobe 127 limited)
+      if ( ch == 0x7F ) { _toggleConsoleMode(); return; }
+
+      if ( ch == '\r' ) { return; }
+
+      if ( ch == '\n' ) { 
+         consoleCursorX = 0;
+         consoleCursorY++;
+         if ( consoleCursorY >= ttyConsoleHeight ) {
+            _scrollUp();
+         }
+         return; 
+      }
+
+      // is generally used as '\b'+' '+'\b' so no need to render it
+      if ( ch == '\b' ) { 
+         consoleCursorX--;
+         if ( consoleCursorX < 0 ) {
+            consoleCursorY--;
+            if ( consoleCursorY < 0 ) {
+               consoleCursorY = 0;
+            }
+         }
+         return; 
+      }
+
+      // beware w/ '\t' & esc seqs 
+      // seems that '\t' is not used ?
+
+      // VT100 escapes
+      if ( ch == 27 ) { 
+         // escape sequence ex. ^B1 ^C1
+         __escapeChar = true;
+         __escapeChar0 = 0x00;
+         __escapeChar1 = 0x00;
+         __escapeChar2 = 0x00;
+
+         __escapeSeq = false;
+         memset( vt100seq, 0x00, 16+1 );
+
+         __escapeMSeq = false;
+
+      } else if ( ch == 26 ) { 
+         // seems to be the CLS escape sequence
+         // Serial.println("Esc:26 ????");
+         consoleCls();
+         return;
+      } else if ( ch == 7 ) { 
+         yatl.beep();
+         return;
+      }
+
+      if ( __escapeChar ) {
+         if ( __escapeChar0 == 0x00 ) {
+            curTextAttr = 0x00;
+            __escapeChar0 = ch;
+         } else if ( __escapeChar1 == 0x00 ) {
+            __escapeChar1 = ch;
+            Serial.print( "Esc:" );
+            //Serial.println( (char)__escapeChar1 );
+            Serial.print( (char)__escapeChar1 );
+
+            if ( __escapeChar1 == 'C' ) { curTextAttr = 0x00; }
+            else if ( __escapeChar1 == 'B' ) { curTextAttr = 0x01; }
+            else if ( __escapeChar1 == '[' ) { __escapeSeq = true; }
+            else if ( __escapeChar1 == '$' ) { 
+               // vt-MUSIC mode
+               __escapeMSeq = true;
+               memset(vtMUSICseq, 0x00, _VT_MUSIC_LEN+1); 
+            }
+            else { curTextAttr = 0x00; }
+         } else if ( __escapeChar2 == 0x00 && !__escapeSeq && !__escapeMSeq ) {
+            __escapeChar2 = ch;
+            Serial.print( (char)__escapeChar2 );
+         } else {
+            
+            // VT-MUSIC SUPPORT
+            // ex. ^$aac#d! => plays "AAC#D"
+            if ( __escapeMSeq ) {
+
+               // bool playInParallel = !false;
+               // SEEMS doesn't work for now
+               bool playInParallel = false;
+
+               if ( ch == '!'  ) {
+                  __escapeChar = false;
+                  playVTMusic(vtMUSICseq, playInParallel);
+                  return;
+               } else {
+                  int l = strlen(vtMUSICseq);
+                  if ( l >= _VT_MUSIC_LEN ) {
+                     __escapeChar = false;
+                     playVTMusic(vtMUSICseq, playInParallel);
+                     return;
+                  }
+                  vtMUSICseq[ l ] = ch;
+               }
+            } else 
+
+            if ( __escapeSeq ) {
+               if ( ch >= 'A' && ch <= 'z'  ) {
+                  vt100seq[ strlen(vt100seq) ] = ch;
+                  // Serial.println( ch );
+                  __escapeChar = false;
+
+                  int slen = strlen(vt100seq);
+                  if ( slen == 1 ) {
+                     if ( ch == 'K' ) {
+                        // ^[K
+                        _eraseTillEOL();
+                        return;
+                     } else if ( ch == 'H' ) {
+                        // ^[H
+                        // return to Home
+                        _consoleSetCursor(0,0);
+                        return;
+                     }
+                  } else if ( slen == 2 ) {
+                     if ( ch == 'J' ) {
+                        if ( vt100seq[0] == '2' ) {
+                           // ^[2J
+                           consoleCls();
+                           return;
+                        }
+                     }
+                  } else {
+                     if ( ch == 'H' ) {
+                        // ^[<row>;<col>H
+                        // set location
+                        int row = 0;
+                        int col = 0;
+                        char rowStr[8];
+                        char colStr[8];
+                        memset( rowStr, 0x00, 8 );
+                        memset( colStr, 0x00, 8 );
+                        char _ch;
+                        int _i,_j=0;
+                        for(_i=0; _i < slen; _i++) {
+                           _ch = vt100seq[_i];
+                           if ( _ch == ';' ) { break; }
+                           rowStr[_i] = _ch;
+                        }
+                        _i++;
+                        for(; _i < slen; _i++) {
+                           _ch = vt100seq[_i];
+                           if ( _ch == 'H' ) { break; }
+                           colStr[_j++] = _ch;
+                        }
+                        col = atoi(colStr) - 1;
+                        row = atoi(rowStr) - 1;
+                        _consoleSetCursor(col,row);
+                        return;
+                     }
+                  }
+
+                  Serial.println( vt100seq );
+
+               } else {
+                  vt100seq[ strlen(vt100seq) ] = ch;
+                  // Serial.print( ch );
+               }
+
+            } else {
+               __escapeChar = false;
+               Serial.println(  );
+            }
+         }
+      }
+
+      if ( __escapeChar ) {
+         return;
+      }
+
+
+      int consoleAddr = ( consoleCursorY * ttyConsoleWidth ) + consoleCursorX;
+
+      #ifdef COLORED_CONSOLE
+         ttyConsoleAttrs[ consoleAddr ] = curTextAttr;
+      #endif
+
+      char previousChar = ttyConsoleFrame[ consoleAddr ];
+      // assign new char
+      ttyConsoleFrame[ consoleAddr ] = ch;
+
+      // direct render
+      tft.setCursor(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight);
+      if ( ch == ' ' ) {
+         if ( ! (previousChar == 0x00 || previousChar == ' ') ) {
+            // render spaces Cf '\b'
+            tft.fillRect(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight, consoleCurrentFontWidth, consoleCurrentFontHeight, TTY_COLOR_BG);
+         }
+      } else {
+
+         if ( ch < 32 || ch >= 127 ) {
+            Serial.write(ch);
+            Serial.write(' ');
+            Serial.print( (int)ch );
+            Serial.write('/');
+         }
+
+         if ( curTextAttr == 0x01 ) { tft.setTextColor( TTY_COLOR_ACCENT );  }
+         else if ( curTextAttr == 0x02 ) { tft.setTextColor( ILI9341_YELLOW ); }
+         else if ( curTextAttr == 0x00 ) { tft.setTextColor( TTY_COLOR_FG ); }
+
+         // tft.write( __escapeChar1 ); // disp Esc char
+
+         tft.write( ch );
+         __escapeChar1 = 0x00;
+      }
+
+      consoleCursorX++;
+      if ( consoleCursorX >= ttyConsoleWidth ) {
+         consoleCursorY++;
+         if ( consoleCursorY >= ttyConsoleHeight ) {
+            _scrollUp();
+         }
+      }
+   }
+
+
+   void YatlScreen::write(char ch) {
+      // tft.write(ch);
+      consoleWrite(ch);
+   }
+
+   void YatlScreen::println(const char* str) {
+      this->println( (char*)str );
+   }
+
+   void YatlScreen::println(char* str) {
+      while (*str)
+              consoleWrite(*(str++));
+      consoleWrite('\n');
+   }
+
+  // ==========] TextBox Routines [==========
 
   void YatlScreen::drawTextBox(const char* title, const char* msg) {
       tft.fillRect( 20, 20, TFT_WIDTH-40, TFT_HEIGHT-40, ILI9341_RED );

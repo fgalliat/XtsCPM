@@ -126,6 +126,8 @@ class YatlScreen {
       void drawWallpaper(char* assetName);
 
       void write(char ch);
+      void println(const char* str);
+      void println(char* str);
 
       void drawTextBox(const char* title, const char* msg);
 };
@@ -178,6 +180,8 @@ class Yatl {
       void dbug(const char* str);
       void dbug(const char* str, int val);
       void dbug(const char* str, float val);
+
+      void beep();
 
       // rather Screen (+ Serial)
       // for Immediate Native User Interaction

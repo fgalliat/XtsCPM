@@ -46,6 +46,7 @@
     }
 
     bool screenReady = false;
+    bool screenDBUG = true;
 
     bool Yatl::setup() {
         Serial.begin(115200);
@@ -75,12 +76,33 @@
         return true;
     }
 
-    void Yatl::dbug(const char* str) { Serial.println(str); }
-    void Yatl::dbug(const char* str, int val) { Serial.print(str); Serial.print(' '); Serial.println(val); }
-    void Yatl::dbug(const char* str, float val) { Serial.print(str); Serial.print(' '); Serial.println(val); }
+    void Yatl::dbug(const char* str) { 
+        Serial.println(str); 
+        if ( screenDBUG && screenReady ) {
+            this->getScreen()->println( str );
+        }
+    }
+    void Yatl::dbug(const char* str, int val) { 
+        char msg[128+1]; sprintf(msg, "%s %d", str, val);
+        Serial.println(msg); 
+        if ( screenDBUG && screenReady ) {
+            this->getScreen()->println( msg );
+        }
+    }
+    void Yatl::dbug(const char* str, float val) { 
+        char msg[128+1]; sprintf(msg, "%s %g", str, val);
+        Serial.println(msg); 
+        if ( screenDBUG && screenReady ) {
+            this->getScreen()->println( msg );
+        }
+    }
 
     void Yatl::delay(long time) {
         ::delay(time);
+    }
+
+    void Yatl::beep() {
+        this->getBuzzer()->beep(440, 100);
     }
 
     void Yatl::led(bool state) {
