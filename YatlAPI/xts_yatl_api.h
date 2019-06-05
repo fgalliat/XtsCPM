@@ -123,6 +123,7 @@ class YatlScreen {
     public:
       YatlScreen(Yatl* yatl) { this->yatl = yatl; }
       bool setup();
+      void drawWallpaper(char* assetName);
 };
 
 class YatlJoypad {

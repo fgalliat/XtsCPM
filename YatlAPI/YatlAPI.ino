@@ -27,6 +27,8 @@ void setup() {
 
     yatl.getBuzzer()->beep(440, 200);
 
+    yatl.getScreen()->drawWallpaper( (char*) "girl.bmp");
+
     yatl.dbug("Wait for SubMcu ready....");
     yatl.delay(3000);
     if ( !muteMode ) {
