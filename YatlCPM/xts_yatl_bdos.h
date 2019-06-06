@@ -147,7 +147,7 @@
 
       if ( endsWith(test, (char*)".BMP") ) {
         Serial.println("|  Wanna draw a BMP wallpaper |");
-        drawBmp( getAssetsFileEntry( test ), true );
+        yatl.getScreen()->drawWallpaper( test );
       } else if ( endsWith(test, (char*)".PCT") ) {
         Serial.println("|  Wanna draw a PCT wallpaper |");
         Serial.println("|  NYI                        |");

@@ -67,11 +67,12 @@
 
     #ifdef HAS_KEYBOARD
       #warning "TO LOOK AT : ISR & Kbd polling"
-      #ifdef LAYOUT_MOBIGO
-        if ( !KB_AUTO_POLL && keybReady ) {
-          kbd.poll();
-        }
-      #endif
+      // #ifdef LAYOUT_MOBIGO
+      //   if ( !KB_AUTO_POLL && keybReady ) {
+      //     kbd.poll();
+      //   }
+      // #endif
+      yatl.getKeyboard()->poll();
     #endif
 
     if ( nextISR == ISR_MODE_NONE ) {
