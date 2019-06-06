@@ -145,4 +145,12 @@ bool endsWith(char* str, char* toFind) {
     return true;
 }
 
+char charUpCase(char ch) {
+    if ( ch >= 'a' && ch <= 'z' ) {
+        return ch - 'a' + 'A';
+    }
+    return ch;
+}
+
+
 #endif

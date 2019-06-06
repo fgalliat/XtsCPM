@@ -26,12 +26,4 @@
    #define BRIDGE_MCU_SERIAL Serial1
    #define BRIDGE_MCU_BAUDS  115200
 
-  // to move away...
-  static char charUpCase(char ch) {
-      if ( ch >= 'a' && ch <= 'z' ) {
-          return ch - 'a' + 'A';
-      }
-      return ch;
-  }
-
 #endif

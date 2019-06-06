@@ -123,12 +123,13 @@ class YatlScreen {
     public:
       YatlScreen(Yatl* yatl) { this->yatl = yatl; }
       bool setup();
-      void drawWallpaper(char* assetName);
 
       void write(char ch);
       void println(const char* str);
       void println(char* str);
 
+      void cls();
+      void drawWallpaper(char* assetName);
       void drawTextBox(const char* title, const char* msg);
 };
 

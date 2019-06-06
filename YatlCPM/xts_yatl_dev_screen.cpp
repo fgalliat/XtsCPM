@@ -1,5 +1,5 @@
 // just for devl purposes
-#define ARDUINO 1
+// #define ARDUINO 1
 
 
 #ifdef ARDUINO
@@ -12,6 +12,8 @@
  */
 
   #include "Arduino.h"
+
+  #include "xts_string.h"
 
   #include "xts_yatl_settings.h"
   #include "xts_yatl_api.h"
@@ -575,6 +577,11 @@
       tft.setCursor( 40, 30+30 );
       tft.print( msg );
   }
+
+  void YatlScreen::cls() {
+     consoleCls(true);
+  }
+
 
   // ==========] Draw Bmp Routines [==========
    void _drawBmp(char* filename, int x, int y);
