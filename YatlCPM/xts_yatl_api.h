@@ -117,6 +117,16 @@ class YatlWiFi {
       char* wget(char* url);
 };
 
+extern uint16_t rgb(uint8_t r,uint8_t g,uint8_t b); 
+extern uint16_t mapColor(uint16_t color);
+
+const uint16_t CLR_BLACK = rgb(0,0,0);
+const uint16_t CLR_WHITE = rgb(255,255,255);
+const uint16_t CLR_GREEN = rgb(0,255,0);
+#define LCD_CONSOLE_40_COLS 0x00
+#define LCD_CONSOLE_80_COLS 0x01
+#define LCD_CONSOLE_DEF_COLS LCD_CONSOLE_80_COLS
+
 class YatlScreen {
     private:
       Yatl* yatl;
@@ -129,6 +139,10 @@ class YatlScreen {
       void println(char* str);
 
       void cls();
+
+      void consoleColorSet(uint16_t bg=CLR_BLACK, uint16_t fg=CLR_WHITE, uint16_t acc=CLR_GREEN);
+      void consoleSetMode(uint8_t columnMode, bool rerenderFull=true);
+
       void drawWallpaper(char* assetName);
       void drawTextBox(const char* title, const char* msg);
 };

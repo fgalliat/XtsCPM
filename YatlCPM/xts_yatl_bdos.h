@@ -37,21 +37,19 @@
          // set the console colorSet
          if ( a1 == 0 ) {
             // to reset
-            consoleColorSet(); 
+            yatl.getScreen()->consoleColorSet(); 
          } else {
             // set as old monochrome LCD (no backlight) 
-            consoleColorSet( rgb(126, 155, 125), rgb(69,80,110), rgb(108-30,120-30,195-30) );
+            yatl.getScreen()->consoleColorSet( rgb(126, 155, 125), rgb(69,80,110), rgb(108-30,120-30,195-30) );
          }
      } else if ( a0 == 1 ) {
          // set the console font size & cols mode
          if ( a1 == 0 ) {
             // to reset
-            _setConsoleMode(LCD_CONSOLE_80_COLS);
-            consoleRenderFull();
+            yatl.getScreen()->consoleSetMode(LCD_CONSOLE_80_COLS, true);
          } else {
             // set as 53 cols (big font)
-            _setConsoleMode(LCD_CONSOLE_40_COLS);
-            consoleRenderFull();
+            yatl.getScreen()->consoleSetMode(LCD_CONSOLE_40_COLS, true);
          }
      }
      return 0;

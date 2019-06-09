@@ -46,10 +46,6 @@
 
     #define TFT_ROTATION 1
 
-   #define LCD_CONSOLE_40_COLS 0x00
-   #define LCD_CONSOLE_80_COLS 0x01
-   #define LCD_CONSOLE_DEF_COLS LCD_CONSOLE_80_COLS
-
   // forward symbols
   void _setConsoleMode(int mode);
 
@@ -216,7 +212,6 @@
       TTY_COLOR_FG = fg;
       TTY_COLOR_ACCENT = acc;
    }
-
 
    void consoleCls(bool clearDisplay=true) {
       _consoleFill(0x00, true);
@@ -550,6 +545,15 @@
       }
    }
 
+
+   void YatlScreen::consoleColorSet(uint16_t bg, uint16_t fg, uint16_t acc) {
+      ::consoleColorSet(bg, fg, acc);
+   }
+
+   void YatlScreen::consoleSetMode(uint8_t columnMode, bool rerenderFull) {
+      ::_setConsoleMode(columnMode);
+      if (rerenderFull) ::consoleRenderFull();
+   }
 
    void YatlScreen::write(char ch) {
       // tft.write(ch);
