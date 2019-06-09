@@ -131,6 +131,7 @@
     #define _puts Serial.print
 
     bool anyBtn() { if (_kbhit() > 0) { _getch(); return true; } else { return false; } }
+    // bool anyBtn() { return false; }
 
     // returns nb of bytes readed
     int _SD_readBinFile(char* filename, uint8_t* outBuff, long fileLength) {
@@ -196,7 +197,7 @@
 
         char lastCh = tuneStreamName[ tlen-1 ];
         lastCh = charUpCase(lastCh);
-        if ( !(( lastCh == 'K' || lastCh == '3') && (tlen >= 2 && tuneStreamName[ tlen-2 ] == '5') ) ) {
+        if ( (( lastCh == 'K' || lastCh == '3') && (tlen >= 2 && tuneStreamName[ tlen-2 ] == '5') ) ) {
             if ( lastCh == 'K' ) {
                 format = AUDIO_FORMAT_T5K;
             } else {
