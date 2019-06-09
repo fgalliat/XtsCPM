@@ -165,6 +165,10 @@ Xtase - fgalliat version @ Apr2109
 
 ![CP/M colored console](./pictures/yatlCPM_colored_1_mini.jpg)
 
+![Begin of Enclosure](./pictures/yatlShiftEnclosure1.jpg)
+
+![Replacing Screen box](./pictures/yatlShiftEnclosure2.jpg)
+
 
 
 @ Xtase - fgalliat :: Apr2019
