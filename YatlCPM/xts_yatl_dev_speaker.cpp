@@ -13,7 +13,8 @@
 
   #include "Arduino.h"
 
-  #include "xts_string.h"
+  // #include "xts_string.h"
+  extern char charUpCase(char ch);
 
   #include "xts_yatl_settings.h"
   #include "xts_yatl_api.h"
@@ -118,15 +119,14 @@
     bool checkbreak() { return false; }
 
     // forward symbols
-    int _kbhit(void);
-    uint8_t _getch(void);
+    extern int _kbhit(void);
+    extern uint8_t _getch(void);
 
     // TMP impl.
     // int _kbhit(void) { return Serial.available(); }
     // uint8_t _getch(void) { return Serial.read(); }
-
-    int _kbhit(void) { return yatl.getKeyboard()->available(); }
-    uint8_t _getch(void) { return yatl.getKeyboard()->read(); }
+    // int _kbhit(void) { return yatl.getKeyboard()->available(); }
+    // uint8_t _getch(void) { return yatl.getKeyboard()->read(); }
 
     #define _puts Serial.print
 

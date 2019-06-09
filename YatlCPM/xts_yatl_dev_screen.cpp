@@ -13,7 +13,8 @@
 
   #include "Arduino.h"
 
-  #include "xts_string.h"
+  // #include "xts_string.h"
+  extern char charUpCase(char ch);
 
   #include "xts_yatl_settings.h"
   #include "xts_yatl_api.h"
