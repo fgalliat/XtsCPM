@@ -101,25 +101,25 @@
         uint16_t h = ((uint16_t)test[12] << 8) + test[13];
         if ( fillType == 0x00 ) {
           // draw outlines
-          tft.drawRect( x, y, w, h, color );
+          yatl.getScreen()->drawRect( x, y, w, h, color );
         } else if ( fillType == 0x01 ) {
           // fills the rect
-          tft.fillRect( x, y, w, h, color );
+          yatl.getScreen()->fillRect( x, y, w, h, color );
         }
       } else if ( shapeType == 0x02 ) {
         // Shape : circle
         uint16_t r = ((uint16_t)test[10] << 8) + test[11];
         if ( fillType == 0x00 ) {
           // draw outlines
-          tft.drawCircle( x,y,r, color );
+          yatl.getScreen()->drawCircle( x,y,r, color );
         } else {
-          tft.fillCircle( x,y,r, color );
+          yatl.getScreen()->fillCircle( x,y,r, color );
         }
       } else if ( shapeType == 0x03 ) {
         // Shape : line
         uint16_t x2 = ((uint16_t)test[10] << 8) + test[11];
         uint16_t y2 = ((uint16_t)test[12] << 8) + test[13];
-        tft.drawLine( x, y, x2, y2, color );
+        yatl.getScreen()->drawLine( x, y, x2, y2, color );
       } 
     }
 

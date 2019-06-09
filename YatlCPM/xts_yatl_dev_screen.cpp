@@ -79,6 +79,24 @@
       drawBmp(fileName, true);
   }
 
+  void YatlScreen::drawRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color) {
+     tft.drawRect(x,y,w,h,color);
+  }
+  void YatlScreen::fillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color) {
+     tft.fillRect(x,y,w,h,color);
+  }
+
+  void YatlScreen::drawCircle(uint16_t x, uint16_t y, uint16_t r, uint16_t color) {
+     tft.drawCircle(x,y,r,color);
+  }
+  void YatlScreen::fillCircle(uint16_t x, uint16_t y, uint16_t r, uint16_t color) {
+     tft.fillCircle(x,y,r,color);
+  }
+
+  void YatlScreen::drawLine(uint16_t x, uint16_t y, uint16_t x2, uint16_t y2, uint16_t color) {
+     tft.drawLine(x,y,x2,y2,color);
+  }
+
   // ==========] Console Routines [==========
 
    void _doPlay(char* sequence) {
