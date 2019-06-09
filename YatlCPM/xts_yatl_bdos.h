@@ -11,6 +11,9 @@
 
   #include "Arduino.h"
 
+  // forward symbols
+  uint8_t mp3BdosCall(int32 value);
+
   // from TurboPascal 3 strings are 255 long max
   // & starts @ 1 ( 'cause @0 contains length)
   int getPascalStringFromRam(int32 addr, char* dest, int maxLen) {
@@ -173,7 +176,49 @@
     return 0;
   }
 
+  uint8_t mp3BdosCall(int32 value) {
+      Serial.println("mp3 Bdos call");
+      // int trckNum += (128+64) << 8
 
+      uint8_t a0 = HIGH_REGISTER(value);
+      uint8_t a1 = LOW_REGISTER(value);
+
+      if ( a0 >= (1 << 6) ) {
+         // 11000000 -> 11 play+loop -> 64(10)
+         // still 16000 addressable songs
+         bool loopMode = a0 >= (1 << 7);
+
+         if ( a0 >= 128 ) { a0 -= 128; }
+
+         a0 -= 64;
+         int trkNum = (a0<<8) + a1;
+
+if ( loopMode ) Serial.println("mp3 LOOP");
+Serial.println("mp3 play");
+Serial.println(trkNum);
+
+         if ( loopMode ) { yatl.getMusicPlayer()->loop(trkNum); }
+         else { yatl.getMusicPlayer()->play(trkNum); }
+      } else if (a0 == 0x00) {
+Serial.println("mp3 stop");
+          yatl.getMusicPlayer()->stop();
+      } else if (a0 == 0x01) {
+Serial.println("mp3 pause");
+          yatl.getMusicPlayer()->pause();
+      } else if (a0 == 0x02) {
+          yatl.getMusicPlayer()->next();
+      } else if (a0 == 0x03) {
+          yatl.getMusicPlayer()->prev();
+      } else if (a0 == 0x04) {
+          yatl.getMusicPlayer()->volume( a1 );
+      } else if (a0 == 0x05) {
+Serial.println("mp3 demo");
+          // for now : just for demo
+          yatl.getMusicPlayer()->play( 65 );
+      }
+
+    return 0;
+  }
 
 
 #endif
