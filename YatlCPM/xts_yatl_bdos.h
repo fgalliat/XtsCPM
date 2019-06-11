@@ -13,6 +13,7 @@
 
   // forward symbols
   uint8_t mp3BdosCall(int32 value);
+  uint8_t subMCUBdosCall(int32 value);
 
   // from TurboPascal 3 strings are 255 long max
   // & starts @ 1 ( 'cause @0 contains length)
@@ -167,7 +168,7 @@
     } else if ( regNum == 227 ) {
      return mp3BdosCall(value);
     } else if ( regNum == 228 ) {
-      Serial.println( "BdosCall 228 NYI" );
+      return subMCUBdosCall(value);
     } else if ( regNum == 229 ) {
       Serial.println( "BdosCall 229 NYI" );
       // BdosTest229(value);
@@ -176,6 +177,34 @@
     return 0;
   }
 
+  // ==============] Deep Hardware Control [==========
+  uint8_t subMCUBdosCall(int32 value) {
+      Serial.println("bridge Bdos call");
+      uint8_t hiB = HIGH_REGISTER(value);
+      if ( hiB == 0 ) {
+        uint8_t volts = (uint8_t)( yatl.getPWRManager()->getVoltage() * 256.0f / 5.0f );
+        return volts;
+      } else if ( hiB == 1 ) {
+        yatl.getPWRManager()->reset();
+      } else if ( hiB == 2 ) {
+        yatl.getPWRManager()->deepSleep();
+      } else if ( hiB == 3 ) {
+        uint8_t loB = LOW_REGISTER(value);
+        bool r = false;
+        bool g = false;
+        bool b = false;
+        if ( (loB & 4) == 4 ) { r = true; }
+        if ( (loB & 2) == 2 ) { g = true; }
+        if ( (loB & 1) == 1 ) { b = true; }
+        yatl.getLEDs()->red(r);
+        yatl.getLEDs()->green(g);
+        yatl.getLEDs()->blue(b);
+      }
+
+      return 0;
+  }
+
+  // ==============] mp3 Hardware Control [==========
   uint8_t mp3BdosCall(int32 value) {
       Serial.println("mp3 Bdos call");
       // int trckNum += (128+64) << 8
