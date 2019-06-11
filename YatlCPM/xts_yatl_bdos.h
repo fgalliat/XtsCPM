@@ -199,6 +199,8 @@
         yatl.getLEDs()->red(r);
         yatl.getLEDs()->green(g);
         yatl.getLEDs()->blue(b);
+      } else if ( hiB == 4 ) {
+        return yatl.getFS()->downloadFromSerial() ? 1 : 0;
       }
 
       return 0;

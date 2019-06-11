@@ -94,10 +94,10 @@ char* str_split(char* stringToSplit, char delim, int tokenNum) {
 
 int str_count(char* stringToSplit, char delim) {
     int curToken = 0;
-    int idx = 0, lastIdx = 0;
+    int idx = 0;//, lastIdx = 0;
 
     while( true ) {
-        lastIdx = idx;
+        // lastIdx = idx;
         idx = indexOf(stringToSplit, delim, idx);
         if ( idx < 0 ) {
             break;

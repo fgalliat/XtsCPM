@@ -97,6 +97,8 @@ class YatlFS {
       YatlFS(Yatl* yatl) { this->yatl = yatl; }
       bool setup();
       char* getAssetsFileEntry(char* entryName);
+      // Serial will have to send PATH/LEN/datas
+      bool downloadFromSerial();
 };
 
 class YatlWiFi {

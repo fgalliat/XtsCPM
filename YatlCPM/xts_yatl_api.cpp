@@ -168,6 +168,29 @@
         return _assetEntry;
     }
 
+    bool YatlFS::downloadFromSerial() {
+        Serial.println("+ Waiting for file...");
+        this->yatl->warn("Download in progress");
+        // for now : file has to be like "/C/0/XTSDEMO.PAS"
+        char name[64+1]; Serial.readBytesUntil(0x0A, name, 64);
+        if ( strlen(name) <= 0 ) {
+            this->yatl->warn("Download not ready");
+            return false;
+        }
+        char sizeStr[12+1]; Serial.readBytesUntil(0x0A, sizeStr, 12);
+        long size = atol(sizeStr);
+        char txt[128+1]; sprintf(txt, "Downloading %s (%ld bytes)", name, size);
+        this->yatl->warn((const char*)txt);
+        char packet[128+1];
+        for(int readed=0; readed < size;) {
+            int packetLen = Serial.readBytes( packet, 128 );
+            readed += packetLen;
+        }
+        this->yatl->warn("-EOF-");
+        this->yatl->beep();
+        return true;
+    }
+
     // ===============] SubMCU [===============
     bool YatlSubMCU::setup() {
         BRIDGE_MCU_SERIAL.begin( BRIDGE_MCU_BAUDS );
