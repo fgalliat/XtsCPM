@@ -121,28 +121,28 @@
     }
 
     void Yatl::alert(const char* msg) {
-        this->blink(5);
-        Serial.println("*****************************");
-        Serial.println("*  ALERT                    *");
-        Serial.print("* ");
-        Serial.println(msg);
-        Serial.println("*****************************");
-        this->buzzer->beep(440, 200);
-        // TODO : screen alert box
         if ( screenReady ) {
             this->getScreen()->drawTextBox( "ALERT", msg );
+        } else {
+            this->blink(5);
+            Serial.println("*****************************");
+            Serial.println("*  ALERT                    *");
+            Serial.print("* ");
+            Serial.println(msg);
+            Serial.println("*****************************");
         }
+        this->buzzer->beep(440, 200);
     }
     void Yatl::warn(const char* msg) {
-        this->blink(5);
-        Serial.println("*****************************");
-        Serial.println("*  WARNING                  *");
-        Serial.print("* ");
-        Serial.println(msg);
-        Serial.println("*****************************");
-        // TODO : screen warning box
         if ( screenReady ) {
             this->getScreen()->drawTextBox( "WARNING", msg );
+        } else {
+            this->blink(5);
+            Serial.println("*****************************");
+            Serial.println("*  WARNING                  *");
+            Serial.print("* ");
+            Serial.println(msg);
+            Serial.println("*****************************");
         }
     }
 
@@ -169,20 +169,32 @@
     }
 
     bool YatlFS::downloadFromSerial() {
-        Serial.println("+ Waiting for file...");
+        while( Serial.available() ) { Serial.read(); delay(2); }
         this->yatl->warn("Download in progress");
+        Serial.println("+OK");
+        while( !Serial.available() ) { delay(2); }
         // for now : file has to be like "/C/0/XTSDEMO.PAS"
-        char name[64+1]; Serial.readBytesUntil(0x0A, name, 64);
-        if ( strlen(name) <= 0 ) {
-            this->yatl->warn("Download not ready");
+        int tlen = 0;
+        char txt[128+1]; 
+        char name[64+1]; memset(name, 0x00, 64); tlen = Serial.readBytesUntil(0x0A, name, 64);
+        if ( tlen <= 0 ) {
+            sprintf(txt, "Downloading %s (error)", name);
+            this->yatl->warn((const char*)txt);
+            Serial.println("Download not ready");
+            Serial.println(name);
+            Serial.println("-OK");
             return false;
         }
-        char sizeStr[12+1]; Serial.readBytesUntil(0x0A, sizeStr, 12);
+        Serial.println("+OK");
+        while( !Serial.available() ) { delay(2); }
+        char sizeStr[12+1]; memset(sizeStr, 0x00, 12); tlen = Serial.readBytesUntil(0x0A, sizeStr, 12);
         long size = atol(sizeStr);
-        char txt[128+1]; sprintf(txt, "Downloading %s (%ld bytes)", name, size);
+        sprintf(txt, "Downloading %s (%ld bytes)", name, size);
         this->yatl->warn((const char*)txt);
         char packet[128+1];
+        Serial.println("+OK");
         for(int readed=0; readed < size;) {
+            while( !Serial.available() ) { delay(2); }
             int packetLen = Serial.readBytes( packet, 128 );
             readed += packetLen;
         }
