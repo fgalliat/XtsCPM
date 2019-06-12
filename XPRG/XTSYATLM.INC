@@ -32,4 +32,10 @@ begin
  Bdos(227, 3 shl 8 );
 end;
 
+procedure volMp3(volum : integer);
+begin
+ volum := (4 * 256) + volum;
+ Bdos(227, volum );
+end;
+
 { -eof- }

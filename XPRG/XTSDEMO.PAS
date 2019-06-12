@@ -46,6 +46,7 @@ begin
  writeln( str );
 
  { 60-duHast / 65-C64MENU / 23-AUTOMATION }
+ volMp3(15);
  playMp3(23);
 
  cursor( 10, 9 );
