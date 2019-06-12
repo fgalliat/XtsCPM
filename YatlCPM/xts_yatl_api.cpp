@@ -18,6 +18,7 @@
     #include "xts_yatl_api.h"
 
     #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
+    extern SdFatSdio SD;
 
     extern Yatl yatl;
     YatlSubMCU _subMcu(&yatl);
@@ -185,6 +186,13 @@
             Serial.println("-OK");
             return false;
         }
+
+        File f = SD.open(name, O_CREAT | O_WRITE);
+        if ( !f ) {
+          Serial.println("-OK");
+          return false;    
+        }
+
         Serial.println("+OK");
         while( !Serial.available() ) { delay(2); }
         char sizeStr[12+1]; memset(sizeStr, 0x00, 12); tlen = Serial.readBytesUntil(0x0A, sizeStr, 12);
@@ -196,8 +204,11 @@
         for(int readed=0; readed < size;) {
             while( !Serial.available() ) { delay(2); }
             int packetLen = Serial.readBytes( packet, 128 );
+            f.write(packet, packetLen);
+            f.flush();
             readed += packetLen;
         }
+        f.close();
         this->yatl->warn("-EOF-");
         this->yatl->beep();
         return true;
