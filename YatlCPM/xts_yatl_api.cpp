@@ -187,7 +187,17 @@
             return false;
         }
 
+        // Cf CPM may padd the original file
         File f = SD.open(name, O_CREAT | O_WRITE);
+        if ( !f ) {
+          Serial.println("-OK");
+          return false;    
+        }
+        f.remove();
+        f.close();
+        // Cf CPM may padd the original file
+
+        f = SD.open(name, O_CREAT | O_WRITE);
         if ( !f ) {
           Serial.println("-OK");
           return false;    
