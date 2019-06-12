@@ -179,9 +179,10 @@
 
   // ==============] Deep Hardware Control [==========
   uint8_t subMCUBdosCall(int32 value) {
-      Serial.println("bridge Bdos call");
+      // Serial.println("bridge Bdos call");
       uint8_t hiB = HIGH_REGISTER(value);
       if ( hiB == 0 ) {
+        yatl.getSubMCU()->cleanBuffer();
         uint8_t volts = (uint8_t)( yatl.getPWRManager()->getVoltage() * 256.0f / 5.0f );
         return volts;
       } else if ( hiB == 1 ) {
