@@ -227,12 +227,25 @@ void _send(float val) { serialBridge.print(val); }
 
     #endif
 
+    // the telnet access password
+    #ifndef TELNETPASSWD
+      #define TELNETUSER   "root"
+      #define TELNETPASSWD "yatl"
+    #endif
+
     #define STACK_PROTECTOR  512 // bytes
 
     //how many clients should be able to telnet to this ESP8266
     #define MAX_SRV_CLIENTS 2
     /*const*/ char* ssid = "None Yet";
     /*const*/ char* password = "None Yet";
+
+    #ifndef AP_SSID
+      #define AP_SSID "YatlShift"
+      // must be at least 8 chars long
+      #define AP_PSK  "yatlshift"
+    #endif
+
 
 // =============] Server [================
     const int port = 23;
@@ -288,9 +301,9 @@ void _send(float val) { serialBridge.print(val); }
         } else {
             WiFi.mode(WIFI_AP);
             delay(200);
-            const char* _ssid = "YatlShift";
+            const char* _ssid = AP_SSID;
             // must be longer then 8 chars
-            const char* _password = "yatlshift";
+            const char* _password = AP_PSK;
             red(true); green(false); 
             bool ok = WiFi.softAP(_ssid, _password);
             if ( !ok ) {
@@ -333,7 +346,7 @@ void _send(float val) { serialBridge.print(val); }
             strcpy(currentSsid, ssid );
         } else if (wifiConnMode == WIFI_CONN_MODE_AP) {
             // TODO : finish that
-            strcpy(currentSsid, "YatlShift" );
+            strcpy(currentSsid, AP_SSID );
         } else {
             strcpy(currentSsid, "None");
         }
@@ -368,6 +381,61 @@ void _send(float val) { serialBridge.print(val); }
 
     int telnetMode = TELNET_MODE_NONE;
 
+    void telnet_client_connected(int num) {
+       WiFiClient clt = serverClients[num];
+
+       clt.println("***************************");
+       clt.println("* Welcome to Yatl system  *");
+       clt.println("* Xtase-fgalliat @Jun2019 *");
+       clt.println("***************************");
+       clt.println("");
+       while( clt.available() ) { clt.read(); }
+
+       bool loginOK = false;
+       bool passwOK = false;
+
+       int tmp;
+
+       clt.print("User : ");
+       clt.flush(); 
+       char login[32+1]; memset(login, 0x00, 32+1);
+       while( !clt.available() ) { delay(2); yield(); }
+       tmp = clt.readBytesUntil(0x0A, login, 32);
+       if ( tmp > 0 && login[ tmp-1 ] == '\r' ) { login[ tmp-1 ] = 0x00; }
+       login[tmp] = 0x00;
+       
+
+       if ( strcmp(login, TELNETUSER) == 0 ) {
+         loginOK = true;
+       }
+       while( clt.available() ) { clt.read(); }
+
+       clt.print("Password : ");
+       clt.flush(); 
+       char passd[32+1]; memset(passd, 0x00, 32+1);
+       while( !clt.available() ) { delay(2); yield(); }
+       tmp = clt.readBytesUntil(0x0A, passd, 32);
+       if ( tmp > 0 && passd[ tmp-1 ] == '\r' ) { passd[ tmp-1 ] = 0x00; }
+       passd[tmp] = 0x00;
+
+       if ( (tmp=strcmp( (const char*)passd, TELNETPASSWD)) == 0 ) {
+         passwOK = true;
+       }
+       while( clt.available() ) { clt.read(); }
+
+       if ( !( loginOK && passwOK ) ) {
+          char msg[64+1]; sprintf( msg, " Acess DENIED (%s/%s)", login, passd );
+          clt.println(msg);
+          clt.flush(); 
+          clt.stop();
+          return;
+       }
+
+       clt.println(" Acess GRANTED ");
+       clt.flush(); 
+    }
+
+
     void loopTelnetd() {
         if (!telnetdStarted) { return; }
 
@@ -383,6 +451,7 @@ void _send(float val) { serialBridge.print(val); }
                 // logger->println(i);
                 blink(4);
                 telnetMode = TELNET_MODE_KEYB;
+                telnet_client_connected(i);
                 break;
             }
 
