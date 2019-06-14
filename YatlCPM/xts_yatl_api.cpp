@@ -299,6 +299,7 @@
     // ==============] WiFi [==================
 
     bool YatlWiFi::beginSTA() { 
+        this->yatl->getSubMCU()->cleanBuffer();
         this->yatl->getSubMCU()->send("wcs");
         int cpt = 0;
         while( this->yatl->getSubMCU()->available() == 0 ) {
@@ -314,6 +315,7 @@
         return strlen(resp) > 0 && resp[0] == '+';
     }
     bool YatlWiFi::beginAP() { 
+        this->yatl->getSubMCU()->cleanBuffer();
         this->yatl->getSubMCU()->send("wca");
         int cpt = 0;
         while( this->yatl->getSubMCU()->available() == 0 ) {
@@ -323,10 +325,12 @@
         }
         ::delay(200);
         char* resp = this->yatl->getSubMCU()->readLine();
+        Serial.print("-> WIFI : ");Serial.print((const char*)resp);Serial.print("\n");
         return strlen(resp) > 0 && resp[0] == '+';
     }
 
     void YatlWiFi::close() { 
+        this->yatl->getSubMCU()->cleanBuffer();
         this->yatl->getSubMCU()->send("ws"); 
         ::delay(200);
         this->yatl->getSubMCU()->readLine(); 
@@ -335,7 +339,20 @@
     char* YatlWiFi::getIP() { this->yatl->getSubMCU()->send("wi"); return this->yatl->getSubMCU()->readLine(); }
     char* YatlWiFi::getSSID() { this->yatl->getSubMCU()->send("we"); return this->yatl->getSubMCU()->readLine(); }
 
-    // bool YatlWiFi::startTelnetd();
+    bool YatlWiFi::startTelnetd() {
+        this->yatl->getSubMCU()->cleanBuffer();
+        this->yatl->getSubMCU()->send("wto");
+        int cpt = 0;
+        while( this->yatl->getSubMCU()->available() == 0 ) {
+            delay(100);
+            if ( cpt >= 50 ) { break; }
+            cpt++;
+        }
+        ::delay(200);
+        char* resp = this->yatl->getSubMCU()->readLine();
+        Serial.print("-> TELNET : ");Serial.print((const char*)resp);Serial.print("\n");
+        return strlen(resp) > 0 && resp[0] == '+';
+    }
     // bool YatlWiFi::stopTelnetd();
     // char* YatlWiFi::wget(char* url);
 

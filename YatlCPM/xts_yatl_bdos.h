@@ -202,6 +202,35 @@
         yatl.getLEDs()->blue(b);
       } else if ( hiB == 4 ) {
         return yatl.getFS()->downloadFromSerial() ? 1 : 0;
+      } // Wifi Device calls -> 64+
+      else if ( hiB == 64 ) {
+        // Start the telnet server in APmode
+        // See later for better
+
+        // just to ensure WiFi will run...
+        yatl.getSubMCU()->cleanBuffer();
+        yatl.getWiFi()->getIP();
+        // yatl.getWiFi()->close();
+        yatl.getSubMCU()->cleanBuffer();
+
+        int ok = yatl.getWiFi()->beginAP();
+        if ( ok <= 0 ) {
+          _puts("(!!) Wifi has not started !\n");
+          return 0;
+        } else {
+          _puts("(ii) Wifi has started :");
+          _puts( (const char*) yatl.getWiFi()->getIP() );
+          _puts(" !\n");
+        }
+        ok = yatl.getWiFi()->startTelnetd();
+        if ( ok <= 0 ) {
+          _puts("(!!) Telnetd has not started !\n");
+          return 0;
+        } else {
+          _puts("(ii) Telnetd has started :23 !\n");
+        }
+
+        return 1;
       }
 
       return 0;
