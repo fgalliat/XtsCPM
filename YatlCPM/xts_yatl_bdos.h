@@ -208,14 +208,12 @@
         // See later for better
 
         // just to ensure WiFi will run...
-        // yatl.getSubMCU()->cleanBuffer();
-        Serial.println("Wasting IP");
+        // Serial.println("Wasting IP");
         yatl.getWiFi()->getIP();
-        Serial.println("Closing WiFi");
+        // Serial.println("Closing WiFi");
         yatl.getWiFi()->close();
-        // yatl.getSubMCU()->cleanBuffer();
 
-Serial.println("Opening WiFi APmode");
+        // Serial.println("Opening WiFi APmode");
         int ok = yatl.getWiFi()->beginAP();
         if ( ok <= 0 ) {
           _puts("(!!) Wifi has not started !\n");

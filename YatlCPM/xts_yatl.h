@@ -66,6 +66,7 @@
     inIRQ = true;
 
     #ifdef HAS_KEYBOARD
+      #if KEYB_ISR_POLL
       #warning "TO LOOK AT : ISR & Kbd polling"
       // #ifdef LAYOUT_MOBIGO
       //   if ( !KB_AUTO_POLL && keybReady ) {
@@ -73,6 +74,7 @@
       //   }
       // #endif
       yatl.getKeyboard()->poll();
+      #endif
     #endif
 
     if ( nextISR == ISR_MODE_NONE ) {

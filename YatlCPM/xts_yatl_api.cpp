@@ -449,7 +449,7 @@ memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
         this->yatl->getSubMCU()->cleanBuffer();
         this->yatl->getSubMCU()->send("wca");
         char* resp = this->yatl->getSubMCU()->waitForNonEmptyLine();
-        Serial.print("-> WIFI : ");Serial.print((const char*)resp);Serial.print("\n");
+        // Serial.print("-> WIFI : ");Serial.print((const char*)resp);Serial.print("\n");
         return strlen(resp) > 0 && resp[0] == '+';
     }
 
@@ -466,7 +466,7 @@ memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
         this->yatl->getSubMCU()->cleanBuffer();
         this->yatl->getSubMCU()->send("wto");
         char* resp = this->yatl->getSubMCU()->waitForNonEmptyLine();
-        Serial.print("-> TELNET : ");Serial.print((const char*)resp);Serial.print("\n");
+        // Serial.print("-> TELNET : ");Serial.print((const char*)resp);Serial.print("\n");
         return strlen(resp) > 0 && resp[0] == '+';
     }
     bool YatlWiFi::stopTelnetd() {

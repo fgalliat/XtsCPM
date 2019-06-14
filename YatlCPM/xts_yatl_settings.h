@@ -15,6 +15,8 @@
   #define HAS_BUILTIN_LCD 1
   #define USE_BUILTIN_LCD 1
   #define HAS_KEYBOARD 1
+  
+  #define KEYB_ISR_POLL 0
 
   // 13 is used by SPI LCD
   #define LED_PIN 14
