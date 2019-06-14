@@ -239,12 +239,20 @@
         if (waitFor) { delay(1000); }
     }
 
+    void YatlSubMCU::flush() { BRIDGE_MCU_SERIAL.flush(); }
     void YatlSubMCU::send(char ch) { BRIDGE_MCU_SERIAL.write( ch ); }
     void YatlSubMCU::send(const char* str) { BRIDGE_MCU_SERIAL.print( str ); }
     void YatlSubMCU::send(char* str) { BRIDGE_MCU_SERIAL.print( str ); }
 
+    extern bool keybLocked;
+
     int YatlSubMCU::available() { return BRIDGE_MCU_SERIAL.available(); }
-    int YatlSubMCU::read() { return BRIDGE_MCU_SERIAL.read(); }
+    int YatlSubMCU::read() { 
+        // keybLocked = true;
+        int ret = BRIDGE_MCU_SERIAL.read(); 
+        // keybLocked = false;
+        return ret;
+    }
 
     int YatlSubMCU::readUntil(uint8_t until, char* dest, int maxLen) {
       int readed = BRIDGE_MCU_SERIAL.readBytesUntil((char)until, dest, maxLen);
@@ -254,9 +262,138 @@
     #define MAX_SUBMCU_LINE_LEN 255
     char lastSubMCULine[MAX_SUBMCU_LINE_LEN+1];
     char* YatlSubMCU::readLine() {
+        keybLocked = true;
         memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
         BRIDGE_MCU_SERIAL.readBytesUntil( '\n', lastSubMCULine, MAX_SUBMCU_LINE_LEN );
+        keybLocked = false;
         return lastSubMCULine;
+    }
+
+    char* YatlSubMCU::waitForNonEmptyLine(unsigned long timeout) {
+        keybLocked = true;
+        if ( timeout == 0 ) { timeout = 10*1000; } // 10sec
+        unsigned long began = millis();
+
+memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
+  uint8_t idx = 0;
+  char c;
+  do
+  {
+    while (BRIDGE_MCU_SERIAL.available() == 0) {
+        delay(1);
+        if (millis()-began >= timeout) { keybLocked = false; return lastSubMCULine; }
+    } // wait for a char this causes the blocking
+    c = BRIDGE_MCU_SERIAL.read();
+    lastSubMCULine[idx++] = c;
+
+    if (millis()-began >= timeout) { keybLocked = false; return lastSubMCULine; }
+  }
+  while (c != '\n' && c != '\r'); 
+  lastSubMCULine[idx] = 0;
+
+
+//         /*
+//         const int curRespLen = 255;
+//         char curResp[curRespLen+1]; memset(curResp, 0x00, curRespLen+1);
+//         memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
+
+
+//         int t;
+//         while( (t = BRIDGE_MCU_SERIAL.available() ) <= 0 ) { 
+//             delay(2); 
+//             Serial.print( (millis()-began) ); Serial.println();
+//             if (millis()-began >= timeout) { return lastSubMCULine; } 
+//         }
+//         Serial.print("Found ");
+//         Serial.print(t);
+//         Serial.println(" bytes to read");
+//         do {
+//             while ( t > 0 ) {
+//                int tlen = strlen(lastSubMCULine);
+//                int ii=0;
+//                for(int i=0; i < t; i++) {
+//                    char ch = BRIDGE_MCU_SERIAL.read();
+//                    if ( ch == '\r' ) { continue; }
+//                    if ( ch == '\n' ) { 
+//                        // what if line is empty !!!!
+//                        lastSubMCULine[tlen+ii] = 0x00;
+//                        return lastSubMCULine;
+//                    }
+//                    lastSubMCULine[tlen+ii] = ch;
+//                    if ( tlen+ii >= MAX_SUBMCU_LINE_LEN ) { break; }
+//                    ii++;
+//                    if (millis()-began >= timeout) { return lastSubMCULine; }
+//                }
+//                lastSubMCULine[tlen+ii] = 0x00;
+
+//                if (millis()-began >= timeout) { return lastSubMCULine; }
+
+//                t = BRIDGE_MCU_SERIAL.available();
+//             }
+//             // Serial.print( lastSubMCULine );
+
+            
+
+//             t = BRIDGE_MCU_SERIAL.available();
+//         } while( true );
+
+//         return lastSubMCULine;
+//         */
+
+//        BRIDGE_MCU_SERIAL.flush();
+
+//        BRIDGE_MCU_SERIAL.setTimeout(3000);
+//        memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
+//        char subResp[64+1]; 
+//        do {
+//            bool found = false;
+//         //    int t = BRIDGE_MCU_SERIAL.available();
+//         //    if ( t == 0 ) { 
+//         //        if (millis()-began >= timeout) { keybLocked = false; return lastSubMCULine; }
+//         //        continue; 
+//         //    }
+//            memset(subResp, 0x00, 64+1);
+//         //    Serial.print("Found Nb-a ");
+//         //    Serial.println(t);
+//         //    t = BRIDGE_MCU_SERIAL.readBytes(subResp, t);
+
+// int t=0;
+// while( (t=BRIDGE_MCU_SERIAL.available()) == 0 ) { ; }
+// if (millis()-began >= timeout) { keybLocked = false; return lastSubMCULine; }
+
+//            int realT = 0;
+//            for(int i=0; i < t; i++) {
+//                int ch = BRIDGE_MCU_SERIAL.read();
+//                if ( ch <= 0 ) { subResp[i] = 0x00; break; }
+//                subResp[i] = (char)ch;
+//                realT = i;
+//            }
+//            t = realT;
+
+//            Serial.print("Found Nb ");
+//            Serial.println(t);
+//            Serial.println(subResp);
+//            for(int i=0; i < t; i++) {
+//                if ( subResp[i] == '\n' ) {
+//                    Serial.print("Found @ ");
+//                    Serial.println(i);
+//                    int tt = strlen(lastSubMCULine);
+//                    for(int j=0; j < i; j++) {
+//                        lastSubMCULine[tt+j] = subResp[j];
+//                    }
+//                    lastSubMCULine[tt+i] = 0x00;
+//                    found = true;
+//                    break;
+//                }
+//            }
+//            if ( found ) { Serial.print("Found : ");Serial.println(lastSubMCULine); break; }
+//            if (millis()-began >= timeout) { keybLocked = false; return lastSubMCULine; }
+//        } while(true);
+
+//        BRIDGE_MCU_SERIAL.setTimeout(1000);
+
+       keybLocked = false;
+       return lastSubMCULine;
     }
 
     void YatlSubMCU::cleanBuffer() {
@@ -266,9 +403,9 @@
     // ===============] PWR [=================
 
     float YatlPWRManager::getVoltage() {
-        this->yatl->getSubMCU()->send('v');
+        this->yatl->getSubMCU()->send('v'); this->yatl->getSubMCU()->flush();
         float volt = -1.0f;
-        volt = atof( this->yatl->getSubMCU()->readLine() );
+        volt = atof( this->yatl->getSubMCU()->waitForNonEmptyLine() );
         return volt;
     }
 
@@ -301,13 +438,7 @@
     bool YatlWiFi::beginSTA() { 
         this->yatl->getSubMCU()->cleanBuffer();
         this->yatl->getSubMCU()->send("wcs");
-        int cpt = 0;
-        while( this->yatl->getSubMCU()->available() == 0 ) {
-            delay(100);
-            if ( cpt >= 999 ) { break; }
-            cpt++;
-        }
-        char* resp = this->yatl->getSubMCU()->readLine();
+        char* resp = this->yatl->getSubMCU()->waitForNonEmptyLine();
         ::delay(200);
         // Serial.println("----------->");
         // Serial.println(resp);
@@ -317,14 +448,7 @@
     bool YatlWiFi::beginAP() { 
         this->yatl->getSubMCU()->cleanBuffer();
         this->yatl->getSubMCU()->send("wca");
-        int cpt = 0;
-        while( this->yatl->getSubMCU()->available() == 0 ) {
-            delay(100);
-            if ( cpt >= 999 ) { break; }
-            cpt++;
-        }
-        ::delay(200);
-        char* resp = this->yatl->getSubMCU()->readLine();
+        char* resp = this->yatl->getSubMCU()->waitForNonEmptyLine();
         Serial.print("-> WIFI : ");Serial.print((const char*)resp);Serial.print("\n");
         return strlen(resp) > 0 && resp[0] == '+';
     }
@@ -332,28 +456,25 @@
     void YatlWiFi::close() { 
         this->yatl->getSubMCU()->cleanBuffer();
         this->yatl->getSubMCU()->send("ws"); 
-        ::delay(200);
-        this->yatl->getSubMCU()->readLine(); 
+        this->yatl->getSubMCU()->waitForNonEmptyLine(); 
     }
 
-    char* YatlWiFi::getIP() { this->yatl->getSubMCU()->send("wi"); return this->yatl->getSubMCU()->readLine(); }
-    char* YatlWiFi::getSSID() { this->yatl->getSubMCU()->send("we"); return this->yatl->getSubMCU()->readLine(); }
+    char* YatlWiFi::getIP() { this->yatl->getSubMCU()->send("wi"); return this->yatl->getSubMCU()->waitForNonEmptyLine(); }
+    char* YatlWiFi::getSSID() { this->yatl->getSubMCU()->send("we"); return this->yatl->getSubMCU()->waitForNonEmptyLine(); }
 
     bool YatlWiFi::startTelnetd() {
         this->yatl->getSubMCU()->cleanBuffer();
         this->yatl->getSubMCU()->send("wto");
-        int cpt = 0;
-        while( this->yatl->getSubMCU()->available() == 0 ) {
-            delay(100);
-            if ( cpt >= 50 ) { break; }
-            cpt++;
-        }
-        ::delay(200);
-        char* resp = this->yatl->getSubMCU()->readLine();
+        char* resp = this->yatl->getSubMCU()->waitForNonEmptyLine();
         Serial.print("-> TELNET : ");Serial.print((const char*)resp);Serial.print("\n");
         return strlen(resp) > 0 && resp[0] == '+';
     }
-    // bool YatlWiFi::stopTelnetd();
+    bool YatlWiFi::stopTelnetd() {
+        this->yatl->getSubMCU()->cleanBuffer();
+        this->yatl->getSubMCU()->send("wto");
+        char* resp = this->yatl->getSubMCU()->waitForNonEmptyLine();
+        return true;
+    }
     // char* YatlWiFi::wget(char* url);
 
     // ==============] MP3 [==================

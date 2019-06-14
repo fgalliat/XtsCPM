@@ -24,9 +24,11 @@ class YatlSubMCU {
       void send(const char* ch);
       void send(char* ch);
 
+      void flush();
       int available();
       int read();
       char* readLine();
+      char* waitForNonEmptyLine(unsigned long timeout=0);
       int readUntil(uint8_t until, char* dest, int maxLen);
 
       void cleanBuffer();

@@ -182,7 +182,7 @@
       // Serial.println("bridge Bdos call");
       uint8_t hiB = HIGH_REGISTER(value);
       if ( hiB == 0 ) {
-        yatl.getSubMCU()->cleanBuffer();
+        // yatl.getSubMCU()->cleanBuffer();
         uint8_t volts = (uint8_t)( yatl.getPWRManager()->getVoltage() * 256.0f / 5.0f );
         return volts;
       } else if ( hiB == 1 ) {
@@ -208,11 +208,14 @@
         // See later for better
 
         // just to ensure WiFi will run...
-        yatl.getSubMCU()->cleanBuffer();
+        // yatl.getSubMCU()->cleanBuffer();
+        Serial.println("Wasting IP");
         yatl.getWiFi()->getIP();
-        // yatl.getWiFi()->close();
-        yatl.getSubMCU()->cleanBuffer();
+        Serial.println("Closing WiFi");
+        yatl.getWiFi()->close();
+        // yatl.getSubMCU()->cleanBuffer();
 
+Serial.println("Opening WiFi APmode");
         int ok = yatl.getWiFi()->beginAP();
         if ( ok <= 0 ) {
           _puts("(!!) Wifi has not started !\n");

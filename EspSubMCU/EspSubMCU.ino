@@ -192,6 +192,8 @@ void _send(char ch) { serialBridge.write(ch); }
 void _send(int ch) { serialBridge.write( (char) ch); } // !!!! BEWARE : to look
 void _send(float val) { serialBridge.print(val); }
 
+void _waitBeforeResp() { delay(50); }
+
 void sendLineToCPM(const char* line) {
    keyboard0.injectStr(line);
    keyboard0.injectChar('\r');
@@ -769,6 +771,7 @@ void testRoutine() {
     Serial.println("Exit from tests");
 }
 
+char tmpMsg[256+1];
 int loopCounter = 0;
 void loop() {
     #if HAS_JOYPAD
@@ -795,6 +798,7 @@ void loop() {
         char ch = _read();
 
         if ( ch == 'i' ) {
+            _waitBeforeResp();
             if (!mp3ok) Serial.println("+m:NOK");
             else Serial.println("+m:OK");
             if (!kbdok) Serial.println("+k:NOK");
@@ -877,8 +881,12 @@ void loop() {
         } else if ( ch == 'v' ) {
             // Voltage Control
             float  voltage = (ESP.getVcc() / 1000.0); // + 0.2 ;// avec offset empirique
-            _send( voltage );
-            _send( '\n' );
+            _waitBeforeResp();
+            sprintf(tmpMsg, "%g\n", voltage);
+            // _send( voltage );
+            // _send( '\n' );
+            _send( tmpMsg );
+
             // if (voltage < 3.0) {   // a 3V l'accu LiFePo4 est quasiment vide; le protéger d'une décharge excessive
             //     ESP.deepSleep(0);   // = arret définitif si 'LOW BATT'
             // }
@@ -907,28 +915,42 @@ void loop() {
                     // 's' -> STA mode
                     // 'a' -> AP mode
                     bool ok = isWiFiStarted() || startWiFi( mode != 'a' );
-                    if ( ok ) { _send("+OK Wifi connected : ");_send((const char*) getLocalIP() );_send('\n'); }
+                    _waitBeforeResp();
+                    if ( ok ) { 
+                        sprintf(tmpMsg, "+OK Wifi connected : %s\n", (const char*) getLocalIP());
+                        _send(tmpMsg); 
+                    }
                     else { _send("-NOK Wifi not connected\n"); }
                 } else if ( subCmd == 's' ) {
                     stopWiFi();
+                    _waitBeforeResp();
                     _send("+OK Wifi disconnected\n");
                 } else if ( subCmd == 'i' ) {
                     // getIP
-                    _send((const char*) getLocalIP() );_send('\n');
+                    _waitBeforeResp();
+                    sprintf(tmpMsg, "%s\n", (const char*) getLocalIP());
+                    _send(tmpMsg);
                 } else if ( subCmd == 'e' ) {
                     // getESSID
-                    _send((const char*) getSSID() );_send('\n');
+                    _waitBeforeResp();
+                    sprintf(tmpMsg, "%s\n", (const char*) getSSID());
+                    _send(tmpMsg);
                 } else if ( subCmd == 't' ) {
                     // telnet control
                     char mode = (char)_waitCh();
                     if ( mode == 'o' ) {
                         // Open - "wto"
                         bool ok = isWiFiStarted() && startTelnetd();
-                        if ( ok ) { _send("+OK Telnetd opened : ");_send((const char*) getLocalIP() );_send(":23\n"); }
+                        _waitBeforeResp();
+                        if ( ok ) {
+                            sprintf(tmpMsg, "+OK Telnetd opened : %s:23\n", (const char*) getLocalIP());
+                            _send(tmpMsg); 
+                        }
                         else { _send("-NOK Telnetd not opened\n"); }
                     } else if ( mode == 'c' ) {
                         // Close - "wtc"
                         stopTelnetd();
+                        _waitBeforeResp();
                         _send("+OK Telnetd closed\n");
                     } 
                 } else if ( subCmd == 'g' ) {
@@ -936,9 +958,11 @@ void loop() {
                     char* url = _readLine();
                     // Serial.println("Will fetch ");
                     // Serial.println(url);
+                    _waitBeforeResp();
                     _send( (const char*)wget(url) );
                     _send( '\n' );
                 } else {
+                    _waitBeforeResp();
                     Serial.print("WiFi SubComand NYI");
                     Serial.print('\n');
                 }
@@ -953,6 +977,7 @@ void loop() {
             // may be some dusty end of line due to terminal 
             // that was used
         } else {
+            _waitBeforeResp();
             Serial.print("> Command ");
             Serial.print(ch);
             Serial.println(" is NYI ");

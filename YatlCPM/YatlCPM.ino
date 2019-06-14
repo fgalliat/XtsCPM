@@ -8,6 +8,8 @@
   // maybe slower but as direct truncate, rename, .... routines that are required by the system
   #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
 
+  bool keybLocked = false;
+
   // needed here ....
   extern SdFatSdio SD;
 

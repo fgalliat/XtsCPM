@@ -401,12 +401,14 @@ uint8 _sys_makedisk(uint8 drive) {
 /* Console abstraction functions */
 /*===============================================================================*/
 
+extern bool keybLocked;
+
 int _kbhit(void) {
 	#ifdef HAS_KEYBOARD
-	  int kavail = yatl.getKeyboard()->available();
+	  int kavail = keybLocked ? 0 : yatl.getKeyboard()->available();
 	  if ( kavail > 0 ) {
 			return kavail;
-		}
+	  }
 	#endif
 	return(Serial.available());
 }
@@ -414,7 +416,7 @@ int _kbhit(void) {
 uint8 _getch(void) {
 	#ifdef HAS_KEYBOARD
 		while (!Serial.available()) {
-			if ( yatl.getKeyboard()->available() > 0 ) {
+			if ( !keybLocked && yatl.getKeyboard()->available() > 0 ) {
 				return yatl.getKeyboard()->read();
 			}
 		}
