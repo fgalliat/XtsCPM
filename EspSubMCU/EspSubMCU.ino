@@ -413,6 +413,7 @@ void sendLineToCPM(const char* line) {
 
        if ( ch == '1' ) {
            telnetMode = TELNET_MODE_KEYB;
+           clt.println("> Have Keyboard for now...");
        } else if ( ch == '2' ) {
            // TODO : TMP
            telnetMode = TELNET_MODE_KEYB;
@@ -423,12 +424,13 @@ void sendLineToCPM(const char* line) {
        } else if (ch == '3' ) {
            telnetMode = TELNET_MODE_NONE;
            // call Down(From)SubMcu
-           sendLineToCPM("C:DOWNSM.COM");
+           sendLineToCPM("C:DOWNSM");
            // TODO : put in downloading state
            return 0;
        } else if (ch == '4' ) {
            telnetMode = TELNET_MODE_NONE;
-           sendLineToCPM("C:REBOOT.COM");
+           // do not call "C:REBOOT.COM"
+           sendLineToCPM("C:REBOOT");
        } else if (ch == 'x' ) {
            // Resume
            return 0;
@@ -557,7 +559,8 @@ void sendLineToCPM(const char* line) {
             while (serverClients[i].available() /*&& Serial.availableForWrite() > 0*/ ) {
                 // working char by char is not very efficient
                 char ch = serverClients[i].read();
-                if ( ch == ':' ) {
+                // if ( ch == ':' ) {
+                if ( ch == 27 ) { // Esc.
                     ch = serverClients[i].read();
                     if ( ch == 'q' ) {
                         serverClients[i].stop();
@@ -567,7 +570,10 @@ void sendLineToCPM(const char* line) {
                         break;
                     }
                     if (telnetMode == TELNET_MODE_KEYB) {
-                        keyboard0.injectChar(ch);
+                        keyboard0.injectChar(27);
+                        if ( ch != 0xFF ) {
+                            keyboard0.injectChar(ch);
+                        }
                     } else {
                         _send(ch);
                     }
