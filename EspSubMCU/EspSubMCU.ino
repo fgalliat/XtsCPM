@@ -192,6 +192,11 @@ void _send(char ch) { serialBridge.write(ch); }
 void _send(int ch) { serialBridge.write( (char) ch); } // !!!! BEWARE : to look
 void _send(float val) { serialBridge.print(val); }
 
+void sendLineToCPM(const char* line) {
+   keyboard0.injectStr(line);
+   keyboard0.injectChar('\r');
+}
+
 // =============] WiFi [================
 
 #define ACTIVE_WIFI 1
@@ -381,14 +386,76 @@ void _send(float val) { serialBridge.print(val); }
 
     int telnetMode = TELNET_MODE_NONE;
 
+    int telnet_client_menu(int num) {
+       WiFiClient clt = serverClients[num];
+
+       clt.println("O-------------------------O");
+       clt.println("|    Yatl System Menu     |");
+       clt.println("+-------------------------+");
+       clt.println("| 1. Keyboard control     |");
+       clt.println("| 2. Full console         |");
+       clt.println("| 3. Recv File            |");
+       clt.println("| 4. Reset YATL           |");
+       clt.println("|                         |");
+       clt.println("| x. Resume               |");
+       clt.println("| y. Disconnect           |");
+       clt.println("| z. Stop WiFi            |");
+       clt.println("O-------------------------O");
+       clt.println("");
+       clt.flush();
+       while( clt.available() ) { clt.read(); }
+
+       while( !clt.available() ) { delay(2); yield(); }
+       char ch = clt.read();
+       while( clt.available() ) { clt.read(); } // potential CRLF chars
+
+       if ( ch == '1' ) {
+           telnetMode = TELNET_MODE_KEYB;
+       } else if ( ch == '2' ) {
+           // TODO : TMP
+           telnetMode = TELNET_MODE_KEYB;
+
+           clt.println("> Full Console Access NYI !");
+           clt.println("> Have Keyboard for now...");
+           clt.flush();
+       } else if (ch == '3' ) {
+           telnetMode = TELNET_MODE_NONE;
+           // call Down(From)SubMcu
+           sendLineToCPM("C:DOWNSM.COM");
+           // TODO : put in downloading state
+           return 0;
+       } else if (ch == '4' ) {
+           telnetMode = TELNET_MODE_NONE;
+           sendLineToCPM("C:REBOOT.COM");
+       } else if (ch == 'x' ) {
+           // Resume
+           return 0;
+       } else if (ch == 'y' ) {
+           telnetMode = TELNET_MODE_NONE;
+           // Disconnect client
+           clt.flush();
+           clt.stop();
+       } else if (ch == 'z' ) {
+           telnetMode = TELNET_MODE_NONE;
+           // Stop Whole WiFi
+           clt.flush();
+           clt.stop();
+           stopTelnetd();
+           stopWiFi();
+       }
+
+       return 1;
+    }
+
     void telnet_client_connected(int num) {
        WiFiClient clt = serverClients[num];
 
        clt.println("***************************");
-       clt.println("* Welcome to Yatl system  *");
+       clt.println("* Welcome to Yatl System  *");
        clt.println("* Xtase-fgalliat @Jun2019 *");
        clt.println("***************************");
        clt.println("");
+       clt.flush();
        while( clt.available() ) { clt.read(); }
 
        bool loginOK = false;
@@ -432,7 +499,18 @@ void _send(float val) { serialBridge.print(val); }
        }
 
        clt.println(" Acess GRANTED ");
-       clt.flush(); 
+       clt.flush();
+
+       int rc;
+       do {
+         rc = telnet_client_menu(num);
+         if ( rc == 0 && telnetMode == TELNET_MODE_NONE ) {
+             continue;
+         } else {
+             break;
+         }
+       } while(true);
+
     }
 
 
@@ -450,7 +528,8 @@ void _send(float val) { serialBridge.print(val); }
                 // logger->print("New client: index ");
                 // logger->println(i);
                 blink(4);
-                telnetMode = TELNET_MODE_KEYB;
+                // telnetMode = TELNET_MODE_KEYB;
+                telnetMode = TELNET_MODE_NONE;
                 telnet_client_connected(i);
                 break;
             }
@@ -480,6 +559,9 @@ void _send(float val) { serialBridge.print(val); }
                     ch = serverClients[i].read();
                     if ( ch == 'q' ) {
                         serverClients[i].stop();
+                        break;
+                    } else if ( ch == 'm' ) {
+                        telnet_client_menu(i);
                         break;
                     }
                     if (telnetMode == TELNET_MODE_KEYB) {

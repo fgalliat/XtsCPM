@@ -287,6 +287,11 @@
     }
   }
 
+  void MobigoKeyboard::injectStr(const char* str) {
+    int tlen = strlen(str);
+    for(int i=0; i < tlen; i++) { this->injectChar(str[i]); }
+  }
+
   void MobigoKeyboard::activateRow(int row) {
     #ifdef HARDCORE_SX_READ
       SX_writePin(KB_ROWS_BG+row, HIGH);

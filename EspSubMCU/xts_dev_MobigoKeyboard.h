@@ -125,6 +125,7 @@
 
       // for another device that emulates Keyb (ex. telnetd)
       void injectChar(char ch);
+      void injectStr(const char* str);
   };
   
   
