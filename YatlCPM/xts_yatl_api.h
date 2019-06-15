@@ -170,7 +170,7 @@ class YatlKeyboard {
       YatlKeyboard(Yatl* yatl) { this->yatl = yatl; }
       bool setup();
       void poll();
-      int available();
+      int available(bool autopoll=true);
       int read();
 };
 

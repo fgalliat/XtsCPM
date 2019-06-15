@@ -1,6 +1,12 @@
 # TODO (current work)
 
-- [x] compile MainMCU code
+- [ ] If Serial monitor not connected
+- [ ] -> Keyboard reading is exctremly slow
+- [ ] test if (!Serial) @ setup() time instead of while(!Serial)
+- [ ] then probe if port is useable or not for further key reading
+- [ ] w/ current code 15/06/19 18:04 if Yatl is wired on an external Battery/PWR
+- [ ] ===================================
+- [ ] compile MainMCU code
 - [x] upload & test MainMCU code (failure on playT5K files **FIXED** the bug was in _SD_readBinFile() )
 - [x] upload XTASE.PAS demo (tested **W/O** SubMCU module)
 - [x] test MainMCU + SubMCU layouts connection (had to use pins 20&21 on SubMCU for Bridge RX/TX)

@@ -30,6 +30,7 @@
   void setupYatl() {
     bool ok = yatl.setup();
     if ( !ok ) {
+      yatl.warn("Something wrong in init !");
       Serial.begin(115200);
       while(true) {
         Serial.println("GENERAL ERROR");

@@ -402,6 +402,7 @@ uint8 _sys_makedisk(uint8 drive) {
 /*===============================================================================*/
 
 extern bool keybLocked;
+extern bool Serial_useable;
 
 int _kbhit(void) {
 	#ifdef HAS_KEYBOARD
@@ -410,11 +411,22 @@ int _kbhit(void) {
 			return kavail;
 	  }
 	#endif
+
+	if ( !Serial_useable ) { return 0; }
+
 	return(Serial.available());
 }
 
 uint8 _getch(void) {
 	#ifdef HAS_KEYBOARD
+		if ( !Serial_useable ) {
+			// -= TODO BEWARE : keybLocked =-
+			while ( yatl.getKeyboard()->available() == 0 ) {
+				; // delay -or- not ??
+			}
+			return yatl.getKeyboard()->read();
+		}
+
 		while (!Serial.available()) {
 			if ( !keybLocked && yatl.getKeyboard()->available() > 0 ) {
 				return yatl.getKeyboard()->read();
@@ -428,7 +440,10 @@ uint8 _getch(void) {
 
 uint8 _getche(void) {
 	uint8 ch = _getch();
-	Serial.write(ch); // local echo
+	if ( Serial_useable ) { 
+		Serial.write(ch); // local echo 
+	}
+	
 #ifdef HAS_BUILTIN_LCD
   if ( currentlyUseScreen() ) { yatl.getScreen()->write(ch); }
 #endif

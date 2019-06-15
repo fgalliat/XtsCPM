@@ -15,6 +15,7 @@
 
   #include "xts_yatl_api.h"
   Yatl yatl;
+  bool Serial_useable = false;
 
   // see if keep that file later ...
   #include "xts_yatl.h"
@@ -134,6 +135,9 @@ void setup(void) {
   // digitalWrite(LED, LOW);
   // Serial.begin(SERIALSPD);
   setupYatl();
+
+  // SerialPort is useable or not .....
+  Serial_useable = !(!Serial);
 
 #ifdef DEBUGLOG
   _sys_deletefile((uint8 *)LogName);

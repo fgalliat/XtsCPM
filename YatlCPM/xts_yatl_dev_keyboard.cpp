@@ -42,7 +42,8 @@
             firstKeybUse = false;
         }
 
-        if ( strlen( keybBuffer ) >= keybBufferLen ) {
+        int initBuffLen = strlen( keybBuffer );
+        if ( initBuffLen >= keybBufferLen ) {
             return;
         }
 
@@ -53,19 +54,30 @@
         if ( tlen == 0 ) { return; }
         // beware w/ overflow...
         // but len == 0 should not occur...
-        strcat(keybBuffer, tmp);
+        
+        if ( initBuffLen + tlen >= keybBufferLen ) {
+            // some overflowed chars will be lost
+            for(int i=0; i < tlen; i++) {
+                keybBuffer[ initBuffLen + i ] = tmp[i];
+            }
+            keybBuffer[ initBuffLen + tlen ] = 0x00;
+        } else {
+            strcat(keybBuffer, tmp);
+        }
     }
 
-    int YatlKeyboard::available() {
+    int YatlKeyboard::available(bool autopoll) {
         int tlen = strlen( keybBuffer );
         if ( tlen == 0 ) {
-            this->poll();
+            if ( autopoll ) {
+              this->poll();
+            }
         }
         return tlen;
     }
 
     int YatlKeyboard::read() {
-        int len = this->available();
+        int len = this->available(false);
         if ( len > 0 ) {
             char ch = keybBuffer[0];
             memmove(&keybBuffer[0], &keybBuffer[1], len-1);
@@ -74,12 +86,14 @@
         } else {
             // kbPoll();
             len = this->available(); // will do poll
-            if ( len == 0 ) {
+            if ( len <= 0 ) {
                 return -1; // no byte to read
             }
             char ch = keybBuffer[0];
-            memmove(&keybBuffer[0], &keybBuffer[1], len-1);
-            keybBuffer[len-1] = 0x00;
+            if ( len >= 1 ) {
+                memmove(&keybBuffer[0], &keybBuffer[1], len-1);
+                keybBuffer[len-1] = 0x00;
+            }
             return (int) kbMap(ch);
         }
     }
