@@ -20,6 +20,8 @@ class YatlSubMCU {
       bool setup();
       void reboot(bool waitFor=true);
 
+      void println(const char* ch);
+
       void send(char ch);
       void send(const char* ch);
       void send(char* ch);
@@ -30,6 +32,8 @@ class YatlSubMCU {
       char* readLine();
       char* waitForNonEmptyLine(unsigned long timeout=0);
       int readUntil(uint8_t until, char* dest, int maxLen);
+      int readBytesUntil(uint8_t until, char* dest, int maxLen) { return readUntil(until, dest, maxLen); }
+      int readBytes(char* dest, int maxLen);
 
       void cleanBuffer();
 };
@@ -101,6 +105,7 @@ class YatlFS {
       char* getAssetsFileEntry(char* entryName);
       // Serial will have to send PATH/LEN/datas
       bool downloadFromSerial();
+      bool downloadFromSubMcu();
 };
 
 class YatlWiFi {
