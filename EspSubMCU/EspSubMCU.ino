@@ -462,6 +462,7 @@ void sendLineToCPM(const char* line) {
        clt.println("");
 
        sendLineToCPM("C:DOWNSM");
+       _readLine(); // +OK
 
        int tmp;
        char filename[64+1]; memset(filename, 0x00, 64+1);
@@ -501,7 +502,7 @@ void sendLineToCPM(const char* line) {
 
            i += readed;
        }
-       _readLine();
+    //    _readLine(); // no -EOF- line for now
 
        clt.println("+OK EOF");
     }
