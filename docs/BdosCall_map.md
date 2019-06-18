@@ -5,5 +5,5 @@
 | 225  | \<TP3 String address><br />if Str startsWith #127 its a drawing call<br />else its a wallpaper file name<br />drawing : 1 rect, 2 circle, 3 line | draws a picture wallpaper |
 | 226  | - 0 **HIGH_REG** mode **LOW_REG** set Console colorSet mode<br />- 1 **HIGH_REG** mode **LOW_REG** set Console columns mode (80/53) | deals w/ console & stdIO  |
 | 227  | - 0 **HIGH_REG** stop playback<br /> - 1 **HIGH_REG** pause / unpause<br /> - 2 **HIGH_REG**  next<br /> - 3 **HIGH_REG** previous<br /> - 4 **HIGH_REG** set volume (**LOW_REG** 0..30 volume rate)<br /> - 5 **HIGH_REG** play a demo MP3<br /> - (128/64)<<8 + trackNum (0..9999) loop/play an MP3 | deals w/ mp3 module       |
-| 228  | - 0 **HIGH_REG** getVoltage (/5*256)<br /> - 1 **HIGH_REG** reboot<br /> - 2 **HIGH_REG** halt<br /> - 3 **HIGH_REG** leds (**LOW_REG** 0..8 RGB led state)<br /> | deals w/ subMcu controls  |
+| 228  | - 0 **HIGH_REG** getVoltage (/5*256)<br /> - 1 **HIGH_REG** reboot<br /> - 2 **HIGH_REG** halt<br /> - 3 **HIGH_REG** leds (**LOW_REG** 0..8 RGB led state)<br />-  4 **HIGH_REG** starts CopyFile from Serial<br />-  5 **HIGH_REG** starts CopyFile from SbMCU<br />-  64 **HIGH_REG** starts Wifi AP + telnetd<br /> | deals w/ subMcu controls  |
 

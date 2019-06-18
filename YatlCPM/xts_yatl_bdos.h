@@ -202,6 +202,8 @@
         yatl.getLEDs()->blue(b);
       } else if ( hiB == 4 ) {
         return yatl.getFS()->downloadFromSerial() ? 1 : 0;
+      } else if ( hiB == 5 ) {
+        return yatl.getFS()->downloadFromSubMcu() ? 1 : 0;
       } // Wifi Device calls -> 64+
       else if ( hiB == 64 ) {
         // Start the telnet server in APmode
