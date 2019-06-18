@@ -388,6 +388,8 @@ void sendLineToCPM(const char* line) {
 
     int telnetMode = TELNET_MODE_NONE;
 
+    void telnet_client_uploadToYatl(int num);
+
     int telnet_client_menu(int num) {
        WiFiClient clt = serverClients[num];
 
@@ -424,8 +426,9 @@ void sendLineToCPM(const char* line) {
        } else if (ch == '3' ) {
            telnetMode = TELNET_MODE_NONE;
            // call Down(From)SubMcu
-           sendLineToCPM("C:DOWNSM");
+           // sendLineToCPM("C:DOWNSM");
            // TODO : put in downloading state
+           telnet_client_uploadToYatl(num);
            return 0;
        } else if (ch == '4' ) {
            telnetMode = TELNET_MODE_NONE;
@@ -449,6 +452,58 @@ void sendLineToCPM(const char* line) {
        }
 
        return 1;
+    }
+
+    void telnet_client_uploadToYatl(int num) {
+       WiFiClient clt = serverClients[num];
+       clt.println("***************************");
+       clt.println("* Wait for upload to YATL *");
+       clt.println("***************************");
+       clt.println("");
+
+       sendLineToCPM("C:DOWNSM");
+
+       int tmp;
+       char filename[64+1]; memset(filename, 0x00, 64+1);
+       char sizeStr[12+1]; memset(sizeStr, 0x00, 12+1);
+
+       clt.println("+OK Name for dest file ?");
+       while( !clt.available() ) { delay(2); yield(); }
+       tmp = clt.readBytesUntil(0x0A, filename, 32);
+       serialBridge.println(filename);
+       _readLine();
+
+       clt.println("+OK Size of dest file ?");
+       while( !clt.available() ) { delay(2); yield(); }
+       tmp = clt.readBytesUntil(0x0A, sizeStr, 32);
+
+       long len = atol(sizeStr);
+       if ( len <= 0 ) {
+           serialBridge.println("0");
+           clt.println("-OK WRONG Size of dest file !");
+           return; // false
+       }
+       serialBridge.println(sizeStr);
+       _readLine();
+
+       const int packetLen = 64;
+       char packet[packetLen+1]; memset(packet, 0x00, packetLen+1);
+       int readed = 0;
+       for(int i=0; i < len;) {
+           while( !clt.available() ) { delay(2); yield(); }
+           readed = clt.readBytesUntil(0x0A, packet, packetLen);
+           if ( readed == 0 ) {
+             clt.println("-OK WRONG Packet !");
+             return; // false
+           }
+
+           serialBridge.write(packet, readed);
+
+           i += readed;
+       }
+       _readLine();
+
+       clt.println("+OK EOF");
     }
 
     void telnet_client_connected(int num) {
@@ -567,6 +622,9 @@ void sendLineToCPM(const char* line) {
                         break;
                     } else if ( ch == 'm' ) {
                         telnet_client_menu(i);
+                        break;
+                    } else if ( ch == 'r' ) {
+                        telnet_client_uploadToYatl(i);
                         break;
                     }
                     if (telnetMode == TELNET_MODE_KEYB) {
