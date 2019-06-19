@@ -16,7 +16,11 @@
 #include "xts_dev_MobigoKeyboard.h"
 
 // higher speed R/W for SX1509 
-#define HARDCORE_SX_READ 1
+// #define HARDCORE_SX_READ 1
+#define HARDCORE_SX_READ 0
+
+// #define INV_LOGIC 0
+#define INV_LOGIC 1
 
 #ifdef HARDCORE_SX_READ
   #include <Wire.h> // Include the I2C library (required)
@@ -158,7 +162,13 @@
   MobigoKeyboard::MobigoKeyboard(SX1509* gpio, bool autoPoll)
   {
       this->io = gpio;
-      this->io->debounceTime(16);
+      
+      this->io->reset(false);
+      delay(200);
+      this->io->begin();
+      delay(50);
+
+      this->io->debounceTime(2);
       this->setAutoPoll(autoPoll);
 
       // Cf SX could not respond, then uses telnetd
@@ -187,13 +197,21 @@
     this->led2 = led2;
     int i=0;
     for(; i < KB_COLS_NB; i++) {
-      this->io->pinMode( KB_COLS_BG+i, INPUT );
+      #if INV_LOGIC
+        this->io->pinMode( KB_COLS_BG+i, INPUT_PULLUP );
+      #else
+        this->io->pinMode( KB_COLS_BG+i, INPUT );
+      #endif
     }
 
     i=0;
     for(; i < KB_ROWS_NB; i++) {
       this->io->pinMode( KB_ROWS_BG+i, OUTPUT );
-      this->io->digitalWrite(KB_ROWS_BG+i, LOW);
+      #if INV_LOGIC
+        this->io->digitalWrite(KB_ROWS_BG+i, HIGH);
+      #else
+        this->io->digitalWrite(KB_ROWS_BG+i, LOW);
+      #endif
     }
 
     this->flushBuffer();
@@ -225,7 +243,7 @@
   bool lastTimeKeyReleased = true;
 
   void MobigoKeyboard::poll() {
-    #ifndef HARDCORE_SX_READ
+    #if not HARDCORE_SX_READ
     this->deactivateAllRows();
     #endif
 
@@ -246,7 +264,7 @@
 
     this->deactivateAllRows();
     bool loclShift = this->isKeyPressed(1,1);
-    #ifdef HARDCORE_SX_READ
+    #if HARDCORE_SX_READ
       this->deactivateAllRows();
       activateRow(0);
       unsigned int tbank = SX_readBanks();
@@ -287,12 +305,12 @@
         this->activateRow(row);
         oneFoundOnRow = false;
 
-        #ifdef HARDCORE_SX_READ
+        #if HARDCORE_SX_READ
           unsigned int banks = SX_readBanks();
         #endif
 
         for(int col=0; col < KB_COLS_NB; col++) {
-          #ifdef HARDCORE_SX_READ
+          #if HARDCORE_SX_READ
           if ( SX_readPin(banks, col+KB_COLS_BG) ) {
           #else
           if ( this->isColPressed(col) ) {
@@ -342,26 +360,34 @@
   }
 
   void MobigoKeyboard::activateRow(int row) {
-    #ifdef HARDCORE_SX_READ
+    #if HARDCORE_SX_READ
       SX_writePin(KB_ROWS_BG+row, HIGH);
       delay(2);
     #else
-      this->io->digitalWrite(KB_ROWS_BG+row, HIGH);
+      #if INV_LOGIC
+        this->io->digitalWrite(KB_ROWS_BG+row, LOW);
+      #else
+        this->io->digitalWrite(KB_ROWS_BG+row, HIGH);
+      #endif
       // delay(1);
     #endif
   }
 
   void MobigoKeyboard::deactivateRow(int row) {
-    #ifdef HARDCORE_SX_READ
+    #if HARDCORE_SX_READ
       SX_writePin(KB_ROWS_BG+row, LOW);
       delay(1);
     #else
-      this->io->digitalWrite(KB_ROWS_BG+row, LOW);
+      #if INV_LOGIC
+        this->io->digitalWrite(KB_ROWS_BG+row, HIGH);
+      #else
+        this->io->digitalWrite(KB_ROWS_BG+row, LOW);
+      #endif
     #endif
   }
 
   void MobigoKeyboard::deactivateAllRows() {
-    #ifdef HARDCORE_SX_READ
+    #if HARDCORE_SX_READ
       unsigned int banks = SX_readBanks();
       for(int i=0; i < KB_ROWS_NB; i++) {
         banks = SX_alterBanks(banks, KB_ROWS_BG+i, LOW);
@@ -373,12 +399,16 @@
   }
 
   bool MobigoKeyboard::isColPressed(int col) {
-    #ifdef HARDCORE_SX_READ
+    #if HARDCORE_SX_READ
           // gain is 1 I2C transaction (no inputModePin test)
           unsigned int banks = SX_readBanks();
           return SX_readPin(banks, KB_COLS_BG+col) == HIGH;
     #else
-      return this->io->digitalRead( KB_COLS_BG+col ) == HIGH;
+      #if INV_LOGIC
+        return this->io->digitalRead( KB_COLS_BG+col ) == LOW;
+      #else
+        return this->io->digitalRead( KB_COLS_BG+col ) == HIGH;
+      #endif
     #endif
   }
 
