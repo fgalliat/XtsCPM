@@ -27,7 +27,8 @@
   #define REG_DATA_B				0x10	//	RegDataB Data register _ I/O[15_8] (Bank B) 1111 1111*
   #define deviceAddress 0x3E
 
-  #define FIX_MODE 1
+  // #define FIX_MODE 1
+  #define FIX_MODE 0
 
   // writeWord(byte registerAddress, ungisnged int writeValue)
   //	This function writes a two-byte word to registerAddress and registerAddress + 1
