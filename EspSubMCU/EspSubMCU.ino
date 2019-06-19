@@ -117,8 +117,10 @@ void setupAddPins() {
             {
                 // Serial.println("SX1509 Failed.");
                 blink(4);
+                keyboard0.gpio_ok = false;
                 return false;
             }
+            keyboard0.gpio_ok = true;
             delay(300);
             
             kbd.setup(LED_R, LED_G, LED_B);
@@ -194,6 +196,7 @@ void _send(float val) { serialBridge.print(val); }
 
 void _waitBeforeResp() { delay(50); }
 
+// requires that keyboard is wired !!!!
 void sendLineToCPM(const char* line) {
    keyboard0.injectStr(line);
    keyboard0.injectChar('\r');
@@ -462,6 +465,7 @@ void sendLineToCPM(const char* line) {
        clt.println("");
 
        sendLineToCPM("C:DOWNSM");
+    //    serialBridge.print("C:DOWNSM\r");
        _readLine(); // +OK
 
        int tmp;

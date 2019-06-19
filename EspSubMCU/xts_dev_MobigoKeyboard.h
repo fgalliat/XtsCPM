@@ -114,6 +114,8 @@
       MobigoKeyboard(SX1509* gpio, bool autoPoll=false);
       ~MobigoKeyboard();
 
+      bool gpio_ok = false;
+
       void setup(int led0=-1, int led1=-1, int led2=-1);
       void reboot();
 

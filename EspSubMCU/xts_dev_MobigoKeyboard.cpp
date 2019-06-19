@@ -23,6 +23,8 @@
   #define REG_DATA_B				0x10	//	RegDataB Data register _ I/O[15_8] (Bank B) 1111 1111*
   #define deviceAddress 0x3E
 
+  #define FIX_MODE 1
+
   // writeWord(byte registerAddress, ungisnged int writeValue)
   //	This function writes a two-byte word to registerAddress and registerAddress + 1
   //	- the upper byte of writeValue is written to registerAddress
@@ -69,32 +71,77 @@
     return readValue;
   }
 
+  extern MobigoKeyboard kbd;
+
   unsigned int SX_readBanks() {
-    return SX1509_readWord(REG_DATA_B);
+    unsigned int banks = SX1509_readWord(REG_DATA_B);
+    #if FIX_MODE
+      if ( !kbd.gpio_ok ) { return 0; }
+
+      // A bit dirty for sure !
+      delay(1);
+      unsigned int banksSURE = SX1509_readWord(REG_DATA_B);
+
+      if ( banks == banksSURE && banks != 0 ) {
+        return banks;
+      }
+
+      delay(1);
+      unsigned int banksSURE2 = SX1509_readWord(REG_DATA_B);
+
+      bool b0=false,b1=false,b2=false;
+
+      if ( banks != 0 ) { b0 = true; }
+      if ( banksSURE != 0 ) { b1 = true; }
+      if ( banksSURE2 != 0 ) { b2 = true; }
+
+      if ( (b0 && b2) && (banks == banksSURE2) ) {
+        return banks;
+      }
+
+      if ( (b1 && b2) && (banksSURE == banksSURE2) ) {
+        return banksSURE;
+      }
+
+      return b2 ? banksSURE2 : (b1 ? banksSURE : banks);
+
+    #endif
+
+    return banks;
   }
 
   // U have to ensure that Ur pin is really an INPUT !!!!
   byte SX_readPin(unsigned int banksValue, byte pin) {
+    if ( !kbd.gpio_ok ) { return 1; }
+
     if (banksValue & (1<<pin))
 			return 1;
     return 0; 
   }
 
+  // U have to ensure that Ur pins are really an OUTPUTs !!!!
+  void SX_writeBanks(unsigned int curRegData) {
+    if ( !kbd.gpio_ok ) { return; }
+		SX1509_writeWord(REG_DATA_B, curRegData);
+  }
+
   // U have to ensure that Ur pin is really an OUTPUT !!!!
   void SX_writePin(byte pin, byte highLow) {
     // the gain is of @least one transaction
-    unsigned int tempRegData = SX1509_readWord(REG_DATA_B);
+    unsigned int tempRegData = SX_readBanks();
 		if (highLow)	tempRegData |= (1<<pin);
 		else			tempRegData &= ~(1<<pin);
-		SX1509_writeWord(REG_DATA_B, tempRegData);
+		SX_writeBanks(tempRegData);
   }
+
+  
 
   // U have to ensure that Ur pin is really an OUTPUT !!!!
   void SX_writeBank(unsigned int curRegData, byte pin, byte highLow) {
     // the gain is of @least two transaction
 		if (highLow)	curRegData |= (1<<pin);
 		else			curRegData &= ~(1<<pin);
-		SX1509_writeWord(REG_DATA_B, curRegData);
+		SX_writeBanks(curRegData);
   }
 
   // U have to ensure that Ur pin is really an OUTPUT !!!!
@@ -104,16 +151,14 @@
     return curRegData;
   }
 
-  // U have to ensure that Ur pins are really an OUTPUTs !!!!
-  void SX_writeBanks(unsigned int curRegData) {
-		SX1509_writeWord(REG_DATA_B, curRegData);
-  }
+  
 
 #endif
 
   MobigoKeyboard::MobigoKeyboard(SX1509* gpio, bool autoPoll)
   {
       this->io = gpio;
+      this->io->debounceTime(16);
       this->setAutoPoll(autoPoll);
 
       // Cf SX could not respond, then uses telnetd
@@ -191,7 +236,7 @@
 
       // filter + auto repeat
       if ( !lastTimeKeyReleased ) { 
-        lastTimeKeyReleased = ( millis() - lastPollTime > 200 ); 
+        lastTimeKeyReleased = ( millis() - lastPollTime > 250 ); 
         return; 
       }
     }
@@ -199,13 +244,16 @@
     // read the metaKeys
     // remanant style
 
+    this->deactivateAllRows();
     bool loclShift = this->isKeyPressed(1,1);
     #ifdef HARDCORE_SX_READ
+      this->deactivateAllRows();
       activateRow(0);
       unsigned int tbank = SX_readBanks();
       bool loclNums  = SX_readPin(tbank, KB_COLS_BG+2);
       bool loclSymbs = SX_readPin(tbank, KB_COLS_BG+3);
-      deactivateRow(0);
+      // deactivateRow(0);
+      this->deactivateAllRows();
     #else
       bool loclNums  = this->isKeyPressed(0,2);
       bool loclSymbs = this->isKeyPressed(0,3);
@@ -234,6 +282,7 @@
       oneFoundOnKbd = true;
     } else { 
       // read char
+      this->deactivateAllRows();
       for(int row=0; row < KB_ROWS_NB; row++) {
         this->activateRow(row);
         oneFoundOnRow = false;
@@ -295,6 +344,7 @@
   void MobigoKeyboard::activateRow(int row) {
     #ifdef HARDCORE_SX_READ
       SX_writePin(KB_ROWS_BG+row, HIGH);
+      delay(2);
     #else
       this->io->digitalWrite(KB_ROWS_BG+row, HIGH);
       // delay(1);
@@ -304,6 +354,7 @@
   void MobigoKeyboard::deactivateRow(int row) {
     #ifdef HARDCORE_SX_READ
       SX_writePin(KB_ROWS_BG+row, LOW);
+      delay(1);
     #else
       this->io->digitalWrite(KB_ROWS_BG+row, LOW);
     #endif
