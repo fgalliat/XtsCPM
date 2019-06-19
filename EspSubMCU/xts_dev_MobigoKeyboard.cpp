@@ -16,8 +16,8 @@
 #include "xts_dev_MobigoKeyboard.h"
 
 // higher speed R/W for SX1509 
-// #define HARDCORE_SX_READ 1
-#define HARDCORE_SX_READ 0
+#define HARDCORE_SX_READ 1
+// #define HARDCORE_SX_READ 0
 
 // #define INV_LOGIC 0
 #define INV_LOGIC 1
@@ -270,6 +270,12 @@
       unsigned int tbank = SX_readBanks();
       bool loclNums  = SX_readPin(tbank, KB_COLS_BG+2);
       bool loclSymbs = SX_readPin(tbank, KB_COLS_BG+3);
+
+      #if INV_LOGIC
+       loclNums = !loclNums;
+       loclSymbs = !loclSymbs;
+      #endif
+
       // deactivateRow(0);
       this->deactivateAllRows();
     #else
@@ -311,7 +317,11 @@
 
         for(int col=0; col < KB_COLS_NB; col++) {
           #if HARDCORE_SX_READ
-          if ( SX_readPin(banks, col+KB_COLS_BG) ) {
+           #if INV_LOGIC
+             if ( !SX_readPin(banks, col+KB_COLS_BG) ) {
+           #else
+             if ( SX_readPin(banks, col+KB_COLS_BG) ) {
+           #endif
           #else
           if ( this->isColPressed(col) ) {
           #endif
@@ -361,7 +371,12 @@
 
   void MobigoKeyboard::activateRow(int row) {
     #if HARDCORE_SX_READ
-      SX_writePin(KB_ROWS_BG+row, HIGH);
+      #if INV_LOGIC
+       const uint8_t v = LOW;
+      #else
+       const uint8_t v = HIGH;
+      #endif
+      SX_writePin(KB_ROWS_BG+row, v);
       delay(2);
     #else
       #if INV_LOGIC
@@ -375,7 +390,12 @@
 
   void MobigoKeyboard::deactivateRow(int row) {
     #if HARDCORE_SX_READ
-      SX_writePin(KB_ROWS_BG+row, LOW);
+      #if INV_LOGIC
+       const uint8_t v = HIGH;
+      #else
+       const uint8_t v = LOW;
+      #endif
+      SX_writePin(KB_ROWS_BG+row, v);
       delay(1);
     #else
       #if INV_LOGIC
@@ -389,8 +409,13 @@
   void MobigoKeyboard::deactivateAllRows() {
     #if HARDCORE_SX_READ
       unsigned int banks = SX_readBanks();
+      #if INV_LOGIC
+       const uint8_t v = HIGH;
+      #else
+       const uint8_t v = LOW;
+      #endif
       for(int i=0; i < KB_ROWS_NB; i++) {
-        banks = SX_alterBanks(banks, KB_ROWS_BG+i, LOW);
+        banks = SX_alterBanks(banks, KB_ROWS_BG+i, v);
       }
       SX_writeBanks(banks);
     #else
@@ -402,7 +427,12 @@
     #if HARDCORE_SX_READ
           // gain is 1 I2C transaction (no inputModePin test)
           unsigned int banks = SX_readBanks();
-          return SX_readPin(banks, KB_COLS_BG+col) == HIGH;
+          #if INV_LOGIC
+            const uint8_t v = LOW;
+          #else
+            const uint8_t v = HIGH;
+          #endif
+          return SX_readPin(banks, KB_COLS_BG+col) == v;
     #else
       #if INV_LOGIC
         return this->io->digitalRead( KB_COLS_BG+col ) == LOW;
