@@ -410,11 +410,11 @@ void sendLineToCPM(const char* line) {
        clt.println("O-------------------------O");
        clt.println("");
        clt.flush();
-       while( clt.available() ) { clt.read(); }
+    //    while( clt.available() ) { clt.read(); }
 
        while( !clt.available() ) { delay(2); yield(); }
        char ch = clt.read();
-       while( clt.available() ) { clt.read(); } // potential CRLF chars
+    //    while( clt.available() ) { clt.read(); } // potential CRLF chars
 
        if ( ch == '1' ) {
            telnetMode = TELNET_MODE_KEYB;
@@ -463,20 +463,26 @@ void sendLineToCPM(const char* line) {
        clt.println("* Wait for upload to YATL *");
        clt.println("***************************");
        clt.println("");
+       clt.flush();
 
-       sendLineToCPM("C:DOWNSM");
-    //    serialBridge.print("C:DOWNSM\r");
+    //    sendLineToCPM("C:DOWNSM");
+       _send("\r"); // just to flush current line if any
+       _send("C:DOWNSM\r"); // because of next _readLine() that waits before keyBeenRead
+       delay(5);
        _readLine(); // +OK
 
        int tmp;
        char filename[64+1]; memset(filename, 0x00, 64+1);
        char sizeStr[12+1]; memset(sizeStr, 0x00, 12+1);
 
+       char* resp;
+
        clt.println("+OK Name for dest file ?");
        while( !clt.available() ) { delay(2); yield(); }
-       tmp = clt.readBytesUntil(0x0A, filename, 32);
+       tmp = clt.readBytesUntil(0x0A, filename, 64);
        serialBridge.println(filename);
-       _readLine();
+       delay(5);
+       resp = _readLine(); if ( resp[0] == '-' ) { clt.println("-OK error"); clt.stop(); return; }
 
        clt.println("+OK Size of dest file ?");
        while( !clt.available() ) { delay(2); yield(); }
@@ -489,7 +495,8 @@ void sendLineToCPM(const char* line) {
            return; // false
        }
        serialBridge.println(sizeStr);
-       _readLine();
+       delay(5);
+       resp = _readLine(); if ( resp[0] == '-' ) { clt.println("-OK error"); clt.stop(); return; }
 
        const int packetLen = 64;
        char packet[packetLen+1]; memset(packet, 0x00, packetLen+1);

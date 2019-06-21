@@ -251,7 +251,7 @@
     if ( lastPollTime == -1L ) {
       lastPollTime = millis();
     } else {
-      if ( millis() - lastPollTime < 10 ) { return; }
+      if ( millis() - lastPollTime < 15 ) { return; }
 
       // filter + auto repeat
       if ( !lastTimeKeyReleased ) { 
