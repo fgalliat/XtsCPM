@@ -1,5 +1,5 @@
 // just for devl purposes
-// #define ARDUINO 1
+#define ARDUINO 1
 
 
 #ifdef ARDUINO
@@ -10,8 +10,83 @@
  * Screen over SPI impl.
  * 
  */
-
   #include "Arduino.h"
+
+  #define SPRITES_SUPPORT 1
+  #if SPRITES_SUPPORT
+    #define SPRITE_AREA_SIZE (120*160)
+    uint16_t spriteArea[ SPRITE_AREA_SIZE ];
+
+    int spriteInstanceCounter = 0; 
+    int lastAddr = 0;
+
+    class Sprite {
+       private:
+         int x, y, w, h;
+         int idx;
+         int addr;
+       public:
+         Sprite() {
+            this->invalid();
+            this->idx = spriteInstanceCounter++;
+            this->addr = -1;
+         }
+         ~Sprite() {}
+         void setBounds(int x, int y, int w, int h) {
+            this->x = x; this->y = y;
+            this->w = w; this->h = h;
+         }
+         bool isValid() {
+            return this->x > -1 && this->y > -1; 
+         }
+         void invalid() {
+            this->x = -1;
+            this->y = -1;
+            this->addr = -1;
+         }
+         uint16_t* getClip() {
+            if ( w < 0 || h < 0 ) { return NULL; }
+            return &spriteArea[ this->addr ];
+         }
+
+         bool setClip(uint16_t* clipData) {
+            if ( w < 0 || h < 0 ) { return false; }
+
+            int clipAreaSize = sizeof(clipData) / 2;
+
+            if ( clipAreaSize > w*h ) {
+               return false;
+            }
+
+            if ( this->addr == -1 ) {
+               this->addr = lastAddr;
+            }
+
+            if (this->addr+clipAreaSize >= SPRITE_AREA_SIZE) {
+               return false;
+            }
+
+            for(int i=0; i < clipAreaSize; i++) {
+               spriteArea[ this->addr+i ] = clipData[i];
+            }
+
+            lastAddr = this->addr+clipAreaSize;
+            return true;
+         }
+    };
+
+    #define NB_SPRITES 15
+    Sprite sprites[NB_SPRITES];
+
+    void cleanSprites() {
+       spriteInstanceCounter = 0; 
+       lastAddr = 0;
+       for(int i=0; i < NB_SPRITES; i++) {
+          sprites[i].invalid();
+       }
+    }
+  #endif
+
 
   // #include "xts_string.h"
   extern char charUpCase(char ch);
