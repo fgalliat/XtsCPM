@@ -16,6 +16,25 @@ public class TelnetSender {
         send( str+"\n" );
     }
 
+    static String readUntiEmptyLine(BufferedReader inRead) throws Exception {
+        String resp;
+        while( (resp = inRead.readLine()) != null && !resp.equals("") ) {
+            System.out.println(">"+resp);
+        }
+        return resp;
+    }
+
+    static boolean readUntiStatusLine(BufferedReader inRead) throws Exception {
+        String resp;
+        while( (resp = inRead.readLine()) != null && !resp.startsWith("+OK") ) {
+            System.out.println(">"+resp);
+            if ( resp.startsWith("-OK") ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     public static void main(String[] args) throws Exception {
         Runtime.getRuntime().addShutdownHook( new Thread() {
@@ -40,15 +59,13 @@ public class TelnetSender {
         char[] tmp = new char[32];
         inRead.read(tmp, 0, 32); // reads UserName : 
         System.out.println("Sending username"); 
-        sendln( "root");
+        sendln( "root"); Zzz(50);
         inRead.read(tmp, 0, 32); // reads Password : 
         System.out.println("Sending passw"); 
-        sendln( "yatl");
+        sendln( "yatl"); Zzz(50);
 
         System.out.println("Waiting for User Menu"); 
-        while( (resp = inRead.readLine()) != null && !resp.equals("") ) {
-            System.out.println(">"+resp);
-        }
+        readUntiEmptyLine(inRead);
         Zzz(300);
 
         System.out.println("Sending control seq."); 
@@ -57,34 +74,32 @@ public class TelnetSender {
         Zzz(500);
         
         System.out.println("Waiting Upload prompt.");
-        while( (resp = inRead.readLine()) != null && !resp.equals("") ) {
-            System.out.println(">"+resp);
-        }
+        readUntiEmptyLine(inRead);
 
         // Zzz(500);
         
-        while( (resp = inRead.readLine()) != null && !resp.startsWith("+OK") ) {
-        }
+        boolean ok = readUntiStatusLine(inRead);
+        if ( !ok ) { System.out.println("Error waiting upload prompt"); }
         Zzz(100);
 
         System.out.println("Sending file path"); 
         String filepath = "/C/0/TEST.TXT";
         sendln(""+filepath);
-        while( (resp = inRead.readLine()) != null && !resp.startsWith("+OK") ) {
-        }
+        ok = readUntiStatusLine(inRead);
+        if ( !ok ) { System.out.println("Error sending file name"); }
         Zzz(100);
 
         System.out.println("Sending file size"); 
         long fileSize = 4;
         sendln(""+fileSize);
-        while( (resp = inRead.readLine()) != null && !resp.startsWith("+OK") ) {
-        }
+        ok = readUntiStatusLine(inRead);
+        if ( !ok ) { System.out.println("Error sending file size"); }
         Zzz(200);
 
         System.out.println("Sending file content"); 
         send( "AbCd" );
-        while( (resp = inRead.readLine()) != null && !resp.startsWith("+OK") ) {
-        }
+        ok = readUntiStatusLine(inRead);
+        if ( !ok ) { System.out.println("Error sending file content"); }
 
         // System.out.println("Press Enter...");
         // new BufferedReader(new InputStreamReader(System.in)).readLine();
