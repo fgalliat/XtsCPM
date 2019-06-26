@@ -61,28 +61,53 @@
 
   int32 BdosTest229(int32 value) {
     Serial.println("/===== BDos 229 call =====\\");
-    char test[32+1];
-    int len = getStringFromRam(value, test, 32+1);
-    Serial.print("TP3 len= ");Serial.print(len);Serial.print("\n");
-    int i=1;
-    Serial.print("OpT ");Serial.print( (int)test[i++] );Serial.print("\n"); // 1
-    Serial.print("Sht ");Serial.print( (int)test[i++] );Serial.print("\n");
-    Serial.print("Fll ");Serial.print( (int)test[i++] );Serial.print("\n");
 
-    Serial.print("cb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 4
-    Serial.print("cb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
+    grabbSpritesOfSize( (char*)"SPRITE1.BMP", 0, 0, 32, 32);
+    sprites[0].drawClip(0,20);
+    sprites[1].drawClip(50,20);
+    sprites[2].drawClip(100,20);
+    sprites[3].drawClip(150,20);
 
-    Serial.print("xb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 6
-    Serial.print("xb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
+    cleanSprites();
 
-    Serial.print("yb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 8
-    Serial.print("yb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
+    sprites[0].setBounds(0,1,19,19);
+    sprites[1].setBounds(40,1,19,19);
+    sprites[2].setBounds(40,20,19,19);
 
-    Serial.print("wb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 10
-    Serial.print("wb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
+    sprites[3].setBounds(62,1,31,28); // FILE
+    sprites[4].setBounds(95,1,31,28); // FOLDER
 
-    Serial.print("hb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 12
-    Serial.print("hb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
+    grabbSprites( (char*)"SPRITE1.BMP", 0, 0);
+
+    yatl.getScreen()->fillRect(0, 120, 80+19, 64+19, 65535);
+    sprites[0].drawClip(0,120);
+    sprites[1].drawClip(80,120);
+    sprites[2].drawClip(80,120+64);
+    sprites[3].drawClip(0+10,120+20+10);
+    sprites[4].drawClip(0+10+32,120+20+10);
+
+    // char test[32+1];
+    // int len = getStringFromRam(value, test, 32+1);
+    // Serial.print("TP3 len= ");Serial.print(len);Serial.print("\n");
+    // int i=1;
+    // Serial.print("OpT ");Serial.print( (int)test[i++] );Serial.print("\n"); // 1
+    // Serial.print("Sht ");Serial.print( (int)test[i++] );Serial.print("\n");
+    // Serial.print("Fll ");Serial.print( (int)test[i++] );Serial.print("\n");
+
+    // Serial.print("cb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 4
+    // Serial.print("cb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
+
+    // Serial.print("xb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 6
+    // Serial.print("xb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
+
+    // Serial.print("yb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 8
+    // Serial.print("yb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
+
+    // Serial.print("wb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 10
+    // Serial.print("wb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
+
+    // Serial.print("hb0 ");Serial.print( (int)test[i++] );Serial.print("\n"); // 12
+    // Serial.print("hb1 ");Serial.print( (int)test[i++] );Serial.print("\n");
     return 0;
   }
 
@@ -170,8 +195,8 @@
     } else if ( regNum == 228 ) {
       return subMCUBdosCall(value);
     } else if ( regNum == 229 ) {
-      Serial.println( "BdosCall 229 NYI" );
-      // BdosTest229(value);
+      Serial.println( "BdosCall 229 NYI => Test Mode" );
+      BdosTest229(value);
     }
     
     return 0;

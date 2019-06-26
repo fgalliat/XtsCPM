@@ -14,10 +14,7 @@
 
   #include "xts_yatl_settings.h"
   #include "xts_yatl_api.h"
-  extern Yatl yatl;
-
-    #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
-    extern SdFatSdio SD;
+  
 
   #define SPRITES_SUPPORT 1
 
@@ -25,10 +22,8 @@
     #define SPRITE_AREA_WIDTH 160
     #define SPRITE_AREA_HEIGHT 120
     #define SPRITE_AREA_SIZE (SPRITE_AREA_WIDTH*SPRITE_AREA_HEIGHT)
-    uint16_t spriteArea[ SPRITE_AREA_SIZE ];
-
-    int spriteInstanceCounter = 0; 
-    int lastAddr = 0;
+    
+    extern int spriteInstanceCounter;
 
     class Sprite {
        private:
@@ -56,15 +51,16 @@
             this->addr = -1;
          }
          
-         void drawClip(int x, int h);
+         void drawClip(int x, int y);
     };
 
     #define NB_SPRITES 15
-    Sprite sprites[NB_SPRITES];
+    extern Sprite sprites[NB_SPRITES];
 
     void cleanSprites();
 
     void grabbSpritesOfSize(char* imageName, int offsetX=0, int offsetY=0, int width=32, int height=32);
+    void grabbSprites(char* imageName, int offsetX=0, int offsetY=0);
 
   #endif
 

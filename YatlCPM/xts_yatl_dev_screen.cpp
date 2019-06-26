@@ -778,16 +778,25 @@
 
    #if SPRITES_SUPPORT
 
-   void Sprite::drawClip(int x, int h) {
+   uint16_t spriteArea[ SPRITE_AREA_SIZE ];
+   Sprite sprites[NB_SPRITES];
+
+   int spriteInstanceCounter = 0; 
+   int lastAddr = 0;
+
+   void Sprite::drawClip(int x, int y) {
       if ( w < 0 || h < 0 ) { return; }
+      if ( !isValid() ) { return; }
 
       uint16_t row[ w ];
       for(int i=0; i < h; i++) {
          if ( i+y >= TFT_HEIGHT ) { break; }
-         memcpy( &row[0], &spriteArea[ ( this->y * SPRITE_AREA_WIDTH )+this->x ], w );
-         tft.writeRect(0, i+y, w, 1, row);
+         // *2 cf uint16_t
+         memcpy( &row[0], &spriteArea[ ( (this->y+i) * SPRITE_AREA_WIDTH )+this->x ], w*2 );
+         tft.writeRect(x, i+y, w, 1, row);
       }
 
+      // tft.writeRect(50, 50, 160, 120, spriteArea);
    }
    
     void cleanSprites() {
@@ -801,6 +810,11 @@
 
     void _feedSprites(char* filename, int x, int y);
 
+
+    void grabbSprites(char* imageName, int offsetX, int offsetY) {
+       char* fileName = yatl.getFS()->getAssetsFileEntry( imageName );
+       _feedSprites(fileName, offsetX, offsetY);
+    }
 
     void grabbSpritesOfSize(char* imageName, int offsetX, int offsetY, int width, int height) {
 
@@ -931,7 +945,8 @@
                } // end pixel
 
                // tft.writeRect(0, row, w, 1, awColors);
-               memcpy( &spriteArea[ (row*SPRITE_AREA_WIDTH)+col ], &awColors[x], w );
+               // *2 Cf uint16_t
+               memcpy( &spriteArea[ (row*SPRITE_AREA_WIDTH)+col ], &awColors[x], w*2 );
 
             } // end scanline
             // long timeElapsed = millis() - startTime;

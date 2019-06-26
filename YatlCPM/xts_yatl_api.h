@@ -9,6 +9,8 @@
  * 
  */
 
+#include "xts_yatl_dev_screen.h"
+
 class Yatl;
 
 class YatlSubMCU {
