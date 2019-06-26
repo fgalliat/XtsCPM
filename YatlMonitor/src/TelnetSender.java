@@ -119,11 +119,17 @@ public class TelnetSender {
         // new BufferedReader(new InputStreamReader(System.in)).readLine();
         Zzz(400);
 
-        System.out.println("Sending closing seq."); 
-        send( ((char)27+"m"));
+        System.out.println("Waiting for userPrompt"); 
+        while( (resp = inRead.readLine()) != null && !resp.equals("") ) {
+            System.out.println(">"+resp);
+        }
+
+        // System.out.println("Sending closing seq."); 
+        // send( ((char)27+"m"));
         System.out.println("closing conn."); 
         send( "y");
 
+        System.out.println("closing Socket"); 
         try { sk.getOutputStream().close(); } catch(Exception ex) {}
         try { sk.getInputStream().close(); } catch(Exception ex) {}
 

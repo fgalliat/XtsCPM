@@ -471,8 +471,10 @@ void sendLineToCPM(const char* line) {
        delay(5);
        while( !serialBridge.available() ) { delay(2); yield(); }
        char* _tmp = _readLine(); // +OK
-       if ( _tmp[0] != '+' ) {
+       while ( _tmp[0] != '+' ) {
            clt.println( _tmp );
+           if (_tmp[0] == '-') { break; clt.stop(); return; }
+           _tmp = _readLine();
        }
 
        int tmp;
@@ -495,7 +497,7 @@ void sendLineToCPM(const char* line) {
        while( !clt.available() ) { delay(2); yield(); }
        tmp = clt.readBytesUntil(0x0A, sizeStr, 32);
 
-       long len = atol(sizeStr);
+       int len = atoi(sizeStr);
        if ( len <= 0 ) {
            serialBridge.println("0");
            clt.println("-OK WRONG Size of dest file !");
@@ -508,12 +510,14 @@ void sendLineToCPM(const char* line) {
        while( !serialBridge.available() ) { delay(2); yield(); }
        resp = _readLine(); if ( resp[0] == '-' ) { clt.println("-OK error"); clt.stop(); return; }
 
-       const int packetLen = 64;
+       clt.println("+OK Send Me Packets !");
+
+       const int packetLen = min(32, len);
        char packet[packetLen+1]; memset(packet, 0x00, packetLen+1);
        int readed = 0;
        for(int i=0; i < len;) {
            while( !clt.available() ) { delay(2); yield(); }
-           readed = clt.readBytesUntil(0x0A, packet, packetLen);
+           readed = clt.readBytes(packet, packetLen);
            if ( readed == 0 ) {
              clt.println("-OK WRONG Packet !");
              return; // false
