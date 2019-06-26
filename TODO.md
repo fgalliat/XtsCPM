@@ -32,3 +32,4 @@
      could still use Pseudo palette color if color < 16 => \<have TODO that 'cause can't use Word w/ TP3>
   - 100x100 filled rect is immediate !!! 5x is still immediate !!! 30x is ~ immediate !!
   - ReMapped drawRoutines on BdosCall(225) ...
+  - ADDED Sprites Support (40KB free for Sprites - 160x120 board)

@@ -12,7 +12,7 @@
    - lower layout (w/ addditional Teensy3.2 3.3v) **(in progress)**
    - REFACTO Screen API
    - REFACTO BdosCalls & VT-EXT **(done)**
-   - GFX Pascal Demo (benchmark : loop for drawing rectangles as ex.)
+   - GFX Pascal Demo (benchmark : loop for drawing rectangles as ex.) **(in progress)**
 
 
 
