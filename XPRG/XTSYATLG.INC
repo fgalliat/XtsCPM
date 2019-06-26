@@ -14,6 +14,64 @@ begin
 end;
 
 { color: word doesn't work on TP3 CP/M }
+procedure defineSprite(num, x,y,w,h : integer);
+ var 
+   buffer : string[16];
+   color : integer;
+   stroke : integer;
+   shape : integer;
+begin
+ color := 0;
+ stroke := 0;
+ shape := 1;
+
+ buffer[0] := Chr(16); { cause not ass. as a reg. str. }
+ buffer[2] := #128; { readed as Str[1] }
+ buffer[3] := Chr( shape );
+ buffer[4] := Chr( stroke ); { 0-draw/1-fill }
+ buffer[5] := Chr( color div 256 );
+ buffer[6] := Chr( color mod 256 );
+ buffer[7] := Chr( x div 256 );
+ buffer[8] := Chr( x mod 256 );
+ buffer[9] := Chr( y div 256 );
+ buffer[10] := Chr( y mod 256 );
+ buffer[11] := Chr( w div 256 );
+ buffer[12] := Chr( w mod 256 );
+ buffer[13] := Chr( h div 256 );
+ buffer[14] := Chr( h mod 256 );
+
+ buffer[15] := Chr( num );
+
+ Bdos(225, addr(buffer) );
+end;
+
+procedure drawSprite(num, x,y : integer);
+ var 
+   buffer : string[16];
+   color : integer;
+   stroke : integer;
+   shape : integer;
+begin
+ color := 0;
+ stroke := 0;
+ shape := 2;
+
+ buffer[0] := Chr(16); { cause not ass. as a reg. str. }
+ buffer[2] := #128; { readed as Str[1] }
+ buffer[3] := Chr( shape );
+ buffer[4] := Chr( stroke ); { 0-draw/1-fill }
+ buffer[5] := Chr( color div 256 );
+ buffer[6] := Chr( color mod 256 );
+ buffer[7] := Chr( x div 256 );
+ buffer[8] := Chr( x mod 256 );
+ buffer[9] := Chr( y div 256 );
+ buffer[10] := Chr( y mod 256 );
+
+ buffer[11] := Chr( num );
+
+ Bdos(225, addr(buffer) );
+end;
+
 procedure _drawShape(shape, x,y,w,h,stroke: integer; color: integer);
  var 
    buffer : string[16];

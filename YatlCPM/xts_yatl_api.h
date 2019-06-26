@@ -162,6 +162,10 @@ class YatlScreen {
       void drawCircle(uint16_t x, uint16_t y, uint16_t r, uint16_t color);
       void fillCircle(uint16_t x, uint16_t y, uint16_t r, uint16_t color);
       void drawLine(uint16_t x, uint16_t y, uint16_t x2, uint16_t y2, uint16_t color);
+
+      void cleanSprites();
+      void grabbSpritesOfSize(char* imageName, int offsetX=0, int offsetY=0, int width=32, int height=32);
+      void grabbSprites(char* imageName, int offsetX=0, int offsetY=0);
 };
 
 class YatlJoypad {

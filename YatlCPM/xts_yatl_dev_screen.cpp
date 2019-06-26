@@ -102,6 +102,14 @@
      tft.drawLine(x,y,x2,y2,color);
   }
 
+  void YatlScreen::cleanSprites() { ::cleanSprites(); }
+  void YatlScreen::grabbSpritesOfSize(char* imageName, int offsetX, int offsetY, int width, int height) {
+     ::grabbSpritesOfSize(imageName, offsetX, offsetY, width, height);
+  }
+  void YatlScreen::grabbSprites(char* imageName, int offsetX, int offsetY) {
+     ::grabbSprites(imageName, offsetX, offsetY);
+  }
+
   // ==========] Console Routines [==========
 
    void _doPlay(char* sequence) {

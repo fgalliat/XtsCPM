@@ -62,13 +62,13 @@
   int32 BdosTest229(int32 value) {
     Serial.println("/===== BDos 229 call =====\\");
 
-    grabbSpritesOfSize( (char*)"SPRITE1.BMP", 0, 0, 32, 32);
+    yatl.getScreen()->grabbSpritesOfSize( (char*)"SPRITE1.BMP", 0, 0, 32, 32);
     sprites[0].drawClip(0,20);
     sprites[1].drawClip(50,20);
     sprites[2].drawClip(100,20);
     sprites[3].drawClip(150,20);
 
-    cleanSprites();
+    yatl.getScreen()->cleanSprites();
 
     sprites[0].setBounds(0,1,19,19);
     sprites[1].setBounds(40,1,19,19);
@@ -77,7 +77,7 @@
     sprites[3].setBounds(62,1,31,28); // FILE
     sprites[4].setBounds(95,1,31,28); // FOLDER
 
-    grabbSprites( (char*)"SPRITE1.BMP", 0, 0);
+    yatl.getScreen()->grabbSprites( (char*)"SPRITE1.BMP", 0, 0);
 
     yatl.getScreen()->fillRect(0, 120, 80+19, 64+19, 65535);
     sprites[0].drawClip(0,120);
@@ -150,6 +150,27 @@
         uint16_t y2 = ((uint16_t)test[12] << 8) + test[13];
         yatl.getScreen()->drawLine( x, y, x2, y2, color );
       } 
+    } else if ( OpType == 0x80 ) {
+      // manage Sprite
+      uint16_t x = ((uint16_t)test[6] << 8) + test[7];
+      uint16_t y = ((uint16_t)test[8] << 8) + test[9];
+
+      if ( shapeType == 0x01 ) {
+        // define sprite
+
+        uint16_t w = ((uint16_t)test[10] << 8) + test[11];
+        uint16_t h = ((uint16_t)test[12] << 8) + test[13];
+
+        uint8_t num = test[14];
+
+        sprites[num].setBounds( x, y, w, h );
+      } else if ( shapeType == 0x02 ) {
+        // draw sprite
+        uint8_t num = test[10];
+
+        sprites[num].drawClip( x, y );
+      }
+
     }
 
     return 0;
@@ -173,8 +194,15 @@
       upper(test);
 
       if ( endsWith(test, (char*)".BMP") ) {
-        Serial.println("|  Wanna draw a BMP wallpaper |");
-        yatl.getScreen()->drawWallpaper( test );
+        if ( test[0] == '!' ) {
+          Serial.println("|  Wanna grabb a BMP SpriteBoard |");
+          yatl.getScreen()->cleanSprites();
+          yatl.getScreen()->grabbSprites( &test[1], 0, 0 );
+        } else {
+          Serial.println("|  Wanna draw a BMP wallpaper |");
+          yatl.getScreen()->drawWallpaper( test );
+        }
+
       } else if ( endsWith(test, (char*)".PCT") ) {
         Serial.println("|  Wanna draw a PCT wallpaper |");
         Serial.println("|  NYI                        |");
