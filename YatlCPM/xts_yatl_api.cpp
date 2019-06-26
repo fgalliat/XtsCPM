@@ -225,6 +225,10 @@
     }
 
     bool YatlFS::downloadFromSubMcu() {
+        this->yatl->getSubMCU()->lock();
+        this->yatl->getSubMCU()->cleanBuffer();
+
+
         while( this->yatl->getSubMCU()->available() ) { this->yatl->getSubMCU()->read(); delay(2); }
         this->yatl->warn("Download in progress");
         this->yatl->getSubMCU()->println("+OK");
@@ -245,6 +249,7 @@ Serial.println(name);
             // Serial.println("Download not ready");
             // Serial.println(name);
             // Serial.println("-OK");
+            this->yatl->getSubMCU()->unlock();
             return false;
         }
 
@@ -255,6 +260,7 @@ Serial.println(name);
         File f = SD.open(name, O_CREAT | O_WRITE);
         if ( !f ) {
           this->yatl->getSubMCU()->println("-OK");
+          this->yatl->getSubMCU()->unlock();
           return false;    
         }
         f.remove();
@@ -266,6 +272,7 @@ Serial.println(name);
             sprintf(txt, "Failed to open %s (0x02)", name);
             this->yatl->warn((const char*)txt);
             this->yatl->getSubMCU()->println("-OK");
+            this->yatl->getSubMCU()->unlock();
           return false;    
         }
 Serial.println("+OK");
@@ -291,6 +298,7 @@ Serial.println("+OK");
         }
         f.close();
 Serial.println("-EOF-");
+        this->yatl->getSubMCU()->unlock();
         this->yatl->warn("-EOF-");
         this->yatl->beep();
         return true;
@@ -320,6 +328,14 @@ Serial.println("-EOF-");
 
     extern bool keybLocked;
 
+    void YatlSubMCU::lock() {
+        keybLocked = true;
+    }
+
+    void YatlSubMCU::unlock() {
+        keybLocked = false;
+    }
+
     int YatlSubMCU::available() { return BRIDGE_MCU_SERIAL.available(); }
     int YatlSubMCU::read() { 
         // keybLocked = true;
@@ -341,15 +357,15 @@ Serial.println("-EOF-");
     #define MAX_SUBMCU_LINE_LEN 255
     char lastSubMCULine[MAX_SUBMCU_LINE_LEN+1];
     char* YatlSubMCU::readLine() {
-        keybLocked = true;
+        // keybLocked = true;
         memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
         BRIDGE_MCU_SERIAL.readBytesUntil( '\n', lastSubMCULine, MAX_SUBMCU_LINE_LEN );
-        keybLocked = false;
+        // keybLocked = false;
         return lastSubMCULine;
     }
 
     char* YatlSubMCU::waitForNonEmptyLine(unsigned long timeout) {
-        keybLocked = true;
+        // keybLocked = true;
         if ( timeout == 0 ) { timeout = 10*1000; } // 10sec
         unsigned long began = millis();
 
@@ -471,7 +487,7 @@ memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
 
 //        BRIDGE_MCU_SERIAL.setTimeout(1000);
 
-       keybLocked = false;
+    //    keybLocked = false;
        return lastSubMCULine;
     }
 

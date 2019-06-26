@@ -22,6 +22,9 @@ class YatlSubMCU {
       bool setup();
       void reboot(bool waitFor=true);
 
+      void lock();
+      void unlock();
+
       void println(const char* ch);
 
       void send(char ch);

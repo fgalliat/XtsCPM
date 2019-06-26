@@ -20,6 +20,8 @@
     const int keybBufferLen = 64; 
     char keybBuffer[keybBufferLen+1];
 
+    extern bool keybLocked;
+
     void initKeyb() {
       memset(keybBuffer, 0x00, keybBufferLen+1);
     }
@@ -34,6 +36,7 @@
 
 
     void YatlKeyboard::poll() {
+        if ( keybLocked ) { return; }
         if ( firstKeybUse ) {
             // clean the buffer garbage ....
             while ( this->yatl->getSubMCU()->available() > 0 ) {
@@ -67,6 +70,8 @@
     }
 
     int YatlKeyboard::available(bool autopoll) {
+        if ( keybLocked ) { return 0; }
+
         int tlen = strlen( keybBuffer );
         if ( tlen == 0 ) {
             if ( autopoll ) {
@@ -77,6 +82,8 @@
     }
 
     int YatlKeyboard::read() {
+        if ( keybLocked ) { return -1; }
+
         int len = this->available(false);
         if ( len > 0 ) {
             char ch = keybBuffer[0];

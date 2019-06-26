@@ -481,14 +481,17 @@ void sendLineToCPM(const char* line) {
 
        char* resp;
 
-       clt.println("+OK Name for dest file ?");
+       clt.println("+OK Name for dest file ?"); clt.flush();
        while( !clt.available() ) { delay(2); yield(); }
        tmp = clt.readBytesUntil(0x0A, filename, 64);
-       serialBridge.println(filename);
+       //serialBridge.println(filename);
+       serialBridge.print(filename);
+       serialBridge.write(0x0A); serialBridge.flush();
        delay(5);
+       while( !serialBridge.available() ) { delay(2); yield(); }
        resp = _readLine(); if ( resp[0] == '-' ) { clt.println("-OK error"); clt.stop(); return; }
 
-       clt.println("+OK Size of dest file ?");
+       clt.println("+OK Size of dest file ?"); clt.flush();
        while( !clt.available() ) { delay(2); yield(); }
        tmp = clt.readBytesUntil(0x0A, sizeStr, 32);
 
@@ -498,8 +501,11 @@ void sendLineToCPM(const char* line) {
            clt.println("-OK WRONG Size of dest file !");
            return; // false
        }
-       serialBridge.println(sizeStr);
+    //    serialBridge.println(sizeStr);
+       serialBridge.print(sizeStr);
+       serialBridge.write(0x0A); serialBridge.flush();
        delay(5);
+       while( !serialBridge.available() ) { delay(2); yield(); }
        resp = _readLine(); if ( resp[0] == '-' ) { clt.println("-OK error"); clt.stop(); return; }
 
        const int packetLen = 64;

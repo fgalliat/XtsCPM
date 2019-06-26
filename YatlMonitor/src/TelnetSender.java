@@ -16,10 +16,13 @@ public class TelnetSender {
         send( str+"\n" );
     }
 
-    static String readUntiEmptyLine(BufferedReader inRead) throws Exception {
+    static String readUntiEmptyLine(BufferedReader inRead, boolean haltOnStatus) throws Exception {
         String resp;
         while( (resp = inRead.readLine()) != null && !resp.equals("") ) {
             System.out.println(">"+resp);
+            if ( haltOnStatus && ( resp.trim().startsWith("+OK") || resp.trim().startsWith("-OK") ) ) {
+                return resp;
+            }
         }
         return resp;
     }
@@ -66,7 +69,7 @@ public class TelnetSender {
         sendln( "yatl"); Zzz(50);
 
         System.out.println("Waiting for User Menu"); 
-        readUntiEmptyLine(inRead);
+        readUntiEmptyLine(inRead, true);
         Zzz(300);
 
         System.out.println("Sending control seq."); 
@@ -75,11 +78,21 @@ public class TelnetSender {
         Zzz(500);
         
         System.out.println("Waiting Upload prompt.");
-        readUntiEmptyLine(inRead);
+        String tmpL;
+        boolean ok = false;
+        while( (tmpL = readUntiEmptyLine(inRead, true) ) != null ) {
+            Zzz(10);
+            if ( tmpL.trim().startsWith("+OK") ) {
+                ok = true;
+                System.out.println("### FOUND OK");
+                break;
+            }
+        }
+
 
         // Zzz(500);
         
-        boolean ok = readUntiStatusLine(inRead);
+        ok = ok || readUntiStatusLine(inRead);
         if ( !ok ) { System.out.println("Error waiting upload prompt"); }
         Zzz(100);
 
