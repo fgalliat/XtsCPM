@@ -469,7 +469,11 @@ void sendLineToCPM(const char* line) {
        _send("\r"); // just to flush current line if any
        _send("C:DOWNSM\r"); // because of next _readLine() that waits before keyBeenRead
        delay(5);
-       _readLine(); // +OK
+       while( !serialBridge.available() ) { delay(2); yield(); }
+       char* _tmp = _readLine(); // +OK
+       if ( _tmp[0] != '+' ) {
+           clt.println( _tmp );
+       }
 
        int tmp;
        char filename[64+1]; memset(filename, 0x00, 64+1);

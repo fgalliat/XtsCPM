@@ -228,11 +228,17 @@
         while( this->yatl->getSubMCU()->available() ) { this->yatl->getSubMCU()->read(); delay(2); }
         this->yatl->warn("Download in progress");
         this->yatl->getSubMCU()->println("+OK");
-        while( !this->yatl->getSubMCU()->available() ) { delay(2); }
+Serial.println("+OK");
+        // while( !this->yatl->getSubMCU()->available() ) { delay(2); }
+        // while( this->yatl->getSubMCU()->available() ) { this->yatl->getSubMCU()->read(); delay(2); }
+
         // for now : file has to be like "/C/0/XTSDEMO.PAS"
         int tlen = 0;
         char txt[128+1]; 
+        // while( !this->yatl->getSubMCU()->available() ) { delay(2); }
         char name[64+1]; memset(name, 0x00, 64); tlen = this->yatl->getSubMCU()->readBytesUntil(0x0A, name, 64);
+Serial.print("Name : ");
+Serial.println(name);
         if ( tlen <= 0 ) {
             sprintf(txt, "Downloading %s (error)", name);
             this->yatl->warn((const char*)txt);
@@ -241,6 +247,9 @@
             // Serial.println("-OK");
             return false;
         }
+
+        sprintf(txt, "Downloading %s (0x01)", name);
+        this->yatl->warn((const char*)txt);
 
         // Cf CPM may padd the original file
         File f = SD.open(name, O_CREAT | O_WRITE);
@@ -254,17 +263,24 @@
 
         f = SD.open(name, O_CREAT | O_WRITE);
         if ( !f ) {
-          this->yatl->getSubMCU()->println("-OK");
+            sprintf(txt, "Failed to open %s (0x02)", name);
+            this->yatl->warn((const char*)txt);
+            this->yatl->getSubMCU()->println("-OK");
           return false;    
         }
-
+Serial.println("+OK");
         this->yatl->getSubMCU()->println("+OK");
+        sprintf(txt, "wait for fileLen %s (0x03)", name);
+        this->yatl->warn((const char*)txt);
         while( !this->yatl->getSubMCU()->available() ) { delay(2); }
         char sizeStr[12+1]; memset(sizeStr, 0x00, 12); tlen = this->yatl->getSubMCU()->readBytesUntil(0x0A, sizeStr, 12);
+Serial.print("Size : ");
+Serial.println(sizeStr);
         long size = atol(sizeStr);
         sprintf(txt, "Downloading %s (%ld bytes)", name, size);
         this->yatl->warn((const char*)txt);
         char packet[128+1];
+Serial.println("+OK");
         this->yatl->getSubMCU()->println("+OK");
         for(int readed=0; readed < size;) {
             while( !this->yatl->getSubMCU()->available() ) { delay(2); }
@@ -274,6 +290,7 @@
             readed += packetLen;
         }
         f.close();
+Serial.println("-EOF-");
         this->yatl->warn("-EOF-");
         this->yatl->beep();
         return true;

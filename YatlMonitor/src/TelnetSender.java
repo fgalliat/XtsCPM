@@ -32,7 +32,8 @@ public class TelnetSender {
                 return false;
             }
         }
-        return true;
+        System.out.println(">"+resp);
+        return resp != null;
     }
 
 
@@ -82,15 +83,15 @@ public class TelnetSender {
         if ( !ok ) { System.out.println("Error waiting upload prompt"); }
         Zzz(100);
 
-        System.out.println("Sending file path"); 
         String filepath = "/C/0/TEST.TXT";
+        System.out.println("Sending file path => "+filepath);
         sendln(""+filepath);
         ok = readUntiStatusLine(inRead);
         if ( !ok ) { System.out.println("Error sending file name"); }
         Zzz(100);
 
-        System.out.println("Sending file size"); 
         long fileSize = 4;
+        System.out.println("Sending file size => "+fileSize);
         sendln(""+fileSize);
         ok = readUntiStatusLine(inRead);
         if ( !ok ) { System.out.println("Error sending file size"); }
