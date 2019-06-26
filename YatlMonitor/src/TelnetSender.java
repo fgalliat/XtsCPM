@@ -12,6 +12,11 @@ public class TelnetSender {
         sout.flush(); 
     }
 
+    static void send(byte[] str) throws Exception {
+        sout.write( str ); 
+        sout.flush(); 
+    }
+
     static void sendln(String str) throws Exception {
         send( str+"\n" );
     }
@@ -49,8 +54,29 @@ public class TelnetSender {
             }
         } );
 
-        // String ip = "192.168.1.32";
+        // "192.168.1.32";
         String ip = "192.168.4.1";
+        String drive = "c";
+        String entry = "test.txt";
+        byte[] content = ("Hello world ! "+new Date().toString()).getBytes();
+
+        if ( args != null ) {
+            if ( args.length > 0 ) { 
+                File f = new File(args[0]);
+                entry = f.getName(); 
+                content = new byte[(int)f.length()];
+                FileInputStream fin = new FileInputStream(f);
+                fin.read( content, 0, content.length);
+                fin.close();
+            }
+            if ( args.length > 1 ) { drive = args[1]; }
+            if ( args.length > 2 ) { ip = args[2]; }
+        }
+
+        
+        process(ip, drive, entry, content);
+    }
+    public static void process(String ip, String drive, String entryname, byte[] fileContent) throws Exception {
         sk = new Socket(ip, 23);
         BufferedReader inRead = new BufferedReader(new InputStreamReader(sk.getInputStream()));
         sout = sk.getOutputStream();
@@ -96,14 +122,14 @@ public class TelnetSender {
         if ( !ok ) { System.out.println("Error waiting upload prompt"); }
         Zzz(100);
 
-        String filepath = "/C/0/TEST.TXT";
+        String filepath = "/"+ (drive.toUpperCase()) +"/0/"+(entryname.toUpperCase());
         System.out.println("Sending file path => "+filepath);
         sendln(""+filepath);
         ok = readUntiStatusLine(inRead);
         if ( !ok ) { System.out.println("Error sending file name"); }
         Zzz(100);
 
-        long fileSize = 4;
+        long fileSize = fileContent.length;
         System.out.println("Sending file size => "+fileSize);
         sendln(""+fileSize);
         ok = readUntiStatusLine(inRead);
@@ -111,7 +137,7 @@ public class TelnetSender {
         Zzz(200);
 
         System.out.println("Sending file content"); 
-        send( "AbCd" );
+        send( fileContent );
         ok = readUntiStatusLine(inRead);
         if ( !ok ) { System.out.println("Error sending file content"); }
 
