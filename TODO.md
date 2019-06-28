@@ -37,6 +37,8 @@
 
 - [ ] **manage key alt symbols :** ": ; . , = ? ( ) - + * / $ # & { } [ ] | _ ^ @ < > "
 
+  - [ ] 25 chars + Sym. Space -> that draws the map to screen (need to upload ctrlChar to upperLayout)
+
 - [ ] **allow fillMode for drawSprites (@least INV. mode)**
 
 - [ ] manage Joystick
