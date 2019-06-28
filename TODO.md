@@ -1,26 +1,58 @@
 # TODO (current work)
 
 - [ ] If Serial monitor not connected
-- [ ] -> Keyboard reading is exctremly slow
-- [ ] test if (!Serial) @ setup() time instead of while(!Serial)
-- [ ] then probe if port is useable or not for further key reading
-- [ ] w/ current code 15/06/19 18:04 if Yatl is wired on an external Battery/PWR
+  - [ ] -> Keyboard reading is exctremly slow
+  - [x] test if (!Serial) @ setup() time instead of while(!Serial)
+  - [x] then probe if port is useable or not for further key reading
+  - [x] w/ current code 15/06/19 18:04 if Yatl is wired on an external Battery/PWR
+
 - [ ] ===================================
-- [ ] compile MainMCU code
-- [x] upload & test MainMCU code (failure on playT5K files **FIXED** the bug was in _SD_readBinFile() )
-- [x] upload XTASE.PAS demo (tested **W/O** SubMCU module)
-- [x] test MainMCU + SubMCU layouts connection (had to use pins 20&21 on SubMCU for Bridge RX/TX)
+
+  
+
+- [x] upload & test MainMCU code (failure on playT5K files **FIXED** )
+
+- [x] WiFi copy via telnet
+
 - [x] manage MP3 module (add missing commands in XTASE.PAS demo)
+
 - [x] make an include for XTSDEMO.PAS demo (split BdosCalls & VT-Ext routines from code)
-- [x] manage Keyboard
+
+- [ ] make **folder REFACTO** (SubMCU, RunCPM, ideas...)
+
 - [ ] manage Keyboard Ctrl Key (cf TE.COM & TURBO.COM inner editor)
+
+- [x] manage Keyboard Left & Right Arrows
+
+  - [ ] Left is 0x55 -> 85 (from Chatpad control values) -> choose rather Java/Javascript KeyCodes
+
+  - [ ] Right is 0x51 -> 81
+
+  - [x] | Key **Code** | Key             |
+    | :----------- | :-------------- |
+    | 37 (0x25)    | left **arrow**  |
+    | 38 (0x26)    | up **arrow**    |
+    | 39 (0x27)    | right **arrow** |
+    | 40 (0x28)    | down **arrow**  |
+
+- [ ] **manage key alt symbols :** ": ; . , = ? ( ) - + * / $ # & { } [ ] | _ ^ @ < > "
+
+- [ ] **allow fillMode for drawSprites (@least INV. mode)**
+
 - [ ] manage Joystick
+
 - [ ] manage LEDs
+
 - [ ] manage MP3/Busy line
+
 - [ ] XTSDEMO.PAS as mp3 JUKEBOX demo too (play/pause/next) **(in Progress)**
+
 - [ ] add **native JUKE.BAD reading** to make displayable the SongName
+
 - [ ] Make Docs about pinout
+
 - [ ] Make Docs about VT-Ext + BdosCall extension mapping **(in Progress)**
+
 - [x] GFX Drawing routines (@least to make a TP3 benchmark)
   - beware : as screen coords are > 255 need uint16_t
   - can PString contains 0x00 w/ trimming (Cf [0] contains length -init or current ?)
