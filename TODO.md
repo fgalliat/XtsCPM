@@ -22,6 +22,8 @@
 
 - [ ] manage Keyboard Ctrl Key (cf TE.COM & TURBO.COM inner editor)
 
+  - [ ] to be tested
+
 - [x] manage Keyboard Left & Right Arrows
 
   - [ ] Left is 0x55 -> 85 (from Chatpad control values) -> choose rather Java/Javascript KeyCodes
@@ -35,9 +37,15 @@
     | 39 (0x27)    | right **arrow** |
     | 40 (0x28)    | down **arrow**  |
 
-- [ ] **manage key alt symbols :** ": ; . , = ? ( ) - + * / $ # & { } [ ] | _ ^ @ < > "
+- [ ] **manage key alt symbols :** ": ; . , = ? ( ) - + * / \\ $ # & { } [ ] | _ ^ @ < > "
 
-  - [ ] 25 chars + Sym. Space -> that draws the map to screen (need to upload ctrlChar to upperLayout)
+  - [ ] 26 chars + Sym. Space -> that draws the map to screen
+  - [ ] **A**(+) **Z**(-) **E**(*) **R**(/) **T**(\\) **Y**(<) **U**(>) **I**(_) **O**(=) **P**(@)
+    **Q**($) **S**(&) **D**(#) **F**( { ) **G**( } ) **H**( [ ) **J**( ] ) **K**( **(** ) **L**( **)** ) **M**(?)
+    **W**(") **X**(') **C**(;) **V**(,) **B**(.) **N**(:)
+  - [ ] coded - to be tested
+  - [ ] Sym. + SPACE injectSpeChar in keybuffer (0xFF) to tell upperLayout to
+    display charMap @ screen
 
 - [ ] **allow fillMode for drawSprites (@least INV. mode)**
 
