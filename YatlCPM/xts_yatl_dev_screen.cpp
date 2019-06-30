@@ -225,10 +225,10 @@
       
       if ( color == 0 ) { return ILI9341_BLACK; }
       if ( color == 1 ) { return ILI9341_WHITE; }
-      if ( color == 1 ) { return ILI9341_RED; }
+      if ( color == 2 ) { return ILI9341_RED; }
       if ( color == 3 ) { return ILI9341_GREEN; }
       if ( color == 4 ) { return ILI9341_BLUE; }
-      if ( color == 4 ) { return ILI9341_YELLOW; }
+      if ( color == 5 ) { return ILI9341_YELLOW; }
       if ( color == 6 ) { return ILI9341_PURPLE; }
       if ( color == 7 ) { return ILI9341_CYAN; }
       if ( color == 8 ) { return ILI9341_ORANGE; }
@@ -603,8 +603,8 @@
 
   // ==========] TextBox Routines [==========
 
-  void YatlScreen::drawTextBox(const char* title, const char* msg) {
-      tft.fillRect( 20, 20, TFT_WIDTH-40, TFT_HEIGHT-40, ILI9341_RED );
+  void YatlScreen::drawTextBox(const char* title, const char* msg, uint16_t color) {
+      tft.fillRect( 20, 20, TFT_WIDTH-40, TFT_HEIGHT-40, mapColor(color) );
       tft.drawRect( 20, 20, TFT_WIDTH-40, TFT_HEIGHT-40, ILI9341_WHITE );
       tft.setTextColor(ILI9341_WHITE);
       tft.setCursor( 40, 30 );

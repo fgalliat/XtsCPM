@@ -81,6 +81,22 @@
         return tlen;
     }
 
+    void displayCharMap() {
+		const char* msg = 
+		" a+ z- e* r/ t\\ y< u> i_ o= p@ \n"+
+		" q$ s& d# f{ g} h[ j] k( l) m? \n"+
+		" w\" x' c; v, b. n:";
+		yatl.getScreen()->drawTextBox( "-= Char Map =-", msg, 6 ); // purple
+	}
+
+	int handleControlChars(char ch) {
+		if ( ch == 0xFF ) {
+			displayCharMap();
+			return -1;
+		}
+		return (int)kbMap(ch);
+	}
+
     int YatlKeyboard::read() {
         if ( keybLocked ) { return -1; }
 
@@ -89,7 +105,7 @@
             char ch = keybBuffer[0];
             memmove(&keybBuffer[0], &keybBuffer[1], len-1);
             keybBuffer[len-1] = 0x00;
-            return (int) kbMap(ch);
+            return handleControlChars(ch);
         } else {
             // kbPoll();
             len = this->available(); // will do poll
@@ -101,7 +117,7 @@
                 memmove(&keybBuffer[0], &keybBuffer[1], len-1);
                 keybBuffer[len-1] = 0x00;
             }
-            return (int) kbMap(ch);
+            return handleControlChars(ch);
         }
     }
 

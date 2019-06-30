@@ -123,7 +123,7 @@
 
     void Yatl::alert(const char* msg) {
         if ( screenReady ) {
-            this->getScreen()->drawTextBox( "ALERT", msg );
+            this->getScreen()->drawTextBox( "ALERT", msg, 2 ); // red
         } else {
             this->blink(5);
             Serial.println("*****************************");
@@ -136,7 +136,7 @@
     }
     void Yatl::warn(const char* msg) {
         if ( screenReady ) {
-            this->getScreen()->drawTextBox( "WARNING", msg );
+            this->getScreen()->drawTextBox( "WARNING", msg, 7 ); // cyan
         } else {
             this->blink(5);
             Serial.println("*****************************");

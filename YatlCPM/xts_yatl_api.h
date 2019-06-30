@@ -158,7 +158,7 @@ class YatlScreen {
       void consoleSetMode(uint8_t columnMode, bool rerenderFull=true);
 
       void drawWallpaper(char* assetName);
-      void drawTextBox(const char* title, const char* msg);
+      void drawTextBox(const char* title, const char* msg, uint16_t color=2);
 
       void drawRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color);
       void fillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color);
