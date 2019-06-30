@@ -1,5 +1,5 @@
 // just for devl purposes
-#define ARDUINO 1
+// #define ARDUINO 1
 
 
 #ifdef ARDUINO

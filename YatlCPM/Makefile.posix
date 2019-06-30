@@ -1,6 +1,6 @@
 # Posix Makefile for RunCPM
 
-PROG = RunCPM
+PROG = YatlCPM
 
 MFILE = Makefile.posix
 
