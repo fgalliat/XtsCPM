@@ -330,6 +330,12 @@
             oneFoundOnRow = true;
             char ch = this->getKeychar(row, col);
             if ( ch != 0x00 ) {
+				
+			  if (this->_kbdSymbs && ch == ' ') {
+				  // display the SymCharMap to upper Screen
+				  this->injectChar(0xFF);
+			  } else
+				
               this->injectChar(ch);
             }
           }

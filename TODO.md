@@ -9,18 +9,19 @@
 - [ ] ===================================
 
   - [ ] Esp
-    - [ ] Sym. + Space -> send 0xFF to bridge
+    - [x] Sym. + Space -> send 0xFF to bridge
     - [ ] ReUpload code to esp
   - [ ] Teensy 3.6
     - [x] when receives 0xFF while keyboard reading
           displayCharMap & consume 0xFF
     - [ ] ReUpload code to Teensy 3.6 
 
+
+
+
 " a+ z- e* r/ t\\ y< u> i_ o= p@ "
 " q$ s& d# f{ g} h[ j] k( l) m?"
 " w\" x' c; v, b. n:"
-
-
 
 - [ ] ===================================
   
