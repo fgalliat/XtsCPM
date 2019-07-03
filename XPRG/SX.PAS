@@ -19,7 +19,7 @@ begin
  clScr; {* no args > no parent. *}
  drawBmp('girl.bmp');
 
- drawBmp(#1+'pack1.pak'); {* loadSomePackedImg *}
+ drawBmp(chr(0)+'pack1.pak'); {* loadSomePackedImg *}
  w := 150;
  h := 100;
  x := 320-w-5;
@@ -36,8 +36,14 @@ begin
 {
    drawRect(300-(i*2),220,15,15, 1, Random(9) );
 }
-   i:=i+1;
-   if ( i > 50 ) then i := 0;
+
+   if ( choiceCh = ' ' ) then
+   begin
+    i:=i+1;
+    if ( i > 9 ) then i := 0;
+    drawBmp(chr(i)+'pack1.pak'); 
+   end;
+
  
  until ( choiceCh = 'q' ); { or ... }
 
