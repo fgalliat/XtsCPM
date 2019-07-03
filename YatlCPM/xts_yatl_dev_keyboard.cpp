@@ -83,9 +83,11 @@
 
     void displayCharMap() {
 		const char* msg = 
-		" a+ z- e* r/ t\\ y< u> i_ o= p@ \n"+
-		" q$ s& d# f{ g} h[ j] k( l) m? \n"+
-		" w\" x' c; v, b. n:";
+		      " a+ z- e* r/ t\\ y< u> i_ o= p@ \n"\
+              "\n"\
+		"        q$ s& d# f{ g} h[ j] k( l) m? \n"\
+              "\n"\
+		"        w\" x' c; v, b. n:";
 		yatl.getScreen()->drawTextBox( "-= Char Map =-", msg, 6 ); // purple
 	}
 
