@@ -207,7 +207,7 @@
       } else if ( endsWith(test, (char*)".PAK") ) {
         Serial.println("|  Wanna draw a PAK wallpaper |");
 
-        int numImg = (int)test[0];
+        int numImg = (int)test[0]-1; // 1 based
         drawImgFromPAK( yatl.getFS()->getAssetsFileEntry( &test[1] ), -1, -1, numImg );
 
       } else if ( endsWith(test, (char*)".PCT") ) {

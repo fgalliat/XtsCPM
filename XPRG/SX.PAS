@@ -19,13 +19,13 @@ begin
  clScr; {* no args > no parent. *}
  drawBmp('girl.bmp');
 
- drawBmp(chr(0)+'pack1.pak'); {* loadSomePackedImg *}
+ drawBmp(chr(1)+'pack1.pak'); {* loadSomePackedImg *}
  w := 150;
  h := 100;
  x := 320-w-5;
  y := 240-h-20-5;
 
- i := 0;
+ i := 1;
 
  repeat 
    {readln( choice );}
@@ -40,7 +40,7 @@ begin
    if ( choiceCh = ' ' ) then
    begin
     i:=i+1;
-    if ( i > 9 ) then i := 0;
+    if ( i > 9 ) then i := 1;
     drawBmp(chr(i)+'pack1.pak'); 
    end;
 
