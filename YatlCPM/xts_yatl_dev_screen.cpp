@@ -998,8 +998,9 @@
       pakFile.seek( numInPak * ( w*h*2 ) );
       uint16_t scanLine[w];
       for(int yy=0; yy < h; yy++) {
-         int ct = pakFile.read( scanLine, w*2 ); // *2 cf U16
-         tft.writeRect(0, yy+y, w, ct, scanLine);
+         int ct = pakFile.read( (uint8_t*)scanLine, w*2 ); // *2 cf U16
+         if ( ct <= 0 ) { Serial.println("Oups EOF !"); break; }
+         tft.writeRect(x, yy+y, w, 1, scanLine);
       }
 
       pakFile.close();
