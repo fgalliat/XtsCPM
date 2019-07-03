@@ -34,6 +34,7 @@
       return code;
     }
 
+    long lastPollTime = -1L;
 
     void YatlKeyboard::poll() {
         if ( keybLocked ) { return; }
@@ -50,10 +51,20 @@
             return;
         }
 
+        if ( lastPollTime == -1L ) {
+            lastPollTime = millis();
+        }
+        else if ( millis()-lastPollTime < 20 ) {
+            return;
+        }
+
         this->yatl->getSubMCU()->send('k');
         char tmp[32+1];
         memset(tmp, 0x00, 32+1);
         int tlen = this->yatl->getSubMCU()->readUntil(0x00, tmp, 32);
+
+        lastPollTime = millis();
+
         if ( tlen == 0 ) { return; }
         // beware w/ overflow...
         // but len == 0 should not occur...
