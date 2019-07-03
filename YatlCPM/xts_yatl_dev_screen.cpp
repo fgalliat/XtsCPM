@@ -970,4 +970,39 @@
    }
    #endif
 
+   // filename is "/Z/0/packXXX.pak"
+   // reads&display image #numInPak of packed image from filename
+   void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
+      if ( filename == NULL || strlen(filename) <= 0 || strlen(filename) >= 32 ) {
+         yatl.dbug("(WW) Wrong PAK filename !");
+         return;
+      }
+ 
+      File pakFile;
+
+      if (!(pakFile = SD.open(filename))) {
+         yatl.warn("PAK File not found");
+         return;
+      }
+
+      uint16_t w = ( pakFile.read() * 256 ) + pakFile.read();
+      uint16_t h = ( pakFile.read() * 256 ) + pakFile.read();
+      uint8_t nbImgs = pakFile.read();
+
+      if ( x < 0 ) { x = (TFT_WIDTH-w)/2; }
+      if ( y < 0 ) { y = (TFT_HEIGHT-h)/2; }
+
+      if ( numInPak < 0 ) { numInPak=0; }
+      if ( numInPak > nbImgs ) { numInPak=nbImgs-1; }
+
+      pakFile.seek( numInPak * ( w*h*2 ) );
+      uint16_t scanLine[w];
+      for(int yy=0; yy < h; yy++) {
+         int ct = pakFile.read( scanLine, w*2 ); // *2 cf U16
+         tft.writeRect(0, yy+y, w, ct, scanLine);
+      }
+
+      pakFile.close();
+   }
+
 #endif

@@ -176,6 +176,7 @@
     return 0;
   }
 
+  extern void drawImgFromPAK(char* filename, int x, int y, int numInPak);
 
   int32 XtsBdosCall(uint8 regNum, int32 value) {
     if ( regNum == 225 ) {
@@ -202,6 +203,12 @@
           Serial.println("|  Wanna draw a BMP wallpaper |");
           yatl.getScreen()->drawWallpaper( test );
         }
+
+      } else if ( endsWith(test, (char*)".PAK") ) {
+        Serial.println("|  Wanna draw a PAK wallpaper |");
+
+        int numImg = (int)test[0];
+        drawImgFromPAK( yatl.getFS()->getAssetsFileEntry( &test[1] ), -1, -1, numImg );
 
       } else if ( endsWith(test, (char*)".PCT") ) {
         Serial.println("|  Wanna draw a PCT wallpaper |");
