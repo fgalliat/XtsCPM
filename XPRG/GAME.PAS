@@ -2,10 +2,12 @@ program Game1;
 
 { Xtase YATL AdventureGame @Jul 2019 }
 
+const
+ nbPlace = 4;
 
 var
- place : array[1..4] of string;
- placeVisit : array[1..4] of integer;
+ place : array[1..nbPlace] of string;
+ placeVisit : array[1..nbPlace] of integer;
 
  choice : string[32];
  i : integer;
@@ -18,7 +20,7 @@ begin
   place[3] := 'The river';
   place[4] := 'The castle';
 
-  for i := 1 to 4 do 
+  for i := 1 to nbPlace do 
     placeVisit[i] := 0;
 
   zz := 0;  
@@ -26,7 +28,7 @@ begin
 
   repeat
 
-    for i := 1 to 4 do
+    for i := 1 to nbPlace do
     begin
 
       str(i, tmp);
