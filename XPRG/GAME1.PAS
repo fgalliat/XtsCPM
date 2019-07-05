@@ -2,12 +2,7 @@ program Game1;
 
 { Xtase YATL AdventureGame @Jul 2019 }
 
-type aStr = string[255];
-procedure drawBmp(text : aStr);
-begin
- Bdos(225, addr(text) );
-end;
-
+{$I XTSYATLG.INC the Yatl GFX include}
 {$I GAME_P.INC the game places}
 
 const
@@ -28,7 +23,7 @@ begin
   repeat
 
     clrscr;
-    drawBmp( chr(6)+'ishar.pak' );
+    drawPakImage('ishar', 6, 0, 0);
     gotoXY(1,1);
 
     for i := 1 to nbPlace do

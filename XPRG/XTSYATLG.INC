@@ -13,6 +13,17 @@ begin
  Bdos(225, addr(text) );
 end;
 
+{ numFrame is 1based }
+procedure drawPakImage(text : aStr; numFrame: integer; x,y:integer);
+var
+  xx: string[4];
+  yy: string[4];
+begin
+ str(x, xx);
+ str(y, yy);
+ drawBmp(chr(numFrame)+xx+','+yy+','+text+'.pak'); 
+end;
+
 { color: word doesn't work on TP3 CP/M }
 procedure defineSprite(num, x,y,w,h : integer);
  var 

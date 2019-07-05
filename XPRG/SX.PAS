@@ -6,6 +6,7 @@ program testSx;
 {$I XTSYATLC.INC console control routines}
 {$I XTSYATLM.INC music control routines}
 
+
 var
  str : string[64];
  choice : string[1];
@@ -19,10 +20,12 @@ begin
  clScr; {* no args > no parent. *}
  drawBmp('girl.bmp');
 
- str := 'pack3.pak'; nbPak := 9;
- str := 'ishar.pak'; nbPak := 8;
+ str := 'pack3'; nbPak := 9;
+ str := 'ishar'; nbPak := 8;
 
- drawBmp(chr(1)+str); {* loadSomePackedImg *}
+ {drawPakImage('pack3', 1, 10, 20);}
+ drawPakImage('ishar', 1, 0, 0);
+
  w := 150;
  h := 100;
  x := 320-w-5;
@@ -44,7 +47,7 @@ begin
    begin
     i:=i+1;
     if ( i > nbPak ) then i := 1;
-    drawBmp(chr(i)+str); 
+    drawPakImage(str, i, 0, 0);
    end;
 
  

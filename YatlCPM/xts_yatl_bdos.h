@@ -205,10 +205,36 @@
         }
 
       } else if ( endsWith(test, (char*)".PAK") ) {
-        Serial.println("|  Wanna draw a PAK wallpaper |");
+        Serial.println("|  Wanna draw a PAK image |");
 
         int numImg = (int)test[0]-1; // 1 based
-        drawImgFromPAK( yatl.getFS()->getAssetsFileEntry( &test[1] ), -1, -1, numImg );
+        int x = -1;
+        int y = -1; // centered
+
+        char* filename = &test[1];
+        int tmp, lastTmp;
+        if ( (tmp = indexOf( test, ',', 1 )) > -1 ) {
+          char xx[ tmp - 1 ]; // -1 cf frameNum#
+          memcpy(xx, &test[1], tmp-1);
+          x = atoi(xx);
+          lastTmp = tmp;
+          tmp = indexOf( test, ',', tmp+1 );
+          if ( tmp > -1 ) {
+            char yy[ tmp - lastTmp ];
+            memcpy(yy, &test[lastTmp+1], tmp-lastTmp);
+            y = atoi(yy);
+          }
+          filename = &test[tmp+1];
+        }
+        Serial.print("|  @ ");
+        Serial.print(filename);
+        Serial.print(",");
+        Serial.print(x);
+        Serial.print(",");
+        Serial.print(y);
+        Serial.println();
+
+        drawImgFromPAK( yatl.getFS()->getAssetsFileEntry( filename ), x, y, numImg );
 
       } else if ( endsWith(test, (char*)".PCT") ) {
         Serial.println("|  Wanna draw a PCT wallpaper |");
