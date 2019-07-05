@@ -10,6 +10,7 @@ public class Packer {
 
         int start = 1;
         int nb = 8;
+        nb = 4;
 
         int w = -1;
         int h = -1;
@@ -20,7 +21,7 @@ public class Packer {
 
             int[][] rgbs = new int[nb][];
             for(int i=0; i < nb; i++) {
-                String filename = "./imgs/img_"+( start + i )+".jpg";
+                String filename = "./imgs_own/img_"+( start + i )+".jpg";
                 System.out.println(filename);
                 BufferedImage img = ImageIO.read( new File( filename) );
                 if ( w == -1 ) {
