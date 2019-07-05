@@ -28,6 +28,8 @@ public class Game1 {
 
     public static class SceneEvent {
         protected int id;
+        protected int newId = -1;
+
         protected String pakFile;
         protected int pakNum;
         protected String placeName;
@@ -61,20 +63,48 @@ public class Game1 {
         public String toString() {
             return "[ "+placeName+" ] {"+ caracters +"} >>"+text+"<< ("+ caps +")";
         }
+
+        public String toCode() {
+            return "placeNam[ "+(newId+1)+" ] := '"+escapeStr(placeName)+"'; \n"+
+            "pakNam[ "+(newId+1)+" ] := '"+ pakFile +"'; \n"+
+            "pakNum[ "+(newId+1)+" ] := "+ pakNum +"; \n"+
+            "text[ "+(newId+1)+" ] := '"+escapeStr(text)+"'; \n"/*+
+                   "' {"+ caracters +"} >>"+text+"<< ("+ caps +")"*/;
+        }
     }
+    
+    static String escapeStr(String str) {
+        return str.replace('\'', ' ');
+    }
+
+    static List<SceneEvent> evts = new ArrayList<SceneEvent>();
+    public static SceneEvent getSceneByDataId(int dataId) {
+        for(SceneEvent evt : evts) {
+            if ( evt.id == dataId ) {
+                return evt;
+            }
+        }
+        return null;
+    }
+    public static SceneEvent getSceneByIndex(int index) {
+        return evts.get(index);
+    }
+
     // =================================
 
     public void process(String dataFileName) throws Exception {
         File f = new File( dataFileName );
         BufferedReader reader = new BufferedReader( new FileReader( f ) );
 
-        List<SceneEvent> evts = new ArrayList<SceneEvent>();
         String line;
+        evts.clear();
+        int cpt = 0;
         while((line = reader.readLine()) != null) {
             SceneEvent evt = SceneEvent.parse(line);
             if (evt == null) { continue; }
+            evt.newId = cpt++;
             evts.add(evt);
-            System.out.println( evt.toString() );
+            System.out.println( evt.toCode() );
         }
 
         reader.close();
