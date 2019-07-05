@@ -2,26 +2,22 @@ program Game1;
 
 { Xtase YATL AdventureGame @Jul 2019 }
 
+{$I GAME_P.INC the game places}
+
 const
- nbPlace = 4;
+ nbTruc = 4;
 
 var
- place : array[1..nbPlace] of string[32];
+{ place : array[1..nbPlace] of string[32];
  placeVisit : array[1..nbPlace] of integer;
-
+}
  choice : string[32];
- i : integer;
+{ i : integer; }
  tmp: string[16];
  zz,err : integer;
 begin
 
-  place[1] := 'The forest';
-  place[2] := 'The mountain';
-  place[3] := 'The river';
-  place[4] := 'The castle';
-
-  for i := 1 to nbPlace do 
-    placeVisit[i] := 0;
+  initPlaces;
 
   zz := 0;  
   choice := '*';
@@ -63,4 +59,4 @@ begin
 
 
 end.
-
+
