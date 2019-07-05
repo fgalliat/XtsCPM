@@ -373,28 +373,35 @@
       tft.fillRect(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight, consoleCurrentFontWidth, consoleCurrentFontHeight, color);
    }
 
+   void hideCursor() {
+      drawGlyphSpace(TTY_COLOR_BG);
+   }
+
+   void showCursor() {
+      drawGlyphSpace(TTY_COLOR_FG);
+   }
 
    void consoleWrite(char ch) {
       // use spe char to toggle console mode for now
       // 7F is 127 (console seems tobe 127 limited)
       if ( ch == 0x7F ) { _toggleConsoleMode(); return; }
 
-      if ( ch == '\r' ) { return; }
+      if ( ch == '\r' ) { hideCursor(); return; }
 
       if ( ch == '\n' ) { 
-         drawGlyphSpace(TTY_COLOR_BG);
+         hideCursor();
          consoleCursorX = 0;
          consoleCursorY++;
          if ( consoleCursorY >= ttyConsoleHeight ) {
             _scrollUp();
          }
-         drawGlyphSpace(TTY_COLOR_FG);
+         showCursor();
          return; 
       }
 
       // is generally used as '\b'+' '+'\b' so no need to render it
       if ( ch == '\b' ) { 
-         drawGlyphSpace(TTY_COLOR_BG);
+         hideCursor();
          consoleCursorX--;
          if ( consoleCursorX < 0 ) {
             consoleCursorY--;
@@ -402,7 +409,7 @@
                consoleCursorY = 0;
             }
          }
-         drawGlyphSpace(TTY_COLOR_FG);
+         showCursor();
          return; 
       }
 
@@ -575,11 +582,12 @@
       ttyConsoleFrame[ consoleAddr ] = ch;
 
       // direct render
+      hideCursor();
       tft.setCursor(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight);
       if ( ch == ' ' ) {
          if ( drawCursor || ( ! (previousChar == 0x00 || previousChar == ' ') ) ) {
             // render spaces Cf '\b'
-            drawGlyphSpace(TTY_COLOR_BG);
+            hideCursor();
          }
       } else {
 
@@ -597,7 +605,7 @@
          // tft.write( __escapeChar1 ); // disp Esc char
 
          if (drawCursor) {
-            drawGlyphSpace(TTY_COLOR_BG);
+            hideCursor();
          }
 
          tft.write( ch );
@@ -614,7 +622,7 @@
 
       // draw cursor
       if (drawCursor) {
-         drawGlyphSpace(TTY_COLOR_FG);
+         showCursor();
       }
    }
 
