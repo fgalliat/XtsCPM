@@ -30,7 +30,8 @@ public class Terminal {
 
 	// =====================================
 
-	protected String commPort = "COM16";
+	// protected String commPort = "COM16";
+	protected String commPort = "/dev/ttyACM0";
 
 	public String getCommPort() {
 		return commPort;
