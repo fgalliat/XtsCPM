@@ -1067,7 +1067,7 @@
       if ( numInPak < 0 ) { numInPak=0; }
       if ( numInPak > nbImgs ) { numInPak=nbImgs-1; }
 
-      pakFile.seek( numInPak * ( w*h*2 ) );
+      pakFile.seek( numInPak * ( w*h*2 ) ); // beware : seems to be relative ? 
       uint16_t scanLine[w];
       for(int yy=0; yy < h; yy++) {
          int ct = pakFile.read( (uint8_t*)scanLine, w*2 ); // *2 cf U16
