@@ -9,6 +9,7 @@ const
  nbTruc = 4;
 
 var
+ pack : string[8];
  choice : string[32];
 { i : integer; }
  tmp: string[16];
@@ -17,6 +18,7 @@ var
 begin
 
   initPlaces;
+  pack := 'ishar';
   curPlace := 6;
 
   zz := 0;  
@@ -25,7 +27,7 @@ begin
   repeat
 
     clrscr;
-    drawPakImage('ishar', curPlace, 0, 0);
+    drawPakImage(pack, curPlace, 0, 0);
     gotoXY(1,1);
 
     for i := 1 to nbPlace do
@@ -53,6 +55,16 @@ begin
       val( choice, i, err );
       placeVisit[i] := placeVisit[i] + 1;
       curPlace := 4 + ( i - 1 );
+
+      pack := 'ishar';
+
+      if ( i = 3 ) then
+      begin
+        curPlace := placeVisit[i];
+        if ( curPlace > 4 ) then curPlace := 1;
+        pack := 'game1-1';
+      end;
+
     end;
 
     zz := zz+1;
