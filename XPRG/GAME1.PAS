@@ -13,9 +13,11 @@ var
 { i : integer; }
  tmp: string[16];
  zz,err : integer;
+ curPlace : integer;
 begin
 
   initPlaces;
+  curPlace := 6;
 
   zz := 0;  
   choice := '*';
@@ -23,7 +25,7 @@ begin
   repeat
 
     clrscr;
-    drawPakImage('ishar', 6, 0, 0);
+    drawPakImage('ishar', curPlace, 0, 0);
     gotoXY(1,1);
 
     for i := 1 to nbPlace do
@@ -50,6 +52,7 @@ begin
     begin
       val( choice, i, err );
       placeVisit[i] := placeVisit[i] + 1;
+      curPlace := 4 + ( i - 1 );
     end;
 
     zz := zz+1;
