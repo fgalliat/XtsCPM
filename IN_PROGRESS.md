@@ -12,7 +12,7 @@
    - lower layout (w/ addditional Teensy3.2 3.3v) **(in progress)**
    - REFACTO Screen API
    - REFACTO BdosCalls & VT-EXT **(done)**
-   - GFX Pascal Demo (benchmark : loop for drawing rectangles as ex.)
+   - GFX Pascal Demo (benchmark : loop for drawing rectangles as ex.) **(in progress)**
 
 
 
@@ -135,9 +135,22 @@
 
 - **Keyboard support**
 
-- - Microsoft XBOX 360 Chatpad
+
+  - Vtech Mobigo Keyboard
+
+      - integrate it in XtsCPM **(done)**
+      - done but too slow
+      - may be do the poll on TimerInterrupt ???? (tried... : to improve...)
+
+          - better times but buzzer ~blinks
+
+
+
+  - Microsoft XBOX 360 Chatpad **(now works - french layout)**
 
     - stdIO handling (Serial IN / Chatpad IN -- Serial OUT / TFT OUT)
+
+      - BOTH are treated w/ **same priority** for now
 
     - Spe keys
 
@@ -160,7 +173,7 @@
           \> TOGGLE CONSOLE MODE
 
           \> SELF TEST
-
+    
           \> REBOOT
 
 - cpm.h l. 736
@@ -179,9 +192,11 @@
 - **Buzzer support**
   
   - <Esc> 7 make bell tone
+  
 - to " play 'a#bbca' " could use a tty escSeq ?
   
   - T5K uses the following format <u8 noteIdx> <u16 duration> => 5KB / 3 => ~1700 notes (have headers)
+  
 - T53 uses => <u16 freq><u16 dur><u16 wait>
   
   - to play "MARIO.T53" could have something like :

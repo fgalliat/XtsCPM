@@ -38,7 +38,8 @@ public class SimpleSender {
         String line;
         while( ( line = reader.readLine() ) != null ) {
           printLineToCPMSlowly(line);
-          Zzz(300);
+          // Zzz(300);
+          Zzz(200);
         }
         reader.close();
         printLineToCPM("-EOF-");

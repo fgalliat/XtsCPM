@@ -6,6 +6,11 @@ RunCPM/RunCPM
 RunCPM/lua/lua
 RunCPM/lua/luac
 RunCPM/lua/liblua.a
+YatlCPM/YatlCPM
+YatlCPM/lua/liblua.a
+YatlCPM/lua/lua
+YatlCPM/lua/luac
 .vscode
 *.class
 *.exe
+XPRG/TURBO.MSG

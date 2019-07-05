@@ -1,0 +1,27 @@
+fileN="$1"
+if [ "$fileN" = "" ];
+then
+  echo "need a filepath";
+  exit;
+fi
+
+fileP="$fileN"
+fileN=$(basename $fileN)
+
+echo "Sending $fileP => $fileN"
+
+output="/dev/tty"
+output="/dev/ttyACM0"
+
+unix2dos -ascii "$fileP"
+
+echo "a:MBASIC c:RTEXT.BAS" > "$output"
+read -t 2
+echo -e "$fileN\r" > "$output"
+read -t 1
+cat "$fileP" | sed "s/\n/\r\n/g" > "$output"
+read -t 1
+echo -e "\r" > "$output"
+echo -e "-EOF-\r" > "$output"
+
+# echo "SYSTEM" > "$output"
