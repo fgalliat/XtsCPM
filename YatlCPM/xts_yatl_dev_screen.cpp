@@ -369,16 +369,38 @@
 
    const bool drawCursor = true;
 
-   void drawGlyphSpace(uint16_t color) {
-      tft.fillRect(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight, consoleCurrentFontWidth, consoleCurrentFontHeight, color);
+   void drawGlyphSpace(uint16_t color, uint16_t color2) {
+      int xx = consoleCursorX * consoleCurrentFontWidth;
+      int yy = consoleCursorY * consoleCurrentFontHeight;
+      tft.fillRect(xx, yy, consoleCurrentFontWidth, consoleCurrentFontHeight, color);
+      char ch = ttyConsoleFrame[ (consoleCursorY*ttyConsoleWidth)+consoleCursorX ];
+      if ( ch == 0x00 || ch == ' ' || ch == '\r' || ch == '\n' || ch == '\t' || ch == '\b' ) {
+         return;
+      }
+      // TODO read consoleCharAttrs for color & style
+      tft.setTextColor( color2 );
+      tft.setCursor(xx, yy);
+      tft.write( ch );
+      if (color2 != TTY_COLOR_FG) tft.setTextColor( TTY_COLOR_FG );
    }
 
+   boolean cursorLocked = false;
+   boolean cursorShown = false;
+
    void hideCursor() {
-      drawGlyphSpace(TTY_COLOR_BG);
+      if (cursorLocked) { return; }
+      if (!cursorShown) { return; }
+
+      drawGlyphSpace(TTY_COLOR_BG, TTY_COLOR_FG);
+      cursorShown = false;
    }
 
    void showCursor() {
-      drawGlyphSpace(TTY_COLOR_FG);
+      if (cursorLocked) { return; }
+      if (cursorShown) { return; }
+
+      drawGlyphSpace(TTY_COLOR_FG, TTY_COLOR_BG);
+      cursorShown = true;
    }
 
    void consoleWrite(char ch) {
@@ -395,7 +417,7 @@
          if ( consoleCursorY >= ttyConsoleHeight ) {
             _scrollUp();
          }
-         showCursor();
+         // showCursor();
          return; 
       }
 
@@ -409,7 +431,7 @@
                consoleCursorY = 0;
             }
          }
-         showCursor();
+         // showCursor();
          return; 
       }
 
@@ -622,7 +644,7 @@
 
       // draw cursor
       if (drawCursor) {
-         showCursor();
+         // showCursor();
       }
    }
 

@@ -80,8 +80,19 @@
         }
     }
 
+    extern void showCursor();
+    extern void hideCursor();
+
+    int keyReadCpt = 0;
+
     int YatlKeyboard::available(bool autopoll) {
         if ( keybLocked ) { return 0; }
+
+        if ( (keyReadCpt++) % 65535 >= 32000 ) {
+            showCursor();
+        } else {
+            hideCursor();
+        }
 
         int tlen = strlen( keybBuffer );
         if ( tlen == 0 ) {
