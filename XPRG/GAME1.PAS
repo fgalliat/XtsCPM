@@ -2,15 +2,18 @@ program Game1;
 
 { Xtase YATL AdventureGame @Jul 2019 }
 
+type aStr = string[255];
+procedure drawBmp(text : aStr);
+begin
+ Bdos(225, addr(text) );
+end;
+
 {$I GAME_P.INC the game places}
 
 const
  nbTruc = 4;
 
 var
-{ place : array[1..nbPlace] of string[32];
- placeVisit : array[1..nbPlace] of integer;
-}
  choice : string[32];
 { i : integer; }
  tmp: string[16];
@@ -24,9 +27,12 @@ begin
 
   repeat
 
+    clrscr;
+    drawBmp( chr(6)+'ishar.pak' );
+    gotoXY(1,1);
+
     for i := 1 to nbPlace do
     begin
-
       str(i, tmp);
       write( tmp +' '+ place[i] );
       str(placeVisit[i], tmp);
