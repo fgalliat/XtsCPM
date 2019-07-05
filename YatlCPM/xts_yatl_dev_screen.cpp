@@ -252,6 +252,11 @@
 
    char _c_line[ ttyConsoleWidth + 1 ];
 
+   #define TTY_ATTR_NORMAL   0x00
+   #define TTY_ATTR_ACCENT   0x01
+   #define TTY_ATTR_ACCENT2  0x02
+   #define TTY_ATTR_INVVIDEO 0x03
+
    void _consoleRenderOneLine(int row, bool clearArea=true) {
       if ( ttyConsoleFrame[ (row*ttyConsoleWidth)+0 ] == 0x00) {
          // do clear the area ????
@@ -268,14 +273,21 @@
          tft.setCursor(0, row * consoleCurrentFontHeight);
          int c=0;
          while ( _c_line[c] != 0x00 ) {
-            if ( ttyConsoleAttrs[ (row*ttyConsoleWidth)+c ] == 0x01 ) {
+            bool invVideo = ttyConsoleAttrs[ (row*ttyConsoleWidth)+c ] == TTY_ATTR_INVVIDEO;
+
+            if ( ttyConsoleAttrs[ (row*ttyConsoleWidth)+c ] == TTY_ATTR_ACCENT ) {
                tft.setTextColor( TTY_COLOR_ACCENT );
-            } else if ( ttyConsoleAttrs[ (row*ttyConsoleWidth)+c ] == 0x02 ) {
+            } else if ( ttyConsoleAttrs[ (row*ttyConsoleWidth)+c ] == TTY_ATTR_ACCENT2 ) {
                tft.setTextColor( ILI9341_YELLOW );
             } else {
                tft.setTextColor( TTY_COLOR_FG );
             }
          
+            if ( invVideo ) {
+               tft.fillRect(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight, consoleCurrentFontWidth, consoleCurrentFontHeight, TTY_COLOR_FG);
+               tft.setTextColor( TTY_COLOR_BG );
+            }
+
             tft.write( _c_line[c] );
 
             c++;
@@ -355,6 +367,13 @@
    #define _VT_MUSIC_LEN 64
    char vtMUSICseq[_VT_MUSIC_LEN+1];
 
+   const bool drawCursor = true;
+
+   void drawGlyphSpace(uint16_t color) {
+      tft.fillRect(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight, consoleCurrentFontWidth, consoleCurrentFontHeight, color);
+   }
+
+
    void consoleWrite(char ch) {
       // use spe char to toggle console mode for now
       // 7F is 127 (console seems tobe 127 limited)
@@ -363,16 +382,19 @@
       if ( ch == '\r' ) { return; }
 
       if ( ch == '\n' ) { 
+         drawGlyphSpace(TTY_COLOR_BG);
          consoleCursorX = 0;
          consoleCursorY++;
          if ( consoleCursorY >= ttyConsoleHeight ) {
             _scrollUp();
          }
+         drawGlyphSpace(TTY_COLOR_FG);
          return; 
       }
 
       // is generally used as '\b'+' '+'\b' so no need to render it
       if ( ch == '\b' ) { 
+         drawGlyphSpace(TTY_COLOR_BG);
          consoleCursorX--;
          if ( consoleCursorX < 0 ) {
             consoleCursorY--;
@@ -380,6 +402,7 @@
                consoleCursorY = 0;
             }
          }
+         drawGlyphSpace(TTY_COLOR_FG);
          return; 
       }
 
@@ -459,7 +482,7 @@
             if ( __escapeSeq ) {
                if ( ch >= 'A' && ch <= 'z'  ) {
                   vt100seq[ strlen(vt100seq) ] = ch;
-                  // Serial.println( ch );
+                  Serial.println( ch );
                   __escapeChar = false;
 
                   int slen = strlen(vt100seq);
@@ -473,6 +496,9 @@
                         // return to Home
                         _consoleSetCursor(0,0);
                         return;
+                     } else {
+                        Serial.print("a.");
+                        Serial.println( vt100seq );
                      }
                   } else if ( slen == 2 ) {
                      if ( ch == 'J' ) {
@@ -481,6 +507,9 @@
                            consoleCls();
                            return;
                         }
+                     } else {
+                        Serial.print("b.");
+                        Serial.println( vt100seq );
                      }
                   } else {
                      if ( ch == 'H' ) {
@@ -509,19 +538,23 @@
                         row = atoi(rowStr) - 1;
                         _consoleSetCursor(col,row);
                         return;
+                     } else {
+                        Serial.print("c.");
+                        Serial.println( vt100seq );
                      }
                   }
 
-                  Serial.println( vt100seq );
+                  // Serial.println( vt100seq );
 
                } else {
                   vt100seq[ strlen(vt100seq) ] = ch;
-                  // Serial.print( ch );
+                  // Serial.print( vt100seq );
                }
 
             } else {
                __escapeChar = false;
-               Serial.println(  );
+               Serial.print("d.");
+               Serial.println( vt100seq );
             }
          }
       }
@@ -544,9 +577,9 @@
       // direct render
       tft.setCursor(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight);
       if ( ch == ' ' ) {
-         if ( ! (previousChar == 0x00 || previousChar == ' ') ) {
+         if ( drawCursor || ( ! (previousChar == 0x00 || previousChar == ' ') ) ) {
             // render spaces Cf '\b'
-            tft.fillRect(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight, consoleCurrentFontWidth, consoleCurrentFontHeight, TTY_COLOR_BG);
+            drawGlyphSpace(TTY_COLOR_BG);
          }
       } else {
 
@@ -563,6 +596,10 @@
 
          // tft.write( __escapeChar1 ); // disp Esc char
 
+         if (drawCursor) {
+            drawGlyphSpace(TTY_COLOR_BG);
+         }
+
          tft.write( ch );
          __escapeChar1 = 0x00;
       }
@@ -573,6 +610,11 @@
          if ( consoleCursorY >= ttyConsoleHeight ) {
             _scrollUp();
          }
+      }
+
+      // draw cursor
+      if (drawCursor) {
+         drawGlyphSpace(TTY_COLOR_FG);
       }
    }
 
