@@ -9,7 +9,7 @@ program testSx;
 var
  str : string[64];
  choice : string[1];
- trk: integer;
+ nbPak: integer;
  i: integer;
  choiceCh: char;
 
@@ -19,7 +19,10 @@ begin
  clScr; {* no args > no parent. *}
  drawBmp('girl.bmp');
 
- drawBmp(chr(1)+'pack1.pak'); {* loadSomePackedImg *}
+ str := 'pack3.pak'; nbPak := 9;
+ str := 'ishar.pak'; nbPak := 8;
+
+ drawBmp(chr(1)+str); {* loadSomePackedImg *}
  w := 150;
  h := 100;
  x := 320-w-5;
@@ -40,8 +43,8 @@ begin
    if ( choiceCh = ' ' ) then
    begin
     i:=i+1;
-    if ( i > 9 ) then i := 1;
-    drawBmp(chr(i)+'pack1.pak'); 
+    if ( i > nbPak ) then i := 1;
+    drawBmp(chr(i)+str); 
    end;
 
  
