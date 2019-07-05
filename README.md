@@ -161,14 +161,15 @@ Xtase - fgalliat version @ Apr2109
 
 **Current stage :**
 
-![BOTH Layouts](./pictures/yatlBothLayouts_1_mini.jpg)
-
-![CP/M colored console](./pictures/yatlCPM_colored_1_mini.jpg)
-
-![Begin of Enclosure](./pictures/yatlShiftEnclosure1.jpg)
+![Start Assembling](./pictures/yatlAssemblingRunning_mini.jpg)
 
 ![Replacing Screen box](./pictures/yatlShiftEnclosure2.jpg)
 
+![Begin of Enclosure](./pictures/yatlShiftEnclosure1.jpg)
+
+![CP/M colored console](./pictures/yatlCPM_colored_1_mini.jpg)
+
+![BOTH Layouts](./pictures/yatlBothLayouts_1_mini.jpg)
 
 
 @ Xtase - fgalliat :: Apr2019
