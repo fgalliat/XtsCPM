@@ -42,12 +42,6 @@ begin
 
     writeln( 'Your choice ?' );
     readln(choice);
-    {
-     if ( zz = 0 ) then
-      choice := '2';
-     if ( zz > 0 ) then
-      choice := 'q';
-    }
 
     if ( choice = 'q' ) then exit;
     if ( choice[1] in ['1'..'4'] ) then

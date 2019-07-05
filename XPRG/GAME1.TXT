@@ -1,0 +1,12 @@
+1|ishar|6|In the castle|mages|The place to learn spells & skills...|Tavern:2
+2|ishar|7|In the tavern|servant|The place where everybody is nobody|Servant:3
+3|ishar|7|In the tavern|servant|Hey guy, you look tied !, let's drink something|Servant:3,Castle:1,River:100
+100|game1-1|1|The river|nobody|Everything looks so peacefull here, no sound... but...|Next:101
+101|game1-1|1|The river|nobody|You suddenly hear a shy voice...|Next:110
+110|game1-1|2|The river|Candice|Hi, I am Candice, Who are you ?|Warrior:111,Stranger:112
+111|game1-1|2|The river|Candice|Oh... I hate wars, see you !|Next:100
+112|game1-1|2|The river|Candice|Oh... You know, I'm not born here too !|Next:100
+113|game1-1|2|The river|Candice|Would you like to meet my friend Okuni ?|Yes:130,No:114
+114|game1-1|2|The river|Candice|Really ?, As you wish...|Yes:130,No:110
+120|game1-1|3|The river|Okuni|Seems that Candice has gone...|Hmmm:120
+130|game1-1|4|The river|Candice+Okuni|Hi, I'm Okuni, the Candice's friend|Hi:130
