@@ -27,7 +27,7 @@ begin
   pakNum[ 2 ] := 7; 
   txt[ 2 ] := 'The place where everybody is nobody'; 
   caract[ 2 ] := 'servant'; 
-  capas[ 2 ] := 'Servant:3'; 
+  capas[ 2 ] := 'Servant:3,Castle:1'; 
 
   placeNam[ 3 ] := 'In the tavern'; 
   pakNam[ 3 ] := 'ishar'; 
@@ -69,7 +69,7 @@ begin
   pakNum[ 8 ] := 2; 
   txt[ 8 ] := 'Oh... You know, I m not born here too !'; 
   caract[ 8 ] := 'Candice'; 
-  capas[ 8 ] := 'Next:4'; 
+  capas[ 8 ] := 'Next:9'; 
 
   placeNam[ 9 ] := 'The river'; 
   pakNam[ 9 ] := 'game1-1'; 

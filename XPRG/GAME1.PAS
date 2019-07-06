@@ -93,19 +93,24 @@ begin
     writeln( caract[ curPlace ] );
 
     parseCapas( capas[ curPlace ] );
-    write(' @ nb of choices : ');
+    { write(' @ nb of choices : ');
     write(icap);
-    writeln;
+    writeln; }
     
     for i:=1 to icap do
     begin
-      writeln( '@ '+lcap[i] );
+      writeln( chr(97 + i -1)+'. @ '+lcap[i] );
     end;
 
     
-    writeln( 'Your choice ?' );
+    write( 'Your choice ? ' );
     readln(choice);
 
+    i := getChoiceNum(choice);
+    if (i >= 1) and (i <= icap) then 
+    begin
+      curPlace := acap[i];
+    end;
 
   until ( choice = 'q' );
 
