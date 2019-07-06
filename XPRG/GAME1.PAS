@@ -3,7 +3,8 @@ program Game1;
 { Xtase YATL AdventureGame @Jul 2019 }
 
 {$I XTSYATLG.INC the Yatl GFX include}
-{$I GAME_P.INC the game places}
+{  GAME_P.INC the game places}
+{$I GAME_S.INC the game scenes}
 
 const
  nbTruc = 4;
@@ -17,6 +18,7 @@ var
  curPlace : integer;
 begin
 
+{
   initPlaces;
   pack := 'ishar';
   curPlace := 6;
@@ -65,8 +67,23 @@ begin
 
 
   until ( choice = 'q' );
+  }
 
 
+  {caract[ 1 ] := 'mages'; 
+  capas[ 1 ] := 'Tavern:2'; }
+
+  initScenes;
+  curPlace := 1;
+
+  clrscr;
+  drawPakImage(pakNam[ curPlace ], pakNum[ curPlace ], 0, 0);
+
+  gotoXY(0,0);
+  writeln( placeNam[ curPlace ] );
+  writeln( txt[ curPlace ] );
+  writeln( caract[ curPlace ] );
+  writeln( capas[ curPlace ] );
 
 
 end.

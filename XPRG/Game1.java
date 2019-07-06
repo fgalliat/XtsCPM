@@ -70,24 +70,26 @@ public class Game1 {
             return "[ "+placeName+" ] {"+ caracters +"} >>"+text+"<< ("+ caps +")";
         }
 
+        // caps is a reserved word .....
         public String toCode() {
             String spaces = "  ";
-            return spaces+"placeNam[ "+(newId+TP_ARRY_OFFSET)+" ] := '"+escapeStr(placeName)+"'; \n"+
-            spaces+"pakNam[ "+(newId+TP_ARRY_OFFSET)+" ] := '"+ pakFile +"'; \n"+
-            spaces+"pakNum[ "+(newId+TP_ARRY_OFFSET)+" ] := "+ pakNum +"; \n"+
-            spaces+"text[ "+(newId+TP_ARRY_OFFSET)+" ] := '"+escapeStr(text)+"'; \n"+
-            spaces+"caract[ "+(newId+TP_ARRY_OFFSET)+" ] := '"+escapeStr( join( caracters ) )+"'; \n"+
-            spaces+"caps[ "+(newId+TP_ARRY_OFFSET)+" ] := '"+escapeStr( joinCap( caps ) )+"'; \n";
+            return spaces+"placeNam[ "+(newId+TP_ARRY_OFFSET)+" ] := '"+escapeStr(placeName)+"'; \r\n"+
+            spaces+"pakNam[ "+(newId+TP_ARRY_OFFSET)+" ] := '"+ pakFile +"'; \r\n"+
+            spaces+"pakNum[ "+(newId+TP_ARRY_OFFSET)+" ] := "+ pakNum +"; \r\n"+
+            spaces+"txt[ "+(newId+TP_ARRY_OFFSET)+" ] := '"+escapeStr(text)+"'; \r\n"+
+            spaces+"caract[ "+(newId+TP_ARRY_OFFSET)+" ] := '"+escapeStr( join( caracters ) )+"'; \r\n"+
+            spaces+"capas[ "+(newId+TP_ARRY_OFFSET)+" ] := '"+escapeStr( joinCap( caps ) )+"'; \r\n";
         }
 
         public static String toStruct() {
             String spaces = "  ";
-            return spaces+"placeNam : array[1..nbScene] of string[32]; \n"+
-                   spaces+"pakNam   : array[1..nbScene] of string[8]; \n"+
-                   spaces+"pakNum   : array[1..nbScene] of integer; \n"+
-                   spaces+"text     : array[1..nbScene] of string[255]; \n"+
-                   spaces+"caract   : array[1..nbScene] of string[32]; \n"+
-                   spaces+"caps     : array[1..nbScene] of string[32]; \n";
+            return spaces+"placeNam : array[1..nbScene] of string[32]; \r\n"+
+                   spaces+"pakNam   : array[1..nbScene] of string[8]; \r\n"+
+                   spaces+"pakNum   : array[1..nbScene] of integer; \r\n"+
+                   spaces+"txt      : array[1..nbScene] of string[255]; \r\n"+
+                   spaces+"caract   : array[1..nbScene] of string[32]; \r\n"+
+                   spaces+"capas    : array[1..nbScene] of string[32]; \r\n";
+                // "";
         }
     }
     
@@ -132,7 +134,7 @@ public class Game1 {
 
     protected void writeToFile(PrintStream out, String line) throws Exception {
         System.out.println(line);
-        out.println(line);
+        out.print(line+"\r\n");
     }
 
     public void process(String dataFileName) throws Exception {
@@ -158,16 +160,17 @@ public class Game1 {
         writeToFile(fout, "{ Xtase - fgalliat @ Jul 2019 }");
         writeToFile(fout, "");
 
-        writeToFile(fout, "const nbScene="+evts.size()+";");
+        writeToFile(fout, "const");
+        writeToFile(fout, "   nbScene="+evts.size()+";");
         writeToFile(fout, "var ");
         writeToFile(fout,  SceneEvent.toStruct() );
         writeToFile(fout, "");
 
-        writeToFile(fout, "procedure initPlaces;");
+        writeToFile(fout, "procedure initScenes;");
         writeToFile(fout, "begin");
         // must be done after all ID <-> newID are assigned
         for(SceneEvent evt : evts) {
-            writeToFile(fout,  evt.toCode() );
+           writeToFile(fout,  evt.toCode() );
         }
         writeToFile(fout, "end;");
 
