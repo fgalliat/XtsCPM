@@ -3,9 +3,10 @@ program HelloWorld;
 type aStr = string[255];
 
 var 
-  lcap : array[0..10] of string[32];
-  acap : array[0..10] of integer;
-  icap : integer;
+  lcap : array[0..10] of string[32]; {label}
+  acap : array[0..10] of integer; {addr}
+  icap : integer; {nb}
+  i: integer;
   
 procedure parseCapas(capas : aStr);
 var
@@ -16,6 +17,13 @@ begin
     {writeln(capas);}
     
     tlen := length( capas );
+
+    if ( tlen = 0 ) then
+    begin
+     icap := 0;
+     exit;
+    end;
+
     icap := 1;
     zz:=0;
 
@@ -52,6 +60,12 @@ begin
   write('nb of choices : ');
   write(icap);
   writeln;
+  
+  for i:=1 to icap do
+  begin
+    writeln( '@ '+lcap[i] );
+  end;
+  
 end.
 
 

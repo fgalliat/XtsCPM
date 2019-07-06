@@ -2,8 +2,12 @@ program Game1;
 
 { Xtase YATL AdventureGame @Jul 2019 }
 
+var 
+ i : integer;
+
 {$I XTSYATLG.INC the Yatl GFX include}
 {  GAME_P.INC the game places}
+{$I GAME_R.INC the game routines}
 {$I GAME_S.INC the game scenes}
 
 const
@@ -12,7 +16,7 @@ const
 var
  pack : string[8];
  choice : string[32];
-{ i : integer; }
+ {i : integer;}
  tmp: string[16];
  zz,err : integer;
  curPlace : integer;
@@ -75,15 +79,34 @@ begin
 
   initScenes;
   curPlace := 1;
+  choice := '*';
 
-  clrscr;
-  drawPakImage(pakNam[ curPlace ], pakNum[ curPlace ], 0, 0);
+  {* ------ *}
 
-  gotoXY(0,0);
-  writeln( placeNam[ curPlace ] );
-  writeln( txt[ curPlace ] );
-  writeln( caract[ curPlace ] );
-  writeln( capas[ curPlace ] );
+  repeat
+    clrscr;
+    drawPakImage(pakNam[ curPlace ], pakNum[ curPlace ], 0, 0);
 
+    gotoXY(0,0);
+    writeln( placeNam[ curPlace ] );
+    writeln( txt[ curPlace ] );
+    writeln( caract[ curPlace ] );
+
+    parseCapas( capas[ curPlace ] );
+    write(' @ nb of choices : ');
+    write(icap);
+    writeln;
+    
+    for i:=1 to icap do
+    begin
+      writeln( '@ '+lcap[i] );
+    end;
+
+    
+    writeln( 'Your choice ?' );
+    readln(choice);
+
+
+  until ( choice = 'q' );
 
 end.
