@@ -57,10 +57,12 @@ public class BdosSerialSender {
         if ( !ok ) { System.out.println("Error 0x03"); return; }
 
         FileInputStream fin = new FileInputStream(f);
-        byte[] buff = new byte[128];
+        int packetLen = 64;
+        byte[] buff = new byte[packetLen];
         while( fin.available() > 0 ) {
-          int len = fin.read(buff, 0, 128);
+          int len = fin.read(buff, 0, packetLen);
           Terminal.getInstance().serWrite( buff, len );
+          Zzz(5);
         }
         fin.close();
         System.out.println("-EOF-");
