@@ -106,11 +106,16 @@ begin
     write( 'Your choice ? ' );
     readln(choice);
 
-    i := getChoiceNum(choice);
+    { if 1 dest : any key will be ok }
+    i := 0;
+    if ( length(choice) >= 1 ) then
+      i := getChoiceNum(choice);
     if (i >= 1) and (i <= icap) then 
     begin
       curPlace := acap[i];
-    end;
+    end
+    else if ( icap = 1 ) then
+      curPlace := acap[1];
 
   until ( choice = 'q' );
 

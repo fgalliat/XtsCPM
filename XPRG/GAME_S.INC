@@ -88,7 +88,7 @@ begin
   placeNam[ 11 ] := 'The river'; 
   pakNam[ 11 ] := 'game1-1'; 
   pakNum[ 11 ] := 3; 
-  txt[ 11 ] := 'Seems that Candice has gone...'; 
+  txt[ 11 ] := 'Seems that Candice has went...'; 
   caract[ 11 ] := 'Okuni'; 
   capas[ 11 ] := 'Hmmm:11'; 
 
@@ -97,6 +97,6 @@ begin
   pakNum[ 12 ] := 4; 
   txt[ 12 ] := 'Hi, I m Okuni, the Candice s friend'; 
   caract[ 12 ] := 'Candice,Okuni'; 
-  capas[ 12 ] := 'Hi:12'; 
+  capas[ 12 ] := 'Hi:11'; 
 
 end;

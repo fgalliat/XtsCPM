@@ -55,5 +55,6 @@ end;
 { 'a' -> 1 }
 function getChoiceNum(ch : char) : integer;
 begin
+  if ( ch = '' ) then getChoiceNum := 0;
   getChoiceNum := ord(ch) - ord('a') + 1;
 end;
