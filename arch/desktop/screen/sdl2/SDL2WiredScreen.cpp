@@ -60,6 +60,16 @@
 // ========================================
 int _k_KEYS = 0;
 
+void __doBlitt();
+
+void *_xts_blittThread(void *argument){
+    while( true ) {
+        __doBlitt();
+        SDL_Delay(100);
+    }
+}
+
+
 void *_xts_keyThread(void *argument){
   
   while( true ) {
@@ -135,7 +145,12 @@ void *_xts_keyThread(void *argument){
 
     bool _BLITT_LOCKED = false;
 
+    // called from 'manual' blitt
     void doBlitt() {
+    }
+
+    // called from Thread
+    void __doBlitt() {
         if (_BLITT_LOCKED) { return; }
         SDL_UpdateTexture(texture, NULL, surface->pixels, surface->pitch);
         SDL_RenderCopy(renderer, texture, NULL, NULL);
@@ -188,8 +203,10 @@ void *_xts_keyThread(void *argument){
         clBLACK.b = 0;
 
         pthread_t thread1;
+        pthread_t thread2;
 
         int i1 = pthread_create( &thread1, NULL, _xts_keyThread, (void*) NULL);
+        int i2 = pthread_create( &thread2, NULL, _xts_blittThread, (void*) NULL);
         // pthread_join(thread1,NULL);
 
     }
