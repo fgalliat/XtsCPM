@@ -46,12 +46,24 @@
         return false;
     }
 
+    void YatlScreen::cls() {
+        sdlScreen.cls();
+    }
+
+    void YatlScreen::write(char ch) {
+        char chs[2] = {ch, 0x00};
+        // TODO : better
+        sdlScreen.print(chs);
+    }
+
     void YatlScreen::println(const char* str) {
         printf("'%s' \n", str);
+        sdlScreen.println((char*)str);
     }
 
     void YatlScreen::println(char* str) {
         printf("'%s' \n", str);
+        sdlScreen.println(str);
     }
 
     void YatlScreen::drawTextBox(char const* title, char const* text, unsigned short color) {
