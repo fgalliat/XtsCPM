@@ -18,11 +18,12 @@
     #include "Desktop.h"
     #endif
 
-    // see that !!!!!
-    uint16_t rgb(uint8_t r,uint8_t g,uint8_t b) {
-        return (r<<16)+(g<<8)+b;
-    }
+    uint16_t rgb(uint8_t r,uint8_t g,uint8_t b) { return (uint16_t)( (( r *31/255 )<<11) | (( g *63/255 )<<5) | ( b *31/255 ) );}
 
+    // @@@@@@@@@@@@@@@@@@
+    #include "../arch/desktop/screen/WiredScreen.h"
+    WiredScreen sdlScreen;
+    // @@@@@@@@@@@@@@@@@@
 
     #include "xts_yatl_settings.h"
     #include "xts_yatl_api.h"
@@ -38,7 +39,7 @@
     }
 
     bool YatlScreen::setup() {
-        return false;
+        return sdlScreen.init();
     }
 
     bool YatlKeyboard::setup() {

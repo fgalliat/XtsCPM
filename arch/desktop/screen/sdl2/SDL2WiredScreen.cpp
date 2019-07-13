@@ -21,7 +21,7 @@
 #include <SDL2/SDL.h>
 
 
-#include "../wiredSPI/WiredScreen.h"
+#include "../WiredScreen.h"
 
 #ifndef ZOOM
   // #define ZOOM 1

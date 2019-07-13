@@ -1,18 +1,27 @@
 #ifndef __BRIDGED_SCREEN_H_
 #define __BRIDGED_SCREEN_H_ 1
 
-#include <stdint.h>
+// #include <stdint.h>
 
-#define rgb16(r,g,b) { (uint16_t)( (( r *31/255 )<<11) | (( g *63/255 )<<5) | ( b *31/255 ) ) }
+//#define rgb16(r,g,b) { (uint16_t)( (( r *31/255 )<<11) | (( g *63/255 )<<5) | ( b *31/255 ) ) }
+//#define rgb16(r,g,b) { (int)( (( r *31/255 )<<11) | (( g *63/255 )<<5) | ( b *31/255 ) ) }
+//static const uint16_t rgb16(uint8_t r,uint8_t g,uint8_t b) {return (uint16_t)( (( r *31/255 )<<11) | (( g *63/255 )<<5) | ( b *31/255 ) );}
+
+extern uint16_t rgb(uint8_t r,uint8_t g,uint8_t b); 
+#define rgb16 rgb
 
 #define CLR_CYAN  rgb16(0,255,255)
 
 #define CLR_PINK  rgb16(255,0,150)
 #define CLR_RED   rgb16(255,0,0)
-#define CLR_GREEN rgb16(0,255,0)
+// #define CLR_GREEN rgb16(0,255,0)
+
 #define CLR_BLUE  rgb16(0,0,255)
-#define CLR_BLACK 0
-#define CLR_WHITE rgb16(255,255,255)
+// #define CLR_BLACK 0
+extern const uint16_t CLR_BLACK;
+extern const uint16_t CLR_WHITE;
+// #define CLR_WHITE rgb16(255,255,255)
+#define _CLR_WHITE rgb16(255,255,255)
 
 #define CLR_LIGHTGRAY rgb16(200,200,200)
 #define CLR_GRAY      rgb16(128,128,128)
@@ -81,7 +90,7 @@
         void print(float val);
         void print(char* str);
         void println(char* str);
-        void dispStr(char* str, int x, int y, uint16_t color=CLR_WHITE);
+        void dispStr(char* str, int x, int y, uint16_t color=_CLR_WHITE);
 
         void drawBPP(char* name, int x, int y);
         void drawPCT(char* name, int x, int y);
