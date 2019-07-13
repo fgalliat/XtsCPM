@@ -7,7 +7,11 @@
  * Screen over SPI impl.
  * 
  */
+  #ifdef ARDUINO
   #include "Arduino.h"
+  #else 
+  #include "Desktop.h"
+  #endif
 
   // #include "xts_string.h"
   extern char charUpCase(char ch);

@@ -1,0 +1,14 @@
+screen is screen
+
+
+Serial is GPIO ------> keyboard based on ncurses ....
+
+  #include <ncurses.h>
+
+  when close :
+
+  clrtoeol();
+    refresh();
+    endwin();
+
+in arduino : !!! w/ SDL_Delay instead of usleep

@@ -7,7 +7,11 @@
   * 
   * Xtase - fgalliat @ May2019
   */
+  #ifdef ARDUINO
   #include "Arduino.h"
+  #else 
+  #include "Desktop.h"
+  #endif
 
 
   #define YATL_PLATFORM 1

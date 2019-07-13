@@ -34,6 +34,13 @@ shoud be kept the same.
   #endif
 #endif
 
+#ifdef DESKTOPYATL
+  #include "xts_yatl_api.h"
+  Yatl yatl;
+#endif
+
+
+
 // AUX: device configuration
 #ifdef USE_PUN
 FILE *pun_dev;
@@ -61,6 +68,11 @@ int main(int argc, char *argv[]) {
 #ifdef DEBUGLOG
 	_sys_deletefile((uint8*)LogName);
 #endif
+
+#ifdef DESKTOPYATL
+	yatl.setup();
+#endif
+
 
 	_console_init();
 	_clrscr();
