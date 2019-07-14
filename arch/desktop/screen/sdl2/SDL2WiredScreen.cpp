@@ -947,6 +947,7 @@ void *_xts_keyThread(void *argument){
 
 #define PROGMEM
 #include "../pzim3x5.ada.h"
+//#include "../../../YatlCPM/font_pzim3x5.h"
 
 #define FONT_END7F
 #define FONT_START (0x20) //first character
@@ -955,8 +956,8 @@ void *_xts_keyThread(void *argument){
 #define FONT_HEIGHT (6)
 
 
-// const uint8_t font_PGM[94*6] = pzim3x56pt7bBitmaps;
-#define font_PGM pzim3x56pt7bBitmaps
+//#define font_PGM pzim3x56pt7bBitmaps
+#define font_PGM Pixelzim_8_data
 
 #else
 
