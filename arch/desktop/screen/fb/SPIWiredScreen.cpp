@@ -17,7 +17,7 @@
 #include <math.h>
 
 
-#include "WiredScreen.h"
+#include "../WiredScreen.h"
 #include "../FX_starfield.h"
 
 #define SCREEN_WIDTH 320
@@ -69,7 +69,8 @@
     
         // Map the device to memory
         fbp = (char *)mmap(0, screensize, PROT_READ | PROT_WRITE, MAP_SHARED, fbfd, 0);
-        if ((int)fbp == -1) {
+        //if ((int)fbp == -1) {
+        if ( !fbp ) {
             perror("Error: failed to map framebuffer device to memory");
             exit(4);
         }

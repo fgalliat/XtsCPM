@@ -15,6 +15,7 @@ extern uint16_t rgb(uint8_t r,uint8_t g,uint8_t b);
 #define CLR_PINK  rgb16(255,0,150)
 #define CLR_RED   rgb16(255,0,0)
 // #define CLR_GREEN rgb16(0,255,0)
+extern const uint16_t CLR_GREEN;
 
 #define CLR_BLUE  rgb16(0,0,255)
 // #define CLR_BLACK 0

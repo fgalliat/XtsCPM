@@ -1,0 +1,48 @@
+# Posix Makefile for RunCPM
+
+PROG = YatlCPM
+
+MFILE = Makefile.posix_fb
+
+ARCH = DESKTOPYATL
+
+# Compiler command
+CC = g++
+#CC = gcc
+#CC = gcc -DDEBUG=1 -DDEBUGLOG=1
+
+# Flags to pass to the compiler - add "-g" to include debug information
+CFLAGS = -D$(ARCH) -Wall -O3 -fPIC -Wno-unused-variable
+#CFLAGS = -Wall -O0 -fPIC -Wno-unused-variable -g
+
+# Flags to pass to the linker
+LDFLAGS = -lncurses -lm -ldl -lSDL2 -lpthread
+
+# Objects to build
+OBJS = main.o lua/liblua.a Desktop.o xts_yatl_api_desktop.o SPIWiredScreen.o
+
+# Lua building
+LUABUILD = $(MAKE) -C lua linux
+LUACLEAN = $(MAKE) -C lua clean
+
+# Clean up program
+RM = rm -f
+
+#------------------------------------------------------------------------
+
+all: $(PROG)
+
+$(PROG): main.o
+	$(CC) $(OBJS) -o $(PROG) $(LDFLAGS)
+
+main.o: main.c $(wildcard *.h) $(MFILE)
+	$(LUABUILD)
+	$(CC) $(CFLAGS) -c main.c Desktop.cpp xts_yatl_api_desktop.cpp ../arch/desktop/screen/fb/SPIWiredScreen.cpp
+
+rebuild: clean all
+
+.PHONY: clean
+clean:
+	$(LUACLEAN)
+	$(RM) *.o
+	$(RM) $(PROG)
