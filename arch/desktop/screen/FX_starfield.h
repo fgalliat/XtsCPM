@@ -120,6 +120,9 @@ void drawStarFieldFrame(WiredScreen* screen, int mode) {
 }
 
 void initStars() {
+ width = SCREEN_WIDTH;
+ height = SCREEN_HEIGHT;
+
   for(int i=0; i < size; i++) {
     createStar(i);
     starfield[i].z = rnd( zMax );
