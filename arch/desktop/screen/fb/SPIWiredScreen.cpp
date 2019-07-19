@@ -779,6 +779,22 @@ int SCREEN_HEIGHT = 240;
 // =============================================
 // =============================================
 
+#define TINYFONT 1
+
+#if TINYFONT
+
+#define PROGMEM
+
+#define FONT_END7F
+#define FONT_START (0x20) //first character
+
+#define FONT_WIDTH (6)
+#define FONT_HEIGHT (8)
+
+#define font_PGM tiny_font_PGM
+
+#else
+
 //if defined char range 0x20-0x7F otherwise 0x20-0xFF
 #define FONT_END7F
 #define FONT_START (0x20) //first character
@@ -1015,6 +1031,9 @@ const uint8_t font_PGM[] =
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  // 0xFF
 #endif
 };
+
+#endif
+
 
 // for text !!
 #define lcd_width SCREEN_WIDTH

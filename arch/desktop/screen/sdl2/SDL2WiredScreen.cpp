@@ -163,7 +163,7 @@ void *_xts_keyThread(void *argument){
     WiredScreen::~WiredScreen() {
     }
 
-    bool WiredScreen::init() {
+    bool WiredScreen::init(int arg) {
         window = SDL_CreateWindow("ILI9341", 0, 0, SCREEN_WIDTH * ZOOM, SCREEN_HEIGHT * ZOOM, SDL_WINDOW_SHOWN | SDL_WINDOW_ALWAYS_ON_TOP | SDL_WINDOW_BORDERLESS);
         if (window == NULL)
         {
@@ -946,18 +946,19 @@ void *_xts_keyThread(void *argument){
 #if TINYFONT
 
 #define PROGMEM
-#include "../pzim3x5.ada.h"
+// #include "../pzim3x5.ada.h"
 //#include "../../../YatlCPM/font_pzim3x5.h"
 
 #define FONT_END7F
 #define FONT_START (0x20) //first character
 
-#define FONT_WIDTH (4)
-#define FONT_HEIGHT (6)
+#define FONT_WIDTH (6)
+#define FONT_HEIGHT (8)
 
 
 //#define font_PGM pzim3x56pt7bBitmaps
-#define font_PGM Pixelzim_8_data
+// #define font_PGM Pixelzim_8_data
+#define font_PGM tiny_font_PGM
 
 #else
 
