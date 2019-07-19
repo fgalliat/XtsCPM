@@ -11,7 +11,7 @@
 #include <string.h>
 
 #include <fcntl.h>
-#include <linux/fb.h>
+// #include <linux/fb.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 
