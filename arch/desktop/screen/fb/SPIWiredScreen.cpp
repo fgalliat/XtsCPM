@@ -38,9 +38,12 @@
     WiredScreen::~WiredScreen() {
     }
 
-    bool WiredScreen::init() {
+    bool WiredScreen::init(int arg) {
+        char fbDesc[16];
+        sprintf( fbDesc, "/dev/fb%d", arg );
+    
         // Open the file for reading and writing
-        fbfd = open("/dev/fb0", O_RDWR);
+        fbfd = open(fbDesc, O_RDWR);
         if (fbfd == -1) {
             perror("Error: cannot open framebuffer device");
             exit(1);

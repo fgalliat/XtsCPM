@@ -81,7 +81,7 @@ extern const uint16_t CLR_WHITE;
         WiredScreen();
         ~WiredScreen();
 
-        bool init();
+        bool init(int arg=0);
         void close();
 
         void cls();
