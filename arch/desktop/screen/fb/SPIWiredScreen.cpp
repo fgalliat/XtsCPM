@@ -26,6 +26,16 @@
 int SCREEN_WIDTH = 320;
 int SCREEN_HEIGHT = 240;
 
+#define TINYFONT 1
+
+#if TINYFONT
+ const int ttyFontWidth = 4;
+ const int ttyFontHeight = 6;
+#else
+ const int ttyFontWidth = 6;
+ const int ttyFontHeight = 8;
+#endif
+
     static int fbfd = 0;
     static struct fb_var_screeninfo vinfo;
     static struct fb_fix_screeninfo finfo;
@@ -126,6 +136,7 @@ int SCREEN_HEIGHT = 240;
         this->print( txt );
     }
     
+
     void WiredScreen::print(char* str) {
     	if ( str == NULL ) { return; }
     	int len = strlen( str );
@@ -133,7 +144,7 @@ int SCREEN_HEIGHT = 240;
     	for(int i=0; i < len; i++) {
     		ch = str[i];
     		if (! ( ch == '\n' ) || ( ch == '\r' ) || ( ch == '\b' ) ) {
-    	    	this->DrawChar( ch , ttyX*6, ttyY*8, CLR_WHITE);
+    	    	this->DrawChar( ch , ttyX*ttyFontWidth, ttyY*ttyFontHeight, CLR_WHITE);
     		}
     		
     		if ( ch == '\r' ) {}
@@ -778,8 +789,6 @@ int SCREEN_HEIGHT = 240;
 // =============================================
 // =============================================
 // =============================================
-
-#define TINYFONT 1
 
 #if TINYFONT
 

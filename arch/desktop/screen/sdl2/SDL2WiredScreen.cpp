@@ -32,6 +32,16 @@
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
 
+#define TINYFONT 1
+
+#if TINYFONT
+ const int ttyFontWidth = 4;
+ const int ttyFontHeight = 6;
+#else
+ const int ttyFontWidth = 6;
+ const int ttyFontHeight = 8;
+#endif
+
 #ifndef SDL_WINDOW_ALWAYS_ON_TOP
   // for old versions of SDL2
   #define SDL_WINDOW_ALWAYS_ON_TOP 0x00008000
@@ -255,7 +265,7 @@ void *_xts_keyThread(void *argument){
     	for(int i=0; i < len; i++) {
     		ch = str[i];
     		if (! ( ch == '\n' ) || ( ch == '\r' ) || ( ch == '\b' ) ) {
-    	    	this->DrawChar( ch , ttyX*6, ttyY*8, CLR_WHITE);
+    	    	this->DrawChar( ch , ttyX*ttyFontWidth, ttyY*ttyFontHeight, CLR_WHITE);
     		}
     		
     		if ( ch == '\r' ) {}
@@ -941,7 +951,6 @@ void *_xts_keyThread(void *argument){
 // =============================================
 // =============================================
 
-#define TINYFONT 1
 
 #if TINYFONT
 
