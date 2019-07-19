@@ -20,8 +20,11 @@
 #include "../WiredScreen.h"
 #include "../FX_starfield.h"
 
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
+//#define SCREEN_WIDTH 320
+//#define SCREEN_HEIGHT 240
+
+int SCREEN_WIDTH = 320;
+int SCREEN_HEIGHT = 240;
 
     static int fbfd = 0;
     static struct fb_var_screeninfo vinfo;
@@ -63,6 +66,11 @@
         }
 
         printf("%dx%d, %dbpp\n", vinfo.xres, vinfo.yres, vinfo.bits_per_pixel);
+        // device memory allocation security
+        if ( vinfo.xres < SCREEN_WIDTH || vinfo.yres < SCREEN_HEIGHT ) {
+          SCREEN_WIDTH = vinfo.xres;
+          SCREEN_HEIGHT = vinfo.yres;
+        }
 
         // Figure out the size of the screen in bytes
         //  screensize = vinfo.xres * vinfo.yres * vinfo.bits_per_pixel / 8;

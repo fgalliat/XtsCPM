@@ -35,8 +35,10 @@ extern const uint16_t CLR_WHITE;
 
 //#define CLR_WHITE 0xFFFF
 
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
+//#define SCREEN_WIDTH 320
+//#define SCREEN_HEIGHT 240
+extern int SCREEN_WIDTH;
+extern int SCREEN_HEIGHT;
 
 #define MODE_FILL 1
 #define MODE_DRAW 0
