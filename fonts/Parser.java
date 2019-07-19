@@ -14,15 +14,63 @@ import javax.imageio.ImageIO;
 public class Parser {
 
     public static void main(String[] args) throws Exception {
-        char[] chars = new char[ 0x7F - 0x20 ];
+        char[] chars = new char[ (0x7F - 0x20) + 1 ];
         for(int i=0; i < chars.length; i++) {
             chars[i] = (char)(i + 0x20);
         }
+        System.out.println("There will be "+ chars.length +" chars");
         String s = new String(chars);
         BufferedImage img = new Parser().stringToBufferedImage(s);
+
         ImageIO.write(img, "PNG", new File("font.png"));
+
+        int nbChars = chars.length;
+        int fontWidth = img.getWidth() / nbChars;
+        int fontHeight = img.getHeight();
+
+        System.out.println("Font is "+fontWidth+"x"+fontHeight+" px");
+
+        int[] rgb = img.getRGB(0, 0, img.getWidth(), img.getHeight(), null, 0, img.getWidth() );
+
+        int virtualFontHeight = 8;
+        int[] font = new int[ nbChars*virtualFontHeight ];
+
+        for(int i=0; i < nbChars; i++) {
+            System.out.println( chars[i] );
+            for(int y=0; y < fontHeight; y++) {
+                String byteRepr = "";
+                byteRepr += "000"; // left unused pixels
+                for(int x=0; x < fontWidth; x++) {
+                    int addr = ( y * img.getWidth() ) + (i*fontWidth)+x;
+                    if ( rgb[addr] == 0 ) {
+                        // Transparent Pixel (a=0)
+                        System.out.print(" ");
+                        byteRepr += "0";
+                    } else {
+                        // any color
+                        System.out.print("*");
+                        byteRepr += "1";
+                    }
+                }
+                font[ (i * virtualFontHeight) + y ] = Integer.parseInt( byteRepr, 2 );
+                System.out.println("");
+            } 
+            font[ (i * virtualFontHeight) + 6 ] = 0x00;
+            font[ (i * virtualFontHeight) + 7 ] = 0x00; // last unused bottom lines
+        }
+
+        for(int i=0; i < font.length; i++) {
+            int charNum = (i / virtualFontHeight);
+            System.out.print( getHex(font[i]) );
+            if (i < font.length-1) { System.out.print(", "); }
+            if ( i % virtualFontHeight == (virtualFontHeight-1) ) { System.out.println("// "+getHex(0x20+charNum)+" "+((char)(0x20+charNum))+" ("+charNum+")"); }
+        }
     }
 
+    static String getHex(int v) {
+        String tmp =Integer.toHexString(v).toUpperCase(); 
+        return "0x"+(tmp.length() < 2 ? "0" : "")+tmp;
+    }
 
 
     public BufferedImage stringToBufferedImage(String s) throws Exception {
@@ -53,6 +101,8 @@ System.out.println( Arrays.asList( ge.getAvailableFontFamilyNames() ) );
     
         //Create a new image where to print the character
         img = new BufferedImage((int) Math.ceil(rect.getWidth()), (int) Math.ceil(rect.getHeight()), BufferedImage.TYPE_4BYTE_ABGR);
+        System.out.println("Image will be "+ img.getWidth()+"x"+ img.getHeight()+" pixels");
+        System.out.println("Image will be "+ (img.getWidth() / s.length() ) +"x"+ img.getHeight()+" char pixels");
         g = img.getGraphics();
         g.setColor(Color.black); //Otherwise the text would be white
         g.setFont(f);
