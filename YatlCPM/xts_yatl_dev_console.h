@@ -213,7 +213,7 @@
             if ( ttyConsoleAttrs[ (row*ttyConsoleWidth)+c ] == TTY_ATTR_ACCENT ) {
                __setTextColor( TTY_COLOR_ACCENT );
             } else if ( ttyConsoleAttrs[ (row*ttyConsoleWidth)+c ] == TTY_ATTR_ACCENT2 ) {
-               __setTextColor( ILI9341_YELLOW );
+               __setTextColor( CLR_YELLOW );
             } else {
                __setTextColor( TTY_COLOR_FG );
             }
@@ -552,7 +552,7 @@
          // }
 
          if ( curTextAttr == 0x01 ) { __setTextColor( TTY_COLOR_ACCENT );  }
-         else if ( curTextAttr == 0x02 ) { __setTextColor( ILI9341_YELLOW ); }
+         else if ( curTextAttr == 0x02 ) { __setTextColor( CLR_YELLOW ); }
          else if ( curTextAttr == 0x00 ) { __setTextColor( TTY_COLOR_FG ); }
 
          // tft.write( __escapeChar1 ); // disp Esc char

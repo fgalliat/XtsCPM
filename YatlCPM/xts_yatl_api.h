@@ -137,6 +137,27 @@ extern uint16_t mapColor(uint16_t color);
 const uint16_t CLR_BLACK = rgb(0,0,0);
 const uint16_t CLR_WHITE = rgb(255,255,255);
 const uint16_t CLR_GREEN = rgb(0,255,0);
+const uint16_t CLR_RED   = rgb(255,0,0);
+const uint16_t CLR_BLUE  = rgb(0,0,255);
+
+const uint16_t CLR_YELLOW = rgb(255,255,0);
+const uint16_t CLR_MAGENTA = rgb(255,0,255);
+const uint16_t CLR_CYAN = rgb(0,255,255);
+const uint16_t CLR_ORANGE = rgb(255,165, 0);
+const uint16_t CLR_PURPLE = rgb(123,0,123);
+const uint16_t CLR_PINK = rgb(255,130,198);
+
+// // Color definitions
+// #define ILI9341_NAVY        0x000F  ///<   0,   0, 123
+// #define ILI9341_DARKGREEN   0x03E0  ///<   0, 125,   0
+// #define ILI9341_DARKCYAN    0x03EF  ///<   0, 125, 123
+// #define ILI9341_MAROON      0x7800  ///< 123,   0,   0
+// #define ILI9341_OLIVE       0x7BE0  ///< 123, 125,   0
+// #define ILI9341_LIGHTGREY   0xC618  ///< 198, 195, 198
+// #define ILI9341_DARKGREY    0x7BEF  ///< 123, 125, 123
+// #define ILI9341_GREENYELLOW 0xAFE5  ///< 173, 255,  41
+
+
 #define LCD_CONSOLE_40_COLS 0x00
 #define LCD_CONSOLE_80_COLS 0x01
 #define LCD_CONSOLE_DEF_COLS LCD_CONSOLE_80_COLS
