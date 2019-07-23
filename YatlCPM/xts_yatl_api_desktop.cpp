@@ -365,7 +365,7 @@
     }
 
     bool screenReady = false;
-    bool screenDBUG = true;
+    bool screenDBUG = !true;
 
     bool Yatl::setup() {
         // Serial.begin(115200);

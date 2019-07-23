@@ -185,7 +185,7 @@
       getStringFromRam(value, test, 256);
 
 
-      if ( test[1] >= 0x7F ) {
+      if ( (unsigned char)test[1] >= 0x7F ) {
         return drawRoutine( test );
       }
 
@@ -245,6 +245,7 @@
       } else {
         yatl.dbug("| Wanna draw a ");
         yatl.dbug( test );
+        printf( "[ %d, %d ]", (int)test[0], (int)test[1] );
         yatl.dbug(" -type wallpaper? |");
       }
 
