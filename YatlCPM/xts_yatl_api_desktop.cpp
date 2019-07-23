@@ -155,7 +155,7 @@
       uint16_t awColors[320]; // hold colors for one row at a time...
 
       if ((x >= SCREEN_WIDTH) || (y >= SCREEN_HEIGHT)) {
-          yatl.dbug("BITMAP TOO BIG FOR SCREEN");
+          yatl.dbug("COORDS TOO BIG FOR SCREEN");
          return;
       }
 
@@ -168,7 +168,8 @@
       // if (!(bmpFile = SD.open(filename)))
       if (!(bmpFile = fopen(filename, "r")))
       {
-         yatl.dbug("File not found");
+         yatl.dbug("File not found : ");
+         yatl.dbug(filename);
          return;
       }
 
