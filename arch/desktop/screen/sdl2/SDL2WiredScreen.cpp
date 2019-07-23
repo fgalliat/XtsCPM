@@ -219,6 +219,7 @@ void *_xts_keyThread(void *argument){
         int i2 = pthread_create( &thread2, NULL, _xts_blittThread, (void*) NULL);
         // pthread_join(thread1,NULL);
 
+        return true;
     }
 
     void WiredScreen::close() {

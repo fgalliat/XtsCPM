@@ -52,7 +52,10 @@
     }
 
     bool YatlScreen::setup() {
-        return sdlScreen.init();
+        bool ok = sdlScreen.init();
+        if ( !ok ) { return ok; }
+        _setConsoleMode(LCD_CONSOLE_DEF_COLS);
+        return ok;
     }
 
     bool YatlKeyboard::setup() {
