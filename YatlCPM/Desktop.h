@@ -21,6 +21,7 @@ void delay(long millis);
 void pinMode(int pin, int mode);
 void digitalWrite(int pin, int value);
 
+extern int min(int a, int b);
 
 
 #endif

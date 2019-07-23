@@ -9,7 +9,7 @@
   * 
   */
 
-  #include "Arduino.h"
+  // #include "Arduino.h"
 
   // forward symbols
   uint8_t mp3BdosCall(int32 value);
@@ -60,7 +60,7 @@
   }
 
   int32 BdosTest229(int32 value) {
-    Serial.println("/===== BDos 229 call =====\\");
+    yatl.dbug("/===== BDos 229 call =====\\");
 
     yatl.getScreen()->grabbSpritesOfSize( (char*)"SPRITE1.BMP", 0, 0, 32, 32);
     sprites[0].drawClip(0,20);
@@ -189,23 +189,23 @@
         return drawRoutine( test );
       }
 
-      Serial.println("/===== BDos PString call =====\\");
-      Serial.println(test);
+      yatl.dbug("/===== BDos PString call =====\\");
+      yatl.dbug(test);
 
       upper(test);
 
       if ( endsWith(test, (char*)".BMP") ) {
         if ( test[0] == '!' ) {
-          Serial.println("|  Wanna grabb a BMP SpriteBoard |");
+          yatl.dbug("|  Wanna grabb a BMP SpriteBoard |");
           yatl.getScreen()->cleanSprites();
           yatl.getScreen()->grabbSprites( &test[1], 0, 0 );
         } else {
-          Serial.println("|  Wanna draw a BMP wallpaper |");
+          yatl.dbug("|  Wanna draw a BMP wallpaper |");
           yatl.getScreen()->drawWallpaper( test );
         }
 
       } else if ( endsWith(test, (char*)".PAK") ) {
-        Serial.println("|  Wanna draw a PAK image |");
+        yatl.dbug("|  Wanna draw a PAK image |");
 
         int numImg = (int)test[0]-1; // 1 based
         int x = -1;
@@ -226,29 +226,29 @@
           }
           filename = &test[tmp+1];
         }
-        Serial.print("|  @ ");
-        Serial.print(filename);
-        Serial.print(",");
-        Serial.print(x);
-        Serial.print(",");
-        Serial.print(y);
-        Serial.println();
+        // Serial.print("|  @ ");
+        // Serial.print(filename);
+        // Serial.print(",");
+        // Serial.print(x);
+        // Serial.print(",");
+        // Serial.print(y);
+        // Serial.println();
 
         drawImgFromPAK( yatl.getFS()->getAssetsFileEntry( filename ), x, y, numImg );
 
       } else if ( endsWith(test, (char*)".PCT") ) {
-        Serial.println("|  Wanna draw a PCT wallpaper |");
-        Serial.println("|  NYI                        |");
+        yatl.dbug("|  Wanna draw a PCT wallpaper |");
+        yatl.dbug("|  NYI                        |");
       } else if ( endsWith(test, (char*)".BPP") ) {
-        Serial.println("|  Wanna draw a BPP wallpaper |");
-        Serial.println("|  NYI                        |");
+        yatl.dbug("|  Wanna draw a BPP wallpaper |");
+        yatl.dbug("|  NYI                        |");
       } else {
-        Serial.print("| Wanna draw a ");
-        Serial.print( test );
-        Serial.println(" wallpaper? |");
+        yatl.dbug("| Wanna draw a ");
+        yatl.dbug( test );
+        yatl.dbug(" -type wallpaper? |");
       }
 
-      Serial.println("\\===== BDos PString call =====/");
+      yatl.dbug("\\===== BDos PString call =====/");
     } else if ( regNum == 226 ) {
      return xbdos_console(value);
     } else if ( regNum == 227 ) {
@@ -256,7 +256,7 @@
     } else if ( regNum == 228 ) {
       return subMCUBdosCall(value);
     } else if ( regNum == 229 ) {
-      Serial.println( "BdosCall 229 NYI => Test Mode" );
+      yatl.dbug( "BdosCall 229 NYI => Test Mode" );
       BdosTest229(value);
     }
     
@@ -327,7 +327,7 @@
 
   // ==============] mp3 Hardware Control [==========
   uint8_t mp3BdosCall(int32 value) {
-      Serial.println("mp3 Bdos call");
+      yatl.dbug("mp3 Bdos call");
       // int trckNum += (128+64) << 8
 
       uint8_t a0 = HIGH_REGISTER(value);
@@ -343,17 +343,17 @@
          a0 -= 64;
          int trkNum = (a0<<8) + a1;
 
-if ( loopMode ) Serial.println("mp3 LOOP");
-Serial.println("mp3 play");
-Serial.println(trkNum);
+if ( loopMode ) yatl.dbug("mp3 LOOP");
+yatl.dbug("mp3 play");
+// yatl.dbug(trkNum);
 
          if ( loopMode ) { yatl.getMusicPlayer()->loop(trkNum); }
          else { yatl.getMusicPlayer()->play(trkNum); }
       } else if (a0 == 0x00) {
-Serial.println("mp3 stop");
+yatl.dbug("mp3 stop");
           yatl.getMusicPlayer()->stop();
       } else if (a0 == 0x01) {
-Serial.println("mp3 pause");
+yatl.dbug("mp3 pause");
           yatl.getMusicPlayer()->pause();
       } else if (a0 == 0x02) {
           yatl.getMusicPlayer()->next();
@@ -362,7 +362,7 @@ Serial.println("mp3 pause");
       } else if (a0 == 0x04) {
           yatl.getMusicPlayer()->volume( a1 );
       } else if (a0 == 0x05) {
-Serial.println("mp3 demo");
+yatl.dbug("mp3 demo");
           // for now : just for demo
           yatl.getMusicPlayer()->play( 65 );
       }

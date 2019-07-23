@@ -35,8 +35,10 @@ shoud be kept the same.
 #endif
 
 #ifdef DESKTOPYATL
+  #include "xts_string.h"
   #include "xts_yatl_api.h"
   Yatl yatl;
+  #include "xts_yatl_bdos.h"
 #endif
 
 

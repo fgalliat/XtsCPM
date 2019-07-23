@@ -18,7 +18,7 @@
     #include "Desktop.h"
     #endif
 
-    #include "xts_string.h"
+    // #include "xts_string.h"
 
     uint16_t rgb(uint8_t r,uint8_t g,uint8_t b) { return (uint16_t)( (( r *31/255 )<<11) | (( g *63/255 )<<5) | ( b *31/255 ) );}
 
@@ -62,7 +62,52 @@
         return false;
     }
 
-    // ============== Console routines ==================
+    // ============== Draw routines ==================
+
+    void YatlScreen::drawRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color) {
+      sdlScreen.drawRect(x, y, w, h, MODE_DRAW, color);
+    }
+    void YatlScreen::fillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color) {
+      sdlScreen.drawRect(x, y, w, h, MODE_FILL, color);
+    }
+    void YatlScreen::drawCircle(uint16_t x, uint16_t y, uint16_t r, uint16_t color) {
+      sdlScreen.drawCircle(x, y, r, MODE_DRAW, color);
+    }
+    void YatlScreen::fillCircle(uint16_t x, uint16_t y, uint16_t r, uint16_t color) {
+      sdlScreen.drawCircle(x, y, r, MODE_FILL, color);
+    }
+
+    void YatlScreen::drawLine(uint16_t x, uint16_t y, uint16_t x2, uint16_t y2, uint16_t color) {
+      sdlScreen.drawLine(x, y, x2, y2, color);
+    }
+
+  void YatlScreen::drawWallpaper(char* assetName) {
+      char* fileName = this->yatl->getFS()->getAssetsFileEntry( assetName );
+      drawBmp(fileName, true);
+  }
+
+  void YatlScreen::cleanSprites() { 
+     //::cleanSprites(); 
+     this->yatl->dbug("cleanSprites NYI");
+  }
+  void YatlScreen::grabbSpritesOfSize(char* imageName, int offsetX, int offsetY, int width, int height) {
+     //::grabbSpritesOfSize(imageName, offsetX, offsetY, width, height);
+     this->yatl->dbug("grabbSpritesOfSize NYI");
+  }
+  void YatlScreen::grabbSprites(char* imageName, int offsetX, int offsetY) {
+     //::grabbSprites(imageName, offsetX, offsetY);
+     this->yatl->dbug("grabbSprites NYI");
+  }
+
+
+    // ============== Image routines ==================
+
+// filename is "/Z/0/packXXX.pak"
+   // reads&display image #numInPak of packed image from filename
+   void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
+       yatl.dbug("drawImgFromPAK NYI");
+   }
+
     #define BUFFPIXEL 80
 
    // TODO : move away
@@ -227,6 +272,8 @@
       }
 
       }
+
+    // ============== Console routines ==================
 
       void _feedSprites(char* filename, int x, int y) {
           yatl.dbug("_feedSprites() NYI");
@@ -426,7 +473,7 @@
     // spe DISK for assets : "Z:"
     // 'cause CP/M supports ONLY up to P:
 
-    const int _fullyQualifiedFileNameSize = 5 + (8+1+3) + 1;
+    const int _fullyQualifiedFileNameSize = 1+5 + (8+1+3) + 1;
     char _assetEntry[ _fullyQualifiedFileNameSize ];
 
     // SdFatSdio SD;
@@ -439,7 +486,7 @@
     // not ThreadSafe !
     char* YatlFS::getAssetsFileEntry(char* assetName) {
         memset(_assetEntry, 0x00, _fullyQualifiedFileNameSize);
-        strcpy( _assetEntry, "/Z/0/" );
+        strcpy( _assetEntry, "./Z/0/" );
         strcat( _assetEntry, assetName );
         return _assetEntry;
     }
