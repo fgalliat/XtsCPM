@@ -249,6 +249,10 @@ void *_xts_keyThread(void *argument){
     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     int cursorXpx = 0;
     int cursorYpx = 0;
+
+    int fontWidth = 4;
+    int fontHeight = 6;
+
     void WiredScreen::setCursorPx(int x, int y) {
         cursorXpx = x;
         cursorYpx = y;
@@ -261,6 +265,12 @@ void *_xts_keyThread(void *argument){
 
     void WiredScreen::write(char ch) {
         this->DrawChar( ch , cursorXpx, cursorYpx, textColor);
+        cursorXpx += fontWidth;
+        if ( cursorXpx >= SCREEN_WIDTH ) {
+            cursorXpx = 0;
+            cursorYpx += fontHeight;
+        }
+        doBlitt();
     }
 
     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
