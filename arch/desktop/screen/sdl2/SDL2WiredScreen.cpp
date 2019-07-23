@@ -28,9 +28,19 @@
   #define ZOOM 2
 #endif
 
-
 int SCREEN_WIDTH = 320;
 int SCREEN_HEIGHT = 240;
+
+
+// experimental for now 
+bool screenRotated = false; // for Bitmap WallPaper
+
+void WiredScreen::screenRotate(bool portrait) {
+    screenRotated = portrait;
+    SCREEN_WIDTH = portrait ? 240 : 320;
+    SCREEN_HEIGHT = portrait ? 320 : 240;
+}
+
 
 #define TINYFONT 1
 
@@ -770,7 +780,11 @@ void *_xts_keyThread(void *argument){
 
 
     void WiredScreen::drawPixel(int x, int y, uint16_t color) {
-        __FillColorRect( x, y, 1, 1, color);
+        if ( screenRotated ) {
+            __FillColorRect( y, x, 1, 1, color);
+        } else {
+            __FillColorRect( x, y, 1, 1, color);
+        }
         // ??? doBlitt(); ???
     }
 

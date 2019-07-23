@@ -97,6 +97,8 @@ extern int SCREEN_HEIGHT;
         void setCursorPx(int x, int y);
         void setTextColor(u_int16_t fgColor=CLR_WHITE);
         void write(char ch);
+
+        void screenRotate(bool portrait);
         // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
         void print(int val);

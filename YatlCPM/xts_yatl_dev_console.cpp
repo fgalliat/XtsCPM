@@ -595,6 +595,7 @@
 
   // ==========] Draw Bmp Routines [==========
    void _drawBmp(char* filename, int x, int y);
+   void _screenRotate(bool portait);
 
    void drawBmp(char* filename, bool screenRotate) {
       // if (TFT_ROTATION == 3) {
@@ -602,8 +603,10 @@
       // } else {
       //    if ( screenRotate ) tft.setRotation(2);
       // }
+      if ( screenRotate ) { _screenRotate(true); }
       _drawBmp( filename, 0, 0 );
       // if ( screenRotate ) tft.setRotation(TFT_ROTATION);
+      if ( screenRotate ) { _screenRotate(false); }
    }
 
    #define BUFFPIXEL 80

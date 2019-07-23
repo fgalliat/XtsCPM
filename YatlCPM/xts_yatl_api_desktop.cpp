@@ -129,9 +129,11 @@
       return result;
    }
 
-      void _drawBmp(char* filename, int x, int y) {
-          bool rotated = true; // for Bitmap WallPaper
+    void _screenRotate(bool portrait) {
+        sdlScreen.screenRotate(portrait);
+    }
 
+      void _drawBmp(char* filename, int x, int y) {
           if ( filename == NULL || strlen(filename) <= 0 || strlen(filename) >= 32 ) {
          yatl.dbug("(WW) Wrong BMP filename !");
          return;
