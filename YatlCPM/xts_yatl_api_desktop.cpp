@@ -86,30 +86,9 @@
       drawBmp(fileName, true);
   }
 
-  void YatlScreen::cleanSprites() { 
-     //::cleanSprites(); 
-     this->yatl->dbug("cleanSprites NYI");
-  }
-  void YatlScreen::grabbSpritesOfSize(char* imageName, int offsetX, int offsetY, int width, int height) {
-     //::grabbSpritesOfSize(imageName, offsetX, offsetY, width, height);
-     this->yatl->dbug("grabbSpritesOfSize NYI");
-  }
-  void YatlScreen::grabbSprites(char* imageName, int offsetX, int offsetY) {
-     //::grabbSprites(imageName, offsetX, offsetY);
-     this->yatl->dbug("grabbSprites NYI");
-  }
-
-
-    // ============== Image routines ==================
-
-// filename is "/Z/0/packXXX.pak"
-   // reads&display image #numInPak of packed image from filename
-   void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
-       yatl.dbug("drawImgFromPAK NYI");
-   }
+    // ============== Sprite routines ==================
 
     #define BUFFPIXEL 80
-
    // TODO : move away
    // uint16_t read16(FILE &f) {
    uint16_t read16(FILE* f) {
@@ -129,19 +108,98 @@
       return result;
    }
 
-    void _screenRotate(bool portrait) {
-        sdlScreen.screenRotate(portrait);
-    }
 
-      void _drawBmp(char* filename, int x, int y) {
-          if ( filename == NULL || strlen(filename) <= 0 || strlen(filename) >= 32 ) {
+extern uint16_t spriteArea[];
+//     uint16_t spriteArea[ SPRITE_AREA_SIZE ];
+//    Sprite sprites[NB_SPRITES];
+
+//    int spriteInstanceCounter = 0; 
+//    int lastAddr = 0;
+
+//    void Sprite::drawClip(int x, int y) {
+//       if ( w < 0 || h < 0 ) { return; }
+//       if ( !isValid() ) { return; }
+
+//       uint16_t row[ w ];
+//       for(int i=0; i < h; i++) {
+//          if ( i+y >= TFT_HEIGHT ) { break; }
+//          // *2 cf uint16_t
+//          memcpy( &row[0], &spriteArea[ ( (this->y+i) * SPRITE_AREA_WIDTH )+this->x ], w*2 );
+//          __fillPixelRect(x, i+y, w, 1, row);
+//       }
+//    }
+   
+    void cleanSprites();
+    void _feedSprites(char* filename, int x, int y);
+
+    // void grabbSprites(char* imageName, int offsetX, int offsetY) {
+    //    char* fileName = yatl.getFS()->getAssetsFileEntry( imageName );
+    //    _feedSprites(fileName, offsetX, offsetY);
+    // }
+
+    void grabbSpritesOfSize(char* imageName, int offsetX, int offsetY, int width, int height);
+
+
+    // @@@@ API
+
+  void YatlScreen::cleanSprites() { 
+     ::cleanSprites(); 
+     //this->yatl->dbug("cleanSprites NYI");
+  }
+  void YatlScreen::grabbSpritesOfSize(char* imageName, int offsetX, int offsetY, int width, int height) {
+     ::grabbSpritesOfSize(imageName, offsetX, offsetY, width, height);
+     //this->yatl->dbug("grabbSpritesOfSize NYI");
+  }
+  void YatlScreen::grabbSprites(char* imageName, int offsetX, int offsetY) {
+     ::grabbSprites(imageName, offsetX, offsetY);
+     //this->yatl->dbug("grabbSprites NYI");
+  }
+
+    // @@@@ Impl.
+
+//     void cleanSprites() {   
+//        memset(spriteArea, 0, SPRITE_AREA_SIZE);
+//        spriteInstanceCounter = 0; 
+//        lastAddr = 0;
+//        for(int i=0; i < NB_SPRITES; i++) {
+//           sprites[i].invalid();
+//        }
+//     }
+
+// void grabbSpritesOfSize(char* imageName, int offsetX, int offsetY, int width, int height) {
+
+//       //  char* fileName = this->yatl->getFS()->getAssetsFileEntry( imageName );
+//       char* fileName = yatl.getFS()->getAssetsFileEntry( imageName );
+
+//        cleanSprites();
+//        int nbW = 160/width;
+//        int nbH = 120/height;
+//        int howMany = nbW * nbH;
+//        if ( howMany > NB_SPRITES ) { howMany = NB_SPRITES; }
+//        int cpt = 0;
+//        for(int y=0; y < nbH; y++) {
+//          for(int x=0; x < nbW; x++) {
+//             sprites[cpt].x = x*width;
+//             sprites[cpt].y = y*height;
+//             sprites[cpt].w = width;
+//             sprites[cpt].h = height;
+//             cpt++;
+//             if ( cpt >= howMany ) { break; }
+//          }
+//        }
+//        _feedSprites(fileName, offsetX, offsetY);
+//     }
+
+
+
+   // will takes only 160x120 px of bmp file
+   void _feedSprites(char* filename, int x, int y) {
+      if ( filename == NULL || strlen(filename) <= 0 || strlen(filename) >= 32 ) {
          yatl.dbug("(WW) Wrong BMP filename !");
          return;
       }
  
-      //File bmpFile;
       FILE* bmpFile;
-
       int bmpWidth, bmpHeight;             // W+H in pixels
       uint8_t bmpDepth;                    // Bit depth (currently must be 24)
       uint32_t bmpImageoffset;             // Start of image data in file
@@ -156,56 +214,31 @@
 
       uint16_t awColors[320]; // hold colors for one row at a time...
 
-      if ((x >= SCREEN_WIDTH) || (y >= SCREEN_HEIGHT)) {
-          yatl.dbug("COORDS TOO BIG FOR SCREEN");
-         return;
-      }
-
-      // Serial.println();
-      // Serial.print(F("Loading image '"));
-      // Serial.print(filename);
-      // Serial.println('\'');
+      // if ((x >= tft.width()) || (y >= tft.height()))
+      //    return;
 
       // Open requested file on SD card
-      // if (!(bmpFile = SD.open(filename)))
+    //   if (!(bmpFile = SD.open(filename)))
       if (!(bmpFile = fopen(filename, "r")))
       {
-         yatl.dbug("File not found : ");
-         yatl.dbug(filename);
+         yatl.warn("BMP File not found");
          return;
       }
 
       // Parse BMP header
       if (read16(bmpFile) == 0x4D42) { // BMP signature
-         // Serial.print(F("File size: "));
-
-         // need to be done @least once
-         // Serial.println(read32(bmpFile));
          (void)read32(bmpFile);
 
          (void)read32(bmpFile);            // Read & ignore creator bytes
          bmpImageoffset = read32(bmpFile); // Start of image data
-         // Serial.print(F("Image Offset: "));
-         // Serial.println(bmpImageoffset, DEC);
-         // Read DIB header
-         // Serial.print(F("Header size: "));
-
-         // need to be done @least once
-         // Serial.println(read32(bmpFile));
          (void)read32(bmpFile);
 
          bmpWidth = read32(bmpFile);
          bmpHeight = read32(bmpFile);
          if (read16(bmpFile) == 1)     { // # planes -- must be '1'
             bmpDepth = read16(bmpFile); // bits per pixel
-            // Serial.print(F("Bit Depth: "));
-            // Serial.println(bmpDepth);
             if ((bmpDepth == 24) && (read32(bmpFile) == 0)) { // 0 = uncompressed
             goodBmp = true; // Supported BMP format -- proceed!
-            // Serial.print(F("Image size: "));
-            // Serial.print(bmpWidth);
-            // Serial.print('x');
-            // Serial.println(bmpHeight);
 
             // BMP rows are padded (if needed) to 4-byte boundary
             rowSize = (bmpWidth * 3 + 3) & ~3;
@@ -217,13 +250,19 @@
                flip = false;
             }
 
+            if ((x >= bmpWidth) || (y >= bmpHeight)) {
+               yatl.warn("Sprite OutOfBounds");
+               return;
+            }
+
             // Crop area to be loaded
-            w = bmpWidth;
-            h = bmpHeight;
-            if ((x + w - 1) >= SCREEN_WIDTH)
-               w = SCREEN_WIDTH - x;
-            if ((y + h - 1) >= SCREEN_HEIGHT)
-               h = SCREEN_HEIGHT - y;
+            // w = bmpWidth;
+            // h = bmpHeight;
+            w = SPRITE_AREA_WIDTH; h = SPRITE_AREA_HEIGHT;
+            if ((x + w - 1) >= bmpWidth)
+               w = bmpWidth - x;
+            if ((y + h - 1) >= bmpHeight)
+               h = bmpHeight - y;
 
             for (row = 0; row < h; row++) { // For each scanline...
 
@@ -237,19 +276,18 @@
                   pos = bmpImageoffset + (bmpHeight - 1 - row) * rowSize;
                else // Bitmap is stored top-to-bottom
                   pos = bmpImageoffset + row * rowSize;
-            //    if (bmpFile.position() != pos) { // Need seek?
+               //if (bmpFile.position() != pos) { // Need seek?
                if ( ftell(bmpFile) != pos) { // Need seek?
-                  //bmpFile.seek(pos);
-                  fseek(bmpFile, pos, SEEK_SET);
+                //   bmpFile.seek(pos);
+                  fseek(bmpFile,pos, SEEK_SET);
                   buffidx = sizeof(sdbuffer); // Force buffer reload
                }
 
                for (col = 0; col < w; col++) { // For each pixel...
                   // Time to read more pixel data?
                   if (buffidx >= sizeof(sdbuffer)) { // Indeed
-                    //bmpFile.read(sdbuffer, sizeof(sdbuffer));
-                    fread(sdbuffer, 1, sizeof(sdbuffer), bmpFile);
-                    buffidx = 0; // Set index to beginning
+                     fread(sdbuffer, 1, sizeof(sdbuffer), bmpFile);
+                     buffidx = 0; // Set index to beginning
                   }
 
                   // Convert pixel from BMP to TFT format, push to display
@@ -258,29 +296,184 @@
                   r = sdbuffer[buffidx++];
                   awColors[col] = rgb(r, g, b);
                } // end pixel
-               __fillPixelRect(0, row, w, 1, awColors);
+
+               // tft.writeRect(0, row, w, 1, awColors);
+               // *2 Cf uint16_t
+               memcpy( &spriteArea[ (row*SPRITE_AREA_WIDTH)+col ], &awColors[x], w*2 );
+
             } // end scanline
             // long timeElapsed = millis() - startTime;
-            // Serial.print(F("Loaded in "));
-            // Serial.print(timeElapsed);
-            // Serial.println(" ms");
             } // end goodBmp
          }
       }
 
-    //   bmpFile.close();
-      fclose(bmpFile);
+      fclose( bmpFile );
       if (!goodBmp) {
-         yatl.dbug("BMP format not recognized.");
+         yatl.warn("BMP format not recognized.");
       }
+
+   }
+
+
+
+    // ============== Image routines ==================
+
+// filename is "/Z/0/packXXX.pak"
+   // reads&display image #numInPak of packed image from filename
+   void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
+       yatl.dbug("drawImgFromPAK NYI");
+   }
+
+
+    void _screenRotate(bool portrait) {
+        sdlScreen.screenRotate(portrait);
+    }
+
+      void _drawBmp(char* filename, int x, int y) {
+          if ( filename == NULL || strlen(filename) <= 0 || strlen(filename) >= 32 ) {
+            yatl.dbug("(WW) Wrong BMP filename !");
+            return;
+        }
+    
+        //File bmpFile;
+        FILE* bmpFile;
+
+        int bmpWidth, bmpHeight;             // W+H in pixels
+        uint8_t bmpDepth;                    // Bit depth (currently must be 24)
+        uint32_t bmpImageoffset;             // Start of image data in file
+        uint32_t rowSize;                    // Not always = bmpWidth; may have padding
+        uint8_t sdbuffer[3 * BUFFPIXEL];     // pixel buffer (R+G+B per pixel)
+        uint16_t buffidx = sizeof(sdbuffer); // Current position in sdbuffer
+        bool goodBmp = false;             // Set to true on valid header parse
+        bool flip = true;                 // BMP is stored bottom-to-top
+        int w, h, row, col;
+        uint8_t r, g, b;
+        uint32_t pos = 0;//, startTime = millis();
+
+        uint16_t awColors[320]; // hold colors for one row at a time...
+
+        if ((x >= SCREEN_WIDTH) || (y >= SCREEN_HEIGHT)) {
+            yatl.dbug("COORDS TOO BIG FOR SCREEN");
+            return;
+        }
+
+        // Serial.println();
+        // Serial.print(F("Loading image '"));
+        // Serial.print(filename);
+        // Serial.println('\'');
+
+        // Open requested file on SD card
+        // if (!(bmpFile = SD.open(filename)))
+        if (!(bmpFile = fopen(filename, "r")))
+        {
+            yatl.dbug("File not found : ");
+            yatl.dbug(filename);
+            return;
+        }
+
+        // Parse BMP header
+        if (read16(bmpFile) == 0x4D42) { // BMP signature
+            // Serial.print(F("File size: "));
+
+            // need to be done @least once
+            // Serial.println(read32(bmpFile));
+            (void)read32(bmpFile);
+
+            (void)read32(bmpFile);            // Read & ignore creator bytes
+            bmpImageoffset = read32(bmpFile); // Start of image data
+            // Serial.print(F("Image Offset: "));
+            // Serial.println(bmpImageoffset, DEC);
+            // Read DIB header
+            // Serial.print(F("Header size: "));
+
+            // need to be done @least once
+            // Serial.println(read32(bmpFile));
+            (void)read32(bmpFile);
+
+            bmpWidth = read32(bmpFile);
+            bmpHeight = read32(bmpFile);
+            if (read16(bmpFile) == 1)     { // # planes -- must be '1'
+                bmpDepth = read16(bmpFile); // bits per pixel
+                // Serial.print(F("Bit Depth: "));
+                // Serial.println(bmpDepth);
+                if ((bmpDepth == 24) && (read32(bmpFile) == 0)) { // 0 = uncompressed
+                goodBmp = true; // Supported BMP format -- proceed!
+                // Serial.print(F("Image size: "));
+                // Serial.print(bmpWidth);
+                // Serial.print('x');
+                // Serial.println(bmpHeight);
+
+                // BMP rows are padded (if needed) to 4-byte boundary
+                rowSize = (bmpWidth * 3 + 3) & ~3;
+
+                // If bmpHeight is negative, image is in top-down order.
+                // This is not canon but has been observed in the wild.
+                if (bmpHeight < 0) {
+                bmpHeight = -bmpHeight;
+                flip = false;
+                }
+
+                // Crop area to be loaded
+                w = bmpWidth;
+                h = bmpHeight;
+                if ((x + w - 1) >= SCREEN_WIDTH)
+                w = SCREEN_WIDTH - x;
+                if ((y + h - 1) >= SCREEN_HEIGHT)
+                h = SCREEN_HEIGHT - y;
+
+                for (row = 0; row < h; row++) { // For each scanline...
+
+                // Seek to start of scan line.  It might seem labor-
+                // intensive to be doing this on every line, but this
+                // method covers a lot of gritty details like cropping
+                // and scanline padding.  Also, the seek only takes
+                // place if the file position actually needs to change
+                // (avoids a lot of cluster math in SD library).
+                if (flip) // Bitmap is stored bottom-to-top order (normal BMP)
+                    pos = bmpImageoffset + (bmpHeight - 1 - row) * rowSize;
+                else // Bitmap is stored top-to-bottom
+                    pos = bmpImageoffset + row * rowSize;
+                //    if (bmpFile.position() != pos) { // Need seek?
+                if ( ftell(bmpFile) != pos) { // Need seek?
+                    //bmpFile.seek(pos);
+                    fseek(bmpFile, pos, SEEK_SET);
+                    buffidx = sizeof(sdbuffer); // Force buffer reload
+                }
+
+                for (col = 0; col < w; col++) { // For each pixel...
+                    // Time to read more pixel data?
+                    if (buffidx >= sizeof(sdbuffer)) { // Indeed
+                        //bmpFile.read(sdbuffer, sizeof(sdbuffer));
+                        fread(sdbuffer, 1, sizeof(sdbuffer), bmpFile);
+                        buffidx = 0; // Set index to beginning
+                    }
+
+                    // Convert pixel from BMP to TFT format, push to display
+                    b = sdbuffer[buffidx++];
+                    g = sdbuffer[buffidx++];
+                    r = sdbuffer[buffidx++];
+                    awColors[col] = rgb(r, g, b);
+                } // end pixel
+                __fillPixelRect(0, row, w, 1, awColors);
+                } // end scanline
+                // long timeElapsed = millis() - startTime;
+                // Serial.print(F("Loaded in "));
+                // Serial.print(timeElapsed);
+                // Serial.println(" ms");
+                } // end goodBmp
+            }
+        }
+
+        //   bmpFile.close();
+        fclose(bmpFile);
+        if (!goodBmp) {
+            yatl.dbug("BMP format not recognized.");
+        }
 
       }
 
     // ============== Console routines ==================
 
-      void _feedSprites(char* filename, int x, int y) {
-          yatl.dbug("_feedSprites() NYI");
-      }
 
       void __setFont(int fontMode) {
           yatl.dbug("SET Font NYI");
