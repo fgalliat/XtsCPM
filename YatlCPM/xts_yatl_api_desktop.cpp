@@ -28,6 +28,8 @@
     #include "xts_yatl_settings.h"
     #include "xts_yatl_api.h"
 
+    #include "xts_yatl_dev_console.h"
+
     // ::::::::::::::::::::::::::::::::::::::
     bool keybLocked = false;
 
@@ -46,25 +48,53 @@
         return false;
     }
 
+    // ============== Console routines ==================
+      void __setFont(int fontMode=0) {
+          yatl.dbug("SET Font NYI");
+      }
+      void __fillPixelRect(int x, int y, int w, int h, uint16_t* bgColor) {
+          yatl.dbug("fill PixelZone NYI");
+      }
+
+      void __setCursor(int xPx, int yPx) {
+          sdlScreen.setCursorPx(xPx, yPx);
+      }
+
+      void __setTextColor(uint16_t color) {
+          sdlScreen.setTextColor(color);
+      }
+
+      void __fillRect(int x, int y, int w, int h, uint16_t bgColor) {
+          sdlScreen.drawRect(x,y,w,h,MODE_FILL, bgColor);
+      }
+
+      void __write1char(char ch) {
+        sdlScreen.write(ch);  
+      }
+
+      void __clearScreen(uint16_t bgColor) {
+        sdlScreen.cls(bgColor);
+      }
+
+
     void YatlScreen::cls() {
-        sdlScreen.cls();
+        consoleCls();
     }
 
     void YatlScreen::write(char ch) {
-        char chs[2] = {ch, 0x00};
-        // TODO : better
-        sdlScreen.print(chs);
+        consoleWrite(ch);
     }
 
-    void YatlScreen::println(const char* str) {
-        printf("'%s' \n", str);
-        sdlScreen.println((char*)str);
-    }
+    // void YatlScreen::println(const char* str) {
+    //     printf("'%s' \n", str);
+    //     sdlScreen.println((char*)str);
+    // }
 
-    void YatlScreen::println(char* str) {
-        printf("'%s' \n", str);
-        sdlScreen.println(str);
-    }
+    // void YatlScreen::println(char* str) {
+    //     printf("'%s' \n", str);
+    //     sdlScreen.println(str);
+    // }
+    // ============== Console routines ==================
 
     void YatlScreen::drawTextBox(char const* title, char const* text, unsigned short color) {
         printf("TXT BOX '%s' \n", text);

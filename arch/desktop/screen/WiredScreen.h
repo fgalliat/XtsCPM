@@ -86,8 +86,14 @@ extern int SCREEN_HEIGHT;
         bool init(int arg=0);
         void close();
 
-        void cls();
+        void cls(uint16_t bgColor=CLR_BLACK);
         void setCursor(int x, int y);
+
+        // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        void setCursorPx(int x, int y);
+        void setTextColor(u_int16_t fgColor=CLR_WHITE);
+        void write(char ch);
+        // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
         void print(int val);
         void print(float val);

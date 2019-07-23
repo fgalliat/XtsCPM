@@ -232,8 +232,8 @@ void *_xts_keyThread(void *argument){
 
     void WiredScreen::blitt(uint8_t mode) {}
 
-    void WiredScreen::cls() {
-        this->drawRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,1,0);
+    void WiredScreen::cls(uint16_t bgColor) {
+        this->drawRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,1,bgColor);
 
         doBlitt();
     }
@@ -245,6 +245,25 @@ void *_xts_keyThread(void *argument){
         ttyX = x;
         ttyY = y;
     }
+
+    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    int cursorXpx = 0;
+    int cursorYpx = 0;
+    void WiredScreen::setCursorPx(int x, int y) {
+        cursorXpx = x;
+        cursorYpx = y;
+    }
+
+    uint16_t textColor = CLR_WHITE;
+    void WiredScreen::setTextColor(uint16_t fgColor) {
+        textColor = fgColor;
+    }
+
+    void WiredScreen::write(char ch) {
+        this->DrawChar( ch , cursorXpx, cursorYpx, textColor);
+    }
+
+    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     void WiredScreen::print(int val) {
         char txt[17+1];
