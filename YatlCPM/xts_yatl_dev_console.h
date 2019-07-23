@@ -15,6 +15,7 @@
   // #include "xts_string.h"
   extern char charUpCase(char ch);
 
+
   #include "xts_yatl_settings.h"
   #include "xts_yatl_api.h"
   extern Yatl yatl;
@@ -63,6 +64,8 @@
    void consoleCls(bool clearDisplay=true);
 
    void _consoleRenderOneLine(int row, bool clearArea=true);
+
+   void consoleRenderFull(bool clearDisplay=true);
 
    void _toggleConsoleMode(bool rerender=true);
 

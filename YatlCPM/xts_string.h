@@ -1,7 +1,7 @@
 #ifndef _XTS_STRING_H_
 #define _XTS_STRING_H_ 1
 
-#include "Arduino.h"
+// #include "Arduino.h"
 
 /**
  * Xtase - fgalliat @Jan2019

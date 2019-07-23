@@ -18,6 +18,8 @@
     #include "Desktop.h"
     #endif
 
+    #include "xts_string.h"
+
     uint16_t rgb(uint8_t r,uint8_t g,uint8_t b) { return (uint16_t)( (( r *31/255 )<<11) | (( g *63/255 )<<5) | ( b *31/255 ) );}
 
     // @@@@@@@@@@@@@@@@@@
@@ -37,6 +39,15 @@
         printf("beep(x,y)\n");
     }
 
+    void YatlBuzzer::playTuneString(const char* str) {
+        printf("playTuneString(...)\n");
+    }
+
+    bool YatlBuzzer::playTuneFile(const char* file) {
+        printf("playTuneFile(...)\n");
+        return true;
+    }
+
     void YatlBuzzer::setup() {
     }
 
@@ -49,7 +60,15 @@
     }
 
     // ============== Console routines ==================
-      void __setFont(int fontMode=0) {
+      void _drawBmp(char* filename, int x, int y) {
+          yatl.dbug("drawBmp() NYI");
+      }
+
+      void _feedSprites(char* filename, int x, int y) {
+          yatl.dbug("_feedSprites() NYI");
+      }
+
+      void __setFont(int fontMode) {
           yatl.dbug("SET Font NYI");
       }
       void __fillPixelRect(int x, int y, int w, int h, uint16_t* bgColor) {

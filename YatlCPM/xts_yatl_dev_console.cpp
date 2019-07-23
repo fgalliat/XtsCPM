@@ -10,10 +10,10 @@
 #include "xts_yatl_dev_console.h"
 
   
-  // forward symbols
-  void _setConsoleMode(int mode);
+//   // forward symbols
+//   void _setConsoleMode(int mode);
 
-  void drawBmp(char* filename, bool screenRotate=true);
+//   void drawBmp(char* filename, bool screenRotate);
 
 
 
@@ -52,7 +52,7 @@
    #define FONT_TINY 1
 
       void __setTextColor(uint16_t color);
-      void __setFont(int fontMode=0);
+      void __setFont(int fontMode);
       void __setCursor(int xPx, int yPx);
       void __clearScreen(uint16_t bgColor);
       void __fillRect(int x, int y, int w, int h, uint16_t bgColor);
@@ -83,7 +83,7 @@
    }
 
    // playInParallel Not Supported
-   void playVTMusic(char* tuneStr, bool playInParallel = false) {
+   void playVTMusic(char* tuneStr, bool playInParallel) {
       if ( strlen( tuneStr ) <= 0 ) { return; }
       _doPlay(tuneStr);
    }
@@ -139,7 +139,7 @@
       __setCursor(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight);
    }
 
-   void _consoleFill(char ch, bool resetCursor=true) {
+   void _consoleFill(char ch, bool resetCursor) {
       #ifdef COLORED_CONSOLE
          curTextAttr = 0x00;
          memset(ttyConsoleAttrs, curTextAttr, ttyConsoleFrameSize);
@@ -184,13 +184,13 @@
    }
 
 
-   void consoleColorSet(uint16_t bg=CLR_BLACK, uint16_t fg=CLR_WHITE, uint16_t acc=CLR_GREEN) {
+   void consoleColorSet(uint16_t bg, uint16_t fg, uint16_t acc) {
       TTY_COLOR_BG = bg;
       TTY_COLOR_FG = fg;
       TTY_COLOR_ACCENT = acc;
    }
 
-   void consoleCls(bool clearDisplay=true) {
+   void consoleCls(bool clearDisplay) {
       _consoleFill(0x00, true);
       if (clearDisplay) { __clearScreen(TTY_COLOR_BG); }
       _consoleSetCursor(0,0);
@@ -203,7 +203,7 @@
    #define TTY_ATTR_ACCENT2  0x02
    #define TTY_ATTR_INVVIDEO 0x03
 
-   void _consoleRenderOneLine(int row, bool clearArea=true) {
+   void _consoleRenderOneLine(int row, bool clearArea) {
       if ( ttyConsoleFrame[ (row*ttyConsoleWidth)+0 ] == 0x00) {
          // do clear the area ????
          if ( clearArea ) {
@@ -250,7 +250,7 @@
       #endif
    }
 
-   void consoleRenderFull(bool clearDisplay=true) {
+   void consoleRenderFull(bool clearDisplay) {
       if (clearDisplay) { __clearScreen(TTY_COLOR_BG); }
       consoleCursorX = 0;
       for(int y=0; y < ttyConsoleHeight; y++) {
@@ -259,7 +259,7 @@
       }
    }
 
-   void _toggleConsoleMode(bool rerender=true) {
+   void _toggleConsoleMode(bool rerender) {
       if ( consoleMode == LCD_CONSOLE_80_COLS ) {
          consoleMode = LCD_CONSOLE_40_COLS;
       } else {
@@ -289,7 +289,7 @@
    }
 
    // erase from current position to EndOfLine
-   void _eraseTillEOL(bool clearArea=true) {
+   void _eraseTillEOL(bool clearArea) {
       if ( clearArea ) {
          __fillRect(consoleCursorX*consoleCurrentFontWidth, consoleCursorY*consoleCurrentFontHeight, TFT_WIDTH, consoleCurrentFontHeight, TTY_COLOR_BG);
       }
