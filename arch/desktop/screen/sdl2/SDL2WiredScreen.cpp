@@ -29,8 +29,8 @@
 #endif
 
 
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
+int SCREEN_WIDTH = 320;
+int SCREEN_HEIGHT = 240;
 
 #define TINYFONT 1
 
