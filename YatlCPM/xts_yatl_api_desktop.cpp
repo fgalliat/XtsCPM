@@ -157,41 +157,6 @@ extern uint16_t spriteArea[];
 
     // @@@@ Impl.
 
-//     void cleanSprites() {   
-//        memset(spriteArea, 0, SPRITE_AREA_SIZE);
-//        spriteInstanceCounter = 0; 
-//        lastAddr = 0;
-//        for(int i=0; i < NB_SPRITES; i++) {
-//           sprites[i].invalid();
-//        }
-//     }
-
-// void grabbSpritesOfSize(char* imageName, int offsetX, int offsetY, int width, int height) {
-
-//       //  char* fileName = this->yatl->getFS()->getAssetsFileEntry( imageName );
-//       char* fileName = yatl.getFS()->getAssetsFileEntry( imageName );
-
-//        cleanSprites();
-//        int nbW = 160/width;
-//        int nbH = 120/height;
-//        int howMany = nbW * nbH;
-//        if ( howMany > NB_SPRITES ) { howMany = NB_SPRITES; }
-//        int cpt = 0;
-//        for(int y=0; y < nbH; y++) {
-//          for(int x=0; x < nbW; x++) {
-//             sprites[cpt].x = x*width;
-//             sprites[cpt].y = y*height;
-//             sprites[cpt].w = width;
-//             sprites[cpt].h = height;
-//             cpt++;
-//             if ( cpt >= howMany ) { break; }
-//          }
-//        }
-//        _feedSprites(fileName, offsetX, offsetY);
-//     }
-
-
-
    // will takes only 160x120 px of bmp file
    void _feedSprites(char* filename, int x, int y) {
       if ( filename == NULL || strlen(filename) <= 0 || strlen(filename) >= 32 ) {
@@ -321,7 +286,37 @@ extern uint16_t spriteArea[];
 // filename is "/Z/0/packXXX.pak"
    // reads&display image #numInPak of packed image from filename
    void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
-       yatl.dbug("drawImgFromPAK NYI");
+       if ( filename == NULL || strlen(filename) <= 0 || strlen(filename) >= 32 ) {
+         yatl.dbug("(WW) Wrong PAK filename !");
+         return;
+      }
+ 
+      FILE* pakFile;
+
+      if (!(pakFile = fopen(filename, "r"))) {
+         yatl.warn("PAK File not found");
+         return;
+      }
+
+      uint16_t w = ( fgetc(pakFile) * 256 ) + fgetc(pakFile);
+      uint16_t h = ( fgetc(pakFile) * 256 ) + fgetc(pakFile);
+      uint8_t nbImgs = fgetc(pakFile);
+
+      if ( x < 0 ) { x = (TFT_WIDTH-w)/2; }
+      if ( y < 0 ) { y = (TFT_HEIGHT-h)/2; }
+
+      if ( numInPak < 0 ) { numInPak=0; }
+      if ( numInPak > nbImgs ) { numInPak=nbImgs-1; }
+
+      fseek(pakFile, numInPak * ( w*h*2 ), SEEK_SET ); // beware : seems to be relative ? 
+      uint16_t scanLine[w];
+      for(int yy=0; yy < h; yy++) {
+         int ct = fread( (uint8_t*)scanLine, 1, w*2, pakFile ); // *2 cf U16
+         if ( ct <= 0 ) { yatl.dbug("Oups EOF !"); break; }
+         __fillPixelRect(x, yy+y, w, 1, scanLine);
+      }
+
+      fclose(pakFile);
    }
 
 
