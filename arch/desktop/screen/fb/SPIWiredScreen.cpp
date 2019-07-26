@@ -20,11 +20,14 @@
 #include "../WiredScreen.h"
 #include "../FX_starfield.h"
 
-//#define SCREEN_WIDTH 320
-//#define SCREEN_HEIGHT 240
-
 int SCREEN_WIDTH = 320;
 int SCREEN_HEIGHT = 240;
+
+const uint16_t CLR_CYAN  = rgb16(0,255,255);
+const uint16_t CLR_PINK  = rgb16(255,0,150);
+const uint16_t CLR_RED   = rgb16(255,0,0);
+const uint16_t CLR_BLUE  = rgb16(0,0,255);
+
 
 #define TINYFONT 1
 
@@ -112,8 +115,8 @@ int SCREEN_HEIGHT = 240;
 	    // flushRX(serial);
     }
 
-    void WiredScreen::cls() {
-        this->drawRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,1,0);
+    void WiredScreen::cls(uint16_t bgColor) {
+        this->drawRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,1,bgColor);
     }
 
 	int ttyX = 0, ttyY = 0;
