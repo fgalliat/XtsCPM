@@ -87,7 +87,9 @@ void WiredScreen::dispStr(char* str, int x, int y, unsigned short color) {
 
   this->setCursorPx(x,y);
   this->setTextColor(color);
-  this->print(str);
+  //this->print(str);
+  int t = strlen(str);
+  for(int i=0; i < t; i++) { this->write(str[i]); }
 
 }
 
