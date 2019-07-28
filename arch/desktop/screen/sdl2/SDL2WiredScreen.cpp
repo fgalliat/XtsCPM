@@ -82,6 +82,16 @@ int _k_KEYS = 0;
 
 void __doBlitt();
 
+
+void WiredScreen::dispStr(char* str, int x, int y, unsigned short color) {
+
+  this->setCursorPx(x,y);
+  this->setTextColor(color);
+  this->print(str);
+
+}
+
+
 void *_xts_blittThread(void *argument){
     while( true ) {
         __doBlitt();
