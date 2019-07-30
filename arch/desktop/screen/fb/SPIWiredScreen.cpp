@@ -399,34 +399,34 @@ const uint16_t CLR_BLUE  = rgb16(0,0,255);
 
 	void WiredScreen::drawRGB16(int x, int y, int width, int height, uint16_t* raster) {
 		uint16_t color, c16b;
-        for (int yy = 0; yy < height; yy++)
-        {
+		bool modeDIV2 = false;
+		if (width > 128 && SCREEN_WIDTH == 128) {
+			modeDIV2 = true;
+			x = x >> 1;// div 2 
+			y = y >> 1;
+		}
+		
+        for (int yy = 0; yy < height; yy++) {
+        	
+        	if ( modeDIV2 && yy % 2 == 1 ) { continue; }
+        	
+        	int yyy = modeDIV2 ? yy >> 1 : yy;
+        	if ( (yyy+y) > SCREEN_HEIGHT ) { continue; }
         	
         	location = (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
-                       (y +yy +vinfo.yoffset) * finfo.line_length;
+                       (y +yyy +vinfo.yoffset) * finfo.line_length;
         	
         	//memcpy( *(fbp+location), raster[(yy * width) + 0], width*2);
         	for (int xx = 0; xx < width; xx++) {
+				
+				if ( modeDIV2 && xx % 2 == 1 ) { continue; }
+				int xxx = modeDIV2 ? xx >> 1 : xx;
+				if ( (xxx+x) > SCREEN_WIDTH ) { continue; }
+				
         		color = raster[(yy * width) + (xx)];
         		*((unsigned short int*)(fbp + location)) = color;
         		location+=2;
         	}
-        	
-        	/*
-            for (int xx = 0; xx < width; xx++)
-            {
-                color = raster[(yy * width) + (xx)];
-
-			      //#ifdef INTEL_MODE
-			      //  // Intel endian ?
-			      //  color = (color%256)*256 + color/256;
-			      //#endif
-
-                //drawPixel(x + xx, y + yy, color );
-                //*((unsigned short int*)(fbp + location)) = color;
-                 
-            }
-            */
         }
 	}
 
