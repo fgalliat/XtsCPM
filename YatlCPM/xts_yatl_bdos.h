@@ -117,27 +117,33 @@
     uint8_t shapeType = test[2];
     uint8_t fillType = test[3]; // 0 draw / 1 fill
 
-    uint16_t color = ((uint16_t)test[4] << 8) + test[5];
+    uint16_t color = (uint16_t) ((uint8_t)test[4] << 8) + (uint8_t)test[5];
     color = mapColor( color );
 
     if ( OpType == 0x7F ) {
       // drawShapes
-      uint16_t x = ((uint16_t)test[6] << 8) + test[7];
-      uint16_t y = ((uint16_t)test[8] << 8) + test[9];
+      uint16_t x = (uint16_t) ((uint8_t)test[6] << 8) + (uint8_t)test[7];
+      uint16_t y = (uint16_t) ((uint8_t)test[8] << 8) + (uint8_t)test[9];
       if ( shapeType == 0x01 ) {
         // Shape : rectangle
-        uint16_t w = ((uint16_t)test[10] << 8) + test[11];
-        uint16_t h = ((uint16_t)test[12] << 8) + test[13];
+        uint16_t w = (uint16_t) ((uint8_t)test[10] << 8) + (uint8_t)test[11];
+        uint16_t h = (uint16_t) ((uint8_t)test[12] << 8) + (uint8_t)test[13];
         if ( fillType == 0x00 ) {
           // draw outlines
           yatl.getScreen()->drawRect( x, y, w, h, color );
         } else if ( fillType == 0x01 ) {
           // fills the rect
+
+// if ( y > 220 ) {
+// char str[64]; sprintf(str,"drawRect(%d,%d,%d,%d,%d)", x, y, w, h, color);
+// yatl.dbug( (const char*)str );
+// }
+
           yatl.getScreen()->fillRect( x, y, w, h, color );
         }
       } else if ( shapeType == 0x02 ) {
         // Shape : circle
-        uint16_t r = ((uint16_t)test[10] << 8) + test[11];
+        uint16_t r = (uint16_t)((uint8_t)test[10] << 8) + (uint8_t)test[11];
         if ( fillType == 0x00 ) {
           // draw outlines
           yatl.getScreen()->drawCircle( x,y,r, color );
@@ -146,20 +152,20 @@
         }
       } else if ( shapeType == 0x03 ) {
         // Shape : line
-        uint16_t x2 = ((uint16_t)test[10] << 8) + test[11];
-        uint16_t y2 = ((uint16_t)test[12] << 8) + test[13];
+        uint16_t x2 = (uint16_t) ((uint8_t)test[10] << 8) + (uint8_t)test[11];
+        uint16_t y2 = (uint16_t) ((uint8_t)test[12] << 8) + (uint8_t)test[13];
         yatl.getScreen()->drawLine( x, y, x2, y2, color );
       } 
     } else if ( OpType == 0x80 ) {
       // manage Sprite
-      uint16_t x = ((uint16_t)test[6] << 8) + test[7];
-      uint16_t y = ((uint16_t)test[8] << 8) + test[9];
+      uint16_t x = (uint16_t)((uint8_t)test[6] << 8) + (uint8_t)test[7];
+      uint16_t y = (uint16_t)((uint8_t)test[8] << 8) + (uint8_t)test[9];
 
       if ( shapeType == 0x01 ) {
         // define sprite
 
-        uint16_t w = ((uint16_t)test[10] << 8) + test[11];
-        uint16_t h = ((uint16_t)test[12] << 8) + test[13];
+        uint16_t w = (uint16_t)((uint8_t)test[10] << 8) + (uint8_t)test[11];
+        uint16_t h = (uint16_t)((uint8_t)test[12] << 8) + (uint8_t)test[13];
 
         uint8_t num = test[14];
 
