@@ -728,7 +728,10 @@ void *_xts_keyThread(void *argument){
 
         SDL_Color _color;
 
-        if ( color > 8 ) {
+        // make as an optional param
+        bool forceDirectColor = true;
+
+        if ( forceDirectColor || color > 8 ) {
             #ifdef INTEL_MODE
                 // Intel endian ?
 //                color = (color%256)*256 + color/256;
@@ -784,7 +787,8 @@ void *_xts_keyThread(void *argument){
         }
 
 
-        SDL_Color usedColor = color == 0x00 ? clBLACK : color == 0x01 ? clWHITE : _color;
+        // SDL_Color usedColor = color == 0x00 ? clBLACK : !forceDirectColor && color == 0x01 ? clWHITE : _color;
+        SDL_Color usedColor = forceDirectColor ? _color : color == 0x00 ? clBLACK : _color;
 
         // draw a rect
         SDL_FillRect(surface, &r, SDL_MapRGB(surface->format, usedColor.r, usedColor.g, usedColor.b));
