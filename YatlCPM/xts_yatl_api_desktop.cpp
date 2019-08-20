@@ -36,14 +36,17 @@
     bool keybLocked = false;
 
     void YatlBuzzer::beep(int freq, int dur) {
+        // use SDL if available
         printf("beep(x,y)\n");
     }
 
     void YatlBuzzer::playTuneString(const char* str) {
+        // use SDL if available
         printf("playTuneString(...)\n");
     }
 
     bool YatlBuzzer::playTuneFile(const char* file) {
+        // use SDL if available
         printf("playTuneFile(...)\n");
         return true;
     }
@@ -993,6 +996,11 @@ memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
         this->yatl->getSubMCU()->send("pp");
         this->yatl->getSubMCU()->send(d0);
         this->yatl->getSubMCU()->send(d1);
+
+        // from WSL to Win64 - to call in a thread
+        // /mnt/c/vm_mnt/usr/local/bin/mpg123.exe /vm_mnt/MP3/060_*.mp3
+        // 'Nix
+        // mpg123 /vm_mnt/MP3/060_*.mp3
     }
     void YatlMusicPlayer::loop(int trackNum) {
         uint8_t d0 = trackNum / 256;
@@ -1001,7 +1009,13 @@ memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
         this->yatl->getSubMCU()->send(d0);
         this->yatl->getSubMCU()->send(d1);
     }
-    void YatlMusicPlayer::stop() { this->yatl->getSubMCU()->send("ps"); }
+    void YatlMusicPlayer::stop() { 
+        this->yatl->getSubMCU()->send("ps"); 
+        // from WSL to Win64
+        // killall mpg123.exe
+        // 'Nix
+        // killall mpg123
+    }
     void YatlMusicPlayer::pause() { this->yatl->getSubMCU()->send("pP"); }
     void YatlMusicPlayer::next() { this->yatl->getSubMCU()->send("pn"); }
     void YatlMusicPlayer::prev() { this->yatl->getSubMCU()->send("pv"); }
