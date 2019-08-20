@@ -1001,6 +1001,11 @@ memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
         // /mnt/c/vm_mnt/usr/local/bin/mpg123.exe /vm_mnt/MP3/060_*.mp3
         // 'Nix
         // mpg123 /vm_mnt/MP3/060_*.mp3
+
+        char str[32]; sprintf(str, "Playing MP3 # %03d", trackNum);
+        this->yatl->dbug( (const char*) str );
+
+
     }
     void YatlMusicPlayer::loop(int trackNum) {
         uint8_t d0 = trackNum / 256;
