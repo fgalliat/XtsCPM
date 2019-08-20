@@ -19,7 +19,7 @@ CFLAGS = -D$(ARCH) -Wall -O3 -fPIC -Wno-unused-variable
 LDFLAGS = -lncurses -lm -ldl -lSDL2 -lpthread
 
 # Objects to build
-OBJS = main.o lua/liblua.a Desktop.o xts_yatl_api_desktop.o SDL2WiredScreen.o xts_yatl_dev_console.o
+OBJS = main.o lua/liblua.a Desktop.o xts_yatl_api_desktop.o MPG123SoundCard.o SDL2WiredScreen.o xts_yatl_dev_console.o
 
 # Lua building
 LUABUILD = $(MAKE) -C lua linux
@@ -37,7 +37,7 @@ $(PROG): main.o
 
 main.o: main.c $(wildcard *.h) $(MFILE)
 	$(LUABUILD)
-	$(CC) $(CFLAGS) -c main.c Desktop.cpp xts_yatl_api_desktop.cpp xts_yatl_dev_console.cpp ../arch/desktop/screen/sdl2/SDL2WiredScreen.cpp
+	$(CC) $(CFLAGS) -c main.c Desktop.cpp xts_yatl_api_desktop.cpp xts_yatl_dev_console.cpp ../arch/desktop/screen/sdl2/SDL2WiredScreen.cpp ../arch/desktop/sound/MPG123SoundCard.cpp
 
 rebuild: clean all
 
