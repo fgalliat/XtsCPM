@@ -474,7 +474,8 @@ extern uint16_t spriteArea[];
 
 
       void __setFont(int fontMode) {
-          yatl.dbug("SET Font NYI");
+          //yatl.dbug("SET Font NYI");
+          sdlScreen.setFont( fontMode == LCD_CONSOLE_80_COLS ? 0 : 1 );
       }
       void __fillPixelRect(int x, int y, int w, int h, uint16_t* raster) {
           sdlScreen.drawRGB16(x,y,w,h,raster);
