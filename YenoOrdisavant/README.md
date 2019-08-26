@@ -20,3 +20,5 @@
 - it could be cool to use pseudoLCD consoleColorSet + Big font @ start then launch MBASIC.... (even if keep TURBO3)
 
 - ESP32 - 2x240MHz / 320KB ram / 4MB flash (1MB sketch storage ?)
+
+![YENO Ordisavant (1988)](./pictures/ORDI_SAVANT_001.jpg)
