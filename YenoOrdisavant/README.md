@@ -24,3 +24,11 @@
 - as used BIG BATTERY-PACKS -> could place a BIG rechargable USB BATT. (up to 5000MAh)
 
 ![YENO Ordisavant (1988)](./pictures/ORDI_SAVANT_001.jpg)
+
+- [x] TFT  ILI9341
+- [ ] SD Card ( have to wire Card CS )
+- [ ] MCP23017 w/ keypad lib 8x8
+  - [ ] lib install
+  - [ ] pinout
+  - [ ] wiring real Keyb on it
+- [ ] YatlCPM
