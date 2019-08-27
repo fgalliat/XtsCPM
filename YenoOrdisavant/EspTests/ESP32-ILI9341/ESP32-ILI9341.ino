@@ -36,14 +36,23 @@
 #include "Adafruit_GFX.h"
 #include "Adafruit_ILI9341.h"
 
-// For the ESP-WROVER_KIT, these are the default.
-#define TFT_CS   22
-#define TFT_DC   21
+// // For the ESP-WROVER_KIT, these are the default.
+// #define TFT_CS   22
+// #define TFT_DC   21
+// #define TFT_MOSI 23
+// #define TFT_CLK  19
+// #define TFT_RST  18
+// #define TFT_MISO 25
+// #define TFT_LED   5  // GPIO not managed by library
+
+// DEVKIT R1
+#define TFT_CS   5
+#define TFT_DC   15
 #define TFT_MOSI 23
-#define TFT_CLK  19
-#define TFT_RST  18
-#define TFT_MISO 25
-#define TFT_LED   5  // GPIO not managed by library
+#define TFT_CLK  18
+#define TFT_RST  -1 // or 18 ????
+#define TFT_MISO 19
+// #define TFT_LED   5  // GPIO not managed by library
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_CLK, TFT_RST, TFT_MISO);
 
