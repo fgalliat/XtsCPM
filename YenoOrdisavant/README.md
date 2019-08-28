@@ -31,5 +31,5 @@
   - [x] lib install
   - [x] pinout
   - [ ] wiring real Keyb on it
-  - [ ] test w/ SD + Screen
+  - [x] test w/ SD + Screen
 - [ ] YatlCPM
