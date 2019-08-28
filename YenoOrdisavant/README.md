@@ -25,10 +25,10 @@
 
 ![YENO Ordisavant (1988)](./pictures/ORDI_SAVANT_001.jpg)
 
-- [x] TFT  ILI9341
-- [ ] SD Card ( have to wire Card CS )
+- [x] TFT  ILI9341 (lib: TFT_eSPI)
+- [x] SD Card ( have to wire Card CS ) (lib: SD esp32 version)
 - [ ] MCP23017 w/ keypad lib 8x8
   - [ ] lib install
-  - [ ] pinout
+  - [x] pinout
   - [ ] wiring real Keyb on it
 - [ ] YatlCPM
