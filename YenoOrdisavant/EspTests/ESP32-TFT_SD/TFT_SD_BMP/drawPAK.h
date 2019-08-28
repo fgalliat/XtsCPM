@@ -31,7 +31,7 @@ void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
     if ( numInPak > nbImgs ) { numInPak=nbImgs-1; }
 
     pakFile.seek( numInPak * ( w*h*2 ) ); // beware : seems to be relative ? 
-    uint16_t scanLine[w];
+    // uint16_t scanLine[w];
 
     #define SCAN_ARRAY_HEIGHT 8
     uint16_t scanArray[w*SCAN_ARRAY_HEIGHT]; // 32KB bytes // 1KB for 2 rows
@@ -42,6 +42,7 @@ void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
         int ct = pakFile.read( (uint8_t*)scanArray, SCAN_ARRAY_HEIGHT * w*2 ); // *2 cf U16
         if ( ct <= 0 ) { Serial.println("Oups EOF !"); break; }
 
+        // Cf ESP32 isn't an ARM -> it's a RISC MCU
         for(int i=0; i < ct/2; i++) {
             int u80 = scanArray[ (i)+0 ] / 256;
             int u81 = scanArray[ (i)+0 ] % 256;
@@ -50,25 +51,7 @@ void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
 
         int usedHeight = SCAN_ARRAY_HEIGHT;
         usedHeight = ct / 2 / w;
-
-// for(int scanRow = 0; scanRow < SCAN_ARRAY_HEIGHT; scanRow++) {
-//         int ct = pakFile.read( (uint8_t*)scanLine, w*2 ); // *2 cf U16
-//         if ( ct <= 0 ) { Serial.println("Oups EOF !"); break; }
- 
-//         // Cf TFT_eSPI pushRect() ???????
-//         for (int i=0; i < w; i++) {
-//             int u80 = scanLine[ (i)+0 ] / 256;
-//             int u81 = scanLine[ (i)+0 ] % 256;
-//             scanLine[i] = (u81*256)+u80;
-//         }
-
-//         memcpy( &scanArray[ scanRow * w ], scanLine, (w*2) );
-
-//         // specific to TFT_eSPI
-//         // tft.writeRect(x, yy+y, w, 1, scanLine);
-//         // tft.pushRect(x, yy+y, w, 1, scanLine);
-// } // for scan
-tft.pushRect(x, yy+y, w, usedHeight, scanArray);
+        tft.pushRect(x, yy+y, w, usedHeight, scanArray);
 
     } // for yy
 
