@@ -1,0 +1,11 @@
+https://playground.arduino.cc/Code/Keypad/#Download
+
+Download, install and import
+This library is now available via the Arduino IDE library manager. 
+If you are using a modern IDE (1.6.2 or above), you can simply use the menu:
+
+Sketch->Include Library->Manage Libraries... Then search for Keypad.
+
+Once found, click on its entry and the install button will appear. 
+The zip file below is for the retro IDE's (not recommended for use, upgrade!).
+
