@@ -49,14 +49,14 @@ const byte K_ROWS = 8; // eight rows
 const byte K_COLS = 8; // eight columns
 //define the cymbols on the buttons of the keypads
 char hexaKeys[K_ROWS][K_COLS] = {
-  {'0','1','2','3','4', '5', '6', '7' }, // 1
-  {'a','b','c','d','e', 'f', 'g', 'h' }, // 2 
-  {'i','j','k','l','m', 'n', 'o', 'p' }, // 3
-  {'q','r','s','t','u', 'v', 'w', 'x' }, // 4
-  {'y','z','A','B','C', 'D', 'E', 'F' }, // 5
-  {'G','H','I','J','K', 'L', 'M', 'N' }, // 6
-  {'O','P','Q','R','S', 'T', 'U', 'V' }, // 7
-  {'W','X','Y','Z','&', '#', '(', ')' }, // 8
+  {'0', '1', '2', '3', '4', '5', '6', '7' }, // 1
+  {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' }, // 2 
+  {'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p' }, // 3
+  {'q', 'r', 's', 't', 'u', 'v', 'w', 'x' }, // 4
+  {'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F' }, // 5
+  {'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N' }, // 6
+  {'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V' }, // 7
+  {'W', 'X', 'Y', 'Z', '&', '#', '(', ')' }, // 8
 };
 byte rowPins[K_ROWS] = {7, 6, 5, 4, 3, 2, 1, 0}; //connect to the row pinouts of the keypad
 byte colPins[K_COLS] = {15, 14, 13, 12, 11, 10, 9, 8}; //connect to the column pinouts of the keypad
