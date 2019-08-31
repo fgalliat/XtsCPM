@@ -1,4 +1,27 @@
 /**
+ * ESP32 working w/ arduino IDE
+ * 
+ * Additional board url : https://dl.espressif.com/dl/package_esp32_index.json
+ * goto Board Manager
+ * choose ESP32 by espressif
+ * 
+ * DOIT ESP32 DEVKIT V1
+ * 
+ * for TFT-eSPI lib, in User_Setup.h, @EOF : add ::
+ * // ===== Xtase Settings =====
+ * #define TFT_MISO 19
+ * #define TFT_MOSI 23
+ * #define TFT_SCLK 18
+ * #define TFT_CS    5  // Chip select control pin
+ * #define TFT_DC   15  // Data Command control pin
+ * //#define TFT_RST   4  // Reset pin (could connect to RST pin)
+ * #define TFT_RST  -1  // Set TFT_RST to -1 if display RESET is connected to ESP32 board RST
+ * 
+ * 
+ * 1.3 MB Sktech
+ * 320 KB RAM
+ *
+ *
  * FullDemo#1
  * 
  * ESP32 + ILI9341 Screen + SDCard + MCP23017 Keyboard decoder
