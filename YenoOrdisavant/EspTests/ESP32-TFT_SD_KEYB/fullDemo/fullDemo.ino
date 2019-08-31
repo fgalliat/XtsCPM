@@ -101,6 +101,23 @@ void pollKeyb() {
 }
 
 //====================================================================================
+//                                    LCD 20x4
+//====================================================================================
+#include <LCD.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address
+
+void setupLCD() {
+  lcd.begin(20,4);
+
+  lcd.setBacklight(LOW);
+  lcd.clear();
+//   lcd.home ();                   // go home
+  lcd.setCursor ( 0, 0 );
+}
+
+//====================================================================================
 //                                    Setup
 //====================================================================================
 void setup()
@@ -108,11 +125,13 @@ void setup()
   // Serial.begin(115200); // Used for messages and the C array generator
   Serial.begin(9600); // Used for messages and the C array generator
 
+  setupLCD();
   setupKeyb();
 
   // Initialise the SD library before the TFT so the chip select gets set
   if (!SD.begin(SD_CS)) {
     Serial.println("Initialisation failed!");
+    lcd.print("SD failed !");
     while (1) yield(); // Stay here twiddling thumbs waiting
   }
   Serial.println("\r\nInitialisation done.");
@@ -131,6 +150,17 @@ void setup()
   tft.println("Screen OK");
   tft.println("SDCard OK");
   tft.println("Checking Keyboard : ");
+
+  // aux screen
+  lcd.setCursor(0,0);
+  lcd.print("== Xtase @Aug2019 ==");
+  lcd.setCursor(0,1);
+  //         12345678901234567890
+  lcd.print("OrdiSavant new YATL");
+  lcd.setCursor(0,2);
+  lcd.print("Layout...");
+  lcd.setCursor(0,3);
+  lcd.print("Have fun !");
 
 }
 
