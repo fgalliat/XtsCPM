@@ -5,12 +5,13 @@
   - look if I have not a 4" screen in ILI chip type ....? (if 640x480 -> check speed & make a pixel shader...)
   - I think I have de devStripBoard w/ just ESP32 + ILI + Serial ....
 - DFPlayer MP3 playback module
-- MCP23017 I2C GPIO for keyboard decoding (MP3 /BUSY reading)
+- MCP23017 I2C GPIO for keyboard decoding (8x8)
 - Buzzer
 - YatlCPM distro ( compilled for ESP8266 w/ spe. Yatl arch (w/o MCU bridge) )
 - see if shared SPI for Screen / TFCard isn't too slow ....?
-  - be sure that used Screen DOES share the SPI ( if need 2 distincts ... :-( )
+  - be sure that used Screen DOES share the SPI ( ok )
   - will just requires 2 CS lines (Screen/TF)
+  - /!\\ not very fast, but works
 - no Bridged MCU (all on one chip)
 - CPM + GFX + WiFi + MP3 + Keyb
 - Startup HOOK for YatlCPM (AUTOEXEC String)
@@ -27,9 +28,12 @@
 
 - [x] TFT  ILI9341 (lib: TFT_eSPI)
 - [x] SD Card ( have to wire Card CS ) (lib: SD esp32 version)
-- [ ] MCP23017 w/ keypad lib 8x8
+- [x] MCP23017 w/ keypad lib 8x8
   - [x] lib install
   - [x] pinout
-  - [ ] wiring real Keyb on it
+  - [x] wiring real Keyb on it
   - [x] test w/ SD + Screen
+- [ ] DFPlayer MP3
+- [ ] LED
+- [ ] Buzzer
 - [ ] YatlCPM
