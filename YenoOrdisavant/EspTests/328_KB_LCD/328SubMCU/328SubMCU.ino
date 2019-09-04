@@ -19,6 +19,14 @@
 //====================================================================================
 //                                    Settings
 //====================================================================================
+#include <SoftwareSerial.h>  // http://arduino.cc/en/Reference/softwareSerial
+
+#define SF_RX  13  // Rx Pin
+#define SF_TX  12  // Tx Pin
+SoftwareSerial bridge(SF_RX, SF_TX);  // (Rx, Tx) 
+
+#define LED_PIN 13
+
 
 //====================================================================================
 //                                    LCD 20x4
@@ -33,7 +41,7 @@ void setupLCD() {
 
   lcd.setBacklight(LOW);
   lcd.clear();
-//   lcd.home ();                   // go home
+  // lcd.home ();                   // go home
   lcd.setCursor ( 0, 0 );
 }
 
@@ -69,14 +77,17 @@ void setupKeyb() {
     customKeypad.begin();
 }
 
-void pollKeyb() {
+int pollKeyb() {
   char customKey = customKeypad.getKey();
   
   if (customKey != NO_KEY){
-    Serial.println(customKey);
-    lcd.setCursor(16,3);
-    lcd.print( (char)customKey );
+    // Serial.println(customKey);
+    // lcd.setCursor(16,3);
+    // lcd.print( (char)customKey );
+    return customKey;
   }
+
+  return -1;
 }
 
 
@@ -85,8 +96,15 @@ void pollKeyb() {
 //====================================================================================
 void setup()
 {
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, HIGH);
+
+
   // Serial.begin(115200); // Used for messages and the C array generator
   Serial.begin(9600); // Used for messages and the C array generator
+
+  bridge.begin(9600);
+  bridge.listen();
 
   setupLCD();
   setupKeyb();
@@ -117,43 +135,156 @@ long t0,t1,t,avg;
 
 int loopCpt = -1;
 
+// ===========================================
+// ============ Serial Port Routines =========
+#define PORT_NONE 0
+#define PORT_HARD 1
+#define PORT_SOFT 2
+char line[20+1];
+
+int serReadLine(int port) {
+  memset(line, 0x00, 20+1);
+  if ( port == PORT_HARD ) { return Serial.readBytesUntil('\n', line, 20); }
+  return bridge.readBytesUntil('\n', line, 20);
+}
+
+int serRead(int port) {
+  if ( port == PORT_HARD ) { return Serial.read(); }
+  return bridge.read();
+}
+
+int serWrite(int port, char ch) {
+  if ( port == PORT_HARD ) { return Serial.write( (int)ch ); }
+  return bridge.write( (int)ch );
+}
+
+int serWrite(int port, char* chs) {
+  if ( port == PORT_HARD ) { Serial.print( chs ); Serial.write( (uint8_t)0x00 ); }
+  bridge.print( chs ); bridge.write( (uint8_t)0x00 );
+}
+
+int probePort() {
+  if ( Serial.available() > 0 ) { return PORT_HARD; }
+  if ( bridge.available() > 0 ) { return PORT_SOFT; }
+  return PORT_NONE;
+}
+
+// ===========================================
+// ==== Keyboard buffer routines =============
+#define KEYB_BUFF_LEN 16
+
+char kBuff[KEYB_BUFF_LEN+1] = {
+  // 0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16/0
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+// ===========================================
+
 void loop()
 {
   if ( loopCpt == -1 ) {
     // first time
     loopCpt = 0;
-    lcd.clear();
+    lcd.clear(); lcd.home();
+    digitalWrite(LED_PIN, LOW);
   }
 
-  t0 = millis();
-  pollKeyb();
-  t1 = millis();
-  t = t1 - t0;
-  if ( t > maxT ) { maxT = t; }
-  if ( t < minT ) { minT = t; }
-  times[ loopCpt ] = t;
 
-  loopCpt++;
-  if ( loopCpt >= SAMPLE_LEN ) {
-    loopCpt = 0;
-    avg = 0;
-    for(int i=0; i < SAMPLE_LEN; i++) {
-      avg += times[i];
+  int port = probePort();
+
+
+  if ( port != PORT_NONE ) {
+    char chr = serRead(port);
+
+    // == LCD Control ==
+    if ( chr == 'C' ) {
+      // cls
+      lcd.clear(); lcd.home();
+
+      return; // skip key reading ?
+    } else if ( chr == 'P' ) {
+      // print
+      int len = serReadLine(port);
+      lcd.print(line);
+
+      return; // ...
+    } else if ( chr == 'c' ) {
+      // setCursor(x,y)
+      int x = serRead(port); // [0..3]
+      int y = serRead(port); // [0..19]
+      lcd.setCursor(x,y);
+
+      return; // ...
     }
-    avg = (long) ((double)avg / (double)SAMPLE_LEN);
+    // == KEYB Control ==
+    else if ( chr == 'K' ) {
+      // clear Key buffer
+      memset( kBuff, 0x00, KEYB_BUFF_LEN+1 );
+
+      return; // ...
+    } else if ( chr == 'k' ) {
+      // return kBuff content
+      serWrite( port, kBuff );
+      memset( kBuff, 0x00, KEYB_BUFF_LEN+1 );
+
+      return; // ...
+    }
+    // == LED Control ==
+    else if ( chr == 'L' ) {
+      digitalWrite(LED_PIN, HIGH);
+
+      return;
+    }
+    else if ( chr == 'l' ) {
+      digitalWrite(LED_PIN, LOW);
+
+      return;
+    }
+
   }
-  char msg[20+1]; memset(msg, 0x00, 20+1);
 
-  lcd.home(); memset(msg, 0x20, 20);
-  sprintf(msg, "AVG:%lu", avg); // %ld -> long signed / %lu long unsigned
-  lcd.print(msg); lcd.setCursor(0, 1); memset(msg, 0x20, 20);
-  sprintf(msg, "MIN:%lu", minT);
-  lcd.print(msg); lcd.setCursor(0, 2);  memset(msg, 0x20, 20);
-  sprintf(msg, "MAX:%lu", maxT);
-  lcd.print(msg); lcd.setCursor(0, 3);  memset(msg, 0x20, 20);
+  int currentBufferLen = strlen( kBuff );
+  if ( currentBufferLen >= KEYB_BUFF_LEN ) {
+    // Keyboard buffer overflow
+    // stop here ...
+    return;
+  }
 
-  minT = 10000;
-  maxT = 0;
+  // ~56msec
+  int k = pollKeyb();
+  if ( k == -1 ) { return; }
+
+  kBuff[ currentBufferLen ] = (char)k;
+
+  // t0 = millis();
+  // pollKeyb();
+  // t1 = millis();
+  // t = t1 - t0;
+  // if ( t > maxT ) { maxT = t; }
+  // if ( t < minT ) { minT = t; }
+  // times[ loopCpt ] = t;
+
+  // loopCpt++;
+  // if ( loopCpt >= SAMPLE_LEN ) {
+  //   loopCpt = 0;
+  //   avg = 0;
+  //   for(int i=0; i < SAMPLE_LEN; i++) {
+  //     avg += times[i];
+  //   }
+  //   avg = (long) ((double)avg / (double)SAMPLE_LEN);
+  // }
+  // char msg[20+1]; memset(msg, 0x00, 20+1);
+
+  // lcd.home(); memset(msg, 0x20, 20);
+  // sprintf(msg, "AVG:%lu", avg); // %ld -> long signed / %lu long unsigned
+  // lcd.print(msg); lcd.setCursor(0, 1); memset(msg, 0x20, 20);
+  // sprintf(msg, "MIN:%lu", minT);
+  // lcd.print(msg); lcd.setCursor(0, 2);  memset(msg, 0x20, 20);
+  // sprintf(msg, "MAX:%lu", maxT);
+  // lcd.print(msg); lcd.setCursor(0, 3);  memset(msg, 0x20, 20);
+
+  // minT = 10000;
+  // maxT = 0;
 }
 
 //====================================================================================
