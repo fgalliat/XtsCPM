@@ -49,11 +49,28 @@
  #define DEFAULT_ROTATION 1 
 #endif
 
+
+#include <HardwareSerial.h>
+//====================================================================================
+//                                    MP3 Player
+//====================================================================================
+HardwareSerial Serial3(1); // use uart3
+#define mp3Serial Serial3
+
+#include "DFPlayer_Simple.h"
+SoundCard sndCard( &mp3Serial );
+
+void setupMp3() {
+    Serial3.begin(9600, SERIAL_8N1, 26, 14); // pins 26 rxY, 14 txY, 9600 bps, 8 bits no parity 1 stop bit
+    sndCard.init();
+    delay(500);
+    sndCard.volume(25);
+}
+
 //====================================================================================
 //                                    MCU Bridge
 //====================================================================================
 
-#include <HardwareSerial.h>
 // HardwareSerial Serial2(2); // use uart2
 
 void cleanBridge() {
@@ -215,19 +232,22 @@ void setup()
   // Serial.begin(115200); // Used for messages and the C array generator
   Serial.begin(9600); // Used for messages and the C array generator
 
-//   setupLCD();
-//   setupKeyb();
   setupBridge();
 
+  lcd_print("Init MP3\n");
+  setupMp3();
+
   // Initialise the SD library before the TFT so the chip select gets set
+  lcd_print("Init SD\n");
   if (!SD.begin(SD_CS)) {
     Serial.println("Initialisation failed!");
-    lcd_print("SD failed !");
+    lcd_print("! SD failed !");
     while (1) yield(); // Stay here twiddling thumbs waiting
   }
   Serial.println("\r\nInitialisation done.");
 
   // Now initialise the TFT
+  lcd_print("Init TFT\n");
   tft.begin();
   tft.setRotation(DEFAULT_ROTATION);  // 0 & 2 Portrait. 1 & 3 landscape
   tft.fillScreen(TFT_BLACK);
@@ -292,6 +312,13 @@ void loop()
 
   t0 = millis();
   char key = pollKeyb();
+
+  // current Space keySymbol
+  if ( key == 'z' ) {
+      if ( sndCard.isPlaying() ) { sndCard.stop(); }
+      else { sndCard.play(1); }
+  }
+
   t1 = millis();
   t = t1 - t0;
   if ( t > maxT ) { maxT = t; }
