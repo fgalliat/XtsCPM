@@ -8,12 +8,14 @@ void drawBmp(const char *filename, int16_t x, int16_t y) {
 
   File bmpFS;
 
+  drive_led(true);
   // Open requested file on SD card
   bmpFS = SD.open(filename);
 
   if (!bmpFS)
   {
     Serial.print("File not found");
+    drive_led(false);
     return;
   }
 
@@ -65,6 +67,7 @@ void drawBmp(const char *filename, int16_t x, int16_t y) {
     else Serial.println("BMP format not recognized.");
   }
   bmpFS.close();
+  drive_led(false);
 }
 
 

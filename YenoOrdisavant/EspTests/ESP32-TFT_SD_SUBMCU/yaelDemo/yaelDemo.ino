@@ -64,12 +64,29 @@ void cleanBridge() {
 
 // forward symbol
 void cleanKeyb();
+void led(bool state);
 
 void setupBridge() {
     // Serial2.begin(9600, SERIAL_8N1, 16, 17); // pins 16 rx2, 17 tx2, 9600 bps, 8 bits no parity 1 stop bit
     Serial2.begin(9600);
     cleanBridge();
+    led(true);
     cleanKeyb();
+    led(false);
+}
+
+//====================================================================================
+//                                    Led
+//====================================================================================
+
+void led(bool state) {
+    if ( state ) { Serial2.write('L'); }
+    else  { Serial2.write('l'); }
+    delay(1);
+}
+
+void drive_led(bool state) {
+    led(state);
 }
 
 //====================================================================================

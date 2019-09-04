@@ -15,8 +15,10 @@ void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
 
     File pakFile;
 
+    drive_led(true);
     if (!(pakFile = SD.open(filename))) {
         Serial.println("PAK File not found");
+        drive_led(false);
         return;
     }
 
@@ -59,4 +61,5 @@ void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
 
 
     pakFile.close();
+    drive_led(false);
 }
