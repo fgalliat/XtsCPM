@@ -188,8 +188,23 @@ void setup()
 //                                    Loop
 //====================================================================================
 int numImg = 0;
+
+#define SAMPLE_LEN 100
+long times[SAMPLE_LEN];
+long maxT = 0;
+long minT = 10000;
+long t0,t1,t,avg;
+
+int loopCpt = -1;
+
 void loop()
 {
+  if ( loopCpt == -1 ) {
+    // first time
+    loopCpt = 0;
+  }
+
+
   // tft.fillScreen(random(0xFFFF));
   // // drawBmp("/parrot.bmp", 0, 0);//, 16);
   // drawBmp("/Z/0/GIRL.BMP", 0, 0);
@@ -200,7 +215,35 @@ void loop()
   // if ( numImg++ >= 5 ) { numImg=0; } 
   // delay(4000);
 
+  t0 = millis();
   pollKeyb();
+  t1 = millis();
+  t = t1 - t0;
+  if ( t > maxT ) { maxT = t; }
+  if ( t < minT ) { minT = t; }
+  times[ loopCpt ] = t;
+
+  loopCpt++;
+  if ( loopCpt >= SAMPLE_LEN ) {
+    loopCpt = 0;
+    avg = 0;
+    for(int i=0; i < SAMPLE_LEN; i++) {
+      avg += times[i];
+    }
+    avg = (long) ((double)avg / (double)SAMPLE_LEN);
+  }
+  char msg[20+1]; memset(msg, 0x00, 20);
+
+  lcd.clear(); lcd.home(); memset(msg, 0x00, 20);
+  sprintf(msg, "AVG:%lu", avg); // %ld -> long signed / %lu long unsigned
+  lcd.print(msg); lcd.setCursor(0, 1); memset(msg, 0x00, 20);
+  sprintf(msg, "MIN:%lu", minT);
+  lcd.print(msg); lcd.setCursor(0, 2);  memset(msg, 0x00, 20);
+  sprintf(msg, "MAX:%lu", maxT);
+  lcd.print(msg); lcd.setCursor(0, 3);  memset(msg, 0x00, 20);
+
+  minT = 10000;
+  maxT = 0;
 }
 //====================================================================================
 
