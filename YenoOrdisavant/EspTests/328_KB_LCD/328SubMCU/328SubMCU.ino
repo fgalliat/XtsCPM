@@ -21,8 +21,8 @@
 //====================================================================================
 #include <SoftwareSerial.h>  // http://arduino.cc/en/Reference/softwareSerial
 
-#define SF_RX  13  // Rx Pin
-#define SF_TX  12  // Tx Pin
+#define SF_RX  10  // Rx Pin
+#define SF_TX  11  // Tx Pin
 SoftwareSerial bridge(SF_RX, SF_TX);  // (Rx, Tx) 
 
 #define LED_PIN 13
