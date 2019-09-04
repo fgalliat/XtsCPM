@@ -99,6 +99,7 @@ void setup()
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, HIGH);
 
+  setupLCD(); // a bit long
 
   // Serial.begin(115200); // Used for messages and the C array generator
   Serial.begin(9600); // Used for messages and the C array generator
@@ -106,32 +107,24 @@ void setup()
   bridge.begin(9600);
   bridge.listen();
 
-  setupLCD();
   setupKeyb();
 
   // aux screen
   lcd.setCursor(0,0);
-  lcd.print("== Xtase @Aug2019 ==");
-  lcd.setCursor(0,1);
-  //         12345678901234567890
-  lcd.print("OrdiSavant new YATL");
-  lcd.setCursor(0,2);
-  lcd.print("Layout...");
-  lcd.setCursor(0,3);
-  lcd.print("Have fun !");
+  lcd.print("ready");
 
 }
 
 //====================================================================================
 //                                    Loop
 //====================================================================================
-int numImg = 0;
+// int numImg = 0;
 
 #define SAMPLE_LEN 100
-long times[SAMPLE_LEN];
-long maxT = 0;
-long minT = 10000;
-long t0,t1,t,avg;
+// long times[SAMPLE_LEN];
+// long maxT = 0;
+// long minT = 10000;
+// long t0,t1,t,avg;
 
 int loopCpt = -1;
 
@@ -185,7 +178,7 @@ void loop()
   if ( loopCpt == -1 ) {
     // first time
     loopCpt = 0;
-    lcd.clear(); lcd.home();
+    // lcd.clear(); lcd.home();
     digitalWrite(LED_PIN, LOW);
   }
 
