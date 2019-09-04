@@ -62,11 +62,74 @@ void cleanBridge() {
     }
 }
 
+// forward symbol
+void cleanKeyb();
+
 void setupBridge() {
     // Serial2.begin(9600, SERIAL_8N1, 16, 17); // pins 16 rx2, 17 tx2, 9600 bps, 8 bits no parity 1 stop bit
     Serial2.begin(9600);
     cleanBridge();
+    cleanKeyb();
 }
+
+//====================================================================================
+//                                    Keyboard
+//====================================================================================
+
+#define KB_BUFF_LEN 20
+char keyBuff[KB_BUFF_LEN + 1];
+bool firstKeyUse = true;
+
+long lastKeyTime = millis();
+
+void cleanKeyb() {
+    Serial2.write((uint8_t)'K');
+    delay(2);
+}
+
+char pollKeyb() {
+
+    if ( firstKeyUse ) {
+        firstKeyUse = false;
+        memset(keyBuff, 0x00, KB_BUFF_LEN+1);
+    }
+
+    int tlen = strlen( keyBuff );
+    if ( tlen == 0 && ( millis() - lastKeyTime > 60 ) ) {
+      Serial2.write( (uint8_t)'k');  
+      delay(4);
+      lastKeyTime = millis();
+    } 
+    
+    if ( tlen < KB_BUFF_LEN ) {
+        while( Serial2.available() ) {
+            keyBuff[ tlen++ ] = (char)Serial2.read();
+            if ( tlen >= KB_BUFF_LEN ) {
+                break;
+            }
+        }
+        keyBuff[ tlen ] = 0x00;
+    }
+
+    char customKey = 0x00;
+
+    if ( tlen > 0 ) {
+        customKey = keyBuff[0];
+
+        // memmove ....
+        for(int i=1; i < tlen; i++) {
+            keyBuff[i-1] = keyBuff[i];
+        }
+        keyBuff[ tlen-1 ] = 0x00;
+        keyBuff[ tlen ] = 0x00;
+    }
+
+return customKey;
+}
+
+// //====================================================================================
+// //                                    LCD 20x4
+// //====================================================================================
 
 void lcd_clear() {
     Serial2.write( (uint8_t)'C' );
@@ -126,106 +189,6 @@ TFT_eSPI tft = TFT_eSPI();
 #include "drawPAK.h"
 #include "drawBMP.h"
 
-//====================================================================================
-//                                    Keyboard
-//====================================================================================
-// #include "Keypad_MC17.h"
-// #include <Keypad.h>        // from Arduino's libs
-// #include <Wire.h>          // from Arduino's libs
-
-// #define KEYB_I2CADDR 0x20
-
-// const byte K_ROWS = 8; // eight rows
-// const byte K_COLS = 8; // eight columns
-// //define the cymbols on the buttons of the keypads
-// char hexaKeys[K_ROWS][K_COLS] = {
-//   {'0', '1', '2', '3', '4', '5', '6', '7' }, // 1
-//   {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' }, // 2 
-//   {'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p' }, // 3
-//   {'q', 'r', 's', 't', 'u', 'v', 'w', 'x' }, // 4
-//   {'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F' }, // 5
-//   {'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N' }, // 6
-//   {'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V' }, // 7
-//   {'W', 'X', 'Y', 'Z', '&', '#', '(', ')' }, // 8
-// };
-// byte rowPins[K_ROWS] = {7, 6, 5, 4, 3, 2, 1, 0}; //connect to the row pinouts of the keypad
-// byte colPins[K_COLS] = {15, 14, 13, 12, 11, 10, 9, 8}; //connect to the column pinouts of the keypad
-
-// //initialize an instance of class NewKeypad
-// Keypad_MC17 customKeypad( makeKeymap(hexaKeys), rowPins, colPins, K_ROWS, K_COLS, KEYB_I2CADDR ); 
-
-// void setupKeyb() {
-//     customKeypad.begin();
-// }
-
-#define KB_BUFF_LEN 20
-char keyBuff[KB_BUFF_LEN + 1];
-bool firstKeyUse = true;
-
-long lastKeyTime = millis();
-
-char pollKeyb() {
-//   char customKey = customKeypad.getKey();
-  
-//   if (customKey != NO_KEY){
-//     Serial.println(customKey);
-//     tft.print( (char)customKey );
-//   }
-
-    if ( firstKeyUse ) {
-        firstKeyUse = false;
-        memset(keyBuff, 0x00, KB_BUFF_LEN+1);
-    }
-
-    int tlen = strlen( keyBuff );
-    if ( tlen == 0 && ( millis() - lastKeyTime > 60 ) ) {
-      Serial2.write( (uint8_t)'k');  
-      delay(4);
-      lastKeyTime = millis();
-    } 
-    
-    if ( tlen < KB_BUFF_LEN ) {
-        while( Serial2.available() ) {
-            keyBuff[ tlen++ ] = (char)Serial2.read();
-            if ( tlen >= KB_BUFF_LEN ) {
-                break;
-            }
-        }
-        keyBuff[ tlen ] = 0x00;
-    }
-
-    char customKey = 0x00;
-
-    if ( tlen > 0 ) {
-        customKey = keyBuff[0];
-
-        // memmove ....
-        for(int i=1; i < tlen; i++) {
-            keyBuff[i-1] = keyBuff[i];
-        }
-        keyBuff[ tlen-1 ] = 0x00;
-        keyBuff[ tlen ] = 0x00;
-    }
-
-return customKey;
-}
-
-// //====================================================================================
-// //                                    LCD 20x4
-// //====================================================================================
-// #include <LCD.h>
-// #include <LiquidCrystal_I2C.h>
-
-// LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address
-
-// void setupLCD() {
-//   lcd.begin(20,4);
-
-//   lcd.setBacklight(LOW);
-//   lcd.clear();
-// //   lcd.home ();                   // go home
-//   lcd.setCursor ( 0, 0 );
-// }
 
 //====================================================================================
 //                                    Setup
