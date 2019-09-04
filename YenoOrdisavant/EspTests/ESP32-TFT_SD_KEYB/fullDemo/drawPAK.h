@@ -42,12 +42,14 @@ void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
         int ct = pakFile.read( (uint8_t*)scanArray, SCAN_ARRAY_HEIGHT * w*2 ); // *2 cf U16
         if ( ct <= 0 ) { Serial.println("Oups EOF !"); break; }
 
+#if not MODE_4INCH
         // Cf ESP32 isn't an ARM -> it's a RISC MCU
         for(int i=0; i < ct/2; i++) {
             int u80 = scanArray[ (i)+0 ] / 256;
             int u81 = scanArray[ (i)+0 ] % 256;
             scanArray[i] = (u81*256)+u80;            
         }
+#endif
 
         int usedHeight = SCAN_ARRAY_HEIGHT;
         usedHeight = ct / 2 / w;

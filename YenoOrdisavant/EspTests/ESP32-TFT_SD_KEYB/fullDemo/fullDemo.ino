@@ -7,7 +7,7 @@
  * 
  * DOIT ESP32 DEVKIT V1
  * 
- * for TFT-eSPI lib, in User_Setup.h, @EOF : add ::
+ * for TFT-eSPI lib, in User_Setup.h, @EOF : add :: -- (now see TFT4inch Settings how-to)
  * // ===== Xtase Settings =====
  * #define TFT_MISO 19
  * #define TFT_MOSI 23
@@ -26,7 +26,28 @@
  * 
  * ESP32 + ILI9341 Screen + SDCard + MCP23017 Keyboard decoder
  * 
+ * (Sept 2109) - w/ RPI 4inch TFT Display
+ * ESP32 + ILI9486 Screen + SDCard + MCP23017 Keyboard decoder
+ * TFT_CS -> 5
+ * TS_CS  -> 2
+ * SD_CS  -> 4
+ * 
  */
+
+//====================================================================================
+//                                    Settings
+//====================================================================================
+
+#define MODE_4INCH 1
+#if MODE_4INCH
+ #define TFT_WIDTH 480
+ #define TFT_HEIGHT 320
+ #define DEFAULT_ROTATION 3
+#else
+ #define TFT_WIDTH 320
+ #define TFT_HEIGHT 240
+ #define DEFAULT_ROTATION 1 
+#endif
 
 
 //====================================================================================
@@ -56,8 +77,6 @@ TFT_eSPI tft = TFT_eSPI();
 
 #include "drawPAK.h"
 #include "drawBMP.h"
-
-#define DEFAULT_ROTATION 1
 
 //====================================================================================
 //                                    Keyboard
@@ -142,10 +161,11 @@ void setup()
   tft.fillScreen(TFT_BLACK);
 
   // Draw Wallpaper
-  tft.setRotation(2);
+  tft.setRotation(DEFAULT_ROTATION == 1 ? 2 : 0);
   tft.fillScreen(random(0xFFFF));
   drawBmp("/Z/0/GIRL.BMP", 0, 0);
   tft.setRotation(DEFAULT_ROTATION);
+  drawImgFromPAK("/z/0/game1-1.pak", 0, 0, 6);
 
   tft.println("Screen OK");
   tft.println("SDCard OK");
