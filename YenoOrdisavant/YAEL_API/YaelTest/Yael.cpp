@@ -1,4 +1,8 @@
 /**
+ * Xtase - fgalliat @Sept2019
+ * 
+ * YAEL routines Impl.
+ * 
  * ESP32 working w/ arduino IDE
  * 
  * Additional board url : https://dl.espressif.com/dl/package_esp32_index.json
@@ -7,47 +11,34 @@
  * 
  * DOIT ESP32 DEVKIT V1
  * 
- * for TFT-eSPI lib, in User_Setup.h, @EOF : add :: -- (now see TFT4inch Settings how-to)
+ * for TFT-eSPI lib, (now see TFT4inch Settings how-to...)
+ * ESP32 + ILI9486 Screen + SDCard + MCP23017 Keyboard decoder
  * // ===== Xtase Settings =====
  * #define TFT_MISO 19
  * #define TFT_MOSI 23
  * #define TFT_SCLK 18
  * #define TFT_CS    5  // Chip select control pin
  * #define TFT_DC   15  // Data Command control pin
- * //#define TFT_RST   4  // Reset pin (could connect to RST pin)
  * #define TFT_RST  -1  // Set TFT_RST to -1 if display RESET is connected to ESP32 board RST
  * 
+ * #define SD_CS     4  // SdCard CHIP-SELECT
+ * #define TS_CS     2  // TouchScreen CHIP-SELECT
  * 
  * 1.3 MB Sktech
  * 320 KB RAM
  *
- *
- * FullDemo#2
+ * SubMCU Bridge on RX2/TX2 (ProMini 328P 3.3v)
  * 
- * (Sept 2109) - w/ RPI 4inch TFT Display
- * ESP32 + ILI9486 Screen + SDCard + MCP23017 Keyboard decoder
- * TFT_CS -> 5
- * TS_CS  -> 2
- * SD_CS  -> 4
- * 
- * SubMCU Bridge on RX2/TX2
- * 
+ * --------------------------
+ * part of XtsCPM project
  */
 
-//====================================================================================
-//                                    Settings
-//====================================================================================
+#include "Arduino.h"
 
-#define MODE_4INCH 1
-#if MODE_4INCH
- #define TFT_WIDTH 480
- #define TFT_HEIGHT 320
- #define DEFAULT_ROTATION 3
-#else
- #define TFT_WIDTH 320
- #define TFT_HEIGHT 240
- #define DEFAULT_ROTATION 1 
-#endif
+#include "Yael.h"
+
+// $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
 
 
 #include <HardwareSerial.h>
@@ -72,6 +63,10 @@ void setupMp3() {
 //====================================================================================
 
 // HardwareSerial Serial2(2); // use uart2
+// can be TX only ...
+// HardwareSerial Serial1(1);
+// Serial1.begin(9600, SERIAL_7E1, 12, -1, true); ....
+
 
 void cleanBridge() {
     while( Serial2.available() ) {
@@ -161,9 +156,9 @@ char pollKeyb() {
 return customKey;
 }
 
-// //====================================================================================
-// //                                    LCD 20x4
-// //====================================================================================
+//====================================================================================
+//                                    LCD 20x4
+//====================================================================================
 
 void lcd_clear() {
     Serial2.write( (uint8_t)'C' );
@@ -190,11 +185,6 @@ void lcd_print(char* str) {
     delay(2);
 }
 
-
-// can be TX only ...
-// HardwareSerial Serial1(1);
-// Serial1.begin(9600, SERIAL_7E1, 12, -1, true); ....
-
 //====================================================================================
 //                                  Libraries
 //====================================================================================
@@ -209,6 +199,8 @@ void lcd_print(char* str) {
 // Invoke TFT library this will set the TFT chip select high
 TFT_eSPI tft = TFT_eSPI();
 
+#include "yael_soft_drawBMP.h"
+#include "yael_soft_drawPAK.h"
 
 // ==== Wiring =====
 #define OWN_SPI_CS   5
@@ -220,14 +212,7 @@ TFT_eSPI tft = TFT_eSPI();
 #define TFT_CS OWN_SPI_CS
 #define SD_CS 4 // SD chip select
 
-#include "drawPAK.h"
-#include "drawBMP.h"
-
-
-//====================================================================================
-//                                    Setup
-//====================================================================================
-void setup()
+bool Y_setup()
 {
   // Serial.begin(115200); // Used for messages and the C array generator
   Serial.begin(9600); // Used for messages and the C array generator
@@ -242,26 +227,15 @@ void setup()
   if (!SD.begin(SD_CS)) {
     Serial.println("Initialisation failed!");
     lcd_print("! SD failed !");
-    while (1) yield(); // Stay here twiddling thumbs waiting
+    return false;
   }
   Serial.println("\r\nInitialisation done.");
 
   // Now initialise the TFT
   lcd_print("Init TFT\n");
   tft.begin();
-  tft.setRotation(DEFAULT_ROTATION);  // 0 & 2 Portrait. 1 & 3 landscape
+  tft.setRotation(DEFAULT_TFT_ROTATION);  // 0 & 2 Portrait. 1 & 3 landscape
   tft.fillScreen(TFT_BLACK);
-
-  // Draw Wallpaper
-  tft.setRotation(DEFAULT_ROTATION == 1 ? 2 : 0);
-  tft.fillScreen(random(0xFFFF));
-  drawBmp("/Z/0/GIRL.BMP", 0, 0);
-  tft.setRotation(DEFAULT_ROTATION);
-  drawImgFromPAK("/z/0/game1-1.pak", 0, 0, 6);
-
-  tft.println("Screen OK");
-  tft.println("SDCard OK");
-  tft.println("Checking Keyboard : ");
 
   // aux screen
   lcd_setCursor(0,0);
@@ -274,93 +248,39 @@ void setup()
   lcd_setCursor(0,3);
   lcd_print("Have fun !");
 
+return true;
 }
 
-//====================================================================================
-//                                    Loop
-//====================================================================================
-int numImg = 0;
+// $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+// $$ YAEL API
 
-#define SAMPLE_LEN 100
-long times[SAMPLE_LEN];
-long maxT = 0;
-long minT = 10000;
-long t0,t1,t,avg;
+bool yael_setup() { return Y_setup(); }
 
-int loopCpt = -1;
-
-bool firstKeyPressed = true;
-
-void loop()
-{
-  if ( loopCpt == -1 ) {
-    // first time
-    loopCpt = 0;
-    cleanBridge();
-  }
-
-
-  // tft.fillScreen(random(0xFFFF));
-  // // drawBmp("/parrot.bmp", 0, 0);//, 16);
-  // drawBmp("/Z/0/GIRL.BMP", 0, 0);
-
-  // tft.setRotation(1);
-  // drawImgFromPAK("/z/0/game1-1.pak", 0, 0, numImg);
-
-  // if ( numImg++ >= 5 ) { numImg=0; } 
-  // delay(4000);
-
-  t0 = millis();
-  char key = pollKeyb();
-
-  // current Space keySymbol
-  if ( key == 'z' ) {
-      if ( sndCard.isPlaying() ) { sndCard.stop(); }
-      else { sndCard.play(1); }
-  }
-
-  t1 = millis();
-  t = t1 - t0;
-  if ( t > maxT ) { maxT = t; }
-  if ( t < minT ) { minT = t; }
-  times[ loopCpt ] = t;
-
-  loopCpt++;
-  if ( loopCpt >= SAMPLE_LEN ) {
-    loopCpt = 0;
-    // avg = 0;
-    // for(int i=0; i < SAMPLE_LEN; i++) {
-    //   avg += times[i];
-    // }
-    // avg = (long) ((double)avg / (double)SAMPLE_LEN);
-
-    // char msg[20+1]; memset(msg, 0x00, 20);
-
-    // lcd_clear(); lcd_home(); memset(msg, 0x00, 20);
-    // sprintf(msg, "AVG:%lu", avg); // %ld -> long signed / %lu long unsigned
-    // lcd_print(msg); lcd_setCursor(0, 1); memset(msg, 0x00, 20);
-    // sprintf(msg, "MIN:%lu", minT);
-    // lcd_print(msg); lcd_setCursor(0, 2);  memset(msg, 0x00, 20);
-    // sprintf(msg, "MAX:%lu", maxT);
-    // lcd_print(msg); lcd_setCursor(0, 3);  memset(msg, 0x00, 20);
-
-    // minT = 10000;
-    // maxT = 0;
-  }
-
-  if ( key != 0x00 ) {
-      tft.print( (char)key );
-
-      if (firstKeyPressed) {
-          lcd_clear();
-          //         12345678901234567890
-          lcd_print("Keyboard works !");
-          firstKeyPressed = false;
-      }
-  }
-
-  delay( 10 );
-
+void yael_tft_cls() { tft.fillScreen(TFT_BLACK); }
+void yael_tft_setCursor(int col, int row) { tft.setCursor(col,row); }
+void yael_tft_print(char ch) { tft.print(ch); }
+void yael_tft_print(char* str) { tft.print(str); }
+void yael_tft_println(char* str) { tft.println(str); }
+void yael_tft_drawBMP(char* filename, int x, int y) { 
+    tft.setRotation(DEFAULT_TFT_ROTATION == 1 ? 2 : 0);
+    drawBmp(filename, x, y);
+    tft.setRotation(DEFAULT_TFT_ROTATION);
 }
-//====================================================================================
+void yael_tft_drawPAK(char* filename, int x, int y, int imgNum) { drawImgFromPAK(filename, x, y, imgNum); }
 
+void yael_lcd_cls() { lcd_clear(); }
+void yael_lcd_setCursor(int col, int row) { lcd_setCursor(col,row); }
+void yael_lcd_print(char* str) { lcd_print(str); }
+
+void yael_mp3Play(int trackNum) { sndCard.play(trackNum); }
+void yael_mp3Loop(int trackNum) { yael_lcd_print( (char*)"(!!) MP3 LOOP NYI" ); }
+void yael_mp3Vol(int volume) { sndCard.volume( volume ); }
+void yael_mp3Pause() { sndCard.pause(); }
+void yael_mp3Stop() { sndCard.stop(); }
+void yael_mp3Next() { sndCard.next(); }
+void yael_mp3Prev() { sndCard.prev(); }
+bool yael_mp3IsPlaying() { return sndCard.isPlaying(); }
+
+void yael_led(bool state) { led(state); }
+
+char yael_keyb_poll() { return pollKeyb(); }
