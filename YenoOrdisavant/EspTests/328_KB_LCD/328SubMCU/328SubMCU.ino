@@ -5,14 +5,12 @@
  * 
  * YAEL SubMCU
  * 
- * 30 KB Sktech
- * 2 KB RAM
- *
+ * 30 KB Sktech -- 27%
+ * 2 KB RAM -- 40%
  *
  * KeybLCD#1
  * 
  * 328 pinout
- * 
  * 
  */
 
@@ -57,15 +55,26 @@ void setupLCD() {
 const byte K_ROWS = 8; // eight rows
 const byte K_COLS = 8; // eight columns
 //define the cymbols on the buttons of the keypads
+// char hexaKeys[K_ROWS][K_COLS] = {
+//   {'0', '1', '2', '3', '4', '5', '6', '7' }, // 1
+//   {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' }, // 2 
+//   {'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p' }, // 3
+//   {'q', 'r', 's', 't', 'u', 'v', 'w', 'x' }, // 4
+//   {'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F' }, // 5
+//   {'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N' }, // 6
+//   {'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V' }, // 7
+//   {'W', 'X', 'Y', 'Z', '&', '#', '(', ')' }, // 8
+// };
 char hexaKeys[K_ROWS][K_COLS] = {
-  {'0', '1', '2', '3', '4', '5', '6', '7' }, // 1
-  {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' }, // 2 
-  {'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p' }, // 3
-  {'q', 'r', 's', 't', 'u', 'v', 'w', 'x' }, // 4
-  {'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F' }, // 5
-  {'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N' }, // 6
-  {'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V' }, // 7
-  {'W', 'X', 'Y', 'Z', '&', '#', '(', ')' }, // 8
+  // 0    1    2    3    4    5    6    7  
+  { '#',0x03, '2', '4', '6', '8', '0',0x00 }, // 0
+  {0x1B, '1', '3', '5', '7', '9', '^',0x00 }, // 1 -- 0x1B is Esc 
+  {0x00, '~', 'z', 'r', 'y', 'i', 'p',0x00 }, // 2
+  {0x00, 'q', 's', 'f', 'h', 'k', 'm', '>' }, // 3
+  {0x00, ' ', 'c', 'b', ',', ':',0xFF, '$' }, // 4 -- 0xFF is Shift
+  {0x00,0xFE, 'x', 'v', 'n', ',', '=','\b' }, // 5 -- 0xFE is Ctrl
+  {0x00, 'w', 'd', 'g', 'j', 'l', '!','\n' }, // 6
+  {0x00, 'a', 'e', 't', 'u', 'o', '^', '<' }, // 7
 };
 byte rowPins[K_ROWS] = {7, 6, 5, 4, 3, 2, 1, 0}; //connect to the row pinouts of the keypad
 byte colPins[K_COLS] = {15, 14, 13, 12, 11, 10, 9, 8}; //connect to the column pinouts of the keypad
