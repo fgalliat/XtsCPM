@@ -33,7 +33,7 @@
   - [x] pinout
   - [x] wiring real Keyb on it
   - [x] test w/ SD + Screen
-- [ ] DFPlayer MP3
-- [ ] LED
+- [x] DFPlayer MP3
+- [x] LED
 - [ ] Buzzer
 - [ ] YatlCPM

@@ -1,0 +1,31 @@
+# YAEL - TODO ( Xtase-fgalliat @Sept2019 )
+
+- [ ] YAEL
+  - [ ] PWR (switch, supply) -> + Ext Port
+  - [ ] USB -> Ext Port
+  - [ ] case drilling
+  - [ ] MainBoard
+  - [ ] Ext Port (specs + building)
+  - [ ] compile XtsCPM
+  - [ ] add Bdos XtsCPM Hooks (Cf specific YAEL Devices Layout)
+- [ ] yael Main MCU (esp32)
+  - [x] TFT ILI9486 480x320 Screen (SPI)
+    - [ ] TouchScreen
+  - [x] SD Card reader (SPI)
+  - [x] DFPlayer MP3 (Serial)
+    - [ ] read BUSY line
+  - [x] MCU Bridge
+  - [ ] BUZZER
+  - [ ] WiFi
+    - [ ] server (telnet)
+    - [ ] HTTP client (GET/POST)
+    - [ ] TELNET client
+- [ ] yael Sub MCU (328P ProMini 3.3v)
+  - [x] LED
+  - [x] LCD 20x4 chars (I2C)
+  - [x] MCP23017 -conected to- YENO OrdiSavant(88) builtin-Keyboard 
+    - [x] decoding
+    - [ ] Map keys
+    - [ ] Map meta-ed Keys
+  - [x] SoftSerial for MCU Bridge
+    - [x] CMD parser
