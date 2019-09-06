@@ -16,7 +16,37 @@
     bool Serial_useable = true;
 
     // TODO
+    #define TFT_CS 5
+    #define TS_CS 2
     #define SD_CS 4
+
+/*
+
+Stack smashing protect failure!
+
+abort() was called at PC 0x400e51e4 on core 1
+
+Backtrace: 0x400893b4:0x3ffb1d80 0x400895e1:0x3ffb1da0 0x400e51e4:0x3ffb1dc0 0x400d1db7:0x3ffb1de0 0x400d1e1d:0x3ffb1e50 0x400d21cd:0x3ffb1e90 0x400d21f9:0x3ffb1eb0 0x400d2bc2:0x3ffb1ed0 0x400d2d9b:0x3ffb1f20 0x400d544d:0x3ffb1f40 0x400dc123:0x3ffb1fb0 0x4008561d:0x3ffb1fd0
+
+Decoding stack results
+0x400893b4: invoke_abort at /Users/ficeto/Desktop/ESP32/ESP32/esp-idf-public/components/esp32/panic.c line 155
+0x400895e1: abort at /Users/ficeto/Desktop/ESP32/ESP32/esp-idf-public/components/esp32/panic.c line 170
+0x400e51e4: __stack_chk_fail at /Users/ficeto/Desktop/ESP32/ESP32/esp-idf-public/components/esp32/stack_check.c line 36
+0x400d1db7: _findnext(unsigned char) at C:\Users\Franck\AppData\Local\Temp\arduino_build_502086\sketch/abstraction_arduino_esp.h line 391
+0x400d1e1d: _findfirst(unsigned char) at C:\Users\Franck\AppData\Local\Temp\arduino_build_502086\sketch/abstraction_arduino_esp.h line 401
+0x400d21cd: _SearchFirst(unsigned short, unsigned char) at C:\Users\Franck\AppData\Local\Temp\arduino_build_502086\sketch/disk.h line 286
+0x400d21f9: _CheckSUB() at C:\Users\Franck\AppData\Local\Temp\arduino_build_502086\sketch/disk.h line 507
+0x400d2bc2: _Bdos() at C:\Users\Franck\AppData\Local\Temp\arduino_build_502086\sketch/cpm.h line 545
+0x400d2d9b: cpu_in(unsigned int) at C:\Users\Franck\AppData\Local\Temp\arduino_build_502086\sketch/cpu.h line 34
+0x400d544d: setup() at C:\Users\Franck\AppData\Local\Temp\arduino_build_502086\sketch/cpu.h line 2765
+0x400dc123: loopTask(void*) at C:\Users\Franck\AppData\Local\Arduino15\packages\esp32\hardware\esp32\1.0.2\cores\esp32\main.cpp line 14
+0x4008561d: vPortTaskWrapper at /Users/ficeto/Desktop/ESP32/ESP32/esp-idf-public/components/freertos/port.c line 143
+
+
+ */
+
+
+
     #define SDINIT SD_CS
   #endif
 #endif
@@ -168,6 +198,24 @@ void setup(void) {
 
   #if YATL_PLATFORM
     setupYatl();
+  #else
+
+    #if YAEL_PLATFORM
+      // TODO : disable Screen & TouchScreen SPI C-select
+      pinMode(TFT_CS, OUTPUT);
+      digitalWrite(TFT_CS, HIGH);
+      pinMode(TS_CS, OUTPUT);
+      digitalWrite(TS_CS, HIGH);
+      // enable SD card C-select
+      pinMode(SD_CS, OUTPUT);
+      digitalWrite(TS_CS, LOW);
+    #endif
+
+    if ( LED > 0 ) {
+      pinMode(LED, OUTPUT);
+      digitalWrite(LED, LOW);
+    }
+    Serial.begin(SERIALSPD);
   #endif
 
   // SerialPort is useable or not .....
@@ -188,6 +236,16 @@ void setup(void) {
   _puts(BOARD);
   _puts("\r\n");
 
+  char ccpFileName[13+1];
+  memset( ccpFileName, 0x00, 13+1 );
+  #if YAEL_PLATFORM
+    // SD.h needs leading "/"
+    sprintf(ccpFileName, "/%s", CCPname);
+  #else
+    sprintf(ccpFileName, "%s", CCPname);
+  #endif
+
+
   _puts("Initializing SD card.\r\n");
 #if defined ADAFRUIT_GRAND_CENTRAL_M4
   if (SD.cardBegin(SDINIT, SD_SCK_MHZ(50))) {
@@ -206,14 +264,16 @@ void setup(void) {
   #endif
 #endif
 
-    if (VersionCCP >= 0x10 || SD.exists(CCPname)) {
+    // if (VersionCCP >= 0x10 || SD.exists(CCPname)) {
+    if (VersionCCP >= 0x10 || SD.exists(ccpFileName)) {
       while (true) {
         _puts(CCPHEAD);
         _PatchCPM();
 	Status = 0;
 #ifndef CCP_INTERNAL
-        if (!_RamLoad((char *)CCPname, CCPaddr)) {
-          _puts("Unable to load the CCP.\r\nCPU halted.\r\n");
+        // if (!_RamLoad((char *)CCPname, CCPaddr)) {
+        if (!_RamLoad((char *)ccpFileName, CCPaddr)) {
+          _puts("Unable to load the CCP [0x01].\r\nCPU halted.\r\n");
           break;
         }
         Z80reset();
@@ -236,10 +296,10 @@ void setup(void) {
 
       }
     } else {
-      _puts("Unable to load CP/M CCP.\r\nCPU halted.\r\n");
+      _puts("Unable to load CP/M CCP [0x02].\r\nCPU halted.\r\n");
     }
   } else {
-    _puts("Unable to initialize SD card.\r\nCPU halted.\r\n");
+    _puts("Unable to initialize SD card [0x03].\r\nCPU halted.\r\n");
   }
 }
 

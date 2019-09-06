@@ -66,13 +66,26 @@ void driveLED(bool state) {
 #define HostOS 0x06
 #endif
 
+
+char _entryName[96+1];
+
+char* getFileEntryPath( char *filename ) {
+	if ( filename == NULL || strlen(filename) <= 0 ) { Serial.println("[GRAVE] null filename"); return NULL; }
+	if ( filename[0] == '/' ) { return filename; }
+	// add leading "/"
+	sprintf( _entryName, "/%s", filename );
+	// Serial.print( "FS: " );	Serial.println( _entryName );
+	return _entryName;
+}
+
+
 /* Memory abstraction functions */
 /*===============================================================================*/
 bool _RamLoad(char *filename, uint16 address) {
 	File f;
 	bool result = false;
 
-	if (f = SD.open(filename, FILE_READ)) {
+	if (f = SD.open( getFileEntryPath(filename), FILE_READ)) {
 		while (f.available())
 			_RamWrite(address++, f.read());
 		f.close();
@@ -97,7 +110,7 @@ typedef struct {
 
 File _sys_fopen_w(uint8 *filename) {
 	// return(SD.open((char *)filename, O_CREAT | O_WRITE));
-	return(SD.open((char *)filename, O_WRITE));
+	return(SD.open( getFileEntryPath((char *)filename), O_WRITE));
 }
 
 int _sys_fputc(int ch, File f) {
@@ -117,7 +130,7 @@ int _sys_select(uint8 *disk) {
 	File f;
 
 	driveLED(true);
-	if (f = SD.open((char *)disk, O_READ)) {
+	if (f = SD.open( getFileEntryPath((char *)disk), O_READ)) {
 		if (f.isDirectory())
 			result = TRUE;
 		f.close();
@@ -131,7 +144,7 @@ long _sys_filesize(uint8 *filename) {
 	File f;
 
 	driveLED(true);
-	if (f = SD.open((char *)filename, O_RDONLY)) {
+	if (f = SD.open( getFileEntryPath((char *)filename), O_RDONLY)) {
 		l = f.size();
 		f.close();
 	}
@@ -144,7 +157,7 @@ int _sys_openfile(uint8 *filename) {
 	int result = 0;
 
 	driveLED(true);
-	f = SD.open((char *)filename, O_READ);
+	f = SD.open( getFileEntryPath(((char *)filename) ), O_READ);
 	if (f) {
 		f.close();
 		result = 1;
@@ -159,7 +172,7 @@ int _sys_makefile(uint8 *filename) {
 
 	driveLED(true);
 	// f = SD.open((char *)filename, O_CREAT | O_WRITE);
-	f = SD.open((char *)filename, O_WRITE);
+	f = SD.open( getFileEntryPath((char *)filename), O_WRITE);
 	if (f) {
 		f.close();
 		result = 1;
@@ -170,7 +183,7 @@ int _sys_makefile(uint8 *filename) {
 
 int _sys_deletefile(uint8 *filename) {
 	driveLED(true);
-	return(SD.remove((char *)filename));
+	return(SD.remove( getFileEntryPath((char *)filename)) );
 	driveLED(false);
 }
 
@@ -184,7 +197,7 @@ int _sys_renamefile(uint8 *filename, uint8 *newname) {
   Serial.println("(FS) RENAME NYI");
 
 // //   f = SD.open((char *)filename, O_WRITE | O_APPEND);
-//   f = SD.open((char *)filename, O_APPEND_WR );
+//   f = SD.open( getFileEntryPath((char *)filename), O_APPEND_WR );
 //   if (f) {
 //     if (f.rename(SD.vwd(), (char*)newname)) {
 //       f.close();      
@@ -204,7 +217,7 @@ void _sys_logbuffer(uint8 *buffer) {
 	uint8 s = 0;
 	while (*(buffer+s))	// Computes buffer size
 		++s;
-	if(f = SD.open(LogName, O_CREAT | O_APPEND | O_WRITE)) {
+	if(f = SD.open( getFileEntryPath(LogName), O_CREAT | O_APPEND | O_WRITE)) {
 		f.write(buffer, s);
 		f.flush();
 		f.close();
@@ -221,7 +234,7 @@ bool _sys_extendfile(char *fn, unsigned long fpos)
 
 	driveLED(true);
 	// if (f = SD.open(fn, O_WRITE | O_APPEND)) {
-	if (f = SD.open(fn, O_APPEND_WR)) {
+	if (f = SD.open( getFileEntryPath(fn) , O_APPEND_WR)) {
 		if (fpos > f.size()) {
 			for (i = 0; i < f.size() - fpos; ++i) {
 				if (f.write((uint8_t)0) < 0) {
@@ -247,7 +260,7 @@ uint8 _sys_readseq(uint8 *filename, long fpos) {
 
 	driveLED(true);
 	if (_sys_extendfile((char*)filename, fpos))
-		f = SD.open((char*)filename, O_READ);
+		f = SD.open( getFileEntryPath((char*)filename), O_READ);
 	if (f) {
 		if (f.seek(fpos)) {
 			for (i = 0; i < 128; ++i)
@@ -275,7 +288,7 @@ uint8 _sys_writeseq(uint8 *filename, long fpos) {
 
 	driveLED(true);
 	if (_sys_extendfile((char*)filename, fpos))
-		f = SD.open((char*)filename, O_RDWR);
+		f = SD.open( getFileEntryPath((char*)filename), O_RDWR);
 	if (f) {
 		if (f.seek(fpos)) {
 			if (f.write(_RamSysAddr(dmaAddr), 128))
@@ -300,7 +313,7 @@ uint8 _sys_readrand(uint8 *filename, long fpos) {
 
 	driveLED(true);
 	if (_sys_extendfile((char*)filename, fpos))
-		f = SD.open((char*)filename, O_READ);
+		f = SD.open( getFileEntryPath((char*)filename), O_READ);
 	if (f) {
 		if (f.seek(fpos)) {
 			for (i = 0; i < 128; ++i)
@@ -328,7 +341,7 @@ uint8 _sys_writerand(uint8 *filename, long fpos) {
 
 	driveLED(true);
 	if (_sys_extendfile((char*)filename, fpos)) {
-		f = SD.open((char*)filename, O_RDWR);
+		f = SD.open( getFileEntryPath((char*)filename), O_RDWR);
 	}
 	if (f) {
 		if (f.seek(fpos)) {
@@ -348,12 +361,26 @@ uint8 _sys_writerand(uint8 *filename, long fpos) {
 uint8 _findnext(uint8 isdir) {
 	File f;
 	uint8 result = 0xff;
-	uint8 dirname[13];
+	#define FNAME_SECU 6
+	uint8 dirname[13 + FNAME_SECU];
 	bool isfile;
 
 	driveLED(true);
 	while (f = root.openNextFile()) {
         // f.getName((char*)&dirname[0], 13);
+
+		// TODO : BEWARE here with leading '/'
+
+// TODO : FIX THAT -> name / not path
+// A>dir
+
+// A: /A/0/ASM COM : /A/0/CAL COM : /A/0/CCP ASM : /A/0/CCP SUB
+// A: /A/0/DDT COM : /A/0/ED  COM : /A/0/LU  COM : /A/0/LUA COM
+// A: /A/0/LUA SUB : /A/0/LUA Z80 : /A/0/MAC COM : /A/0/PIP COM
+// A: /A/0/TE  COM : /A/0/USQ COM
+
+
+
 		sprintf( (char*)&dirname[0], "%s", f.name() ); // auto add 0-terminated
 
 		isfile = !f.isDirectory();
@@ -382,7 +409,7 @@ uint8 _findfirst(uint8 isdir) {
 	path[2] = filename[2];
 	if (root)
 		root.close();
-	root = SD.open((char *)path); // Set directory search to start from the first position
+	root = SD.open( getFileEntryPath((char *)path)); // Set directory search to start from the first position
 	_HostnameToFCBname(filename, pattern);
 	return(_findnext(isdir));
 }
@@ -393,7 +420,7 @@ uint8 _Truncate(char *filename, uint8 rc) {
 
   driveLED(true);
 //   f = SD.open((char *)filename, O_WRITE | O_APPEND);
-  f = SD.open((char *)filename, O_APPEND_WR);
+  f = SD.open( getFileEntryPath((char *)filename), O_APPEND_WR);
   if (f) {
 
 	// see :: SD/src/utility/SdFat.h:281:  uint8_t truncate(uint32_t size);
@@ -418,7 +445,7 @@ void _MakeUserDir() {
 	uint8 path[4] = { dFolder, FOLDERCHAR, uFolder, 0 };
 
 	driveLED(true);
-	SD.mkdir((char*)path);
+	SD.mkdir( getFileEntryPath((char*)path) );
 	driveLED(false);
 }
 
@@ -430,11 +457,11 @@ uint8 _sys_makedisk(uint8 drive) {
 		uint8 dFolder = drive + '@';
 		uint8 disk[2] = { dFolder, 0 };
 		driveLED(true);
-		if (!SD.mkdir((char*)disk)) {
+		if (!SD.mkdir( getFileEntryPath( (char*)disk) ) ) {
 			result = 0xfe;
 		} else {
 			uint8 path[4] = { dFolder, FOLDERCHAR, '0', 0 };
-			SD.mkdir((char*)path);
+			SD.mkdir( getFileEntryPath( (char*)path) );
 		}
 		driveLED(false);
 	}
