@@ -35,7 +35,7 @@
 
 #include "Arduino.h"
 
-#include "Yael.h"
+#include "xts_yael.h"
 
 // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
@@ -48,7 +48,7 @@
 HardwareSerial Serial3(1); // use uart3
 #define mp3Serial Serial3
 
-#include "DFPlayer_Simple.h"
+#include "xts_yael_dev_dfplayer.h"
 SoundCard sndCard( &mp3Serial );
 
 void setupMp3() {
@@ -199,8 +199,8 @@ void lcd_print(char* str) {
 // Invoke TFT library this will set the TFT chip select high
 TFT_eSPI tft = TFT_eSPI();
 
-#include "yael_soft_drawBMP.h"
-#include "yael_soft_drawPAK.h"
+#include "xts_yael_soft_drawBMP.h"
+#include "xts_yael_soft_drawPAK.h"
 
 // ==== Wiring =====
 #define OWN_SPI_CS   5

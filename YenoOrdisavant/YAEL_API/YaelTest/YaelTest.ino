@@ -5,7 +5,7 @@
  * 
  *  
  */
-#include "Yael.h"
+#include "xts_yael.h"
 
 void setup()
 {
@@ -13,8 +13,11 @@ void setup()
   if ( !ok ) {
       yael_lcd_cls();
       yael_lcd_setCursor(1,1);
-      yael_lcd_print("Something Wrong !");
+      yael_lcd_print("  Something Wrong !  ");
       while (1) {
+          yael_lcd_setCursor(1,1);
+          yael_lcd_print("  Something Wrong !  ");
+          delay(500);
           yield();
       }
   }

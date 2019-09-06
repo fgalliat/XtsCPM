@@ -38,7 +38,7 @@
 #include "Arduino.h"
  
 //  #include "SoundCard.h"
- #include "DFPlayer_Simple.h"
+ #include "xts_yael_dev_dfplayer.h"
  
 //   void _error(char* str) { printf("(EE) "); printf(str); printf("\n"); }
   void _error(char* str) { Serial.print("(EE) "); Serial.print(str); Serial.print("\n"); }
