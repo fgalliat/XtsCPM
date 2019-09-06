@@ -123,7 +123,11 @@
 #define sDELAY 50
 #define DELAY 100
 
-#include "abstraction_arduino.h"
+#ifdef ESP32
+  #include "abstraction_arduino_esp.h"
+#else
+  #include "abstraction_arduino.h"
+#endif
 
 #ifdef ESP32        // ESP32 specific CP/M BDOS call routines
   #include "esp32.h"

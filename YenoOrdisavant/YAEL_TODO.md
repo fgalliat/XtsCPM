@@ -7,6 +7,8 @@
   - [ ] MainBoard
   - [ ] Ext Port (specs + building)
   - [ ] compile XtsCPM
+    - [ ] FS : rename NYI
+    - [ ] FS : truncate NYI
   - [ ] add Bdos XtsCPM Hooks (Cf specific YAEL Devices Layout)
 - [ ] yael Main MCU (esp32)
   - [x] TFT ILI9486 480x320 Screen (SPI)
