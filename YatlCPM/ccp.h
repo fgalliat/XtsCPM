@@ -407,6 +407,7 @@ uint8 _ccp_lua(void) {
 
 // External (.COM) command
 uint8 _ccp_ext(void) {
+Serial.println("(.COM) exec a");
 	uint8 error = TRUE;
 	uint8 found, drive, user = 0;
 	uint16 loadAddr = defLoad;
@@ -414,26 +415,40 @@ uint8 _ccp_ext(void) {
 	_RamWrite(CmdFCB + 9, 'C');
 	_RamWrite(CmdFCB + 10, 'O');
 	_RamWrite(CmdFCB + 11, 'M');
+Serial.println("(.COM) exec b");
+Serial.println(CmdFCB);
 
 	drive = _RamRead(CmdFCB);							// Get the drive from the command FCB
 	found = !_ccp_bdos(F_OPEN, CmdFCB);					// Look for the program on the FCB drive, current or specified
+Serial.println("(.COM) exec c");
 	if (!found) {										// If not found
+Serial.println("(.COM) exec d");
 		if (!drive) {									// and the search was on the default drive
+Serial.println("(.COM) exec e");
 			_RamWrite(CmdFCB, 0x01);					// Then look on drive A: user 0
 			if (curUser) {
+Serial.println("(.COM) exec f");
 				user = curUser;							// Save the current user
 				_ccp_bdos(F_USERNUM, 0x0000);			// then set it to 0
+Serial.println("(.COM) exec g");
 			}
+Serial.println("(.COM) exec h");
 			found = !_ccp_bdos(F_OPEN, CmdFCB);
+Serial.println("(.COM) exec i");
 			if (!found) {								// If still not found then
+Serial.println("(.COM) exec j");
 				if (curUser) {							// If current user not = 0
+Serial.println("(.COM) exec k");
 					_RamWrite(CmdFCB, 0x00);			// look on current drive user 0
 					found = !_ccp_bdos(F_OPEN, CmdFCB);	// and try again
+Serial.println("(.COM) exec l");
 				}
 			}
 		}
 	}
+Serial.println("(.COM) exec m");
 	if (found) {									// Program was found somewhere
+Serial.println("(.COM) exec n");
 		_puts("\r\n");
 		_ccp_bdos(F_DMAOFF, loadAddr);				// Sets the DMA address for the loading
 		while (!_ccp_bdos(F_READ, CmdFCB)) {		// Loads the program into memory
@@ -445,13 +460,13 @@ uint8 _ccp_ext(void) {
 			_ccp_bdos(F_DMAOFF, loadAddr);			// Points the DMA offset to the next loadAddr
 		}
 		_ccp_bdos(F_DMAOFF, defDMA);				// Points the DMA offset back to the default
-
+Serial.println("(.COM) exec o");
 		if (user) {									// If a user was selected
 			user = 0;
 			_ccp_bdos(F_USERNUM, curUser);			// Set it back
 		}
 		_RamWrite(CmdFCB, drive);
-
+Serial.println("(.COM) exec p");
 		// Place a trampoline to call the external command
 		// as it may return using RET instead of JP 0000h
 		loadAddr = Trampoline;
@@ -459,22 +474,24 @@ uint8 _ccp_ext(void) {
 		_RamWrite16(loadAddr + 1, defLoad);
 		_RamWrite(loadAddr + 3, JP);				// JP RETTOCCP
 		_RamWrite16(loadAddr + 4, BIOSjmppage + 0x33);
-
+Serial.println("(.COM) exec q");
 		Z80reset();									// Resets the Z80 CPU
 		SET_LOW_REGISTER(BC, _RamRead(0x0004));		// Sets C to the current drive/user
 		PC = loadAddr;								// Sets CP/M application jump point
 		SP = BDOSjmppage;							// Sets the stack to the top of the TPA
-
+Serial.println("(.COM) exec r");
 		Z80run();									// Starts Z80 simulation
-
+Serial.println("(.COM) exec s");
 		error = FALSE;
 	}
-
+Serial.println("(.COM) exec t");
 	if (user) {										// If a user was selected
 		_ccp_bdos(F_USERNUM, curUser);				// Set it back
+Serial.println("(.COM) exec v");
 	}
+Serial.println("(.COM) exec w");
 	_RamWrite(CmdFCB, drive);						// Set the command FCB drive back to what it was
-
+Serial.println("(.COM) exec z");
 	return(error);
 }
 

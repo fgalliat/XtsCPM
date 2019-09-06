@@ -236,8 +236,14 @@ bool Y_setup()
 
   setupBridge();
 
-  lcd_print("Init MP3\n");
-  setupMp3();
+//   lcd_print("Init MP3\n");
+//   setupMp3();
+
+  // Now initialise the TFT
+  lcd_print("Init TFT\n");
+  tft.begin();
+  tft.setRotation(DEFAULT_TFT_ROTATION);  // 0 & 2 Portrait. 1 & 3 landscape
+  tft.fillScreen(TFT_BLACK);
 
   // Initialise the SD library before the TFT so the chip select gets set
   // have some issues w/ RESETing Screen ...
@@ -263,11 +269,14 @@ bool Y_setup()
   }
   Serial.println("\r\nSD Initialisation done.");
 
-  // Now initialise the TFT
-  lcd_print("Init TFT\n");
-  tft.begin();
-  tft.setRotation(DEFAULT_TFT_ROTATION);  // 0 & 2 Portrait. 1 & 3 landscape
-  tft.fillScreen(TFT_BLACK);
+  lcd_print("Init MP3\n");
+  setupMp3();
+
+//   // Now initialise the TFT
+//   lcd_print("Init TFT\n");
+//   tft.begin();
+//   tft.setRotation(DEFAULT_TFT_ROTATION);  // 0 & 2 Portrait. 1 & 3 landscape
+//   tft.fillScreen(TFT_BLACK);
 
   // aux screen
   lcd_setCursor(0,0);
