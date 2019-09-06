@@ -78,6 +78,18 @@ char* getFileEntryPath( char *filename ) {
 	return _entryName;
 }
 
+char* getFileEntryName( char* filepath ) {
+	if ( filepath == NULL || strlen(filepath) <= 0 ) { Serial.println("[GRAVE] null filepath"); return NULL; }
+	int tlen = strlen(filepath);
+	int lastSlash = -1;
+	for (int i = 0; i < tlen; i++) {
+		if ( filepath[i] == '/' ) {
+			lastSlash = i;
+		}
+	}
+	// -1 protected
+	return &filepath[lastSlash+1];
+}
 
 /* Memory abstraction functions */
 /*===============================================================================*/
@@ -379,9 +391,7 @@ uint8 _findnext(uint8 isdir) {
 // A: /A/0/LUA SUB : /A/0/LUA Z80 : /A/0/MAC COM : /A/0/PIP COM
 // A: /A/0/TE  COM : /A/0/USQ COM
 
-
-
-		sprintf( (char*)&dirname[0], "%s", f.name() ); // auto add 0-terminated
+		sprintf( (char*)&dirname[0], "%s", getFileEntryName( (char*) f.name() ) ); // auto add 0-terminated
 
 		isfile = !f.isDirectory();
 		f.close();
