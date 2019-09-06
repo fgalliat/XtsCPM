@@ -47,8 +47,8 @@
   #define TS_CS 2
   #define SD_CS 4
 
-  // #define HAS_BUILTIN_LCD 1
-  // #define USE_BUILTIN_LCD 1
+  #define HAS_BUILTIN_LCD 1
+  #define USE_BUILTIN_LCD 1
   // #define HAS_KEYBOARD 1
 
   #define SDINIT SD_CS

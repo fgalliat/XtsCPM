@@ -17,8 +17,11 @@
 #define O_READ       "r"
 #define O_RDONLY     "r"
 #define O_WRITE      "w"
+// does it is supported ????
 #define O_RDWR       "rw"
-#define O_APPEND_WR  "wa"
+// #define O_APPEND_WR  "wa"
+// just "a"
+#define O_APPEND_WR  "a"
 
 
 #ifdef YATL_PLATFORM
@@ -300,7 +303,8 @@ uint8 _sys_writeseq(uint8 *filename, long fpos) {
 
 	driveLED(true);
 	if (_sys_extendfile((char*)filename, fpos))
-		f = SD.open( getFileEntryPath((char*)filename), O_RDWR);
+		// f = SD.open( getFileEntryPath((char*)filename), O_RDWR);
+		f = SD.open( getFileEntryPath((char*)filename), O_WRITE);
 	if (f) {
 		if (f.seek(fpos)) {
 			if (f.write(_RamSysAddr(dmaAddr), 128))
@@ -353,7 +357,8 @@ uint8 _sys_writerand(uint8 *filename, long fpos) {
 
 	driveLED(true);
 	if (_sys_extendfile((char*)filename, fpos)) {
-		f = SD.open( getFileEntryPath((char*)filename), O_RDWR);
+		//f = SD.open( getFileEntryPath((char*)filename), O_RDWR);
+		f = SD.open( getFileEntryPath((char*)filename), O_WRITE);
 	}
 	if (f) {
 		if (f.seek(fpos)) {
@@ -415,6 +420,7 @@ uint8 _findfirst(uint8 isdir) {
 }
 
 uint8 _Truncate(char *filename, uint8 rc) {
+	Serial.println("(FS) TRUNCATE NYI");
   File f;
   int result = 0;
 

@@ -312,12 +312,12 @@ void _Bios(void) {
 		Status = 3;
 		break;
 	default:
-#ifdef DEBUG	// Show unimplemented BIOS calls only when debugging
+// #ifdef DEBUG	// Show unimplemented BIOS calls only when debugging
 		_puts("\r\nUnimplemented BIOS call.\r\n");
 		_puts("C = 0x");
 		_puthex8(ch);
 		_puts("\r\n");
-#endif
+// #endif
 		break;
 	}
 #ifdef DEBUGLOG
@@ -827,12 +827,12 @@ void _Bdos(void) {
 		Unimplemented calls get listed
 		*/
 	default:
-#ifdef DEBUG	// Show unimplemented BDOS calls only when debugging
+//#ifdef DEBUG	// Show unimplemented BDOS calls only when debugging
 		_puts("\r\nUnimplemented BDOS call.\r\n");
 		_puts("C = 0x");
 		_puthex8(ch);
 		_puts("\r\n");
-#endif
+//#endif
 		break;
 	}
 

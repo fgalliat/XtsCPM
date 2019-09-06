@@ -11,6 +11,7 @@
     - [ ] FS : truncate NYI
     - [ ] LED -> redirect to function -> redirect to YAEL & YATL APIs
     - [ ] 115200 bps terminal setting
+    - [ ] TTY console -> code to reuse....
   - [ ] add Bdos XtsCPM Hooks (Cf specific YAEL Devices Layout)
 - [ ] yael Main MCU (esp32)
   - [x] TFT ILI9486 480x320 Screen (SPI)
@@ -29,7 +30,7 @@
   - [x] LCD 20x4 chars (I2C)
   - [x] MCP23017 -conected to- YENO OrdiSavant(88) builtin-Keyboard 
     - [x] decoding
-    - [ ] Map keys
+    - [x] Map keys
     - [ ] Map meta-ed Keys
   - [x] SoftSerial for MCU Bridge
     - [x] CMD parser
