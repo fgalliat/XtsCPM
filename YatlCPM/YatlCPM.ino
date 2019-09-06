@@ -13,6 +13,8 @@
     #define YAEL_PLATFORM 1
     #warning "BEWARE : it's a YAEL config"
 
+    bool Serial_useable = true;
+
     // TODO
     #define SD_CS 4
     #define SDINIT SD_CS
