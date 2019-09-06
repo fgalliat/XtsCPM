@@ -380,17 +380,7 @@ uint8 _findnext(uint8 isdir) {
 	driveLED(true);
 	while (f = root.openNextFile()) {
         // f.getName((char*)&dirname[0], 13);
-
-		// TODO : BEWARE here with leading '/'
-
-// TODO : FIX THAT -> name / not path
-// A>dir
-
-// A: /A/0/ASM COM : /A/0/CAL COM : /A/0/CCP ASM : /A/0/CCP SUB
-// A: /A/0/DDT COM : /A/0/ED  COM : /A/0/LU  COM : /A/0/LUA COM
-// A: /A/0/LUA SUB : /A/0/LUA Z80 : /A/0/MAC COM : /A/0/PIP COM
-// A: /A/0/TE  COM : /A/0/USQ COM
-
+		// getFileEntryName(...) returns only entry name (no path)
 		sprintf( (char*)&dirname[0], "%s", getFileEntryName( (char*) f.name() ) ); // auto add 0-terminated
 
 		isfile = !f.isDirectory();
@@ -526,14 +516,26 @@ uint8 _getche(void) {
 	}
 	
 #ifdef HAS_BUILTIN_LCD
-  if ( currentlyUseScreen() ) { yatl.getScreen()->write(ch); }
+  if ( currentlyUseScreen() ) { 
+	  #if YATL_PLATFORM
+	    yatl.getScreen()->write(ch); 
+	  #elif YAEL_PLATFORM
+	    yael_tft_print(ch); 
+	  #endif
+  }
 #endif
 	return(ch);
 }
 
 void _putch(uint8 ch) {
 #ifdef HAS_BUILTIN_LCD
-  if ( currentlyUseScreen() ) { yatl.getScreen()->write(ch); }
+  if ( currentlyUseScreen() ) { 
+	  #if YATL_PLATFORM
+	    yatl.getScreen()->write(ch); 
+	  #elif YAEL_PLATFORM
+	    yael_tft_print(ch); 
+	  #endif
+  }
 	else
 #endif
 	Serial.write(ch);
@@ -541,7 +543,13 @@ void _putch(uint8 ch) {
 
 void _clrscr(void) {
 #ifdef HAS_BUILTIN_LCD
-  if ( currentlyUseScreen() ) { yatl.getScreen()->cls(); }
+  if ( currentlyUseScreen() ) {
+	  #if YATL_PLATFORM
+	    yatl.getScreen()->cls(); 
+	  #elif YAEL_PLATFORM
+	    yael_tft_cls(); 
+	  #endif
+  }
 	else
 #endif
 	Serial.println("\e[H\e[J");

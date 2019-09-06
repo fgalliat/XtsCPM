@@ -10,44 +10,9 @@
     // but redef. right layout
     #undef XTASE_T36_YATL_LAYOUT
     #define XTASE_ESP_YATL_LAYOUT 1
+
     #define YAEL_PLATFORM 1
     #warning "BEWARE : it's a YAEL config"
-
-    bool Serial_useable = true;
-
-    // TODO
-    #define TFT_CS 5
-    #define TS_CS 2
-    #define SD_CS 4
-
-/*
-
-Stack smashing protect failure!
-
-abort() was called at PC 0x400e51e4 on core 1
-
-Backtrace: 0x400893b4:0x3ffb1d80 0x400895e1:0x3ffb1da0 0x400e51e4:0x3ffb1dc0 0x400d1db7:0x3ffb1de0 0x400d1e1d:0x3ffb1e50 0x400d21cd:0x3ffb1e90 0x400d21f9:0x3ffb1eb0 0x400d2bc2:0x3ffb1ed0 0x400d2d9b:0x3ffb1f20 0x400d544d:0x3ffb1f40 0x400dc123:0x3ffb1fb0 0x4008561d:0x3ffb1fd0
-
-Decoding stack results
-0x400893b4: invoke_abort at /Users/ficeto/Desktop/ESP32/ESP32/esp-idf-public/components/esp32/panic.c line 155
-0x400895e1: abort at /Users/ficeto/Desktop/ESP32/ESP32/esp-idf-public/components/esp32/panic.c line 170
-0x400e51e4: __stack_chk_fail at /Users/ficeto/Desktop/ESP32/ESP32/esp-idf-public/components/esp32/stack_check.c line 36
-0x400d1db7: _findnext(unsigned char) at C:\Users\Franck\AppData\Local\Temp\arduino_build_502086\sketch/abstraction_arduino_esp.h line 391
-0x400d1e1d: _findfirst(unsigned char) at C:\Users\Franck\AppData\Local\Temp\arduino_build_502086\sketch/abstraction_arduino_esp.h line 401
-0x400d21cd: _SearchFirst(unsigned short, unsigned char) at C:\Users\Franck\AppData\Local\Temp\arduino_build_502086\sketch/disk.h line 286
-0x400d21f9: _CheckSUB() at C:\Users\Franck\AppData\Local\Temp\arduino_build_502086\sketch/disk.h line 507
-0x400d2bc2: _Bdos() at C:\Users\Franck\AppData\Local\Temp\arduino_build_502086\sketch/cpm.h line 545
-0x400d2d9b: cpu_in(unsigned int) at C:\Users\Franck\AppData\Local\Temp\arduino_build_502086\sketch/cpu.h line 34
-0x400d544d: setup() at C:\Users\Franck\AppData\Local\Temp\arduino_build_502086\sketch/cpu.h line 2765
-0x400dc123: loopTask(void*) at C:\Users\Franck\AppData\Local\Arduino15\packages\esp32\hardware\esp32\1.0.2\cores\esp32\main.cpp line 14
-0x4008561d: vPortTaskWrapper at /Users/ficeto/Desktop/ESP32/ESP32/esp-idf-public/components/freertos/port.c line 143
-
-
- */
-
-
-
-    #define SDINIT SD_CS
   #endif
 #endif
 
@@ -73,6 +38,21 @@ Decoding stack results
 
 #elif defined XTASE_ESP_YATL_LAYOUT
   #include <SD.h>
+  #include "xts_yael.h"
+
+  bool Serial_useable = true;
+
+  // TODO : BETTER
+  #define TFT_CS 5
+  #define TS_CS 2
+  #define SD_CS 4
+
+  // #define HAS_BUILTIN_LCD 1
+  // #define USE_BUILTIN_LCD 1
+  // #define HAS_KEYBOARD 1
+
+  #define SDINIT SD_CS
+
 #else
   #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
 #endif
@@ -198,19 +178,20 @@ void setup(void) {
 
   #if YATL_PLATFORM
     setupYatl();
+  #elif YAEL_PLATFORM
+    bool ok = yael_setup();
+    if ( !ok ) {
+        yael_lcd_cls();
+        yael_lcd_setCursor(1,1);
+        yael_lcd_print("  Something Wrong !  ");
+        while (1) {
+            yael_lcd_setCursor(1,1);
+            yael_lcd_print("  Something Wrong !  ");
+            delay(500);
+            yield();
+        }
+    }
   #else
-
-    #if YAEL_PLATFORM
-      // TODO : disable Screen & TouchScreen SPI C-select
-      pinMode(TFT_CS, OUTPUT);
-      digitalWrite(TFT_CS, HIGH);
-      pinMode(TS_CS, OUTPUT);
-      digitalWrite(TS_CS, HIGH);
-      // enable SD card C-select
-      pinMode(SD_CS, OUTPUT);
-      digitalWrite(TS_CS, LOW);
-    #endif
-
     if ( LED > 0 ) {
       pinMode(LED, OUTPUT);
       digitalWrite(LED, LOW);
@@ -255,7 +236,7 @@ void setup(void) {
       return;
     }
 #else
-  #ifdef YATL_PLATFORM
+  #if YATL_PLATFORM || YAEL_PLATFORM
   // do nothing here
   if (true) {
   #else

@@ -9,6 +9,8 @@
   - [ ] compile XtsCPM
     - [ ] FS : rename NYI
     - [ ] FS : truncate NYI
+    - [ ] LED -> redirect to function -> redirect to YAEL & YATL APIs
+    - [ ] 115200 bps terminal setting
   - [ ] add Bdos XtsCPM Hooks (Cf specific YAEL Devices Layout)
 - [ ] yael Main MCU (esp32)
   - [x] TFT ILI9486 480x320 Screen (SPI)
