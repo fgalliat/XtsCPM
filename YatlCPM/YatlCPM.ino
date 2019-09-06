@@ -4,6 +4,22 @@
 
 #include <SPI.h>
 
+// keep as custom entry point
+#ifdef XTASE_T36_YATL_LAYOUT
+  #if defined ESP32
+    // but redef. right layout
+    #undef XTASE_T36_YATL_LAYOUT
+    #define XTASE_ESP_YATL_LAYOUT 1
+    #define YAEL_PLATFORM 1
+    #warning "BEWARE : it's a YAEL config"
+
+    // TODO
+    #define SD_CS 4
+    #define SDINIT SD_CS
+  #endif
+#endif
+
+
 #ifdef XTASE_T36_YATL_LAYOUT
   // maybe slower but as direct truncate, rename, .... routines that are required by the system
   #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
@@ -23,6 +39,8 @@
 
   #include "xts_yatl_bdos.h"
 
+#elif defined XTASE_ESP_YATL_LAYOUT
+  #include <SD.h>
 #else
   #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
 #endif
@@ -49,11 +67,18 @@
   #define LEDinv 0 // 0=normal 1=inverted
   #define BOARD "STM32F407DISC1"
 #elif defined ESP32 // ESP32 boards
-  SdFatSoftSpiEX<2, 15, 14> SD; // MISO, MOSI, SCK Some boards use 2,15,14,13, other 12,14,27,26
-  #define SDINIT 13 // CS
-  #define LED 22 // TTGO_T1=22 LOLIN32_Pro=5(inverted) DOIT_Esp32=2 ESP32-PICO-KIT=no led
-  #define LEDinv 0
-  #define BOARD "TTGO_T1"
+
+  #if YAEL_PLATFORM
+    #define LED -1
+    #define LEDinv 0
+    #define BOARD "ESP32"
+  #else
+    SdFatSoftSpiEX<2, 15, 14> SD; // MISO, MOSI, SCK Some boards use 2,15,14,13, other 12,14,27,26
+    #define SDINIT 13 // CS
+    #define LED 22 // TTGO_T1=22 LOLIN32_Pro=5(inverted) DOIT_Esp32=2 ESP32-PICO-KIT=no led
+    #define LEDinv 0
+    #define BOARD "TTGO_T1"
+  #endif
 #elif defined CORE_TEENSY // Teensy 3.5 and 3.6
   #ifdef XTASE_T36_YATL_LAYOUT
     // // SD instance is auto-provided by include "SD.h"
@@ -134,7 +159,10 @@ void setup(void) {
   // pinMode(LED, OUTPUT);
   // digitalWrite(LED, LOW);
   // Serial.begin(SERIALSPD);
-  setupYatl();
+
+  #if YATL_PLATFORM
+    setupYatl();
+  #endif
 
   // SerialPort is useable or not .....
   Serial_useable = !(!Serial);
