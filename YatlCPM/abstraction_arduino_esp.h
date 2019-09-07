@@ -46,9 +46,13 @@
 
 // turn on/off drive LED
 void driveLED(bool state) {
+#if YAEL_PLATFORM
+    yael_led(state, true);
+#else
 	if ( LED <= 0 ) { return; }
 	if (state) digitalWrite(LED, HIGH^LEDinv);
 	else digitalWrite(LED, LOW^LEDinv);
+#endif
 }
 
 
@@ -77,7 +81,6 @@ char* getFileEntryPath( char *filename ) {
 	if ( filename[0] == '/' ) { return filename; }
 	// add leading "/"
 	sprintf( _entryName, "/%s", filename );
-	// Serial.print( "FS: " );	Serial.println( _entryName );
 	return _entryName;
 }
 
@@ -93,10 +96,13 @@ char* getFileEntryName( char* filepath ) {
 	// -1 protected
 	return &filepath[lastSlash+1];
 }
+char _msg[64]; 
 
 /* Memory abstraction functions */
 /*===============================================================================*/
 bool _RamLoad(char *filename, uint16 address) {
+	long t0, t1;
+	t0 = millis();
 	File f;
 	bool result = false;
 
@@ -106,6 +112,9 @@ bool _RamLoad(char *filename, uint16 address) {
 		f.close();
 		result = true;
 	}
+	t1 = millis();
+	sprintf( _msg, "RamL %lu ms", (t1-t0) ); 
+	Serial.println(_msg);
 	return(result);
 }
 
@@ -144,13 +153,13 @@ int _sys_select(uint8 *disk) {
 	uint8 result = FALSE;
 	File f;
 
-	driveLED(true);
+	// driveLED(true);
 	if (f = SD.open( getFileEntryPath((char *)disk), O_READ)) {
 		if (f.isDirectory())
 			result = TRUE;
 		f.close();
 	}
-	driveLED(false);
+	// driveLED(false);
 	return(result);
 }
 
@@ -158,26 +167,42 @@ long _sys_filesize(uint8 *filename) {
 	long l = -1;
 	File f;
 
-	driveLED(true);
+	// driveLED(true);
 	if (f = SD.open( getFileEntryPath((char *)filename), O_RDONLY)) {
 		l = f.size();
 		f.close();
 	}
-	driveLED(false);
+	// driveLED(false);
 	return(l);
 }
 
+long _t0,_t1;
+void startCounter() {
+  _t0 = millis();
+}
+
+void stopCounter(const char* signature) {
+  _t1 = millis();
+  sprintf( _msg, "%s %lu ms", signature, (_t1-_t0) ); 
+  Serial.println(_msg);
+}
+
+
 int _sys_openfile(uint8 *filename) {
+	startCounter();
+
 	File f;
 	int result = 0;
 
-	driveLED(true);
+	// driveLED(true);
 	f = SD.open( getFileEntryPath(((char *)filename) ), O_READ);
 	if (f) {
 		f.close();
 		result = 1;
 	}
-	driveLED(false);
+	// driveLED(false);
+
+	stopCounter("opnF");
 	return(result);
 }
 
@@ -185,14 +210,14 @@ int _sys_makefile(uint8 *filename) {
 	File f;
 	int result = 0;
 
-	driveLED(true);
+	// driveLED(true);
 	// f = SD.open((char *)filename, O_CREAT | O_WRITE);
 	f = SD.open( getFileEntryPath((char *)filename), O_WRITE);
 	if (f) {
 		f.close();
 		result = 1;
 	}
-	driveLED(false);
+	// driveLED(false);
 	return(result);
 }
 
@@ -241,59 +266,126 @@ void _sys_logbuffer(uint8 *buffer) {
 }
 #endif
 
+
+// ** SLOW POINT **
 bool _sys_extendfile(char *fn, unsigned long fpos)
 {
 	uint8 result = true;
 	File f;
 	unsigned long i;
 
-	driveLED(true);
+	// driveLED(true);
 	// if (f = SD.open(fn, O_WRITE | O_APPEND)) {
 	if (f = SD.open( getFileEntryPath(fn) , O_APPEND_WR)) {
 		if (fpos > f.size()) {
-			for (i = 0; i < f.size() - fpos; ++i) {
-				if (f.write((uint8_t)0) < 0) {
-					result = false;
-					break;
-				}
-			}
+
+			// Xtase version
+            int blen = f.size() - fpos;
+			uint8 buff[ blen ];
+			memset(buff, 0x00, blen);
+			result = f.write( buff, blen ); 
+
+			// for (i = 0; i < f.size() - fpos; ++i) {
+			// 	if (f.write((uint8_t)0) < 0) {
+			// 		result = false;
+			// 		break;
+			// 	}
+			// }
 		}
 		f.close();
 	} else {
 		result = false;
 	}
-	driveLED(false);
+	// driveLED(false);
 	return(result);
 }
 
+// =========== Read Cache ==================
+// == by Xtase
+char cachedFileName[64];
+File cachedFile;
+long cachedFpos = 0L; 
+
+// Xtase - I did modify this routine to speed system up
+// ** SLOW POINT **
 uint8 _sys_readseq(uint8 *filename, long fpos) {
+	// startCounter();
+
 	uint8 result = 0xff;
 	File f;
 	uint8 bytesread;
 	uint8 dmabuf[128];
 	uint8 i;
 
-	driveLED(true);
-	if (_sys_extendfile((char*)filename, fpos))
+	// driveLED(true);
+
+	// 82ms
+	// if (_sys_extendfile((char*)filename, fpos))
+	// 	f = SD.open( getFileEntryPath((char*)filename), O_READ);
+    // 42ms
+	// f = SD.open( getFileEntryPath((char*)filename), O_READ);
+
+	if ( strcmp((const char*)filename, (const char*)cachedFileName) == 0 &&
+	     fpos >= cachedFpos // don't know rewind ....
+	   ) {
+		f = cachedFile;
+	} else {
 		f = SD.open( getFileEntryPath((char*)filename), O_READ);
+		cachedFile = f;
+		sprintf(cachedFileName, "%s", (char*)filename);
+	}
+
+	cachedFpos = fpos;
+
+	if ( f ) {
+		if ( fpos > f.size() ) {
+			// Serial.println( "I did need to extendFile !" );
+			// Serial.println(fpos);
+			// Serial.println((char*)filename);
+			
+
+			uint8 _result = _sys_extendfile((char*)filename, fpos);
+			// re-open file
+			f = SD.open( getFileEntryPath((char*)filename), O_READ);
+			sprintf(cachedFileName, "%s", "XXX.XX"); // erase cache
+		}
+	} else {
+		Serial.println( "There was a mistake ..." );
+		Serial.println(fpos);
+		Serial.println((char*)filename);
+
+		// re-open file
+		f = SD.open( getFileEntryPath((char*)filename), O_READ);
+		sprintf(cachedFileName, "%s", "XXX.XX"); // erase cache
+	}
+
 	if (f) {
 		if (f.seek(fpos)) {
-			for (i = 0; i < 128; ++i)
-				dmabuf[i] = 0x1a;
+			// for (i = 0; i < 128; ++i)
+			// 	dmabuf[i] = 0x1a;
+			memset(dmabuf, 0x1a, 128);
 			bytesread = f.read(&dmabuf[0], 128);
 			if (bytesread) {
-				for (i = 0; i < 128; ++i)
-					_RamWrite(dmaAddr + i, dmabuf[i]);
+				// for (i = 0; i < 128; ++i)
+				// 	_RamWrite(dmaAddr + i, dmabuf[i]);
+				memcpy( &RAM[dmaAddr], &dmabuf[0], 128 );
 			}
 			result = bytesread ? 0x00 : 0x01;
 		} else {
+			Serial.println("could not seek");
+			Serial.println(fpos);
+			Serial.println((char*)filename);
+
 			result = 0x01;
 		}
 		f.close();
 	} else {
+		Serial.println("file was false");
 		result = 0x10;
 	}
-	driveLED(false);
+	// driveLED(false);
+
+	// stopCounter("redS");
 	return(result);
 }
 
@@ -321,6 +413,8 @@ uint8 _sys_writeseq(uint8 *filename, long fpos) {
 }
 
 uint8 _sys_readrand(uint8 *filename, long fpos) {
+	startCounter();
+
 	uint8 result = 0xff;
 	File f;
 	uint8 bytesread;
@@ -348,6 +442,8 @@ uint8 _sys_readrand(uint8 *filename, long fpos) {
 		result = 0x10;
 	}
 	driveLED(false);
+
+	stopCounter("redR");
 	return(result);
 }
 

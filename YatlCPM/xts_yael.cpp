@@ -76,7 +76,7 @@ void cleanBridge() {
 
 // forward symbol
 void cleanKeyb();
-void led(bool state);
+void led(bool state, bool fastMode=false);
 
 void setupBridge() {
     // Serial2.begin(9600, SERIAL_8N1, 16, 17); // pins 16 rx2, 17 tx2, 9600 bps, 8 bits no parity 1 stop bit
@@ -91,14 +91,14 @@ void setupBridge() {
 //                                    Led
 //====================================================================================
 
-void led(bool state) {
+void led(bool state, bool fastMode) {
     if ( state ) { Serial2.write('L'); }
     else  { Serial2.write('l'); }
-    delay(1);
+    if (!fastMode) delay(1);
 }
 
 void drive_led(bool state) {
-    led(state);
+    led(state, true);
 }
 
 //====================================================================================
@@ -297,9 +297,12 @@ return true;
 
 bool yael_setup() { return Y_setup(); }
 
-void yael_tft_cls() { tft.fillScreen(TFT_BLACK); }
+void yael_tft_cls() { tft.fillScreen(TFT_BLACK); tft.setCursor(0,0); }
 void yael_tft_setCursor(int col, int row) { tft.setCursor(col,row); }
-void yael_tft_print(char ch) { tft.print(ch); }
+void yael_tft_print(char ch) { 
+    if ( ch == 26 ) { yael_tft_cls(); return; }
+    tft.print(ch); 
+}
 void yael_tft_print(char* str) { tft.print(str); }
 void yael_tft_println(char* str) { tft.println(str); }
 void yael_tft_drawBMP(char* filename, int x, int y) { 
@@ -322,6 +325,6 @@ void yael_mp3Next() { sndCard.next(); }
 void yael_mp3Prev() { sndCard.prev(); }
 bool yael_mp3IsPlaying() { return sndCard.isPlaying(); }
 
-void yael_led(bool state) { led(state); }
+void yael_led(bool state, bool fastMode) { led(state, fastMode); }
 
 char yael_keyb_poll() { return pollKeyb(); }

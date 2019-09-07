@@ -59,6 +59,6 @@ void yael_mp3Next();
 void yael_mp3Prev();
 bool yael_mp3IsPlaying();
 
-void yael_led(bool state);
+void yael_led(bool state, bool fastMode=false);
 
 char yael_keyb_poll();

@@ -285,17 +285,28 @@ void setup(void) {
 }
 
 void loop(void) {
-  #ifdef YATL_PLATFORM
+  #if YATL_PLATFORM
     yatl.blink(3);
     delay(500);
+  #elif YAEL_PLATFORM
+    yael_led(true);
+    delay(DELAY);
+    yael_led(false);
+    delay(DELAY);
+    yael_led(true);
+    delay(DELAY);
+    yael_led(false);
+    delay(DELAY);
   #else
-    digitalWrite(LED, HIGH^LEDinv);
-    delay(DELAY);
-    digitalWrite(LED, LOW^LEDinv);
-    delay(DELAY);
-    digitalWrite(LED, HIGH^LEDinv);
-    delay(DELAY);
-    digitalWrite(LED, LOW^LEDinv);
+    if ( LED > 0 ) {
+      digitalWrite(LED, HIGH^LEDinv);
+      delay(DELAY);
+      digitalWrite(LED, LOW^LEDinv);
+      delay(DELAY);
+      digitalWrite(LED, HIGH^LEDinv);
+      delay(DELAY);
+      digitalWrite(LED, LOW^LEDinv);
+    }
     delay(DELAY * 4);
   #endif
 }
