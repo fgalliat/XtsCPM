@@ -10,18 +10,18 @@
  * 
  */
 
-#define FILE_READ       "r"
-#define FILE_WRITE      "w"
-#define FILE_APPEND     "a"
+// #define FILE_READ       "r"
+// #define FILE_WRITE      "w"
+// #define FILE_APPEND     "a"
 
-#define O_READ       "r"
-#define O_RDONLY     "r"
-#define O_WRITE      "w"
-// does it is supported ????
-#define O_RDWR       "rw"
-// #define O_APPEND_WR  "wa"
-// just "a"
-#define O_APPEND_WR  "a"
+// #define O_READ       "r"
+// #define O_RDONLY     "r"
+// #define O_WRITE      "w"
+// // does it is supported ????
+// #define O_RDWR       "rw"
+// // #define O_APPEND_WR  "wa"
+// // just "a"
+// #define O_APPEND_WR  "a"
 
 
 #ifdef YATL_PLATFORM
@@ -133,8 +133,8 @@ typedef struct {
 } CPM_FCB;
 
 File _sys_fopen_w(uint8 *filename) {
-	// return(SD.open((char *)filename, O_CREAT | O_WRITE));
-	return(SD.open( getFileEntryPath((char *)filename), O_WRITE));
+	return(SD.open((char *)filename, O_CREAT | O_WRITE));
+	// return(SD.open( getFileEntryPath((char *)filename), O_WRITE));
 }
 
 int _sys_fputc(int ch, File f) {
@@ -211,8 +211,8 @@ int _sys_makefile(uint8 *filename) {
 	int result = 0;
 
 	// driveLED(true);
-	// f = SD.open((char *)filename, O_CREAT | O_WRITE);
-	f = SD.open( getFileEntryPath((char *)filename), O_WRITE);
+	f = SD.open((char *)filename, O_CREAT | O_WRITE);
+	// f = SD.open( getFileEntryPath((char *)filename), O_WRITE);
 	if (f) {
 		f.close();
 		result = 1;
@@ -236,14 +236,14 @@ int _sys_renamefile(uint8 *filename, uint8 *newname) {
   // TODO : on ESP : check SD.exists(....)
   Serial.println("(FS) RENAME NYI");
 
-// //   f = SD.open((char *)filename, O_WRITE | O_APPEND);
+  f = SD.open((char *)filename, O_WRITE | O_APPEND);
 //   f = SD.open( getFileEntryPath((char *)filename), O_APPEND_WR );
-//   if (f) {
-//     if (f.rename(SD.vwd(), (char*)newname)) {
-//       f.close();      
-//       result = 1;
-//     }
-//   }
+  if (f) {
+    if (f.rename(SD.vwd(), (char*)newname)) {
+      f.close();      
+      result = 1;
+    }
+  }
   driveLED(false);
   return(result);
 }
@@ -275,8 +275,8 @@ bool _sys_extendfile(char *fn, unsigned long fpos)
 	unsigned long i;
 
 	// driveLED(true);
-	// if (f = SD.open(fn, O_WRITE | O_APPEND)) {
-	if (f = SD.open( getFileEntryPath(fn) , O_APPEND_WR)) {
+	if (f = SD.open(fn, O_WRITE | O_APPEND)) {
+	// if (f = SD.open( getFileEntryPath(fn) , O_APPEND_WR)) {
 		if (fpos > f.size()) {
 
 			// Xtase version
@@ -395,8 +395,8 @@ uint8 _sys_writeseq(uint8 *filename, long fpos) {
 
 	driveLED(true);
 	if (_sys_extendfile((char*)filename, fpos))
-		// f = SD.open( getFileEntryPath((char*)filename), O_RDWR);
-		f = SD.open( getFileEntryPath((char*)filename), O_WRITE);
+		f = SD.open( getFileEntryPath((char*)filename), O_RDWR);
+		// f = SD.open( getFileEntryPath((char*)filename), O_WRITE);
 	if (f) {
 		if (f.seek(fpos)) {
 			if (f.write(_RamSysAddr(dmaAddr), 128))
@@ -453,8 +453,8 @@ uint8 _sys_writerand(uint8 *filename, long fpos) {
 
 	driveLED(true);
 	if (_sys_extendfile((char*)filename, fpos)) {
-		//f = SD.open( getFileEntryPath((char*)filename), O_RDWR);
-		f = SD.open( getFileEntryPath((char*)filename), O_WRITE);
+		f = SD.open( getFileEntryPath((char*)filename), O_RDWR);
+		// f = SD.open( getFileEntryPath((char*)filename), O_WRITE);
 	}
 	if (f) {
 		if (f.seek(fpos)) {
@@ -521,8 +521,8 @@ uint8 _Truncate(char *filename, uint8 rc) {
   int result = 0;
 
   driveLED(true);
-//   f = SD.open((char *)filename, O_WRITE | O_APPEND);
-  f = SD.open( getFileEntryPath((char *)filename), O_APPEND_WR);
+  f = SD.open((char *)filename, O_WRITE | O_APPEND);
+//   f = SD.open( getFileEntryPath((char *)filename), O_APPEND_WR);
   if (f) {
 
 	// see :: SD/src/utility/SdFat.h:281:  uint8_t truncate(uint32_t size);

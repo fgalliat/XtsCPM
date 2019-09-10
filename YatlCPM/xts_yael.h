@@ -29,7 +29,8 @@
 #include <TFT_eSPI.h> // Hardware-specific library for ESP8266
 extern TFT_eSPI tft;
 
-#include "SD.h"
+// #include "SD.h"
+#include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
 // for SD.open(...)
 
 //====================================================================================

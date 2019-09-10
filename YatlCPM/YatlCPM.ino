@@ -37,8 +37,11 @@
   #include "xts_yatl_bdos.h"
 
 #elif defined XTASE_ESP_YATL_LAYOUT
-  #include <SD.h>
+  // changed lib @10/09/19
+  //#include <SD.h>
+
   #include "xts_yael.h"
+  extern SdFatSoftSpiEX<12, 14, 27> SD;
 
   bool Serial_useable = true;
 

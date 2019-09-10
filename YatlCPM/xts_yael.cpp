@@ -23,6 +23,14 @@
  * 
  * #define SD_CS     4  // SdCard CHIP-SELECT
  * #define TS_CS     2  // TouchScreen CHIP-SELECT
+ *
+ * #define SD_CS     26 // REDEF for now
+ * in SdFatConfig.h (of SdFatLib)
+ *  If the symbol ENABLE_EXTENDED_TRANSFER_CLASS is nonzero, the class SdFatEX
+ *  will be defined. If the symbol ENABLE_SOFTWARE_SPI_CLASS is also nonzero,
+ *  the class SdFatSoftSpiEX will be defined.
+ *  These classes used extended multi-block SD I/O for better performance.
+ *  the SPI bus may not be shared with other devices in this mode.
  * 
  * 1.3 MB Sktech
  * 320 KB RAM
@@ -49,10 +57,14 @@ HardwareSerial Serial3(1); // use uart3
 #define mp3Serial Serial3
 
 #include "xts_yael_dev_dfplayer.h"
+// #define MP3_IN  26
+// #define MP3_OUT 14
+#define MP3_IN  32
+#define MP3_OUT 33
 SoundCard sndCard( &mp3Serial );
 
 void setupMp3() {
-    Serial3.begin(9600, SERIAL_8N1, 26, 14); // pins 26 rxY, 14 txY, 9600 bps, 8 bits no parity 1 stop bit
+    Serial3.begin(9600, SERIAL_8N1, MP3_IN, MP3_OUT); // pins 26 rxY, 14 txY, 9600 bps, 8 bits no parity 1 stop bit
     sndCard.init();
     delay(500);
     sndCard.volume(25);
@@ -197,8 +209,7 @@ void lcd_print(char* str) {
 // Invoke TFT library this will set the TFT chip select high
 TFT_eSPI tft = TFT_eSPI();
 
-#include "xts_yael_soft_drawBMP.h"
-#include "xts_yael_soft_drawPAK.h"
+
 
 // ==== Wiring =====
 #define OWN_SPI_CS   5
@@ -211,6 +222,27 @@ TFT_eSPI tft = TFT_eSPI();
 #define SD_CS 4 // SD chip select
 #define TS_CS 2
 
+
+// #include "FS.h"
+// #include "SD.h"
+
+// in SdFatConfig.h (of SdFatLib)
+//  * If the symbol ENABLE_EXTENDED_TRANSFER_CLASS is nonzero, the class SdFatEX
+//  * will be defined. If the symbol ENABLE_SOFTWARE_SPI_CLASS is also nonzero,
+//  * the class SdFatSoftSpiEX will be defined.
+//  * These classes used extended multi-block SD I/O for better performance.
+//  * the SPI bus may not be shared with other devices in this mode.
+
+#include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
+SdFatSoftSpiEX<12, 14, 27> SD; // MISO, MOSI, SCK Some boards use 2,15,14,13, other 12,14,27,26
+#undef define SD_CS
+#define SD_CS 26
+
+// === Now that TFT & SD Loaded ... ===
+#include "xts_yael_soft_drawBMP.h"
+#include "xts_yael_soft_drawPAK.h"
+
+
 void _setupCSlines() {
   // disable Screen & TouchScreen SPI C-select
   pinMode(TFT_CS, OUTPUT);
@@ -222,8 +254,7 @@ void _setupCSlines() {
   digitalWrite(SD_CS, LOW);
 }
 
-#include "FS.h"
-#include "SD.h"
+
 
 // ========================================
 

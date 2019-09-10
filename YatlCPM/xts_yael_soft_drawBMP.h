@@ -1,6 +1,8 @@
 
-uint16_t read16(fs::File &f);
-uint32_t read32(fs::File &f);
+// uint16_t read16(fs::File &f);
+// uint32_t read32(fs::File &f);
+uint16_t read16(File &f);
+uint32_t read32(File &f);
 
 void drawBmp(const char *filename, int16_t x, int16_t y) {
 
@@ -71,7 +73,7 @@ void drawBmp(const char *filename, int16_t x, int16_t y) {
 }
 
 
-uint16_t read16(fs::File &f) {
+uint16_t read16(File &f) {
   uint16_t result;
   ((uint8_t *)&result)[0] = f.read(); // LSB
   ((uint8_t *)&result)[1] = f.read(); // MSB
@@ -79,7 +81,7 @@ uint16_t read16(fs::File &f) {
 }
 
 
-uint32_t read32(fs::File &f) {
+uint32_t read32(File &f) {
   uint32_t result;
   ((uint8_t *)&result)[0] = f.read(); // LSB
   ((uint8_t *)&result)[1] = f.read();
