@@ -46,22 +46,22 @@
   bool Serial_useable = true;
 
   // TODO : BETTER
-  #define TFT_CS 5
-  #define TS_CS 2
-  #define SD_CS 4
+  // #define TFT_CS 5
+  // #define TS_CS 2
+  // #define SD_CS 4
 
-  #define HAS_BUILTIN_LCD 1
-  #define USE_BUILTIN_LCD 1
+  // #define HAS_BUILTIN_LCD 0
+  // #define USE_BUILTIN_LCD 0
   // #define HAS_KEYBOARD 1
 
-  #define SDINIT SD_CS
+  #define SDINIT
 
 #else
   #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
 #endif
 
 // Serial port speed
-#ifdef YATL_PLATFORM
+#if YATL_PLATFORM || YAEL_PLATFORM
   #define SERIALSPD 115200
 #else
   #define SERIALSPD 9600

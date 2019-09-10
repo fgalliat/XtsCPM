@@ -233,10 +233,21 @@ TFT_eSPI tft = TFT_eSPI();
 //  * These classes used extended multi-block SD I/O for better performance.
 //  * the SPI bus may not be shared with other devices in this mode.
 
+/*
+rst:0x10 (RTCWDT_RTC_RESET),boot:0x33 (SPI_FAST_FLASH_BOOT)
+flash read err, 1000
+ets_main.c 371 
+ */
+
 #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
-SdFatSoftSpiEX<12, 14, 27> SD; // MISO, MOSI, SCK Some boards use 2,15,14,13, other 12,14,27,26
-#undef define SD_CS
-#define SD_CS 26
+//SdFatSoftSpiEX<12, 14, 27> SD; // MISO, MOSI, SCK Some boards use 2,15,14,13, other 12,14,27,26
+SdFatSoftSpiEX<2, 15, 14> SD; // MISO, MOSI, SCK Some boards use 2,15,14,13, other 12,14,27,26
+#undef SD_CS
+#define SD_CS 13
+// #define SD_CS 4
+
+#undef TS_CS
+#define TS_CS 26
 
 // === Now that TFT & SD Loaded ... ===
 #include "xts_yael_soft_drawBMP.h"
@@ -262,8 +273,8 @@ bool Y_setup()
 {
   _setupCSlines();
 
-  // Serial.begin(115200); // Used for messages and the C array generator
-  Serial.begin(9600); // Used for messages and the C array generator
+  Serial.begin(115200); // Used for messages and the C array generator
+//   Serial.begin(9600); // Used for messages and the C array generator
 
   setupBridge();
 
