@@ -41,7 +41,7 @@
   //#include <SD.h>
 
   #include "xts_yael.h"
-  extern SdFatSoftSpiEX<12, 14, 27> SD;
+  extern SdFatSoftSpiEX<2, 15, 14> SD;
 
   bool Serial_useable = true;
 

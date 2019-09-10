@@ -480,9 +480,9 @@ uint8 _findnext(uint8 isdir) {
 
 	driveLED(true);
 	while (f = root.openNextFile()) {
-        // f.getName((char*)&dirname[0], 13);
+        f.getName((char*)&dirname[0], 13);
 		// getFileEntryName(...) returns only entry name (no path)
-		sprintf( (char*)&dirname[0], "%s", getFileEntryName( (char*) f.name() ) ); // auto add 0-terminated
+		// sprintf( (char*)&dirname[0], "%s", getFileEntryName( (char*) f.name() ) ); // auto add 0-terminated
 
 		isfile = !f.isDirectory();
 		f.close();
