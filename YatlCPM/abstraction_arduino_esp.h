@@ -263,7 +263,7 @@ bool _sys_extendfile(char *fn, unsigned long fpos)
 	// if (f = SD.open( getFileEntryPath(fn) , O_APPEND_WR)) {
 		if (fpos > f.size()) {
 
-			// // Xtase version
+			// // Xtase version -- avoid TURBO from compilling big files !!!
             // int blen = f.size() - fpos;
 			// uint8 buff[ blen ];
 			// memset(buff, 0x00, blen);
