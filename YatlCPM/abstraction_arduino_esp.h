@@ -263,18 +263,18 @@ bool _sys_extendfile(char *fn, unsigned long fpos)
 	// if (f = SD.open( getFileEntryPath(fn) , O_APPEND_WR)) {
 		if (fpos > f.size()) {
 
-			// Xtase version
-            int blen = f.size() - fpos;
-			uint8 buff[ blen ];
-			memset(buff, 0x00, blen);
-			result = f.write( buff, blen ); 
+			// // Xtase version
+            // int blen = f.size() - fpos;
+			// uint8 buff[ blen ];
+			// memset(buff, 0x00, blen);
+			// result = f.write( buff, blen ); 
 
-			// for (i = 0; i < f.size() - fpos; ++i) {
-			// 	if (f.write((uint8_t)0) < 0) {
-			// 		result = false;
-			// 		break;
-			// 	}
-			// }
+			for (i = 0; i < f.size() - fpos; ++i) {
+				if (f.write((uint8_t)0) < 0) {
+					result = false;
+					break;
+				}
+			}
 		}
 		f.close();
 	} else {
@@ -307,19 +307,19 @@ uint8 _sys_readseq(uint8 *filename, long fpos) {
 	// if (_sys_extendfile((char*)filename, fpos))
 	// 	f = SD.open( getFileEntryPath((char*)filename), O_READ);
     // 42ms
-	// f = SD.open( getFileEntryPath((char*)filename), O_READ);
+	f = SD.open( getFileEntryPath((char*)filename), O_READ);
 
-	if ( strcmp((const char*)filename, (const char*)cachedFileName) == 0 &&
-	     fpos >= cachedFpos // don't know rewind ....
-	   ) {
-		f = cachedFile;
-	} else {
-		f = SD.open( getFileEntryPath((char*)filename), O_READ);
-		cachedFile = f;
-		sprintf(cachedFileName, "%s", (char*)filename);
-	}
+	// if ( strcmp((const char*)filename, (const char*)cachedFileName) == 0 &&
+	//      fpos >= cachedFpos // don't know rewind ....
+	//    ) {
+	// 	f = cachedFile;
+	// } else {
+	// 	f = SD.open( getFileEntryPath((char*)filename), O_READ);
+	// 	cachedFile = f;
+	// 	sprintf(cachedFileName, "%s", (char*)filename);
+	// }
 
-	cachedFpos = fpos;
+	// cachedFpos = fpos;
 
 	if ( f ) {
 		if ( fpos > f.size() ) {
