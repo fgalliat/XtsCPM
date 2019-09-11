@@ -59,6 +59,8 @@ HardwareSerial Serial3(1); // use uart3
 #include "xts_yael_dev_dfplayer.h"
 // #define MP3_IN  26
 // #define MP3_OUT 14
+
+// 16,17 is RX2,TX2
 #define MP3_IN  32
 #define MP3_OUT 33
 SoundCard sndCard( &mp3Serial );
@@ -228,12 +230,12 @@ TFT_eSPI tft = TFT_eSPI();
 //  TFT_DC    D15|           |D13 SD_CS
 //  SD_MISO   D02|           |D12
 //  SD_MOSI   D04|           |D14 SD_CLK
-//            RX2|           |D17
-//            TX2|           |D26 TS_CS
+//  Sub_MCU   RX2|           |D17
+//  Sub_MCU   TX2|           |D26 TS_CS
 //  TFT_CS    D05|           |D25
 //  TFT_CLK   D18|           |D33
-//  TFT_MISO  D19|           |D32
-//            D21|           |D35
+//  TFT_MISO  D19|           |D32 RX-mp3 ??
+//            D21|           |D35 TX-mp3 ??
 //            RX0|           |D34
 //            TX0|           |VN
 //            D22|           |VP

@@ -7,10 +7,10 @@
   - [ ] MainBoard
   - [ ] Ext Port (specs + building)
   - [ ] compile XtsCPM
-    - [ ] FS : rename NYI
-    - [ ] FS : truncate NYI
-    - [ ] LED -> redirect to function -> redirect to YAEL & YATL APIs
-    - [ ] 115200 bps terminal setting
+    - [x] FS : rename NYI -> OK now
+    - [x] FS : truncate NYI -> OK now
+    - [x] LED -> redirect to function -> redirect to YAEL & YATL APIs
+    - [x] 115200 bps terminal setting
     - [ ] TTY console -> code to reuse....
   - [ ] add Bdos XtsCPM Hooks (Cf specific YAEL Devices Layout)
 - [ ] yael Main MCU (esp32)

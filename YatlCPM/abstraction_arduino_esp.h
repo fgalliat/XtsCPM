@@ -5,24 +5,8 @@
  * Abstraction for ESP boards
  * 
  * NYI :
- *  - rename
- *  - truncate
  * 
  */
-
-// #define FILE_READ       "r"
-// #define FILE_WRITE      "w"
-// #define FILE_APPEND     "a"
-
-// #define O_READ       "r"
-// #define O_RDONLY     "r"
-// #define O_WRITE      "w"
-// // does it is supported ????
-// #define O_RDWR       "rw"
-// // #define O_APPEND_WR  "wa"
-// // just "a"
-// #define O_APPEND_WR  "a"
-
 
 #ifdef YATL_PLATFORM
   #include "xts_yatl_api.h"
@@ -234,7 +218,7 @@ int _sys_renamefile(uint8 *filename, uint8 *newname) {
   driveLED(true);
 
   // TODO : on ESP : check SD.exists(....)
-  Serial.println("(FS) RENAME NYI");
+//   Serial.println("(FS) RENAME NYI");
 
   f = SD.open((char *)filename, O_WRITE | O_APPEND);
 //   f = SD.open( getFileEntryPath((char *)filename), O_APPEND_WR );
@@ -516,7 +500,7 @@ uint8 _findfirst(uint8 isdir) {
 }
 
 uint8 _Truncate(char *filename, uint8 rc) {
-	Serial.println("(FS) TRUNCATE NYI");
+	// Serial.println("(FS) TRUNCATE NYI");
   File f;
   int result = 0;
 
@@ -524,16 +508,12 @@ uint8 _Truncate(char *filename, uint8 rc) {
   f = SD.open((char *)filename, O_WRITE | O_APPEND);
 //   f = SD.open( getFileEntryPath((char *)filename), O_APPEND_WR);
   if (f) {
+    if (f.truncate(rc*128)) {
+      f.close();
+      result = 1;
+    }
 
-	// see :: SD/src/utility/SdFat.h:281:  uint8_t truncate(uint32_t size);
-	// in SD.h :: class File contains a private : SdFile *_file;
-
-    // if (f.truncate(rc*128)) {
-    //   f.close();
-    //   result = 1;
-    // }
-
-	Serial.println("(FS) TRUNCATE NYI");
+	// Serial.println("(FS) TRUNCATE NYI");
 
   }
   driveLED(false);
