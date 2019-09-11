@@ -219,27 +219,25 @@ TFT_eSPI tft = TFT_eSPI();
 #define OWN_SPI_MISO 19
 
 #define TFT_CS OWN_SPI_CS
-//#define SD_CS 4 // SD chip select
-// #define TS_CS 2
 #define TS_CS 26
 #define SD_CS 13 // SD chip select
 
 //                ___________
 //            3.3|           |VIN
 //            GND|           |GND
-//            D15|           |D13 SD_CS
+//  TFT_DC    D15|           |D13 SD_CS
 //  SD_MISO   D02|           |D12
 //  SD_MOSI   D04|           |D14 SD_CLK
 //            RX2|           |D17
 //            TX2|           |D26 TS_CS
 //  TFT_CS    D05|           |D25
-//            D18|           |D33
-//            D19|           |D32
+//  TFT_CLK   D18|           |D33
+//  TFT_MISO  D19|           |D32
 //            D21|           |D35
 //            RX0|           |D34
 //            TX0|           |VN
 //            D22|           |VP
-//            D23|___________|EN
+//  TFT_MOSI  D23|___________|EN /RESET
 
 // #include "FS.h"
 // #include "SD.h"
