@@ -219,9 +219,27 @@ TFT_eSPI tft = TFT_eSPI();
 #define OWN_SPI_MISO 19
 
 #define TFT_CS OWN_SPI_CS
-#define SD_CS 4 // SD chip select
-#define TS_CS 2
+//#define SD_CS 4 // SD chip select
+// #define TS_CS 2
+#define TS_CS 26
+#define SD_CS 13 // SD chip select
 
+//                ___________
+//            3.3|           |VIN
+//            GND|           |GND
+//            D15|           |D13 SD_CS
+//  SD_MISO   D02|           |D12
+//  SD_MOSI   D04|           |D14 SD_CLK
+//            RX2|           |D17
+//            TX2|           |D26 TS_CS
+//  TFT_CS    D05|           |D25
+//            D18|           |D33
+//            D19|           |D32
+//            D21|           |D35
+//            RX0|           |D34
+//            TX0|           |VN
+//            D22|           |VP
+//            D23|___________|EN
 
 // #include "FS.h"
 // #include "SD.h"
@@ -240,14 +258,11 @@ ets_main.c 371
  */
 
 #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
-//SdFatSoftSpiEX<12, 14, 27> SD; // MISO, MOSI, SCK Some boards use 2,15,14,13, other 12,14,27,26
-SdFatSoftSpiEX<2, 15, 14> SD; // MISO, MOSI, SCK Some boards use 2,15,14,13, other 12,14,27,26
-#undef SD_CS
-#define SD_CS 13
-// #define SD_CS 4
+// SdFatSoftSpiEX<12, 14, 27> SD; // MISO, MOSI, SCK Some boards use 2,15,14,13, other 12,14,27,26
+// SdFatSoftSpiEX<2, 15, 14> SD; // MISO, MOSI, SCK Some boards use 2,15,14,13, other 12,14,27,26
 
-#undef TS_CS
-#define TS_CS 26
+SdFatSoftSpiEX<2, 4, 14> SD; // MISO, MOSI, SCK Some boards use 2,15,14,13, other 12,14,27,26
+
 
 // === Now that TFT & SD Loaded ... ===
 #include "xts_yael_soft_drawBMP.h"
