@@ -67,6 +67,17 @@ SoundCard sndCard( &mp3Serial );
 
 void setupMp3() {
     Serial3.begin(9600, SERIAL_8N1, MP3_IN, MP3_OUT); // pins 26 rxY, 14 txY, 9600 bps, 8 bits no parity 1 stop bit
+
+    // Serial3.println("Hello Serial3 !");
+    // Serial.println("Hello Serial3 !");
+
+    // Serial.println("Reading Serial3 !");
+    // char line[32];
+    // while( Serial3.available() == 0 ) { delay(100); }
+    // int nb = Serial3.readBytesUntil('\n', line, 32);
+    // Serial3.println(line);
+    // Serial.println(line);
+
     sndCard.init();
     delay(500);
     sndCard.volume(25);
@@ -233,9 +244,9 @@ TFT_eSPI tft = TFT_eSPI();
 //  Sub_MCU   RX2|           |D17
 //  Sub_MCU   TX2|           |D26 TS_CS
 //  TFT_CS    D05|           |D25
-//  TFT_CLK   D18|           |D33
-//  TFT_MISO  D19|           |D32 RX-mp3 ??
-//            D21|           |D35 TX-mp3 ??
+//  TFT_CLK   D18|           |D33 TX1 (mp3 ??)
+//  TFT_MISO  D19|           |D32 RX1 (mp3 ??)
+//            D21|           |D35
 //            RX0|           |D34
 //            TX0|           |VN
 //            D22|           |VP
@@ -302,6 +313,9 @@ bool Y_setup()
   tft.setRotation(DEFAULT_TFT_ROTATION);  // 0 & 2 Portrait. 1 & 3 landscape
   tft.fillScreen(TFT_BLACK);
 
+// // TEMP : just to test Serial3/1
+// setupMp3();
+
   // Initialise the SD library before the TFT so the chip select gets set
   // have some issues w/ RESETing Screen ...
   lcd_print("Init SD\n");
@@ -310,7 +324,8 @@ bool Y_setup()
   while( retry <= 3 ) {
     if (!SD.begin(SD_CS)) {
         Serial.println("SD Initialisation failed!");
-        lcd_print("! SD failed !");
+        lcd_print("! SD failed ! ");
+        yael_tft_print("! SD failed ! ");
         // return false;
     } else {
         ok = true;
