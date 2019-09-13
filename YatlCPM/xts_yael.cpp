@@ -415,3 +415,5 @@ bool yael_mp3IsPlaying() { return _mp3Playing; }
 void yael_led(bool state, bool fastMode) { led(state, fastMode); }
 
 char yael_keyb_poll() { return pollKeyb(); }
+
+void yael_dbug(char* str) { Serial.print("(ii) "); Serial.println(str); }

@@ -63,3 +63,6 @@ bool yael_mp3IsPlaying();
 void yael_led(bool state, bool fastMode=false);
 
 char yael_keyb_poll();
+
+void yael_dbug(char* str);
+void yael_dbug(const char* str) { yael_dbug( (char*)str ); }
