@@ -37,7 +37,7 @@ void setupMp3() {
   // no need to listen() we use TX only !!!
   snd.init();
   delay(300);
-  snd.play(1);
+  // snd.play(1);
 }
 
 //====================================================================================
