@@ -17,14 +17,28 @@
 //====================================================================================
 //                                    Settings
 //====================================================================================
+#define LED_PIN 13
+
 #include <SoftwareSerial.h>  // http://arduino.cc/en/Reference/softwareSerial
 
 #define SF_RX  10  // Rx Pin
 #define SF_TX  11  // Tx Pin
 SoftwareSerial bridge(SF_RX, SF_TX);  // (Rx, Tx) 
 
-#define LED_PIN 13
+#define MP3_RX  8  // Rx Pin
+#define MP3_TX  9  // Tx Pin
+SoftwareSerial mp3(MP3_RX, MP3_TX);  // (Rx, Tx) 
 
+#include "xts_yael_dev_dfplayer.h"
+SoundCard snd(&mp3);
+
+void setupMp3() {
+  mp3.begin(9600);
+  // no need to listen() we use TX only !!!
+  snd.init();
+  delay(300);
+  snd.play(1);
+}
 
 //====================================================================================
 //                                    LCD 20x4
@@ -65,7 +79,7 @@ const byte K_COLS = 8; // eight columns
 //   {'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V' }, // 7
 //   {'W', 'X', 'Y', 'Z', '&', '#', '(', ')' }, // 8
 // };
-char hexaKeys[K_ROWS][K_COLS] = {
+const char hexaKeys[K_ROWS][K_COLS] = {
   // 0    1    2    3    4    5    6    7  
   { '#',0x03, '2', '4', '6', '8', '0',0x00 }, // 0
   {0x1B, '1', '3', '5', '7', '9', '^',0x00 }, // 1 -- 0x1B is Esc 
@@ -76,6 +90,19 @@ char hexaKeys[K_ROWS][K_COLS] = {
   {0x00, 'w', 'd', 'g', 'j', 'l', '!','\n' }, // 6
   {0x00, 'a', 'e', 't', 'u', 'o', '^', '<' }, // 7
 };
+
+const char hexaShiftedKeys[K_ROWS][K_COLS] = {
+  // 0    1    2    3    4    5    6    7  
+  { '#',0x03, '2', '4', '6', '8', '0',0x00 }, // 0
+  {0x1B, '1', '3', '5', '7', '9', '^',0x00 }, // 1 -- 0x1B is Esc 
+  {0x00, '~', 'z', 'r', 'y', 'i', 'p',0x00 }, // 2
+  {0x00, 'q', 's', 'f', 'h', 'k', 'm', '>' }, // 3
+  {0x00, ' ', 'c', 'b', ',', ':',0xFF, '$' }, // 4 -- 0xFF is Shift
+  {0x00,0xFE, 'x', 'v', 'n', ',', '=','\b' }, // 5 -- 0xFE is Ctrl
+  {0x00, 'w', 'd', 'g', 'j', 'l', '!','\n' }, // 6
+  {0x00, 'a', 'e', 't', 'u', 'o', '^', '<' }, // 7
+};
+
 byte rowPins[K_ROWS] = {7, 6, 5, 4, 3, 2, 1, 0}; //connect to the row pinouts of the keypad
 byte colPins[K_COLS] = {15, 14, 13, 12, 11, 10, 9, 8}; //connect to the column pinouts of the keypad
 
@@ -108,10 +135,12 @@ void setup()
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, HIGH);
 
+  Serial.begin(9600);
+
   setupLCD(); // a bit long
 
-  // Serial.begin(115200); // Used for messages and the C array generator
-  Serial.begin(9600); // Used for messages and the C array generator
+  setupMp3();
+
 
   bridge.begin(9600);
   bridge.listen();
@@ -239,6 +268,27 @@ void loop()
     }
     else if ( chr == 'l' ) {
       digitalWrite(LED_PIN, LOW);
+
+      return;
+    }
+    // == MP3 Control ==
+    else if ( chr == 'M' ) {
+      // available ? -- TODO : better
+      while( probePort() == PORT_NONE ) { delay(5); }
+      char ch2 = serRead(port);
+      if ( ch2 == 's' ) { snd.stop(); }
+      else if ( ch2 == 'p' ) { snd.pause(); }
+      else if ( ch2 == 'n' ) { snd.next(); }
+      else if ( ch2 == 'v' ) { snd.prev(); }
+
+      else if ( ch2 == 'V' ) { char chV = serRead(port); snd.volume( (int)chV ); }
+      else if ( ch2 == 'P' ) { 
+        char ch0 = serRead(port);
+        char ch1 = serRead(port);
+        int track = ( ch0 * 256 ) + ch1;
+        snd.play(track); 
+      }
+      // else if ( ch2 == 'L' ) { snd.loop(??); }
 
       return;
     }
