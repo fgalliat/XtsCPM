@@ -244,8 +244,8 @@ TFT_eSPI tft = TFT_eSPI();
 //  Sub_MCU   RX2|           |D17
 //  Sub_MCU   TX2|           |D26 TS_CS
 //  TFT_CS    D05|           |D25
-//  TFT_CLK   D18|           |D33 TX1 (mp3 ??)
-//  TFT_MISO  D19|           |D32 RX1 (mp3 ??)
+//  TFT_CLK   D18|           |D33 TX1 (aux ExtPort)
+//  TFT_MISO  D19|           |D32 RX1 (aux ExtPort)
 //            D21|           |D35
 //            RX0|           |D34
 //            TX0|           |VN
