@@ -5,13 +5,27 @@
  * 
  * YAEL SubMCU
  * 
- * 30 KB Sktech -- 27%
- * 2 KB RAM -- 40%
+ * 30 KB Sktech -- 28%
+ * 2 KB RAM -- 47% (w/ keyb+lcd+mp3)
  *
  * KeybLCD#1
  * 
  * 328 pinout
  * 
+ * 
+ *           _|_|_|_|_|_
+ *       TX0|           |RAW Vin
+ *       RX1|           |GND
+ *       RST|           |RST
+ *       GND|           |Vcc 3.3
+ *         2|      (scl)|A3
+ *         3|      (sda)|A2
+ *         4|           |A1
+ *         5|           |A0
+ *         6|           |13  LED
+ *         7|           |12
+ *  RX-MP3 8|           |11  TX-BRIDGE
+ *  TX-MP3 9|___________|10  RX-BRIDGE
  */
 
 //====================================================================================
