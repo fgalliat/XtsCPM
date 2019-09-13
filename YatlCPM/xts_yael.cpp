@@ -51,22 +51,17 @@
 
 #include <HardwareSerial.h>
 //====================================================================================
-//                                    MP3 Player
+//                                    AUX Serial Port
 //====================================================================================
 HardwareSerial Serial3(1); // use uart3
-#define mp3Serial Serial3
-
-#include "xts_yael_dev_dfplayer.h"
-// #define MP3_IN  26
-// #define MP3_OUT 14
+#define auxSerial Serial3
 
 // 16,17 is RX2,TX2
-#define MP3_IN  32
-#define MP3_OUT 33
-SoundCard sndCard( &mp3Serial );
+#define AUX_IN  32
+#define AUX_OUT 33
 
-void setupMp3() {
-    Serial3.begin(9600, SERIAL_8N1, MP3_IN, MP3_OUT); // pins 26 rxY, 14 txY, 9600 bps, 8 bits no parity 1 stop bit
+void setupAuxPort() {
+    Serial3.begin(9600, SERIAL_8N1, AUX_IN, AUX_OUT); // pins 26 rxY, 14 txY, 9600 bps, 8 bits no parity 1 stop bit
 
     // Serial3.println("Hello Serial3 !");
     // Serial.println("Hello Serial3 !");
@@ -77,10 +72,6 @@ void setupMp3() {
     // int nb = Serial3.readBytesUntil('\n', line, 32);
     // Serial3.println(line);
     // Serial.println(line);
-
-    sndCard.init();
-    delay(500);
-    sndCard.volume(25);
 }
 
 //====================================================================================
@@ -92,6 +83,7 @@ void setupMp3() {
 // HardwareSerial Serial1(1);
 // Serial1.begin(9600, SERIAL_7E1, 12, -1, true); ....
 
+#define bridgeSerial Serial2
 
 void cleanBridge() {
     while( Serial2.available() ) {
@@ -117,8 +109,8 @@ void setupBridge() {
 //====================================================================================
 
 void led(bool state, bool fastMode) {
-    if ( state ) { Serial2.write('L'); }
-    else  { Serial2.write('l'); }
+    if ( state ) { bridgeSerial.write('L'); }
+    else  { bridgeSerial.write('l'); }
     if (!fastMode) delay(1);
 }
 
@@ -137,7 +129,7 @@ bool firstKeyUse = true;
 long lastKeyTime = millis();
 
 void cleanKeyb() {
-    Serial2.write((uint8_t)'K');
+    bridgeSerial.write((uint8_t)'K');
     delay(2);
 }
 
@@ -150,14 +142,14 @@ char pollKeyb() {
 
     int tlen = strlen( keyBuff );
     if ( tlen == 0 && ( millis() - lastKeyTime > 60 ) ) {
-      Serial2.write( (uint8_t)'k');  
+      bridgeSerial.write( (uint8_t)'k');  
       delay(4);
       lastKeyTime = millis();
     } 
     
     if ( tlen < KB_BUFF_LEN ) {
-        while( Serial2.available() ) {
-            keyBuff[ tlen++ ] = (char)Serial2.read();
+        while( bridgeSerial.available() ) {
+            keyBuff[ tlen++ ] = (char)bridgeSerial.read();
             if ( tlen >= KB_BUFF_LEN ) {
                 break;
             }
@@ -186,15 +178,14 @@ return customKey;
 //====================================================================================
 
 void lcd_clear() {
-    Serial2.write( (uint8_t)'C' );
-
+    bridgeSerial.write( (uint8_t)'C' );
     delay(2);
 }
 
 void lcd_setCursor(int col, int row) {
-    Serial2.write( (uint8_t)'c' );
-    Serial2.write( (uint8_t)col );
-    Serial2.write( (uint8_t)row );
+    bridgeSerial.write( (uint8_t)'c' );
+    bridgeSerial.write( (uint8_t)col );
+    bridgeSerial.write( (uint8_t)row );
     delay(2);
 }
 
@@ -204,11 +195,22 @@ void lcd_home() {
 }
 
 void lcd_print(char* str) {
-    Serial2.write( (uint8_t)'P' );
-    Serial2.print( str );
-    Serial2.write( (uint8_t)'\n' );
+    bridgeSerial.write( (uint8_t)'P' );
+    bridgeSerial.print( str );
+    bridgeSerial.write( (uint8_t)'\n' );
     delay(2);
 }
+
+//====================================================================================
+//                                    MP3 Player
+//====================================================================================
+void setupMp3() {
+    // sndCard.init();
+    // delay(500);
+    // sndCard.volume(25);
+}
+
+
 
 //====================================================================================
 //                                  Libraries
@@ -303,18 +305,13 @@ bool Y_setup()
 //   Serial.begin(9600); // Used for messages and the C array generator
 
   setupBridge();
-
-//   lcd_print("Init MP3\n");
-//   setupMp3();
+  setupAuxPort();
 
   // Now initialise the TFT
   lcd_print("Init TFT\n");
   tft.begin();
   tft.setRotation(DEFAULT_TFT_ROTATION);  // 0 & 2 Portrait. 1 & 3 landscape
   tft.fillScreen(TFT_BLACK);
-
-// // TEMP : just to test Serial3/1
-// setupMp3();
 
   // Initialise the SD library before the TFT so the chip select gets set
   // have some issues w/ RESETing Screen ...
@@ -388,14 +385,32 @@ void yael_lcd_cls() { lcd_clear(); }
 void yael_lcd_setCursor(int col, int row) { lcd_setCursor(col,row); }
 void yael_lcd_print(char* str) { lcd_print(str); }
 
-void yael_mp3Play(int trackNum) { sndCard.play(trackNum); }
+bool _mp3Playing = false;
+
+void yael_mp3Play(int trackNum) { 
+    bridgeSerial.print("MP"); bridgeSerial.write( (char)(trackNum/256) ); bridgeSerial.write( (char)(trackNum%256) ); delay(2);
+    _mp3Playing = true; 
+}
 void yael_mp3Loop(int trackNum) { yael_lcd_print( (char*)"(!!) MP3 LOOP NYI" ); }
-void yael_mp3Vol(int volume) { sndCard.volume( volume ); }
-void yael_mp3Pause() { sndCard.pause(); }
-void yael_mp3Stop() { sndCard.stop(); }
-void yael_mp3Next() { sndCard.next(); }
-void yael_mp3Prev() { sndCard.prev(); }
-bool yael_mp3IsPlaying() { return sndCard.isPlaying(); }
+void yael_mp3Vol(int volume) { bridgeSerial.print("MV"); bridgeSerial.write( (char)(volume%(30+1)) ); delay(2); }
+
+void yael_mp3Pause() { bridgeSerial.print("Mp"); delay(2); _mp3Playing = !_mp3Playing;}
+void yael_mp3Stop() { bridgeSerial.print("Ms"); delay(2); _mp3Playing = false; }
+void yael_mp3Next() { bridgeSerial.print("Mn"); delay(2); _mp3Playing = true; }
+void yael_mp3Prev() { bridgeSerial.print("Mv"); delay(2); _mp3Playing = true; }
+
+// TODO : TEMP
+bool yael_mp3IsPlaying() { return _mp3Playing; }
+
+
+// void yael_mp3Play(int trackNum) { sndCard.play(trackNum); }
+// void yael_mp3Loop(int trackNum) { yael_lcd_print( (char*)"(!!) MP3 LOOP NYI" ); }
+// void yael_mp3Vol(int volume) { sndCard.volume( volume ); }
+// void yael_mp3Pause() { sndCard.pause(); }
+// void yael_mp3Stop() { sndCard.stop(); }
+// void yael_mp3Next() { sndCard.next(); }
+// void yael_mp3Prev() { sndCard.prev(); }
+// bool yael_mp3IsPlaying() { return sndCard.isPlaying(); }
 
 void yael_led(bool state, bool fastMode) { led(state, fastMode); }
 
