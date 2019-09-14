@@ -64,5 +64,8 @@ void yael_led(bool state, bool fastMode=false);
 
 char yael_keyb_poll();
 
+// not concurent safe !
+char* yael_fs_getAssetsFileEntry(char* assetName);
+
 void yael_dbug(char* str);
 void yael_dbug(const char* str);

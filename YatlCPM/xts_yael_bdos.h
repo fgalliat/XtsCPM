@@ -249,7 +249,7 @@
           yael_dbug("|  Wanna draw a BMP wallpaper |");
           // yatl.getScreen()->drawWallpaper( test );
           // TODO -1,-1 => centers wallpaper ...
-          yael_tft_drawBMP( test, 0, 0 );
+          yael_tft_drawBMP(  yael_fs_getAssetsFileEntry( test ), 0, 0 );
         }
 
       } else if ( endsWith(test, (char*)".PAK") ) {
@@ -283,7 +283,7 @@
         // Serial.println();
 
         // drawImgFromPAK( yatl.getFS()->getAssetsFileEntry( filename ), x, y, numImg );
-        yael_tft_drawPAK(filename, x, y, numImg);
+        yael_tft_drawPAK( yael_fs_getAssetsFileEntry( filename ), x, y, numImg);
 
       } else if ( endsWith(test, (char*)".PCT") ) {
         yael_dbug("|  Wanna draw a PCT wallpaper |");

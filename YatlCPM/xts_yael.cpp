@@ -276,6 +276,28 @@ ets_main.c 371
 
 SdFatSoftSpiEX<2, 4, 14> SD; // MISO, MOSI, SCK Some boards use 2,15,14,13, other 12,14,27,26
 
+// ====== Fs Routines =================
+
+const int _fullyQualifiedFileNameSize = 1+5 + (8+1+3) + 1;
+char _assetEntry[ _fullyQualifiedFileNameSize ];
+
+// not ThreadSafe !
+char* yael_fs_getAssetsFileEntry(char* assetName) {
+    if ( assetName == NULL || strlen(assetName) <= 0 ) { yael_dbug("NULL filename"); return NULL; }
+    memset(_assetEntry, 0x00, _fullyQualifiedFileNameSize);
+
+    if ( assetName[1] == ':' ) {
+        // ex. "Y:IMG.PAK"
+        sprintf( _assetEntry, "/%c/0/%s", assetName[0], &assetName[2] );
+    } else {
+        sprintf( _assetEntry, "/Z/0/%s", &assetName[0] );
+    }
+
+    return _assetEntry;
+}
+
+
+
 
 // === Now that TFT & SD Loaded ... ===
 #include "xts_yael_soft_drawBMP.h"
