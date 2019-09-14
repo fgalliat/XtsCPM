@@ -416,4 +416,11 @@ void yael_led(bool state, bool fastMode) { led(state, fastMode); }
 
 char yael_keyb_poll() { return pollKeyb(); }
 
-void yael_dbug(char* str) { Serial.print("(ii) "); Serial.println(str); }
+void yael_dbug(char* str) { 
+    Serial.print("(ii) "); Serial.println(str); 
+    yael_lcd_print(" (ii) ");
+    yael_lcd_print(str);
+    yael_lcd_print("\n");
+}
+
+void yael_dbug(const char* str) { yael_dbug( (char*)str ); }
