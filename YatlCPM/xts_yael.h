@@ -23,6 +23,20 @@
 #endif
 
 
+  static uint16_t rgb(uint8_t r,uint8_t g,uint8_t b) { return (uint16_t)( (( r *31/255 )<<11) | (( g *63/255 )<<5) | ( b *31/255 ) );}
+
+  static const uint16_t CLR_BLACK = rgb(0,0,0);
+  static const uint16_t CLR_WHITE = rgb(255,255,255);
+  static const uint16_t CLR_GREEN = rgb(0,255,0);
+  static const uint16_t CLR_RED   = rgb(255,0,0);
+  static const uint16_t CLR_BLUE  = rgb(0,0,255);
+  static const uint16_t CLR_YELLOW = rgb(255,255,0);
+  static const uint16_t CLR_MAGENTA = rgb(255,0,255);
+  static const uint16_t CLR_CYAN = rgb(0,255,255);
+  static const uint16_t CLR_ORANGE = rgb(255,165, 0);
+  static const uint16_t CLR_PURPLE = rgb(123,0,123);
+  static const uint16_t CLR_PINK = rgb(255,130,198);
+
 //====================================================================================
 //                                    Symbols
 //====================================================================================

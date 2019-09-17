@@ -49,6 +49,7 @@
 
 
 
+
 #include <HardwareSerial.h>
 //====================================================================================
 //                                    AUX Serial Port
@@ -390,12 +391,15 @@ bool yael_setup() { return Y_setup(); }
 
 void yael_tft_cls() { tft.fillScreen(TFT_BLACK); tft.setCursor(0,0); }
 void yael_tft_setCursor(int col, int row) { tft.setCursor(col,row); }
-void yael_tft_print(char ch) { 
-    if ( ch == 26 ) { yael_tft_cls(); return; }
-    tft.print(ch); 
-}
-void yael_tft_print(char* str) { tft.print(str); }
-void yael_tft_println(char* str) { tft.println(str); }
+
+// see. xts_yael_dev_console.cpp ::
+// void yael_tft_print(char ch) { 
+//     if ( ch == 26 ) { yael_tft_cls(); return; }
+//     tft.print(ch); 
+// }
+// void yael_tft_print(char* str) { tft.print(str); }
+// void yael_tft_println(char* str) { tft.println(str); }
+
 void yael_tft_drawBMP(char* filename, int x, int y) { 
     tft.setRotation(DEFAULT_TFT_ROTATION == 1 ? 2 : 0);
     drawBmp(filename, x, y);

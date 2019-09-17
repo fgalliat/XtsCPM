@@ -7,7 +7,7 @@
 
 // filename is "/Z/0/packXXX.pak"
 // reads&display image #numInPak of packed image from filename
-void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
+static void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
     if ( filename == NULL || strlen(filename) <= 0 || strlen(filename) >= 32 ) {
         Serial.println("(WW) Wrong PAK filename !");
         return;

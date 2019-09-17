@@ -12,42 +12,7 @@
   // #include "Arduino.h"
 
 
-  // TODO : move away !!!! _________________________
-  
-  uint16_t rgb(uint8_t r,uint8_t g,uint8_t b) { return (uint16_t)( (( r *31/255 )<<11) | (( g *63/255 )<<5) | ( b *31/255 ) );}
-
-  const uint16_t CLR_BLACK = rgb(0,0,0);
-  const uint16_t CLR_WHITE = rgb(255,255,255);
-  const uint16_t CLR_GREEN = rgb(0,255,0);
-  const uint16_t CLR_RED   = rgb(255,0,0);
-  const uint16_t CLR_BLUE  = rgb(0,0,255);
-
-  const uint16_t CLR_YELLOW = rgb(255,255,0);
-  const uint16_t CLR_MAGENTA = rgb(255,0,255);
-  const uint16_t CLR_CYAN = rgb(0,255,255);
-  const uint16_t CLR_ORANGE = rgb(255,165, 0);
-  const uint16_t CLR_PURPLE = rgb(123,0,123);
-  const uint16_t CLR_PINK = rgb(255,130,198);
-
-  uint16_t mapColor(uint16_t color) {
-      if ( color >= 16 ) { return color; }
-      
-      if ( color == 0 ) { return CLR_BLACK; }
-      if ( color == 1 ) { return CLR_WHITE; }
-      if ( color == 2 ) { return CLR_RED; }
-      if ( color == 3 ) { return CLR_GREEN; }
-      if ( color == 4 ) { return CLR_BLUE; }
-      if ( color == 5 ) { return CLR_YELLOW; }
-      if ( color == 6 ) { return CLR_PURPLE; }
-      if ( color == 7 ) { return CLR_CYAN; }
-      if ( color == 8 ) { return CLR_ORANGE; }
-      if ( color == 9 ) { return CLR_MAGENTA; }
-
-      return CLR_PINK;
-  }
-  // _______________________________________________
-
-
+  extern uint16_t mapColor(uint16_t color);
 
 
   // forward symbols
