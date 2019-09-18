@@ -319,6 +319,8 @@ void _setupCSlines() {
 
 
 // ========================================
+// forward symbols
+void _setConsoleMode(int mode);
 
 bool Y_setup()
 {
@@ -335,6 +337,8 @@ bool Y_setup()
   tft.begin();
   tft.setRotation(DEFAULT_TFT_ROTATION);  // 0 & 2 Portrait. 1 & 3 landscape
   tft.fillScreen(TFT_BLACK);
+
+  _setConsoleMode(1); // compute 80 cols mode
 
   // Initialise the SD library before the TFT so the chip select gets set
   // have some issues w/ RESETing Screen ...

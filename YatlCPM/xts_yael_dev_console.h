@@ -48,8 +48,10 @@
    // playInParallel Not Supported
    void playVTMusic(char* tuneStr, bool playInParallel = false);
 
-   #define TFT_WIDTH 320
-   #define TFT_HEIGHT 240
+  //  #define TFT_WIDTH 320
+  //  #define TFT_HEIGHT 240
+   #define TFT_WIDTH 480
+   #define TFT_HEIGHT 320
 
    // one of LCD_CONSOLE_xx_COLS
    void _setConsoleMode(int mode);

@@ -128,7 +128,7 @@
    #define TTY_CON_SIZE ( TTY_CON_WIDTH * TTY_CON_HEIGHT )
 
    #define COLORED_CONSOLE 1
-   // #define LCD_TINYFONT 1
+   #define LCD_TINYFONT 1
 
    #ifdef COLORED_CONSOLE
       char ttyConsoleAttrs[ TTY_CON_SIZE ];
