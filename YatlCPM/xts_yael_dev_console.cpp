@@ -117,8 +117,11 @@
       _doPlay(tuneStr);
    }
 
-   #define TTY_FONT_WIDTH 4
-   #define TTY_FONT_HEIGHT 6
+   // #define TTY_FONT_WIDTH 4
+   // #define TTY_FONT_HEIGHT 6
+   // YAEL mono font based
+   #define TTY_FONT_WIDTH 6
+   #define TTY_FONT_HEIGHT 8
   
    // 53 - 80 if tinyFont
    #define TTY_CON_WIDTH  ( TFT_WIDTH / TTY_FONT_WIDTH )

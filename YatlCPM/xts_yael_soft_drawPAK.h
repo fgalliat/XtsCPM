@@ -44,8 +44,9 @@ static void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
         int ct = pakFile.read( (uint8_t*)scanArray, SCAN_ARRAY_HEIGHT * w*2 ); // *2 cf U16
         if ( ct <= 0 ) { Serial.println("Oups EOF !"); break; }
 
-#if not MODE_4INCH
+#if MODE_4INCH
         // Cf ESP32 isn't an ARM -> it's a RISC MCU
+        // in reality I don't really know why .....
         for(int i=0; i < ct/2; i++) {
             int u80 = scanArray[ (i)+0 ] / 256;
             int u81 = scanArray[ (i)+0 ] % 256;
