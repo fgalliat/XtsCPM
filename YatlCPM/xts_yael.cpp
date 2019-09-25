@@ -218,6 +218,8 @@ void setupMp3() {
     // sndCard.init();
     // delay(500);
     // sndCard.volume(25);
+
+    pinMode(MP3_BUSY_PIN, INPUT);
 }
 
 
@@ -511,8 +513,10 @@ void yael_mp3Stop() { bridgeSerial.print("Ms"); delay(2); _mp3Playing = false; }
 void yael_mp3Next() { bridgeSerial.print("Mn"); delay(2); _mp3Playing = true; }
 void yael_mp3Prev() { bridgeSerial.print("Mv"); delay(2); _mp3Playing = true; }
 
-// TODO : TEMP
-bool yael_mp3IsPlaying() { return _mp3Playing; }
+// bool yael_mp3IsPlaying() { return _mp3Playing; }
+bool yael_mp3IsPlaying() { 
+    return digitalRead(MP3_BUSY_PIN) == LOW; 
+}
 
 
 // void yael_mp3Play(int trackNum) { sndCard.play(trackNum); }

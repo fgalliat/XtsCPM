@@ -389,6 +389,8 @@ yael_dbug("mp3 play");
           // yael_dbug("mp3 demo");
           // for now : just for demo
           yael_mp3Play( 65 );
+      } else if (a0 == 0x06) {
+          return yael_mp3IsPlaying() ? 1 : 0;
       }
 
     return 0;
