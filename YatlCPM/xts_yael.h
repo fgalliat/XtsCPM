@@ -61,6 +61,13 @@ void yael_tft_println(char* str);
 void yael_tft_drawBMP(char* filename, int x, int y);
 void yael_tft_drawPAK(char* filename, int x, int y, int imgNum);
 
+void yael_tft_drawRect(int x, int y, int w, int h, uint16_t color);
+void yael_tft_fillRect(int x, int y, int w, int h, uint16_t color);
+void yael_tft_drawCircle(int x, int y, int radius, uint16_t color);
+void yael_tft_fillCircle(int x, int y, int radius, uint16_t color);
+void yael_tft_drawLine(int x, int y, int x2, int y2, uint16_t color);
+
+
 void yael_lcd_cls();
 void yael_lcd_setCursor(int col, int row);
 void yael_lcd_print(char* str);

@@ -124,64 +124,64 @@
     uint16_t color = (uint16_t) ((uint8_t)test[4] << 8) + (uint8_t)test[5];
     color = mapColor( color );
 
-//     if ( OpType == 0x7F ) {
-//       // drawShapes
-//       uint16_t x = (uint16_t) ((uint8_t)test[6] << 8) + (uint8_t)test[7];
-//       uint16_t y = (uint16_t) ((uint8_t)test[8] << 8) + (uint8_t)test[9];
-//       if ( shapeType == 0x01 ) {
-//         // Shape : rectangle
-//         uint16_t w = (uint16_t) ((uint8_t)test[10] << 8) + (uint8_t)test[11];
-//         uint16_t h = (uint16_t) ((uint8_t)test[12] << 8) + (uint8_t)test[13];
-//         if ( fillType == 0x00 ) {
-//           // draw outlines
-//           yatl.getScreen()->drawRect( x, y, w, h, color );
-//         } else if ( fillType == 0x01 ) {
-//           // fills the rect
+    if ( OpType == 0x7F ) {
+      // drawShapes
+      uint16_t x = (uint16_t) ((uint8_t)test[6] << 8) + (uint8_t)test[7];
+      uint16_t y = (uint16_t) ((uint8_t)test[8] << 8) + (uint8_t)test[9];
+      if ( shapeType == 0x01 ) {
+        // Shape : rectangle
+        uint16_t w = (uint16_t) ((uint8_t)test[10] << 8) + (uint8_t)test[11];
+        uint16_t h = (uint16_t) ((uint8_t)test[12] << 8) + (uint8_t)test[13];
+        if ( fillType == 0x00 ) {
+          // draw outlines
+          yael_tft_drawRect( x, y, w, h, color );
+        } else if ( fillType == 0x01 ) {
+          // fills the rect
 
-// // if ( y > 220 ) {
-// // char str[64]; sprintf(str,"drawRect(%d,%d,%d,%d,%d)", x, y, w, h, color);
-// // yael_dbug( (const char*)str );
-// // }
+// if ( y > 220 ) {
+// char str[64]; sprintf(str,"drawRect(%d,%d,%d,%d,%d)", x, y, w, h, color);
+// yael_dbug( (const char*)str );
+// }
 
-//           yatl.getScreen()->fillRect( x, y, w, h, color );
-//         }
-//       } else if ( shapeType == 0x02 ) {
-//         // Shape : circle
-//         uint16_t r = (uint16_t)((uint8_t)test[10] << 8) + (uint8_t)test[11];
-//         if ( fillType == 0x00 ) {
-//           // draw outlines
-//           yatl.getScreen()->drawCircle( x,y,r, color );
-//         } else {
-//           yatl.getScreen()->fillCircle( x,y,r, color );
-//         }
-//       } else if ( shapeType == 0x03 ) {
-//         // Shape : line
-//         uint16_t x2 = (uint16_t) ((uint8_t)test[10] << 8) + (uint8_t)test[11];
-//         uint16_t y2 = (uint16_t) ((uint8_t)test[12] << 8) + (uint8_t)test[13];
-//         yatl.getScreen()->drawLine( x, y, x2, y2, color );
-//       } 
-//     } else if ( OpType == 0x80 ) {
-//       // manage Sprite
-//       uint16_t x = (uint16_t)((uint8_t)test[6] << 8) + (uint8_t)test[7];
-//       uint16_t y = (uint16_t)((uint8_t)test[8] << 8) + (uint8_t)test[9];
+          yael_tft_fillRect( x, y, w, h, color );
+        }
+      } else if ( shapeType == 0x02 ) {
+        // Shape : circle
+        uint16_t r = (uint16_t)((uint8_t)test[10] << 8) + (uint8_t)test[11];
+        if ( fillType == 0x00 ) {
+          // draw outlines
+          yael_tft_drawCircle( x,y,r, color );
+        } else {
+          yael_tft_fillCircle( x,y,r, color );
+        }
+      } else if ( shapeType == 0x03 ) {
+        // Shape : line
+        uint16_t x2 = (uint16_t) ((uint8_t)test[10] << 8) + (uint8_t)test[11];
+        uint16_t y2 = (uint16_t) ((uint8_t)test[12] << 8) + (uint8_t)test[13];
+        yael_tft_drawLine( x, y, x2, y2, color );
+      } 
+    } else if ( OpType == 0x80 ) {
+      // manage Sprite
+      uint16_t x = (uint16_t)((uint8_t)test[6] << 8) + (uint8_t)test[7];
+      uint16_t y = (uint16_t)((uint8_t)test[8] << 8) + (uint8_t)test[9];
 
-//       if ( shapeType == 0x01 ) {
-//         // define sprite
+      // if ( shapeType == 0x01 ) {
+      //   // define sprite
 
-//         uint16_t w = (uint16_t)((uint8_t)test[10] << 8) + (uint8_t)test[11];
-//         uint16_t h = (uint16_t)((uint8_t)test[12] << 8) + (uint8_t)test[13];
+      //   uint16_t w = (uint16_t)((uint8_t)test[10] << 8) + (uint8_t)test[11];
+      //   uint16_t h = (uint16_t)((uint8_t)test[12] << 8) + (uint8_t)test[13];
 
-//         uint8_t num = test[14];
+      //   uint8_t num = test[14];
 
-//         sprites[num].setBounds( x, y, w, h );
-//       } else if ( shapeType == 0x02 ) {
-//         // draw sprite
-//         uint8_t num = test[10];
+      //   sprites[num].setBounds( x, y, w, h );
+      // } else if ( shapeType == 0x02 ) {
+      //   // draw sprite
+      //   uint8_t num = test[10];
 
-//         sprites[num].drawClip( x, y );
-//       }
+      //   sprites[num].drawClip( x, y );
+      // }
 
-//     }
+    }
 
     return 0;
   }
@@ -287,10 +287,8 @@
         uint8_t volts = (uint8_t)0xFF; // 5v
         return volts;
       } else if ( hiB == 1 ) {
-        // yatl.getPWRManager()->reset();
         ESP.restart();
       } else if ( hiB == 2 ) {
-        // yatl.getPWRManager()->deepSleep();
         esp_deep_sleep_start();
       } else if ( hiB == 3 ) {
         uint8_t loB = LOW_REGISTER(value);
@@ -378,10 +376,10 @@ yael_dbug("mp3 play");
          if ( loopMode ) { yael_mp3Loop(trkNum); }
          else { yael_mp3Play(trkNum); }
       } else if (a0 == 0x00) {
-yael_dbug("mp3 stop");
+          // yael_dbug("mp3 stop");
           yael_mp3Stop();
       } else if (a0 == 0x01) {
-yael_dbug("mp3 pause");
+          // yael_dbug("mp3 pause");
           yael_mp3Pause();
       } else if (a0 == 0x02) {
           yael_mp3Next();
@@ -390,7 +388,7 @@ yael_dbug("mp3 pause");
       } else if (a0 == 0x04) {
           yael_mp3Vol( a1 );
       } else if (a0 == 0x05) {
-yael_dbug("mp3 demo");
+          // yael_dbug("mp3 demo");
           // for now : just for demo
           yael_mp3Play( 65 );
       }

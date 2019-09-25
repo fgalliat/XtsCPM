@@ -411,6 +411,14 @@ void yael_tft_drawBMP(char* filename, int x, int y) {
 }
 void yael_tft_drawPAK(char* filename, int x, int y, int imgNum) { drawImgFromPAK(filename, x, y, imgNum); }
 
+
+void yael_tft_drawRect(int x, int y, int w, int h, uint16_t color) { tft.drawRect( x, y, w, h, color ); }
+void yael_tft_fillRect(int x, int y, int w, int h, uint16_t color) { tft.fillRect( x, y, w, h, color ); }
+void yael_tft_drawCircle(int x, int y, int radius, uint16_t color) { tft.drawCircle( x, y, radius, color ); }
+void yael_tft_fillCircle(int x, int y, int radius, uint16_t color) { tft.fillCircle( x, y, radius, color ); }
+void yael_tft_drawLine(int x, int y, int x2, int y2, uint16_t color) { tft.drawLine( x, y, x2, y2, color ); }
+
+
 void yael_lcd_cls() { lcd_clear(); }
 void yael_lcd_setCursor(int col, int row) { lcd_setCursor(col,row); }
 void yael_lcd_print(char* str) { lcd_print(str); }
