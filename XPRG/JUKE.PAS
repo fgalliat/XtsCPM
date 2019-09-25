@@ -6,13 +6,14 @@ var
  i : integer;
 
 {$I XTSYATLG.INC the Yatl GFX include}
+{$I XTSYATLC.INC the Yatl TTY include}
 
 {$I XTSYATLM.INC the Yatl MP3 include}
 
 { to put in include }
-function doesMp3Play : integer;
+function doesMp3Play : boolean;
 begin
- doesMp3Play := Bdos(227, 6 shl 8 );
+ doesMp3Play := ( Bdos(227, 6 shl 8 ) ) = 1;
 end;
 
 { to put in a generic include }
@@ -36,29 +37,32 @@ var
  choiceCh : char;
 begin
 
+  stopMp3;
+
   clrscr;
   { auto-add '.pak' }
   drawPakImage('ishar', 6, 0, 0);
-  gotoXY(0,0);
+  {gotoXY(1,1); -- need to set TTYcurs }
+  cursor(1,1);
 
   choice := '*';
 
   {* ------ *}
   playMp3( 22 );
-  gotoXY(0,0);
+  cursor(1,1);
   writeln( 'Xtase JukeBox v1.0' );
-  gotoXY(0,2);
+  cursor(1,3);
   writeln( 'Playing an MP3 : ' );
 
   repeat
 
-    gotoXY(22,2); write('NO ');
+    cursor(22,3); write('NO ');
     if ( doesMp3Play ) then
     begin
-      gotoXY(22,2); write('YES');
+      cursor(22,3); write('YES');
     end;
 
-    gotoXY(0,5);
+    cursor(1,6);
     write( 'Your choice ? (q, p, n)' );
     if ( KeyPressed ) then 
      Read(Kbd,choiceCh);
@@ -69,5 +73,7 @@ begin
       nextMp3;
 
   until ( choiceCh = 'q' );
+
+  stopMp3;
 
 end.
