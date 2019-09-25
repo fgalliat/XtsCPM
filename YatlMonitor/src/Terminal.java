@@ -1,6 +1,9 @@
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.Properties;
 
 import jssc.SerialPort;
 import jssc.SerialPortEventListener;
@@ -16,6 +19,30 @@ public class Terminal {
 	public boolean isListenerLocked() {
 		return LISTENER_LOCKED;
 	}
+
+	protected Terminal() {
+		try {
+			File propsF = new File("./config.props");
+			if ( propsF.exists() ) {
+				Properties props = new Properties();
+				Reader reader = new FileReader(propsF);
+				System.out.println("Reading props from "+propsF.getPath());
+				props.load(reader);
+				reader.close();
+
+				if ( props.containsKey("comm.port") ) {
+					commPort = props.getProperty("comm.port");
+					System.out.println("Will use port : "+commPort);
+				}
+
+			} else {
+				System.out.println("Skip reading props from "+propsF.getPath());
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
 
 	public static synchronized Terminal getInstance() {
 		if (instance == null) {
