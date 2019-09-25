@@ -351,7 +351,7 @@
 
   // ==============] mp3 Hardware Control [==========
   uint8_t mp3BdosCall(int32 value) {
-      yael_dbug("mp3 Bdos call");
+      // yael_dbug("mp3 Bdos call");
       // int trckNum += (128+64) << 8
 
       uint8_t a0 = HIGH_REGISTER(value);

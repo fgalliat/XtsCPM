@@ -56,7 +56,9 @@ begin
 
   repeat
 
-    cursor(22,3); write('NO ');
+    {cursor(22,3); write('---');}
+    { ,1 fill ,0 black }
+    drawRect(22*6,3*8,5*6,2*8, 1, 0);
     if ( doesMp3Play ) then
     begin
       cursor(22,3); write('YES');
@@ -71,6 +73,8 @@ begin
       pauseMp3;
     if ( choiceCh = 'n' ) then
       nextMp3;
+
+    delay(300);
 
   until ( choiceCh = 'q' );
 
