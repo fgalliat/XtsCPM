@@ -94,8 +94,7 @@
       // Serial.println(sequence);
 
       if ( slen <= 2 ) { 
-         // TODO
-         // yatl.getBuzzer()->playTuneString(sequence); 
+         yael_buzzer_playTuneString(sequence); 
          return; 
       }
 
@@ -106,8 +105,7 @@
          // TODO
          // yatl.getBuzzer()->playTuneFile(sequence);
       }  else {
-         // TODO
-         // yatl.getBuzzer()->playTuneString(sequence);
+         yael_buzzer_playTuneString(sequence);
       }
    }
 
@@ -422,8 +420,8 @@
          consoleCls();
          return;
       } else if ( ch == 7 ) { 
-         // yatl.beep();
-         Serial.println("BEEP NYI");
+         yael_buzzer_beep();
+         // Serial.println("BEEP");
          return;
       }
 

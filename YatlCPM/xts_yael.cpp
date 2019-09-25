@@ -242,15 +242,15 @@ TFT_eSPI tft = TFT_eSPI();
 //            3.3|           |VIN
 //            GND|           |GND
 //  TFT_DC    D15|           |D13 SD_CS
-//  SD_MISO   D02|           |D12
+//  SD_MISO   D02|           |D12 BUZZER - certified
 //  SD_MOSI   D04|           |D14 SD_CLK
-//  Sub_MCU   RX2|           |D17
+//  Sub_MCU   RX2|           |D27 
 //  Sub_MCU   TX2|           |D26 TS_CS
-//  TFT_CS    D05|           |D25
+//  TFT_CS    D05|           |D25 (??) LED !! not sure
 //  TFT_CLK   D18|           |D33 TX1 (aux ExtPort)
 //  TFT_MISO  D19|           |D32 RX1 (aux ExtPort)
-//            D21|           |D35
-//            RX0|           |D34
+//            D21|           |D35 (??) SubMCU /READY \__ Cf spec: INPUT ONLY
+//            RX0|           |D34 (??) MP3 /BUSY     /
 //            TX0|           |VN
 //            D22|           |VP
 //  TFT_MOSI  D23|___________|EN /RESET
@@ -316,6 +316,7 @@ void _setupCSlines() {
   digitalWrite(SD_CS, LOW);
 }
 
+// ========================================
 
 
 // ========================================
@@ -331,6 +332,8 @@ bool Y_setup()
 
   setupBridge();
   setupAuxPort();
+
+  yael_buzzer_init();
 
   // Now initialise the TFT
   lcd_print("Init TFT\n");
@@ -350,6 +353,8 @@ bool Y_setup()
         Serial.println("SD Initialisation failed!");
         lcd_print("! SD failed ! ");
         yael_tft_print("! SD failed ! ");
+
+        yael_buzzer_beep();
         // return false;
     } else {
         ok = true;

@@ -85,6 +85,12 @@ void yael_led(bool state, bool fastMode=false);
 
 char yael_keyb_poll();
 
+void yael_buzzer_init();
+void yael_buzzer_tone(int freq, int duration);
+void yael_buzzer_noTone();
+void yael_buzzer_playTuneString(char* sequence);
+void yael_buzzer_beep(int freq=440, int duration=200);
+
 // not concurent safe !
 char* yael_fs_getAssetsFileEntry(char* assetName);
 
