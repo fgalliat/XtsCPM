@@ -306,9 +306,7 @@
         yael_led( r | g | b );
 
       } else if ( hiB == 4 ) {
-        // TODO
-        // return yatl.getFS()->downloadFromSerial() ? 1 : 0;
-        yael_dbug( "downloadFromSerial() NYI" );
+        return yael_fs_downloadFromSerial() ? 1 : 0;
         return 0;
       } else if ( hiB == 5 ) {
         // return yatl.getFS()->downloadFromSubMcu() ? 1 : 0;

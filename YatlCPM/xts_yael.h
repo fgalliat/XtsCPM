@@ -95,6 +95,7 @@ void yael_buzzer_beep(int freq=440, int duration=200);
 
 // not concurent safe !
 char* yael_fs_getAssetsFileEntry(char* assetName);
+bool yael_fs_downloadFromSerial();
 
 void yael_dbug(char* str);
 void yael_dbug(const char* str);

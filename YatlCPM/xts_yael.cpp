@@ -402,6 +402,65 @@ bool Y_setup()
 return true;
 }
 
+// ===================================
+    bool yael_fs_downloadFromSerial() {
+        while( Serial.available() ) { Serial.read(); delay(2); }
+        yael_warn("Download in progress");
+        Serial.println("+OK");
+        while( !Serial.available() ) { delay(2); }
+        // for now : file has to be like "/C/0/XTSDEMO.PAS"
+        int tlen = 0;
+        char txt[128+1]; 
+        char name[64+1]; memset(name, 0x00, 64); tlen = Serial.readBytesUntil(0x0A, name, 64);
+        if ( tlen <= 0 ) {
+            sprintf(txt, "Downloading %s (error)", name);
+            yael_warn((const char*)txt);
+            Serial.println("Download not ready");
+            Serial.println(name);
+            Serial.println("-OK");
+            return false;
+        }
+
+        // Cf CPM may padd the original file
+        File f = SD.open(name, O_CREAT | O_WRITE);
+        if ( !f ) {
+          Serial.println("-OK");
+          return false;    
+        }
+        f.remove();
+        f.close();
+        // Cf CPM may padd the original file
+
+        f = SD.open(name, O_CREAT | O_WRITE);
+        if ( !f ) {
+          Serial.println("-OK");
+          return false;    
+        }
+
+        Serial.println("+OK");
+        while( !Serial.available() ) { delay(2); }
+        char sizeStr[12+1]; memset(sizeStr, 0x00, 12); tlen = Serial.readBytesUntil(0x0A, sizeStr, 12);
+        long size = atol(sizeStr);
+        sprintf(txt, "Downloading %s (%ld bytes)", name, size);
+        yael_warn((const char*)txt);
+        char packet[128+1];
+        Serial.println("+OK");
+        for(int readed=0; readed < size;) {
+            while( !Serial.available() ) { delay(2); }
+            int packetLen = Serial.readBytes( packet, 128 );
+            f.write(packet, packetLen);
+            f.flush();
+            readed += packetLen;
+        }
+        f.close();
+        yael_warn("-EOF-");
+        yael_buzzer_beep();
+        return true;
+    }
+
+
+
+
 // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 // $$ YAEL API
 
@@ -479,7 +538,11 @@ void yael_dbug(char* str) {
 void yael_dbug(const char* str) { yael_dbug( (char*)str ); }
 
 void yael_warn(char* str) { 
-    Serial.print("(!!) "); Serial.println(str); 
+    // no serial write : because used while Serial copy
+    // Serial.print("(!!) "); Serial.println(str); 
+
+    yael_lcd_cls();
+
     yael_lcd_print(" (!!) ");
     yael_lcd_print(str);
     yael_lcd_print("\n");
