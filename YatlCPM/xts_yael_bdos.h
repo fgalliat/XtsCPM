@@ -17,7 +17,7 @@
 
   // forward symbols
   uint8_t mp3BdosCall(int32 value);
-  uint8_t subMCUBdosCall(int32 value);
+  uint8_t subSystemBdosCall(int32 value);
 
   // from TurboPascal 3 strings are 255 long max
   // & starts @ 1 ( 'cause @0 contains length)
@@ -269,7 +269,7 @@
     } else if ( regNum == 227 ) {
      return mp3BdosCall(value);
     } else if ( regNum == 228 ) {
-      return subMCUBdosCall(value);
+      return subSystemBdosCall(value);
     } else if ( regNum == 229 ) {
       yael_dbug( "BdosCall 229 NYI => Test Mode" );
       BdosTest229(value);
@@ -279,7 +279,7 @@
   }
 
   // ==============] Deep Hardware Control [==========
-  uint8_t subMCUBdosCall(int32 value) {
+  uint8_t subSystemBdosCall(int32 value) {
       // Serial.println("bridge Bdos call");
       uint8_t hiB = HIGH_REGISTER(value);
       if ( hiB == 0 ) {
@@ -311,6 +311,15 @@
       } else if ( hiB == 5 ) {
         // return yatl.getFS()->downloadFromSubMcu() ? 1 : 0;
         yael_dbug( "downloadFromWifi() NYI" );
+        return 0;
+      } else if ( hiB == 6 ) {
+        // real delay(x/10) because as we don't emulate
+        // CPU cycles ... Pascal.delay() is instable in time 
+        uint8_t loB = LOW_REGISTER(value);
+
+        int timeToSleep = loB * 10;
+        delay( timeToSleep );
+
         return 0;
       } // Wifi Device calls -> 64+
       else if ( hiB == 64 ) {
