@@ -202,6 +202,15 @@ void lcd_print(char* str) {
     delay(2);
 }
 
+void lcd_println(char* str, int lineNum) {
+    lcd_setCursor( 0, lineNum );
+
+    bridgeSerial.write( (uint8_t)'P' );
+    bridgeSerial.print( str );
+    bridgeSerial.write( (uint8_t)'\n' );
+    delay(2);
+}
+
 //====================================================================================
 //                                    MP3 Player
 //====================================================================================
@@ -427,6 +436,7 @@ void yael_tft_drawLine(int x, int y, int x2, int y2, uint16_t color) { tft.drawL
 void yael_lcd_cls() { lcd_clear(); }
 void yael_lcd_setCursor(int col, int row) { lcd_setCursor(col,row); }
 void yael_lcd_print(char* str) { lcd_print(str); }
+void yael_lcd_println(char* str, int row) { lcd_println(str, row); }
 
 bool _mp3Playing = false;
 
@@ -467,3 +477,12 @@ void yael_dbug(char* str) {
 }
 
 void yael_dbug(const char* str) { yael_dbug( (char*)str ); }
+
+void yael_warn(char* str) { 
+    Serial.print("(!!) "); Serial.println(str); 
+    yael_lcd_print(" (!!) ");
+    yael_lcd_print(str);
+    yael_lcd_print("\n");
+}
+
+void yael_warn(const char* str) { yael_warn( (char*)str ); }

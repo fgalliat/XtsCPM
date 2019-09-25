@@ -71,6 +71,7 @@ void yael_tft_drawLine(int x, int y, int x2, int y2, uint16_t color);
 void yael_lcd_cls();
 void yael_lcd_setCursor(int col, int row);
 void yael_lcd_print(char* str);
+void yael_lcd_println(char* str, int row);
 
 void yael_mp3Play(int trackNum);
 void yael_mp3Loop(int trackNum);
@@ -89,6 +90,7 @@ void yael_buzzer_init();
 void yael_buzzer_tone(int freq, int duration);
 void yael_buzzer_noTone();
 void yael_buzzer_playTuneString(char* sequence);
+bool yael_buzzer_playTuneFile(const char* tuneStreamName);
 void yael_buzzer_beep(int freq=440, int duration=200);
 
 // not concurent safe !
@@ -96,3 +98,6 @@ char* yael_fs_getAssetsFileEntry(char* assetName);
 
 void yael_dbug(char* str);
 void yael_dbug(const char* str);
+
+void yael_warn(char* str);
+void yael_warn(const char* str);

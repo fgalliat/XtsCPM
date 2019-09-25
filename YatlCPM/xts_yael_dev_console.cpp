@@ -102,8 +102,7 @@
       ch = charUpCase(ch);
 
       if ( (ch == '3' || ch == 'K') && sequence[ slen-2  ] == '5' ) {
-         // TODO
-         // yatl.getBuzzer()->playTuneFile(sequence);
+         yael_buzzer_playTuneFile(sequence);
       }  else {
          yael_buzzer_playTuneString(sequence);
       }
