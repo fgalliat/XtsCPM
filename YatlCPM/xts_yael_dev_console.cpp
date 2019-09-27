@@ -6,6 +6,43 @@
  * VT100 + Ext protocols & routines
  * 
  * for YAEL Layout
+ * 
+ * 
+ * Docs :
+ * https://www.seasip.info/Cpm/bdos.html
+ * https://vt100.net/docs/vt102-ug/appendixc.html
+ * http://manpagesfr.free.fr/man/man4/console_codes.4.html
+ * https://www.seasip.info/Cpm/cpm86esc.html
+ * 
+ * 
+Esc:=!d.
+Esc:="d.
+Esc:=#d.
+Esc:=$d.
+Esc:=%d.
+Esc:=&d.
+Esc:='d.
+Esc:=(d.
+Esc:=)d.
+Esc:=*d.
+Esc:=+d.
+Esc:=-d.
+Esc:=.d.
+Esc:=/d.
+Esc:=,d.
+Esc:=0d.
+Esc:=1d.
+Esc:=2d.
+Esc:=3d.
+Esc:=0d.
+Esc:=4d.
+Esc:=5d.
+Esc:=6d.
+ * 
+ * Pascal :> GotoXY(1, 5);
+ * ^ = (31+Y) (31+X) ....
+ * ^ = (36) (32)
+ * 
  */
 
 #include "xts_yael_dev_console.h"
@@ -167,7 +204,19 @@
       }
    }
 
+   // 0 based
    void _consoleSetCursor(int col, int row) {
+      if ( col < 0 ) { col = 0; }
+      if ( row < 0 ) { row = 0; }
+
+      if ( col >= ttyConsoleWidth ) {
+         col = ttyConsoleWidth-1;
+      }
+
+      if ( row >= ttyConsoleHeight ) {
+         row = ttyConsoleHeight-1;
+      }
+
       consoleCursorX = col;
       consoleCursorY = row;
       __setCursor(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight);
@@ -318,6 +367,7 @@
    }
 
    bool __escapeChar = false;
+   bool __escapeUnknownChar = false;
    char __escapeChar0 = 0x00;
    char __escapeChar1 = 0x00;
    char __escapeChar2 = 0x00;
@@ -365,14 +415,17 @@
       cursorShown = true;
    }
 
+#define DBUG_VT_ESC 1
+
+
    void consoleWrite(char ch) {
       // use spe char to toggle console mode for now
       // 7F is 127 (console seems tobe 127 limited)
-      if ( ch == 0x7F ) { _toggleConsoleMode(); return; }
+      if ( !__escapeUnknownChar && ch == 0x7F ) { _toggleConsoleMode(); return; }
 
-      if ( ch == '\r' ) { hideCursor(); return; }
+      if ( !__escapeUnknownChar && ch == '\r' ) { hideCursor(); return; }
 
-      if ( ch == '\n' ) { 
+      if ( !__escapeUnknownChar && ch == '\n' ) { 
          hideCursor();
          consoleCursorX = 0;
          consoleCursorY++;
@@ -384,7 +437,7 @@
       }
 
       // is generally used as '\b'+' '+'\b' so no need to render it
-      if ( ch == '\b' ) { 
+      if ( !__escapeUnknownChar && ch == '\b' ) { 
          hideCursor();
          consoleCursorX--;
          if ( consoleCursorX < 0 ) {
@@ -401,41 +454,69 @@
       // seems that '\t' is not used ?
 
       // VT100 escapes
-      if ( ch == 27 ) { 
-         // escape sequence ex. ^B1 ^C1
-         __escapeChar = true;
-         __escapeChar0 = 0x00;
-         __escapeChar1 = 0x00;
-         __escapeChar2 = 0x00;
+      if ( !__escapeUnknownChar ) {
+         if ( ch == 27 ) { 
+            // escape sequence ex. ^B1 ^C1
+            __escapeChar = true;
+            __escapeChar0 = 0x00;
+            __escapeChar1 = 0x00;
+            __escapeChar2 = 0x00;
 
-         __escapeSeq = false;
-         memset( vt100seq, 0x00, 16+1 );
+            __escapeSeq = false;
+            memset( vt100seq, 0x00, 16+1 );
 
-         __escapeMSeq = false;
+            __escapeMSeq = false;
 
-      } else if ( ch == 26 ) { 
-         // seems to be the CLS escape sequence
-         // Serial.println("Esc:26 ????");
-         consoleCls();
-         return;
-      } else if ( ch == 7 ) { 
-         yael_buzzer_beep();
-         // Serial.println("BEEP");
-         return;
+         } else if ( ch == 26 ) { 
+            // seems to be the CLS escape sequence
+            // Serial.println("Esc:26 ????");
+            consoleCls();
+            return;
+         } else if ( ch == 7 ) { 
+            yael_buzzer_beep();
+            // Serial.println("BEEP");
+            return;
+         } else if ( ch < 32 || ch > 127 ) {
+            #if DBUG_VT_ESC
+               Serial.print( "EscSPE[" );
+               Serial.print( (int)__escapeChar1 );
+               Serial.print( "," );
+               Serial.print( (char)__escapeChar1 );
+               Serial.println( "]" );
+            #endif
+         }
       }
 
       if ( __escapeChar ) {
          if ( __escapeChar0 == 0x00 ) {
             curTextAttr = 0x00;
-            __escapeChar0 = ch;
+            __escapeChar0 = ch; // regular is 27 (Esc)
          } else if ( __escapeChar1 == 0x00 ) {
             __escapeChar1 = ch;
-            // Serial.print( "Esc:" );
-            // Serial.print( (char)__escapeChar1 );
+            #if DBUG_VT_ESC
+               Serial.print( "(Esc(" );
+               Serial.print( (int)__escapeChar1 );
+               Serial.print( ")" );
+               Serial.print( (char)__escapeChar1 );
+               Serial.println(")");
+            #endif
 
             if ( __escapeChar1 == 'C' ) { curTextAttr = 0x00; }
             else if ( __escapeChar1 == 'B' ) { curTextAttr = 0x01; }
             else if ( __escapeChar1 == '[' ) { __escapeSeq = true; }
+            // ======= Ext console tries ======
+
+            else if ( __escapeChar1 == '=' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+
+            else if ( __escapeChar1 == '!' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            else if ( __escapeChar1 == '(' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            else if ( __escapeChar1 == ')' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            else if ( __escapeChar1 == '%' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            else if ( __escapeChar1 == '+' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            else if ( __escapeChar1 == '-' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            else if ( __escapeChar1 == '/' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            else if ( __escapeChar1 == '*' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            // ================================
             else if ( __escapeChar1 == '$' ) { 
                // vt-MUSIC mode
                __escapeMSeq = true;
@@ -444,7 +525,9 @@
             else { curTextAttr = 0x00; }
          } else if ( __escapeChar2 == 0x00 && !__escapeSeq && !__escapeMSeq ) {
             __escapeChar2 = ch;
-            // Serial.print( (char)__escapeChar2 );
+            #if DBUG_VT_ESC
+               Serial.print( (char)__escapeChar2 );
+            #endif
          } else {
             
             // VT-MUSIC SUPPORT
@@ -471,9 +554,59 @@
             } else 
 
             if ( __escapeSeq ) {
+
+               // for not yet known esc sequences
+               if ( __escapeUnknownChar ) {
+
+                  // BEWARE w/ __escapeUnknownChar !!!!
+                  if ( __escapeChar1 == '=' ) {
+                     vt100seq[ strlen(vt100seq) ] = ch;
+                     if ( strlen(vt100seq) >= 2 ) {
+                        __escapeChar = false;
+                        __escapeSeq = false;
+                        __escapeUnknownChar = false;
+
+                        uint8_t y = vt100seq[0] - 31;
+                        uint8_t x = vt100seq[1] - 31;
+                        _consoleSetCursor(x,y);
+
+                        memset(vt100seq, 0x00, strlen(vt100seq));
+                     }
+
+                     return;
+                  }
+
+                  if ( ch == '\n' || ch == '\r' || ch == 27 ) {
+                     __escapeUnknownChar = false;
+                     __escapeSeq = false;
+                     Serial.print("UKN-ESC : ");
+                     Serial.println(vt100seq);
+                     Serial.println("===============");
+
+                     if ( __escapeChar1 == '=' ) {
+                        // cursor control ????
+                        Serial.print("UKN-ES2 : ");
+                        for(int wyw=0; wyw < strlen(vt100seq); wyw++) {
+                           Serial.print( (int)vt100seq[wyw]);
+                           Serial.print( "|");
+                        }
+                        Serial.println("===============");
+                     }
+
+
+                  } else {
+                     vt100seq[ strlen(vt100seq) ] = ch;
+                  }
+
+                  return;
+               }
+
+
                if ( ch >= 'A' && ch <= 'z'  ) {
                   vt100seq[ strlen(vt100seq) ] = ch;
-                  // Serial.println( ch );
+                  #if DBUG_VT_ESC
+                     Serial.println( ch );
+                  #endif
                   __escapeChar = false;
 
                   int slen = strlen(vt100seq);
@@ -488,8 +621,10 @@
                         _consoleSetCursor(0,0);
                         return;
                      } else {
-                        // Serial.print("a.");
-                        // Serial.println( vt100seq );
+                        #if DBUG_VT_ESC
+                           Serial.print("a.");
+                           Serial.println( vt100seq );
+                        #endif
                      }
                   } else if ( slen == 2 ) {
                      if ( ch == 'J' ) {
@@ -499,11 +634,17 @@
                            return;
                         }
                      } else {
-                        // Serial.print("b.");
-                        // Serial.println( vt100seq );
+                        #if DBUG_VT_ESC
+                           Serial.print("b.");
+                           Serial.println( vt100seq );
+                        #endif
                      }
                   } else {
                      if ( ch == 'H' ) {
+                        #if DBUG_VT_ESC
+                           Serial.print("cursor.");
+                           Serial.println( vt100seq );
+                        #endif
                         // ^[<row>;<col>H
                         // set location
                         int row = 0;
@@ -530,19 +671,27 @@
                         _consoleSetCursor(col,row);
                         return;
                      } else {
-                        // Serial.print("c.");
-                        // Serial.println( vt100seq );
+                        #if DBUG_VT_ESC
+                           Serial.print("c.");
+                           Serial.println( vt100seq );
+                        #endif
                      }
                   }
 
                } else {
                   vt100seq[ strlen(vt100seq) ] = ch;
+                  #if DBUG_VT_ESC
+                     Serial.print("@. ");
+                     Serial.println( vt100seq );
+                  #endif
                }
 
             } else {
                __escapeChar = false;
-               // Serial.print("d.");
-               // Serial.println( vt100seq );
+               #if DBUG_VT_ESC
+                  Serial.print("d. ");
+                  Serial.println( vt100seq );
+               #endif
             }
          }
       }
