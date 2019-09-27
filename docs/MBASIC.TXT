@@ -1,0 +1,9203 @@
+basic-80 
+
+reference 
+
+manual 
+
+
+
+This manual is a reference for Microsoft's BASIC-80 language, release 5.0 and later. 
+
+There are significant differences between the 5.0 release of BASlC-80 and the previous releases 
+(release 4.51 and earlier). If you have programs written under a previous release of BA51C-80, 
+check Appendix A for new features in 5.0 that may affect execution. 
+
+
+
+BASIC-80 Reference Manual 
+
+CONTENTS 
+
+INTRODUCTION 
+
+CHAPTER 1 General Information About BASIC-BO 
+
+CHAPTER 2 BASIC-80 Commands and Statements 
+
+CHAPTER 3 BASIC-80 Functions 
+
+
+
+APPENDIX A 
+APPENDIX B 
+APPENDIX C 
+APPENDIX D 
+APPENDIX E 
+APPENDIX F 
+APPENDIX G 
+APPENDIX H 
+APPENDIX I 
+APPENDIX J 
+APPENDIX K 
+APPENDIX L 
+APPENDIX M 
+
+
+
+New Features in BASIC-80, Release 5.0 
+
+BASIC-80 Disk I/O 
+
+Assembly Language Subroutines 
+
+BASIC-80 with the CP/M Operating System 
+
+BASIC-80 with the ISIS-II Operating System 
+
+BASIC-80 with the TEKDOS Operating System 
+
+BASIC-80 with the Intel SBC and MDS Systems 
+
+Standalone Disk BASIC 
+
+Converting Programs to BASIC-80 
+
+Summary of Error Codes and Error Messages 
+
+Mathematical Functions 
+
+Microsoft BASIC Compiler 
+
+ASCII Character Codes 
+
+
+
+Introduction 
+
+
+
+BASIC-80 is the most extensive implementation of BASIC 
+available for the 8080 and 28 microprocessors. In its 
+fifth major release (Release 5-0), BASIC-80 meets the ANSI 
+qualifications for BASIC, as set forth in document 
+BSRX3. 60-1978. Each release of BASIC-80 consists of three 
+upward compatible versions: 8K, Extended and Disk. This 
+manual is a reference for all three versions of BASIC-80, 
+release 5,0 and later. This manual is also a reference for 
+Microsoft BASIC-8 6 and the Microsoft BASIC Compiler - 
+BASIC-86 is currently available in Extended and Disk 
+Standalone versions, which are comparable to the BASIC-80 
+Extended and Disk Standalone versions. 
+
+There are significant differences between the 5.0 release of 
+BASIC-80 and the previous releases (release 4.51 and 
+earlier) . If you have programs written under a previous 
+release of BASIC-80, check Appendix A for new features in 
+5.0 that may affect execution. 
+
+The manual is divided into three large chapters plus a 
+number of appendices. Chapter , 1 covers a variety of topics, 
+largely pertaining to information representation when using 
+BASIC-80. Chapter 2 contains the syntax and semantics of 
+every command and statement in BASIC-80, ordered 
+alphabetically. Chapter 3 describes all of BASIC-80 's 
+intrinsic functions, also ordered alphabetically. The 
+appendices contain information pertaining to individual 
+operating systems; plus lists of error messages, ASCII 
+codes, and math functions; and helpful information on 
+assembly language subroutines and disk I/O. 
+
+
+
+CHAPTER 1 
+GENERAL INFORMATION ABOUT BASlC-80 
+
+
+
+1-1 INITIALIZATION 
+
+The procedure for initialization will vary with different 
+implementations of BASIC-80. Check the appropriate appendix 
+at the back of this manual to determine how BASIC-80 is 
+initialized with your operating system- 
+
+
+
+1.2 MODES OF OPERATION 
+
+When BASIC-80 is initialized, it types the prompt "Ok". 
+"Ok" means BASIC-80 is at command level, that is, it is 
+ready to accept commands. At this point, BASIC-80 may be 
+used in either of two modes : the direct mode or the 
+indirect mode. 
+
+In the direct mode, BASIC statements and commands are not 
+preceded by line numbers. They are executed as they are 
+entered. Results of arithmetic and logical operations may 
+be displayed immediately and stored for later use, but the 
+instructions themselves are lost after execution. This mode 
+is useful for debugging and for using BASIC as a 
+"calculator" for quick computations that do not require a 
+complete program. 
+
+The indirect mode is the mode used for entering programs. 
+
+Program lines are preceded by line numbers and are stored in 
+
+memory. The program stored in memory is executed by 
+entering the RUN command. 
+
+
+
+1.3 LINE FORMAT 
+
+Program lines in a BASIC program have the following format 
+(square brackets indicate optional) : 
+
+nnnnn BASIC statement [ :BASIC statement.-.] <carriage return> 
+
+
+
+GENERAL INFORMATION ABOUT BASIC-80 Page 1-2 
+
+At the programmer * s option, more than one BASIC statement 
+may be placed on a line, but each statement on a line must 
+be separated from the last by a colon, 
+
+A BASIC program line always begins with a line number, ends 
+with a carriage return, and may contain a maximum of; 
+
+72 characters in BK BASIC-80 
+255 characters in Extended and Disk BASIC-80. 
+
+In Extended and Disk versions, it is possible to extend a 
+logical line over more than one physical line by use of the 
+terminal* s <line feed> key. <Line feed> lets you continue 
+typing a logical line on the next physical line without 
+entering a <carriage return>. (In the 8K version, <line 
+feed> has no effect.) 
+
+
+
+1.3.1 Line Numbers 
+
+Every BASIC program line begins with a line number. Line 
+numbers indicate the order in which the program lines are 
+stored in memory and are also used as references when 
+branching and editing- Line numbers must be in the range 
+to 65529. In the Extended and Disk versions, a period (. ) 
+may be used in EDIT, LIST, AUTO and DELETE commands to refer 
+to the current line. 
+
+
+
+GENERAL INFORMATION ABOUT BASlC-80 
+
+
+
+Page 1-3 
+
+
+
+1.4 CHARACTER SET 
+
+The BASIC-BO character set is comprised of alphabetic 
+characters, numeric characters and special characters. 
+
+The alphabetic characters in BASIC-80 are the upper case and 
+lower case letters of the alphabet- 
+
+The numeric characters in BASIC-80 are the digits through 
+9. 
+
+The following special characters and terminal keys are 
+recognized by BASIC-80: 
+
+
+
+Character 
+
+
+
+Name 
+
+
+
+/ 
+
+( 
+) 
+
+% 
+
+# 
+
+$ 
+
+1 
+
+i 
+
+
+
+& 
+
+< 
+> 
+
+\ 
+
+@ 
+
+<rubout> 
+<escape> 
+
+<tab> 
+
+<line fe 
+
+<car riag 
+
+retur 
+
+
+
+ed> 
+
+e 
+n> 
+
+
+
+Blank 
+
+Equal sign or assignment symbol 
+
+Plus sign 
+
+Minus sign 
+
+Asterisk or multiplication symbol 
+
+Slash or division symbol 
+
+Up arrow or exponentiation symbol 
+
+Left parenthesis 
+
+Right parenthesis 
+
+Percent 
+
+Number (or pound) sign 
+
+Dollar sign 
+
+Exclamation point 
+
+Left bracket 
+
+Right bracket 
+
+Comma 
+
+Period or decimal point 
+
+Single quotation mark (apostrophe) 
+
+Semicolon 
+
+Colon 
+
+Ampersand 
+
+Question mark 
+
+Less than 
+
+Greater than 
+
+Backslash or integer division symbol 
+
+At-sign 
+
+Underscore 
+
+Deletes last character typed- 
+
+Escapes Edit Mode subcommands. 
+
+See Section 2 .16. 
+
+Moves print position to next tab stop 
+
+Tab stops are every eight columns. 
+
+Moves to next physical line. 
+
+Terminates input of a line. 
+
+
+
+GENERAL INFORMATION ABOUT BASIC-80 
+
+
+
+Page 1-4 
+
+
+
+1.4.1 Control Characters 
+
+The following control characters are in BASIC-80: 
+
+Control-A Enters Edit Mode on the line being typed- 
+
+
+
+Control-C 
+
+Control-G 
+Control-H 
+
+Control-I 
+Control-O 
+
+Control-R 
+
+Control-S 
+Control-Q 
+Control-U 
+
+
+
+Interrupts program execution and returns to 
+BASIC-80 command level - 
+
+Rings the bell at the terminal. 
+
+Backspace. Deletes the last character typed. 
+
+Tab. Tab stops are every eight columns. 
+
+Halts program output while execution 
+continues- A second Control-O restarts 
+output- 
+Retypes the line that is currently being 
+
+typed. 
+
+Suspends program execution- 
+Resumes program execution after a Control-S. 
+
+Deletes the line that is currently being 
+typed - 
+
+
+
+1.5 CONSTANTS 
+
+Constants are the actual values BASIC uses during execution. 
+There are two types of constants: string and numeric- 
+
+A string constant is a sequence of up to 255 alphanumeric 
+characters enclosed in double quotation marks- Examples of 
+string constants: 
+
+"HELLO" 
+
+"$25,000.00" 
+
+"Number of Employees" 
+
+Numeric constants are positive or negative numbers. Numeric 
+constants in BASIC cannot contain commas- There are five 
+types of numeric constants: 
+
+
+
+1. Integer constants 
+
+
+
+2, Fixed Point 
+constants 
+
+
+
+Whole numbers between -3 27 68 and 
++32767. Integer constants do not 
+have decimal points- 
+Positive or negative real numbers, 
+i.e., numbers that contain decimal 
+points- 
+
+
+
+GENERAL INFORMATION ABOUT BASIC-80 
+
+
+
+Page 1-5 
+
+
+
+3- Floating Point 
+constants 
+
+
+
+4. Hex constants 
+
+
+
+5. Octal constants 
+
+
+
+Positive or negative numbers repre- 
+sented in exponential form (similar 
+to scientific notation) ■ A 
+floating point constant consists of 
+an optionally signed integer or 
+fixed point number (the mantissa) 
+followed by the letter E and an 
+optionally signed integer (the 
+exponent) . The allowable range for 
+floating point constants is 10-38 
+to 10+38, 
+Examples: 
+
+235.988E-7 = ,0000235988 
+2359E6 = 2359000000 
+
+(Double precision floating point 
+constants use the letter D instead 
+of E. See Section 1-5.1.) 
+
+Hexadecimal numbers with the prefix 
+&H- Examples: 
+
+&H76 
+
+'SH32F 
+
+Octal numbers with the prefix &0 or 
+&. Examples: 
+
+&0347 
+S1234 
+
+
+
+1.5.1 Sinole And Double Precision Form For Numeric Constants 
+
+In the 8K version of BASIC-BO, all numeric constants are 
+single precision numbers. They are stored with 7 digits of 
+precision^ and printed with up to 6 digits- 
+
+In the Extended and Disk versions, however, numeric 
+constants may be either single precision or double precision 
+numbers. With double precision, the numbers are stored with 
+16 digits of precision, and printed with up to 16 digits. 
+
+
+
+GENERAL INFORMATION ABOUT BASIC-8 Page 1-6 
+
+A single precision constant is any numeric constant that 
+has: 
+
+1. seven or fewer digits, or 
+
+2- exponential form using E, or 
+
+3. a trailing exclamation point (!) 
+
+A double precision constant is any numeric constant that 
+has: 
+
+1- eight or more digits, or 
+
+2. exponential form using D, or 
+
+3. a trailing number sign (#) 
+Examples: 
+
+Single Precision Constants Double Precision Constants 
+
+46.8 345692811 
+
+-l,09E-06 -1.09 4 32D-06 
+3489.0 3489. 0# 
+
+22.51 7654321.1234 
+
+1-6 VARIABLES 
+
+Variables are names used to represent values that are used 
+in a BASIC program. The value of a variable may be assigned 
+explicitly by the programmer, or it may be assigned as the 
+result of calculations in the program. Before a variable is 
+assigned a value, its value is assumed to be zero. 
+
+1.6.1 Variable Names And Declaration Characters 
+
+BASIC-80 variable names may be any length , however , in the 
+8K version, only the first two characters are significant. 
+In the Extended and Disk versions, up to 40 characters are 
+significant. The characters allowed in a variable name are 
+letters and numbers, and the decimal point is allowed in 
+Extended and Disk variable names. The first character must 
+be a letter. Special type declaration characters are also 
+allowed — see below, 
+
+A variable name may not be a reserved word. The Extended 
+and Disk versions allow embedded reserved words; the 8K 
+version does not. If a variable begins with FN, it is 
+assumed to be a call to a user -defined function. Reserved 
+words include all BASIC-80 commands, statements, function 
+
+
+
+GENERAL INFORMATION ABOUT BASIC-80 Page 1-7 
+
+names and operator names. 
+
+Variables may represent either a numeric value or a string- 
+String variable names are written with a dollar sign ($) as 
+the last character- For example: AS = "SALES REPORT". The 
+dollar sign is a variable type declaration character, that 
+is, it "declares" that the variable will represent a string. 
+
+In the Extended and Disk versions, numeric variable names 
+may declare integer , single or double precision values. 
+(All numeric values in 8K are single precision.) The type 
+declaration characters for these variable names are as 
+follows: 
+
+% Integer variable 
+
+i Single precision variable 
+
+# Double precision variable 
+
+The default type for a numeric variable name is single 
+precision. 
+
+Examples of BASlC-80 variable ^ames follow. 
+
+In Extended and Disk versions: 
+
+PI* declares a double precision value 
+MINIMUM! declares a single precision value 
+LIMIT% declares an integer value 
+
+In 8K, Ex.tended and Disk versions: 
+
+N$ declares a string value 
+
+ABC represents a single precision value 
+
+In the Extended and Disk versions of BASIC-80, there is a 
+second method by which variable types may be declared. The 
+aASIC-80 statements DEFINT, DEFSTR, DEFSNG and DEFDBL may be 
+included in a program to declare the types for certain 
+variable names. These statements are described in detail in 
+Section 2.12. 
+
+
+
+1,6,2 Array V ariables 
+
+An array is a group or table of values referenced by the 
+same variable name. Each element in an array is referenced 
+by an array variable that is subscripted with an integer or 
+an integer expression. An array variable name has as many 
+subscripts as there are dimensions in the array. For 
+example V(10) would reference a value in a one-dimension 
+array, T(l,4) would reference a value in a two-dimension 
+array, and so on. The maximum number of dimensions for an 
+
+
+
+GENERAL INFORMATION ABOUT BASIC-80 
+
+
+
+Page 1-8 
+
+
+
+array is 255, The maximum number of elements per dimension 
+is 32767. 
+
+
+
+1-6.3 Space Requirements 
+
+VARIABLES: 
+
+INTEGER 
+
+SINGLE PRECISION 
+DOUBLE PRECISION 
+
+
+
+BYTES 
+
+2 
+
+4 
+8 
+
+
+
+ARRAYS : 
+
+INTEGER 
+
+SINGLE PRECISION 
+DOUBLE PRECISION 
+
+
+
+BYTES 
+
+2 per element 
+4 per element 
+8 per element 
+
+
+
+STRINGS: 
+
+3 bytes overhead plus the present contents of the string 
+
+
+
+1.7 TYPE CONVERSION 
+
+When necessary, BASIC will convert a numeric constant from 
+one type to another- The following rules and examples 
+should be kept in mind- 
+
+1. If a numeric constant of one type is set equal to a 
+numeric variable of a different type, the number 
+will be stored as the type declared in the variable 
+name- (If a string variable is set equal to a 
+numeric value or vice versa , a "Type mismatch" 
+error occurs- ) 
+
+Example: 
+
+10 A% = 23.42 
+20 PRINT A% 
+RUN 
+23 
+
+2. During expression evaluation, all of the operands 
+in an arithmetic or relational operation are 
+converted to the same degree of precision, i.e., 
+that of the most precise operand. Also, the result 
+of an arithmetic operation is returned to this 
+degree of precision. 
+
+Examples : 
+
+
+
+10 D# = 65/7 
+
+
+
+The arithmetic was performed 
+
+
+
+GENERAL INFORMATION ABOUT BASIC-80 Page 1-9 
+
+20 PRINT D# in double precision and the 
+RUN result was returned in D# 
+
+.8571428571428571 as a double precision value. 
+
+10 D = 6#/7 The arithmetic was performed 
+20 PRINT D in double precision and the 
+RUN result was returned to D (single 
+
+.857143 precision variable) , rounded and 
+
+printed as a single precision 
+
+value. 
+
+3. Logical operators (see Section 1-8.3) convert their 
+operands to integers and return an integer result. 
+Operands must be in the range -32768 to 32767 or an 
+"Overflow" error occurs. 
+
+4 . When a floating point value- is converted to an 
+integer, the fractional portion is rounded. 
+Example: 
+
+10 C% = 55.88 
+20 PRINT C% 
+RUN 
+56 
+
+5. If a double precision variable is assigned a single 
+precision value, only the first seven digits, 
+rounded, of the converted number will be valid. 
+This is because only seven digits of accuracy were 
+supplied with the single precision value- The 
+absolute value of the difference between the 
+printed double precision number and the original 
+single precision value will be less than 6.3E-8 
+times the original single precision value. 
+Example: 
+
+10 A = 2.04 
+
+20 B# = A 
+30 PRINT A;B# 
+RUN 
+2-04 2.0 39 999961853027 
+
+
+
+1-8 EXPRESSIONS AND OPERATORS 
+
+An expression may be simply a string or numeric constant, or 
+a variable, or it may combine constants and variables with 
+operators to produce a single value. 
+
+Operators perform mathematical or logical operations on 
+values. The operators provided by BASIC-80 may be divided 
+into four categories: 
+
+
+
+GENERAL INFORMATION ABOUT BASIC-80 Page 1-10 
+
+1. Arithmetic 
+
+2. Relational 
+
+3- Logical 
+
+4- Functional 
+
+
+
+1.8,1 Arithmetic Operators 
+
+The arithmetic operators, in order of precedence, are: 
+
+Operator Operation Sample Expression 
+
+Exponentiation X"Y 
+
+- Negation -X 
+
+*// Multiplication, Floating X*Y 
+Point Division X/Y 
+
++/- Addition, Subtraction X+Y 
+
+To change the order in which the operations are performed, 
+use parentheses- Operations within parentheses are 
+performed first. Inside parentheses, the usual order of 
+operations is maintained. 
+
+Here are some sample algebraic expressions and their BASIC 
+counterparts. 
+
+Algebraic Expression BASIC Expression 
+
+X+2Y X+Y*2 
+
+X- ~ X-Y/2 
+
+
+
+Z 
+XY 
+Z 
+
+
+
+X*Y/Z 
+
+
+
+^i±X (X+Y)/Z 
+
+Z 
+
+(X^)^ (X"2)"Y 
+
+X(-Y) X*{-Y) Two consecutive 
+
+operators must 
+be separated by 
+parentheses- 
+
+
+
+GENERAL INFORMATION ABOUT BASlC-80 Page 1-11 
+
+1.8.1,1 Integer Division And Modulus Arithmetic - 
+
+Two additional operators are available in Extended and Disk 
+
+versions of BASIC-80 : Integer division and modulus 
+
+arithmetic. 
+
+Integer division is denoted by the bask slash (\) . The 
+operands are rounded to integers (must be in the range 
+-32768 to 32767) before the division is performed, and the 
+quotient is truncated to an integer. 
+For example : 
+
+10\4 = 2 
+25.68\6.99 = 3 
+
+The precedence of integer division is just after 
+multiplication and floating point division. 
+
+Modulus arithmetic is denoted by the operator MOD. It gives 
+the integer value that is the remainder of an integer 
+division- For example : 
+
+10-4 MOD 4=2 (10/4=2 with a remainder 2) 
+25-68 MOD 6-99 = 5 (26/7=3 with a remainder 5) 
+
+The precedence of modulus arithmetic is just after integer 
+division. 
+
+
+
+1.8,1.2 Overflow And Division By Zero - 
+
+If, during the evaluation of an expression, a division by 
+zero is encountered, the "Division by zero" error message is 
+displayed, machine infinity with the sign of the numerator 
+is supplied as the result of the division, and execution 
+continues- If the evaluation of an exponentiation results 
+in zero being raised to a negative power, the "Division by 
+zero" error message is displayed, positive machine infinity 
+is supplied as the result of the exponentiation, and 
+execution continues- 
+
+If overflow occurs, the "Overflow" error message is 
+displayed, machine infinity with the algebraically correct 
+sign is supplied as the result, and execution continues- 
+
+
+
+1.8.2 Relational Operators 
+
+Relational operators are used to compare two values- The 
+result of the comparison is either "true" (-1) or "false" 
+(0) . This result may then used to make a decision regarding 
+program flow. (See IF, Section 2.26.) 
+
+
+
+GENERAL INFORMATION ABOUT BASIC-80 Page 1-12 
+
+Operator Relation Tested Expression 
+
+Equality X=Y 
+
+<> Inequality XoY 
+
+< Less than X<Y 
+
+> Greater than X>Y 
+
+<= Less than or equal to X<=Y 
+
+>= Greater than or equal to X>=Y 
+
+(The equal sign is also used to assign a value to a 
+variable. See LET, Section 2.30.) 
+
+When arithmetic and relational operators are combined in one 
+expression, the arithmetic is always performed first. For 
+example, the expression 
+
+X+Y < (T-l)/Z 
+
+is true if the value of X plus Y is less than the value of 
+T-1 divided by Z. More examples: 
+
+IF SIN(X)<0 GOTO lOOG 
+
+IF I MOD J <> THEN K=K+1 
+
+1.8-3 Logical Operators 
+
+Logical operators perform tests on multiple relations, bit 
+manipulation, or Boolean operations. The logical operator 
+returns a bitwise result which is either "true" (not zero) 
+or "false" (zero). In an expression, logical operations are 
+performed after arithmetic and relational operations. The 
+outcome of a logical operation is determined as shown in the 
+following table. The operators are listed in order of 
+precedence . 
+
+
+
+GENERAL INFORMATION ABOUT BASIC-80 Page 1-13 
+
+
+
+NOT 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+X 
+
+
+NOT 
+
+
+X 
+
+
+
+
+
+
+1 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1 
+
+
+
+
+
+
+AND 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+X 
+
+
+y 
+
+
+
+
+X 
+
+
+AND Y 
+
+
+
+
+1 
+
+
+1 
+
+
+
+
+
+
+1 
+
+
+
+
+1 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OR 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+X 
+
+
+Y 
+
+
+
+
+X 
+
+
+OR Y 
+
+
+
+
+1 
+
+
+1 
+
+
+
+
+
+
+1 
+
+
+
+
+1 
+
+
+
+
+
+
+
+
+
+1 
+
+
+
+
+
+
+
+1 
+
+
+
+
+
+
+1 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+XOR 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+X 
+
+
+y 
+
+
+
+
+X 
+
+
+XOR Y 
+
+
+
+
+1 
+
+
+1 
+
+
+
+
+
+
+
+
+
+
+
+1 
+
+
+
+
+
+
+
+
+
+1 
+
+
+
+
+
+
+
+1 
+
+
+
+
+
+
+1 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+IMP 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+X 
+
+
+y 
+
+
+
+
+X 
+
+
+IMP y 
+
+
+
+
+1 
+
+
+1 
+
+
+
+
+
+
+1 
+
+
+
+
+1 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1 
+
+
+
+
+
+
+1 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1 
+
+
+EQV 
+
+
+X 
+
+
+Y 
+
+
+
+
+X 
+
+
+EQV y 
+
+
+
+
+1 
+
+
+1 
+
+
+
+
+
+
+1 
+
+
+
+
+1 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1 
+
+
+
+Just as the relational operators can be used to make 
+decisions regarding program flow, logical operators can 
+connect two or more relations and return a true or false 
+value to be used in a decision (see IF, Section 2.26). For 
+example: 
+
+IF D<200 AND F<4 THEN 80 
+IF I>10 OR K<0 THEN 50 
+IF NOT P THEN 100 
+
+Logical operators work by converting their operands to 
+sixteen bit, signed, two* s complement integers in the range 
+-32768 to +327 67. (If the operands are not in this range, 
+an error results.) If both operands are supplied as or -1, 
+logical operators return or -1, The given operation is 
+
+
+
+GENERAL INFORMATION ABOUT BASIC-80 Page 1-14 
+
+performed on these integers in bitwise fashion, i.e., each 
+bit ot the resvilt is determined by the corresponding bits in 
+the two operands. 
+
+Thus, it is possible to use logical operators to test bytes 
+for a particular bit pattern. For instance, the AND 
+operator may be used to "mask" all but one of the bits of a 
+status byte at a machine I/O port- The OR operator may be 
+used to "merge" two bytes to create a particular binary 
+value. The following examples will help demonstrate how the 
+logical operators work. 
+
+63 AND 16=16 63 = binary 111111 and 16 = binary 
+
+10000, so 63 AND 16 = 16 
+
+IS AND 14=14 15 = binary 1111 and 14 = binary 1110, 
+
+so 15 AND 14 = 14 (binary 1110) 
+
+-1 AND 8=B -1 = binary 1111111111111111 and 
+
+8 = binary 1000, so -1 AND 8=8 
+
+4 OR 2=6 4 = binary 100 and 2 = binary 10, 
+
+so 4 OR 2 = 6 (binary 110) 
+
+10 OR 10=10 10 = binary 1010, so 1010 OR 1010 = 
+
+1010 (10) 
+
+-1 OR -2=-l -1 = binary llllllllllllllll and 
+
+-2 = binary 1111111111111110, 
+so -1 OR -2 = -1. The bit 
+complement of sixteen zeros is 
+sixteen ones, which is the 
+two's complement representation of -1, 
+
+NOT X=-(X+1) The two * s complement of any integer 
+
+is the bit complement plus one. 
+
+
+
+1.8.4 Functional Operators 
+
+A function is used in an expression to call a predetermined 
+operation that is to be performed on an operand. BASIC-80 
+has "intrinsic" functions that reside in the system, such as 
+SQR (square root) or SIN (sine) , All of BASlC-80 ' s 
+intrinsic functions are described in Chapter 3 . 
+
+BASIC-80 also allows "user defined" functions that are 
+written by the programmer. See DEF FN, Section 2 . 11, 
+
+
+
+GENERAL INFORMATION ABOUT BASIC-80 Page 1-15 
+
+1.8.5 String Operations 
+
+Strings may be concatenated using +. For example: 
+
+10- AS^'-FILE" : B$ = "NAME" 
+
+20 PRINT A$ + B$ 
+
+30 PRINT "NEW " + A$ + B$ 
+
+RUN 
+
+FILENAME 
+
+NEW FILENAME 
+
+Strings may be compared using the same relational operators 
+that are used with numbers; 
+
+String comparisons are made by taking one character at a 
+time from each string and comparing the ASCII codes- If all 
+the ASCII codes are the same, the strings are equal- If the 
+ASCII codes differ, the lower code number precedes the 
+higher- If, during string comparison, the end of one string 
+is reached , the shorter string is said to be smaller- 
+Leading and trailing blanks are significant- Examples: 
+
+
+
+"AA** < "AB" 
+
+"FILENAME" = "FILENAME" 
+
+"X&" > "X#" 
+
+"CL " > "CL" 
+
+"kg" > "KG" 
+
+"SMYTH" < "SMYTHE" 
+
+B$ < "9/12/78" where B$ = "8/12/78" 
+
+Thus, string comparisons can be used to test string values 
+or to alphabetize strings. All string constants used in 
+comparison expressions must be enclosed in quotation marks. 
+
+
+
+1-9 INPUT EDITING 
+
+If an incorrect character is entered as a line is being 
+typed, it can be deleted with the RUBOUT key or with 
+Control-H. Rubout surrounds the deleted character (s) with 
+backslashes, and Control-H has the effect of backspacing 
+over a character and erasing it. Once a character (s) has 
+been deleted, simply continue typing the line as desired- 
+
+To delete a line that is in the process of being typed, type 
+Control-U. A carriage return is executed automatically 
+after the line is deleted. 
+
+To correct program lines for a program that is currently in 
+memory, simply retype the line using the same line number. 
+BASIC-80 will automatically replace the old line with the 
+new line. 
+
+
+
+GENERAL INFORMATION ABOUT BASIC-80 
+
+
+
+Page 1-16 
+
+
+
+More sophisticated editing capabilities are provided in the 
+Extended and Disk versions of BASIC-80. See EDIT, Section 
+2.16- 
+
+To delete the entire program that is currently residing in 
+memory, enter the NEW command. (See Section 2.41.) NEW is 
+usually used to clear memory prior to entering a new 
+
+program. 
+
+
+
+1-10 ERROR MESSAGES 
+
+
+
+If BASIC-80 detects an error that causes program execution 
+to terminate, an error message is printed- In the 8K 
+version, only the error code is printed. In the Extended 
+and Disk versions, the entire error message is printed. For 
+a complete list of BASIC-80 error codes and error messages, 
+see Appendix J. 
+
+
+
+CHAPTER 2 
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+All of the BASIC-80 commands and statements are described in 
+this chapter. Each description is formatted as follows: 
+
+Format: Shows the correct format for the instruction. 
+
+See below for format notation- 
+Versions: Lists the versions of BASIC-80 
+
+in which the instruction is available. 
+
+Purpose: Tells what the instruction is used for. 
+
+Remarks: Describes in detail how the instruction 
+is used. 
+
+Example: Shows sample programs or program segments 
+
+that demonstrate the use of the instruction. 
+
+Format Notation 
+
+Wherever the format for a statement or command is given, the 
+
+following rules apply: 
+
+1. Items in capital letters must be input as shown. 
+
+2. Items in lower case letters enclosed in angle 
+brackets (< >) are to be supplied by the user. 
+
+3. Items in square brackets {[ ]) are optional, 
+
+4 . All punctuation except angle brackets and square 
+brackets (i.e., commas, parentheses, semicolons, 
+hyphens, equal signs) must be included where shown. 
+
+5. Items followed by an ellipsis (...) may be repeated 
+any number of times (up to the length of the line) , 
+
+
+
+BASIC-80 COMMANDS AND STATEME^3TS 
+
+
+
+Page 2-2 
+
+
+
+2 . 1 AUTO 
+
+
+
+Format; 
+
+
+
+Versions 
+
+
+
+Purpose: 
+
+
+
+Remarks: 
+
+
+
+AUTO [<line number> { , < increment> 1] 
+
+
+
+Extended, Disk 
+
+To generate a line number 
+every carriage return. 
+
+
+
+automatically after 
+
+
+
+AUTO begins numbering at <line number > and 
+increments each subsequent line number by 
+<increment> . The default for both values is 10. 
+If <line number > is followed by a comma but 
+<increment> is not specified, the last increment 
+specified in an AUTO command is assumed. 
+
+If AUTO generates a line number that is already 
+being used, an asterisk is printed after the 
+number to warn the user that any input will 
+replace the existing line. However, typing a 
+carriage return immediately after the asterisk 
+will save the line and generate the next Line 
+number. 
+
+AUTO is terminated by typing Control-C. The 
+line in which Control-C is typed is not saved - 
+After Control-C is typed, BASIC returns to 
+command level. 
+
+
+
+Example: 
+
+
+
+AUTO 100,50 
+
+
+
+AUTO 
+
+
+
+Generates line numbers 100, 
+150, 200 ... 
+
+Generates line numbers 10, 
+20, 30, 40 ... 
+
+
+
+BASIC-BO COMMANDS AND STATEMENTS 
+
+
+
+Page 2-3 
+
+
+
+2.2 CALL 
+
+Format: CALL <variable name> [ (<argumerit list>) ] 
+
+Version: Extended, Disk 
+
+Purpose; To call an assembly language subroutine - 
+
+Remarks: The CALL statement is one way to transfer 
+program flow to an external subroutine, (See 
+also the USR function. Section 3.40) 
+
+<variable nanie> contains an address that is the 
+starting point in memory of the subroutine. 
+<variable name> may not be an array variable 
+name. <argument list> contains the arguments 
+that are passed to the external subroutine. 
+<argument list> may contain only variables. 
+
+The CALL statement generates the same calling 
+sequence used by Microsoft's FORTRAN, COBOL and 
+BASIC compilers. 
+
+Example: 110 MYROUT=&HD000 
+
+120 CALL MYROUT(I,J,K) 
+
+
+
+NOTE: 
+
+
+
+For a BASIC Compiler program, line 110 is not 
+needed because the address of MYROUT will be 
+assigned by the linking loader at load time- 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-4 
+
+2-3 CHAIN 
+
+
+
+Format: CHAIN [MERGE] <f ilenaine> [ , [<line number exp>] 
+[,ALL] [,DELETE<range>] ] 
+
+Version: Disk 
+
+Purpose: To call a program and pass variables to it from 
+the current program. 
+
+Remarks: <f ilename> is the name of the program that is 
+called. Example: 
+
+CHAIN "PROGl" 
+
+<line number exp> is a line number or an 
+expression that evaluates to a line number in 
+the called program. It is the starting point 
+for execution of the called program. If it is 
+omitted, execution begins at the first line. 
+Example: 
+
+CHAIN"PROG1",1000 
+
+<line number exp> is not affected by a RENUM 
+command. 
+
+With the ALL option, every variable in the 
+current program is passed to the called program. 
+If the ALL option is omitted, the current 
+program must contain a COMMON statement to list 
+the variables that are passed. See Section 2.7. 
+Example: 
+
+CHAIN"PR0G1", 1000, ALL 
+
+If the MERGE option is included, it allows a 
+subroutine to be brought into the BASIC program 
+as an overlay. That is, a MERGE operation is 
+performed with the current program and the 
+called program. The called program must be an 
+ASCII file if it. is to be MERGEd. Example: 
+
+CHAIN MERGE"GVRLAy",1000 
+
+After an overlay is brought in, it is usually 
+desirable to delete it so that a new overlay may 
+be brought in. To do this use the DELETE 
+option. Example : 
+
+CHAIN MERGE"0VRLAy2", 1000, DELETE 1000-5000 
+
+The line numbers in <range> are affected by the 
+RENUM command. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-5 
+
+
+
+NOTE 
+
+
+
+NOTE 
+
+
+
+The CHAIN statement with MERGE option leaves the 
+files open and preserves the current OPTION BASE 
+setting. 
+
+If the MERGE option is omitted, CHAIN does not 
+preserve variable types or user -de fined 
+functions for use by the chained program. That 
+is, any DEFINT, DEFSNG, DEFDBL, DEFSTR, or DEFFN 
+statements containing shared variables must be 
+restated in the chained program. 
+
+
+
+NOTE 
+
+
+
+The Microsoft BASIC compiler does not support 
+the ALL, MERGE, DELETE, and LINE number exp> 
+
+Thus, the statement format is 
+
+If you wish to maintain 
+
+the BASIC compiler , it is 
+
+COMMON be used to pass 
+
+overlays not be used. The 
+
+leaves the files open during 
+
+
+
+options to CHAIN. 
+CHAIN FILENAME>- 
+compa tibility with 
+recommended that 
+variables and that 
+CHAIN statement 
+
+
+
+CHAINing. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-6 
+
+
+
+2,4 CLEAR 
+
+Format ; 
+Versions; 
+
+Purpose : 
+
+
+
+Remarks: 
+
+
+
+NOTE: 
+
+
+
+NOTE 
+
+
+
+CLEAR ( , [<expressionl>] [ , <expression2>] ] 
+
+8K, Extended, Disk 
+
+To set all numeric variables to zero, all string 
+variables to null, and to close all open files; 
+and, optionally, to set the end of memory and 
+the amount of stack space - 
+
+<expressionl> is a memory location which, if 
+specified, sets the highest location available 
+for use by BASIC-80. 
+
+<expression2> sets aside stack space for BASIC. 
+The default is 256 bytes or one-eighth of the 
+available memory, whichever is smaller . 
+
+In previous versions of BASIC-80, <expressionl> 
+set the amount of string space, and 
+<expression2> set the end of memory. BASIC-80, 
+release 5,0 and later, allocates string space 
+dynamically. An "Out of string space error" 
+occurs only if there is no free memory left for 
+BASIC to use. 
+
+The BASIC Compiler supports the CLEAR statement 
+with the restriction that EXPRESSI0N1> and 
+EXPRESSI0N2> must be integer expressions. If a 
+value of is given for either expression, the 
+appropriate default is used. The default stack 
+size is 256 bytes, and the default top of memory 
+is the current top of memory- The CLEAR 
+statement performs the following actions: 
+
+Closes all files 
+
+Clears all COMMON and user variables 
+Resets the stack and string space 
+Releases all disk buffers 
+
+
+
+Examples : 
+
+
+
+CLEAR 
+
+CLEAR ,32768 
+
+CLEAR , ,2000 
+
+CLEAR ,32768,2000 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-7 
+
+
+
+2 . 5 CLOAD 
+
+
+
+Formats: 
+
+
+
+CLOAD <filename> 
+
+
+
+CLOAD? <filenanie> 
+
+CLOAD* < array name> 
+
+Versions: 8K (cassette). Extended (cassette) 
+
+Purpose: To load a program or an array from cassette tape 
+into memory. 
+
+Remarks: CLOAD executes a NEW command before it loads the 
+program from cassette tape . <f ilename> is the 
+string expression or the first character of the 
+string expression that was specified when the 
+program was CSAVEd. 
+
+CLOAD? verifies tapes by comparing the program 
+currently in memory with the file on tape that 
+has the same filename. If they are the same, 
+BASIC-80 prints Ok. If not, BASIC-80 prints NO 
+GOOD. 
+
+CLOAD* loads a numeric array that has been saved 
+on tape . The data on tape is loaded into the 
+array called <array name> specified when the 
+array was CSAVE*ed. 
+
+CLOAD and CLOAD? are always entered at command 
+level as direct mode commands- CLOAD* may be 
+entered at command level or used as a program 
+statement. Make sure the array has been 
+DIMensioned before it is loaded. BASIC-80 
+always returns to command level after a CLOAD, 
+CLOAD? or CLOAD* is executed- Before a CLOAD 
+is executed, make sure the cassette recorder is 
+properly connected and in the Play mode, and the 
+tape is possitioned correctly- 
+
+
+
+See also CSAVE, Section 2-9. 
+
+NOTE: CLOAD and CSAVE are not included 
+implementations of BASIC-80. 
+
+Example: CLOAD "MAX2" 
+
+Loads file "M** into memory - 
+
+
+
+m 
+
+
+
+all 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-8 
+
+2.6 CLOSE 
+
+Format: CLOSE[ [# ] <f ile number> [ , [# ] <f ile number. ..>]] 
+Version: Disk 
+
+Purpose: To conclude I/O to a disk file- 
+Remarks: <f ile number > is the number under which the file 
+
+was OPENed, A CLOSE with no arguments closes 
+
+all open files. 
+
+The association between a particular file and 
+file number terminates upon execution of a 
+CLOSE, The file may then be reOPENed using the 
+same or a different file number; likewise, that 
+file number may now be reused to OPEN any file. 
+
+A CLOSE for a sequential output file writes the 
+final buffer of output. 
+
+The END statement and the NEW command always 
+CLOSE all disk files automatically- (STOP does 
+not close disk files. ) 
+
+Example: See Appendix B, 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-9 
+
+
+
+2 . 7 COMMON 
+
+
+
+Format: COMMON <list of vatiables> 
+
+Version: Disk 
+
+Purpose: To pass variables to a CHAINed program. 
+
+Remarks; The COMMON statement is used in conjunction with 
+the CHAIN statement. COMMON statements may 
+appear anywhere in a program, though it is 
+recommended that they appear at the beginning. 
+The same variable cannot appear in more than one 
+COMMON statement. Array variables are specified 
+by appending "{)" to the variable name. If all 
+variables are to be passed, use CHAIN with the 
+ALL option and omit the COMMON statement. 
+
+Example: 100 COMMON A,B,C,D(),G$ 
+110 CHAIN "PROG3",10 
+
+
+
+NOTE: 
+
+
+
+The BASIC Compiler supports a modified version 
+of the COMMON statement. The COMMON statement 
+must appear in a program before any executable 
+statements- The current non-executable 
+statements are : 
+
+COMMON 
+
+DEFDBL, DEFINT, DEFSNG, DEFSTR 
+
+DIM 
+
+OPTION BASE 
+
+REM 
+
+% INCLUDE 
+
+Arrays in COMMON must be declared in preceding 
+DIM statements. 
+
+The standard form of the COMMON statement is 
+referred to as blank COMMON. FORTRAN style 
+named COMMON areas are also supported; however, 
+the variables are not preserved across CHAINS. 
+The syntax for named COMMON is as follows: 
+
+COMMON /NAME>/ LIST of variables> 
+
+where NAME> is 1 to 6 alphanumeric characters 
+starting with a letter- This is useful for 
+communicating with FORTRAN and assembly language 
+routines without having to explicityly pass 
+parameters in the CALL statement. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-10 
+
+
+
+The blank COMMON size and order of variables 
+must be the same in the CHAINing and CHAINed-to 
+programs- With the BASIC Compiler, the best way 
+to insure this is to place all blank COMMON 
+declarations in a single include file and use 
+the %INCLUDE statement in each program- For 
+example : 
+
+MENU. HAS 
+
+10 % INCLUDE COMDEF 
+
+
+
+1000 CHAIN "PROGl" 
+
+
+
+PROGl.BAS 
+
+10 %INCLUDE COMDEF 
+
+
+
+. 2000 CHAIN "MENU 
+
+
+
+COMDEF -HAS 
+
+100 DIM A(IOO) ,B$(200) 
+
+110 COMMON I,J,K,A, {) 
+
+120 COMMON A?,B$, ,X,Y,Z 
+
+
+
+BASIC-BO COMMANDS AND STATEMENTS 
+
+
+
+Page 2-11 
+
+
+
+2,8 CONT 
+
+
+
+Format: CONT 
+
+Versions: 8K, Extended, Disk 
+
+Purpose: To continue program execution after a Control-C 
+has been typed, or a STOP or END statement has 
+been executed. 
+
+Remarks: Execution resumes at the point where the break 
+occurred. If the break occurred after a prompt 
+from an INPUT statement, execution continues 
+with the reprinting of the prompt (? or prompt 
+string) . 
+
+CONT is usually used in conjunction with STOP 
+for debugg ing . When execution is stopped , 
+intermediate values may be examined and changed 
+using direct mode statements. Execution may be 
+resumed with CONT or a direct mode GOTO, which 
+resumes execution at a specified line number. 
+With the Extended and Disk versions, CONT may be 
+used to continue execution after an error. 
+
+CONT is invalid if the program has been edited 
+dur ing the break - In 8K BASIC-80 , execution 
+cannot be CONTinued if a direct mode error has 
+occurred during the break. 
+
+Example: See example Section 2.61, STOP- 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-12 
+
+
+
+2.9 CSAVE 
+
+
+
+Formats: CSAVE < string express ion > 
+
+CSAVE* <array variable nanie> 
+
+Versions: 8K (cassette). Extended (cassette) 
+
+Purpose: To save the program or an array currently in 
+memory on cassette tape. 
+
+Remarks: Each program or array saved on tape is 
+identified by a filename- When the command 
+CSAVE <string expression> is executed, BASIC-80 
+saves the program currently in memory on tape 
+and uses the first character in < string 
+expression> as the filename- <string 
+expression> may be more than one character, but 
+only the first character is used for the 
+filename. 
+
+When the command CSAVE* <array variable name> is 
+executed, BASIC-80 saves the specified array on 
+tape. The array must be a numeric array. The 
+elements of a multidimensional array are saved 
+with the leftmost subscript changing f as test - 
+
+CSAVE may be used as a program statement or as a 
+direct mode command- 
+Before a CSAVE or CSAVE* is executed, make sure 
+the cassette recorder is properly connected and 
+in the Record mode. 
+
+See also CLOAD, Section 2.5. 
+
+NOTE: CSAVE and CLOAD are not included in all 
+implementations of BASIC-80. 
+
+Example: CSAVE "TIMER" 
+
+Saves the program currently in memory on 
+cassette under filename "T". 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-13 
+
+
+
+2.10 DATA 
+
+
+
+Format: DATA <list of constant s> 
+
+Versions: BK, Extended, Disk 
+
+Purpose: To store the numeric and string constants that 
+are accessed by the program' s READ statement (s) - 
+(See READ, Section 2.54) 
+
+Remarks: DATA statements are nonexecutable and may be 
+placed anywhere in the program. A DATA 
+statement may contain as many constants as will 
+fit on a line (separated by commas) , and any 
+number of DATA statements may be used in a 
+program. The READ statements access the DATA 
+statements in order (by line number) and the 
+data contained therein may be thought of as one 
+continuous list of items, regardless of how many 
+items are on a line or where the lines are 
+placed in the program. 
+
+<list of con Stan ts> may contain numeric 
+constants in any format, i.e. , fixed point, 
+floating point or integer . (No numeric 
+expressions are allowed in the list.) String 
+constants in DATA statements must be surrounded 
+by double quotation marks only if they contain 
+commas, colons or significant leading or 
+trailing spaces. Otherwise, quotation marks are 
+not needed - 
+
+The variable type (numeric or string) given in 
+the READ statement must agree with the 
+corresponding constant in the DATA statement. 
+
+DATA statements may be reread from the beginning 
+by use of the RESTORE statement (Section 2.57). 
+
+Example: See examples in Section 2.54, READ. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-14 
+
+2.11 DEF FN 
+
+Format: DEF FN<name> [ {<parameter list>) ] =<function definition> 
+
+Versions: 8K, Extended, Disk 
+
+Purpose: To define and name a function that is written by 
+the user. 
+
+Remarks: <name> must be a legal variable name. This 
+name , preceded by FN, becomes the name of the 
+function. <parameter list> is comprised of 
+those variable names in the function definition 
+that are to be replaced when the function is 
+called. The items in the list are separated by 
+commas. <function definition> is an expression 
+that performs the operation of the function. It 
+is limited to one line. Variable names that 
+appear in this expression serve only to define 
+the function; they do not affect program 
+variables that have the same name. A variable 
+name used in a function definition may or may 
+not appear in the parameter list- If it does, 
+the value of the parameter is supplied when the 
+function is called. Otherwise, the current 
+value of the variable is used. 
+
+The variables in the parameter list represent, 
+on a one-to-one basis, the argument variables or 
+values that will be given in the function call, 
+(Remember, in the 8K version only one argument 
+is allowed in a function call, therefore the DEF 
+FN statement will contain only one variable.) 
+
+In Extended and Disk BASIC-80, user-defined 
+functions may be numeric or string; in 8K, 
+user-defined string functions are not allowed. 
+If a type is specified in the function name , the 
+value of the expression is forced to that type 
+before it is returned to the calling statement. 
+If a type is specified in the function name and 
+the argument type does not match , a "Type 
+mismatch" error occurs. 
+
+A DEF FN statement must be executed before the 
+function it defines may be called. If a 
+function is called before it has been defined, 
+an "Undefined user function" error occurs- DEF 
+FN is illegal in the direct mode. 
+
+
+
+BASIC-BO COMMANDS AND STATEMENTS Page 2-15 
+
+Example: 
+
+410 DEF FNAB(X,y)=X"3/y"2 
+420 T=FNAB{I,J) 
+
+
+
+Line 410 defines the function FNAB. The 
+function is called in line 420. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-16 
+
+
+
+2.12 DEFINT/SNG/DBL/STR 
+
+
+
+Format: 
+
+Versions 
+Purpose : 
+
+Remarks: 
+
+
+
+Examples: 
+
+
+
+DEF<type> <range(s) of letter s> 
+where <type> is INT, SNG, DBL, or STR 
+
+Extended, Disk 
+
+To declare variable types as integer, 
+precision, double precision, or string- 
+
+
+
+single 
+
+
+
+will be that 
+declaration 
+
+
+
+A DEFtype statement declares that the variable 
+
+names beginning with the letter (s) specified 
+type variable. However, a type 
+character always takes precedence 
+
+over a DEFtype statement in the typing of a 
+
+variable. 
+
+If no type declaration statements are 
+encountered, BASIC-80 assumes all variables 
+without declaration characters are single 
+precision variables. 
+
+10 DEFDBL L-P All variables beginning with 
+
+the letters L, M, N, O, and P 
+will be double precision 
+variables. 
+
+
+
+10 DEFSTR A 
+
+
+
+Ail variables beginning^ with 
+the letter A will be string 
+variables. 
+
+
+
+10 DEFINT I-N,W-2 
+
+All variable beginning with 
+the letters I, J, K, L, M, 
+N, W, X, Y, 2 will be integer 
+variables. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-17 
+
+
+
+2.13 DEF USR 
+
+
+
+Format: 
+
+Versions 
+
+Purpose: 
+
+Remarks; 
+
+
+
+DEF USR[<digit>] s=<integer expression> 
+
+Extended, Disk 
+
+To specify the starting address of an assembly 
+language subroutine- 
+
+<digit> may be any digit from to 9. The digit 
+corresponds to the number of the USR routine 
+whose address is being specified. If <digit> is 
+omitted, DEF USRO is assumed- The value of 
+< integer expression> is the starting address of 
+the USR routine- See Appendix C, Assembly 
+Language Subroutines. 
+
+Any number of DEF USR statements may appear in a 
+program to redefine subroutine starting 
+addresses, thus allowing access to as many 
+subroutines as necessary* 
+
+
+
+Example : 
+
+
+
+200 DEF USR0=24000 
+210 X=USR0{Y''2/2-89) 
+
+
+
+BASIC-BO COMMANDS AND STATEMENTS Page 2-18 
+
+2.14 DELETE 
+
+Format; DELETE[<line number>] [-<line number>] 
+
+Versions: Extended, Disk 
+
+Purpose: To delete program lines. 
+
+Remarks: BASIC-80 always returns to command level after a 
+DELETE is executed- If <line number> does not 
+exist, an "Illegal function call" error occurs. 
+
+Examples: DELETE 40 Deletes line 40 
+
+DELETE 40-100 Deletes lines 40 through 
+
+100, inclusive 
+
+DELETE-40 Deletes all lines up to 
+
+and including line 40 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-19 
+
+
+
+2,15 DIM 
+
+
+
+Format: DIM <list of subscripted variables> 
+
+Versions: 8K, Extended, Disk 
+
+Purpose: To specify the maximum values for array variable 
+subscripts and allocate storage accordingly. 
+
+Remarks: If an array variable name is used without a DIM 
+statement, the maximum value of its subscript (s) 
+is assumed to be 10, If a subscript is used 
+that is greater than the maximum specified, a 
+"Subscript out of range" error occurs. The 
+minimum value for a subscript is always , 
+unless otherwise specified with the OPTION BASE 
+statement (see Section 2.46). 
+
+The DIM statement sets all the elements of the 
+specified arrays to an initial value of 2ero, 
+
+Example: 10 DIM A (20) 
+
+20 FOR 1=0 TO 20 
+
+30 READ A(I) 
+
+40 NEXT I 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-20 
+
+2.16 EDIT 
+
+Format: EDIT <Iine noniber> 
+Versions: Extended, Disk 
+
+Purpose : To enter Edit Mode at the specified line- 
+Remarks: In Edit Mode » it is possible to edit portions of 
+a line without retyping the entire line- Upon 
+entering Edit Mode, BASIC-BO types the line 
+number of the line to he edited, then it types a 
+space and waits for an Edit Mode subcommand- 
+
+Edit Mode Subcommands 
+
+Edit Mode subcommands are used to move the 
+cursor or to insert, delete, replace, or search 
+for text within a line. The subcommands are not 
+echoed. Most of the Edit Mode subcommands may 
+be preceded by an integer which causes the 
+command to be executed that number of times- 
+When a preceding integer is not specified, it is 
+assumed to be 1. 
+
+Edit Mode subcommands may be categorized 
+according to the following functions: 
+
+1. Moving the cursor 
+
+2. Inserting text 
+
+3 . Deleting text 
+
+4 . Finding text 
+
+5. Replacing text 
+
+6- Ending and restarting Edit Mode 
+
+
+
+NOTE 
+
+In the descriptions that follow, <ch> 
+represents any character, <text> 
+represents a string of characters of 
+arbitrary length, [i] represents an 
+optional integer (the default is 1) , and 
+$ represents the Escape (or Alt mode) 
+key. 
+
+
+
+BASlC-80 COMMANDS AND STATEMENTS Page 2-21 
+
+1. Moving the Cursor 
+
+Space Use the space bar to move the cursor to the 
+right. [i] Space moves the cursor i spaces to 
+the right. Characters are printed as you space 
+over them. 
+
+Rubout In Edit Mode, [i] Rubout moves the cursor i 
+spaces to the left (backspaces) . Characters are 
+printed as you backspace over them. 
+
+2- Inserting Text 
+
+I I<text>5 inserts <text> at the current cursor 
+position- The inserted characters are printed 
+on the terminal- To terminate insertion, type 
+Escape- If Carriage Return is typed during an 
+Insert command, the effect is the same as typing 
+Escape and then Carriage Return. During an 
+Insert command, the Rubout, Delete, or 
+Underscore key on the terminal may be used to 
+delete characters to the left of the cursor. 
+Rubout will print out the characters as you 
+backspace over them. Delete and Underscore will 
+print an Underscore for each character that you 
+backspace over- If an attempt is made to insert 
+a character that will make the line longer than 
+255 characters, a bell (Control-G) is typed and 
+the character is not printed. 
+
+X The X subcommand is used to extend the line- X 
+moves the cursor to the end of the line, goes 
+into insert mode, and allows insertion of text 
+as if an Insert command had been given- When 
+you are finished extending the line, type Escape 
+or Carriage Return. 
+
+3, Deleting Text 
+
+D [i]D deletes i characters to the right of the 
+cursor. The deleted characters are echoed 
+between backslashes, and the cursor is 
+positioned to the right of the last character 
+deleted. If there are fewer than i characters 
+to the right of the cursor, iD deletes the 
+remainder of the line- 
+
+H H deletes all characters to the right of the 
+
+cursor and then automatically enters insert 
+
+mode- H is useful for replacing statements at 
+the end of a line- 
+
+4. Finding Text 
+
+S The subcommand [ i ] S<ch> searches for the ith 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-22 
+
+
+
+occurrence of <ch> and positions the cursor 
+before it. The character at the current cursor 
+position is not included in the search. If <ch> 
+is not found, the cursor will stop at the end of 
+the line. All characters passed over during the 
+search are printed. 
+
+K The subcommand IilK<ch> is similar to Ii]S<ch>, 
+except all the characters passed over in the 
+search are deleted. The cursor is positioned 
+before <ch>, and the deleted characters are 
+enclosed in backslashes- 
+Replacing Text 
+
+C The subcommand C<ch> changes the next character 
+to <ch>. If you wish to change the next i 
+characters, use the subcommand iC, followed by i 
+characters. After the ith new character is 
+typed, change mode is exited and you will return 
+to Edit Mode- 
+
+Ending and Restarting Edit Mode 
+
+<cr> Typing Carriage Return prints the remainder of 
+the line, saves the changes you made and exits 
+Edit Mode. 
+
+E The E subcommand has the same effect as Carriage 
+Return, except the remainder of the line is not 
+
+printed. 
+
+Q The Q subcommand returns to BASIC-80 command 
+level, without saving any of the changes that 
+were made to the line during Edit Mode. 
+
+li The L subcommand lists the remainder of the line 
+(saving any changes made so far) and repositions 
+the cursor at the beginning of the line, still 
+in Edit Mode- L is usually used to list the 
+line when you first enter Edit Mode. 
+
+A The A subcommand lets you begin editing a line 
+over again. It restores the original line and 
+repositions the cursor at the beginning. 
+
+
+
+NOTE 
+
+If BASIC-80 receives an unrecognizable 
+command or illegal character while in 
+Edit Mode, it prints a bell (Control-G) 
+and the command or character is ignored. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-23 
+
+
+
+Syntax Errors 
+
+When a Syntax Error is encountered during 
+execution of a program, BASIC-80 automatically 
+enters Edit Mode at the line that caused the 
+error* For example : 
+
+10 K = 2(4) 
+
+RUN 
+
+?Syntax error in 10 
+
+10 
+
+When you finish editing the line and type 
+Carriage Return (or the E subcommand) , BASIC-BO 
+reinserts the line, which causes all variable 
+values to be lost. To preserve the variable 
+values for examination , first exit Edit Mode 
+with the Q subcommand. BASIC-80 will return to 
+command level, and all variable values will be 
+preserved- 
+
+Control-A 
+
+To enter Edit Mode on the line you are currently 
+typing , type Control-A- BASIC-80 responds with 
+a carriage return, an exclamation point (!) and 
+a space. The cursor will be positioned at the 
+first character in the line. Proceed by typing 
+an Edit Mode subcommand. 
+
+
+
+NOTE 
+
+Remember, if you have just entered a 
+line and wish to go back and edit it, 
+the command "EDIT." will enter Edit Mode 
+at the current line. (The line number 
+symbol " . " always refer s to the current 
+line. ) 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-24 
+
+2.17 END 
+
+Format: END 
+
+Versions: 8K, Extended, Disk 
+
+Purpose: To terminate program execution, close all files 
+and return to command level . 
+
+Remarks: END statements may be placed anywhere in the 
+program to terminate execution- Unlike the STOP 
+statement/ END does not cause a BREAK message to 
+be printed. An END statement at the end of a 
+program is optional. BASIC-80 always returns to 
+command level after an END is executed- 
+
+Example: 520 IF K>1000 THEN END ELSE GOTO 20 
+
+
+
+BA5IC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-25 
+
+
+
+2.18 ERASE 
+
+Format: 
+Versions: 
+Purpose: 
+Remarks: 
+
+
+
+VOTE: 
+
+
+
+Example ; 
+
+
+
+ERASE <list of array var iables> 
+
+Extended, Disk 
+
+To eliminate arrays from a program. 
+
+Ar rays may be redimensioned after they are 
+ERASEd, or the previously allocated array space 
+in memory may be used for other purposes. If an 
+attempt is made to redimension an array without 
+first ERASEing it, a "Redimensioned array" error 
+occur s- 
+
+The Microsoft BASIC compiler <3oes not support 
+
+ERASE, 
+
+
+
+450 ERASE A,B 
+460 DIM B(99) 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-26 
+
+2. 19 ERR AND ERL VARIABLES 
+
+When an error handling subroutine is entered, 
+the variable ERR contains the error code for the 
+error and the variable ERL contains the line 
+number of the line in which the error was 
+detected. The ERR and ERL variables are usually 
+
+used in IF THEN statements to direct program 
+
+flow in the error trap routine. 
+
+If the statement that caused the error was a 
+direct mode statement, ERL will contain 65535. 
+To test if an error occurred in a direct 
+statement, use IF 65535 = ERL THEN ... 
+Otherwise, use 
+
+IF ERR = error code THEN ... 
+
+IF ERL = line number TEEVi ... 
+
+If the line number is not on the right side of 
+the relational operator, it cannot be renumbered 
+by RENUM, Because ERL and ERR are reserved 
+variables, neither may appear to the left of the 
+equal sign in a LET (assignment) statement, 
+BASIC-80 's error codes are listed in Appendix J. 
+(For Standalone Disk BASIC error codes, see 
+Appendix H.) 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-27 
+
+2.20 ERROR 
+
+Format: ERROR < integer express ion> 
+
+Versions: Extended, Disk 
+
+Purpose: 1) To simulate the occurrence of a BASIC-80 
+error; or 2) to allow error codes to be 
+
+defined by the user. 
+
+Remarks: The value of < integer express ion> must be 
+greater than and less than 255- If the value 
+of < integer express ion> equals an error code 
+already in use by BASIC-80 (see Appendix J) , the 
+ERROR statement will simulate the occurrence of 
+that error, and the corresponding error message 
+will be printed- (See Example 1.) 
+
+To define your own error code, use a value that 
+is greater than any used by BASIC-80 's error 
+codes- (It is preferable to use the highest 
+available values, so compatibility may be 
+maintained when more error codes are added to 
+BASIC-BO.) This user-defined error code may then 
+be conveniently handled in an error trap 
+routine, (See Exafnple 2.) 
+
+If an ERROR statement specifies a code for which 
+no error message has been defined, BASIC-80. 
+responds with the message UNPRINTABLE ERROR. 
+Execution of an ERROR statement for which there 
+is no error trap routine causes an error message 
+to be printed and execution to halt- 
+Example 1: LIST 
+
+10 S = 10 
+
+20 T = 5 
+
+30 ERROR S + T 
+
+40 END 
+
+Ok 
+
+RUN 
+
+String too long in line 30 
+
+Or , in direct mode : 
+
+Ok 
+
+ERROR 15 (you type this line) 
+
+String too long (BASIC-80 types this line) 
+
+Ok 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-28 
+
+Example 2: 
+
+
+
+110 ON ERROR GOTO 400 
+
+120 INPUT "WHAT IS YOUR BET";B 
+
+130 IF B > 5000 THEN ERROR 210 
+
+
+
+400 IF ERR = 210 THEN PRINT "HOUSE LIMIT IS $5000" 
+410 IF ERL =130 THEN RESUME 120 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-29 
+
+
+
+2.21 FIELD 
+
+
+
+Format: FIEI.D[#] <f ile number> , <f ield width> AS <string variable> 
+Version: Disk 
+
+Purpose: To allocate space for variables in a random file 
+
+buffer- 
+Remarks: To get data out of a random buffer after a GET 
+
+or to enter data before a PUT, a FIELD statement 
+
+must have been executed. 
+
+<f ile number > is the number under which the file 
+was OPENed. <field width> is the number of 
+characters to be allocated to <string variable>. 
+For example, 
+
+FIELD 1, 20 AS N$ , 10 AS ID$ , 40 AS ADD$ 
+
+allocates the first 20 positions (bytes) in the 
+random file buffer to the string variable N$, 
+the next 10 positions to ID$, and the next 40 
+positions to ADD$. FIELD does NOT place any 
+data in the random file buffer. (See LSET/RSET 
+and GET,) 
+
+The total number of bytes allocated in a FIELD 
+statement must not exceed the record length that 
+was specified when the file was OPENed. 
+Otherwise, a "Field overflow" error occurs, 
+(The default record length is 128.) 
+
+Any number of FIELD statements may be executed 
+for the same file, and all FIELD statements that 
+have been executed are in effect at the same 
+time. 
+
+Example: See Appendix B. 
+
+NOTE: Do not use a FIELDed variable name in an INPUT 
+or LET statement . Once a variable name is 
+FIELDed, it points to the correct place in the 
+random file buffer. If a subsequent INPUT or 
+LET statement with that variable name is 
+executed, the variable's pointer is moved to 
+string space. 
+
+
+
+BA5IC-80 COMMANDS AND STATEMENTS Page 2-30 
+
+2.22 FOR. . . NEXT 
+
+Forinat: FOR <variable>=x TO y (STEP z] 
+
+NEXT [<variable>) [,<variable> ] 
+
+where x, y and z are numeric expressions. 
+
+Versions: 8K, Extended, Disk 
+
+Purpose: To allow a series of instructions to be 
+performed in a loop a given number of times. 
+
+Remarks: <variable> is used as a counter. The first 
+numeric expression (x) is the initial value of 
+the counter. The second numeric expression (y) 
+is the final value of the counter. The program 
+lines following the FOR statement are executed 
+until the NEXT statement is encountered. Then 
+the counter is incremented by the amount 
+specified by STEP, A check is performed to see 
+if the value of the counter is now greater than 
+the final value (y) - If it is not greater, 
+BASIC-80 branches back to the statement after 
+the FOR statement and the process is repeated. 
+If it is greater , execution continues with the 
+statement following the NEXT statement- This is 
+a FOR- -.NEXT loop. If STEP is not specified, 
+the increment is assumed to be one. If STEP is 
+negative, the final value of the counter is set 
+to be less than the initial value. The counter 
+is decremented each time through the loop, and 
+the loop is executed until the counter is less 
+than the final value. 
+
+The body of the loop is skipped if the initial 
+value of the loop times the sign of the step 
+exceeds the final value times the sign of the 
+step. 
+
+Nested Loops 
+
+FOR. ..NEXT loops may be nested, that is, a 
+FOR... NEXT loop may be placed within the context 
+of another FOR. , .NEXT loop. When loops are 
+nested, each loop must have a unique variable 
+name as its counter- The NEXT statement for the 
+inside loop must appear before that for the 
+outside loop- If nested loops have the same end 
+point, a single NEXT statement may be used for 
+all of them- 
+
+The variable (s) in the NEXT statement may be 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-31 
+
+
+
+omitted, in which case the NEXT statement will 
+match the most recent FOR statement. If a NEXT 
+statement is encountered before its 
+corresponding FOR statement, a "NEXT without 
+FOR" error message is issued and execution is 
+terminated , 
+
+Example 1: 10 K=10 
+
+20 FOR 1=1 TO K STEP 2 
+
+30 PRINT I; 
+
+40 K=K+10 
+
+50 PRINT K 
+
+60 NEXT 
+
+RUN 
+
+1 20 
+
+3 30 
+
+5 40 
+
+7 50 
+
+9 60 
+Ok 
+
+Example 2: 10 J=a 
+
+20 FOR 1=1 TO J 
+
+30 PRINT I 
+
+40 NEXT I 
+
+In this example , the loop does not execute 
+because the initial value of the loop exceeds 
+the final value- 
+
+
+
+Example 3: 10 1=5 
+
+20 FOR 1=1 TO 1+5 
+30 PRINT I; 
+4 NEXT 
+RUN 
+
+123456789 10 
+Ok 
+
+In this example, the loop executes ten times. 
+The final value for the loop variable is always 
+set before the initial value is set. {Note: 
+Previous versions of BASIC-80 set the initial 
+value of the loop variable before setting the 
+final value; i.e., the above loop would have 
+executed six times,) 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-32 
+
+
+
+2,23 GET 
+
+Format: GET [#3<file number> [ r <record number>] 
+Version: Disk 
+
+Purpose: To read a record from a random disk file into a 
+random buffer. 
+
+Remarks : <f ile nuinber> is the number under which the file 
+was OPENed. If <record number> is omitted, the 
+next record (after the last GET) is read into 
+the buffer. The largest possible record number 
+is 32767. 
+
+
+
+Example: See Appendix B. 
+
+NOTE: After a GET statement, INPUTS and LINE INPUT* 
+may be done to read characters from the random 
+file buffer. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-33 
+
+
+
+2.24 GOSUB. . -RETURN 
+
+
+
+Format: 
+
+
+
+GOSUB <line number> 
+
+
+
+Versions 
+
+Purpose : 
+Remarks:. 
+
+
+
+Example: 
+
+
+
+RETURN 
+
+8K, Extended, Disk 
+
+To branch to and return from a subroutine. 
+
+
+
+<line nuinber> 
+subroutine. 
+
+
+
+is the first line of 
+
+
+
+the 
+
+
+
+return at 
+Subroutines 
+but it is 
+be readily 
+
+
+
+A subroutine may be called any number of times 
+in a program, and a subroutine may be called 
+from within another subroutine. Such nesting of 
+subroutines is limited only by available memory- 
+
+The RETURN statement (s) in a subroutine cause 
+BASIC-80 to branch back to the statement 
+following the most recent GOSUB statement, A 
+subroutine may contain more than one RETURN 
+statement, should logic dictate a 
+different points in the subroutine, 
+may appear anywhere in the program, 
+recommended that the subroutine 
+distinguishable from the main program. To 
+prevent inadvertant entry into the subroutine, 
+it may be preceded by a STOP, END, or GOTO 
+statement that directs program control around 
+the subroutine. 
+
+10 GOSUB 40 
+
+20 PRINT "BACK FROM SUBROUTINE" 
+
+30 END 
+
+40 PRINT "SUBROUTINE"; 
+
+5 PRINT " IN"; 
+
+60 PRINT " PROGRESS" 
+
+70 RETURN 
+
+RUN 
+
+SUBROUTINE IN PROGRESS 
+
+BACK FROM SUBROUTINE 
+
+Ok 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-34 
+
+
+
+2-25 GOTO 
+
+
+
+Format: 
+
+Versions 
+
+Purpose: 
+
+Remarks: 
+
+
+
+GOTO <1 i ne numbe r > 
+
+8K, Extended, Disk 
+
+To branch unconditionally out of the normal 
+program sequence to a specified line number. 
+
+If <line number> is an executable statement, 
+that statement and those following are executed. 
+If it is a nonexecutable statement, execution 
+proceeds at the first executable statement 
+encountered after <line number >. 
+
+
+
+Example: 
+
+
+
+LIST 
+
+
+
+
+10 READ R 
+
+
+
+
+20 PRINT "R =";R, 
+
+
+
+
+30 A = 3-14*R'^2 
+
+
+
+
+40 PRINT "AREA =";A 
+
+
+
+
+50 GOTO 10 
+
+
+
+
+60 DATA 5,7,12 
+
+
+
+
+Ok 
+
+
+
+
+RUN 
+
+
+
+
+R = 5 AREA 
+
+
+= 78.5 
+
+
+R = 7 AREA 
+
+
+= 153.86 
+
+
+R = 12 AREA 
+
+
+= 452.16 
+
+
+?Out of data in 10 
+
+
+
+
+Ok 
+
+
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-35 
+
+
+
+2.26 IF. ..THEN[,. ,ELSE] AND IF.. -GOTO 
+
+Focmat: IF <expression> THEN <statement (s) > | <llne nuTnber> 
+
+(ELSE <statement (s) > ( <line numbeol 
+Format: IF <€Xpression> GOTO <line number> 
+
+[ELSE <statement (s) > | <line number>] 
+Versions: 8K, Extended, Disk 
+
+NOTE; The ELSE clause is allowed only in Extended and 
+
+Disk versions- 
+Purpose: To make a decision regarding program flow based 
+
+on the result returned by an expression. 
+
+Remarks: If the result of <expression> is not zero, the 
+THEN or GOTO Clause is executed, THEN may be 
+followed by either a line number for branching 
+or one or more statements to be executed. GOTO 
+is always followed by a line number. If the 
+result of <expression> is zero, the THEN or GOTO 
+clause is ignored and the ELSE clause, if 
+present, is executed- Execution continues with 
+the next executable statement. (ELSE is allowed 
+only in Extended and Disk versions.) Extended 
+and Disk versions allow a comma before THEN, 
+
+Nesting of IF Statements 
+
+In the Extended and Disk versions, 
+IF. , .THEN. . .ELSE statements may be nested. 
+Nesting is limited only by the length of the 
+line. For example 
+
+IF X>Y THEN PRINT "GREATER" ELSE IF Y>X 
+
+THEN PRINT "LESS THAN" ELSE PRINT "EOOAL" 
+
+is a legal statement. If the statement does not 
+contain the same number of ELSE and THEN 
+clauses, each ELSE is matched with the closest 
+unmatched THEN. For example 
+
+IF A=B THEN IF B=C THEN PRINT "A=C" 
+ELSE PRINT "hoc" 
+
+will not print "A<>C" when AOB. 
+
+If an IF. , -THEN statement is followed by a line 
+number in the direct mode , an "Undefined line" 
+error results unless a statement with the 
+specified line number had previously been 
+entered in the indirect mode. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-36 
+
+NOTE: When using IF to test equality foe a value that 
+is the result of a floating point computation, 
+remeinber that the internal representation of the 
+value may not be exact. Therefore, the test 
+should be against the range over which the 
+accuracy of the value may vary. For example, to 
+test a computed variable A against the value 
+1,0, use: 
+
+IF ABS (A-1.0) <l-0E-6 THEN ... 
+
+This test returns true if the value of A is 1.0 
+with a relative error of less than l-OE-6. 
+
+Example 1: 200 IF I THEN GET#1,I 
+
+This statement GETs record number I if I is not 
+zero. 
+
+Example 2: 100 IF (K20) * {I>10) THEN DB=1979-1 :GOTO 300 
+110 PRINT "OUT OF RANGE" 
+
+
+
+In this example , a test determines if I is 
+greater than 10 and less than 20. If I is in 
+this range, DB is calculated and execution 
+branches to line 300. If I is not in this 
+range, execution continues with line 110. 
+
+Example 3: 210 IF lOFLAG THEN PRINT A$ ELSE LPRINT A$ 
+
+This statement causes printed output to go 
+either to the terminal or the line printer, 
+depending on the value of a variable (lOFLAG) . 
+If lOFLAG is zero, output goes to the line 
+printer, otherwise output goes to the terminal. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-37 
+
+2,27 INPUT 
+
+Format: INPUT[ ; ] [<"prompt string"> ; ] <list of variables> 
+Versions: 8K, Extended, Disk 
+
+Purpose: To allow input from the terminal during program 
+
+execution- 
+Remarks: When an INPUT statement is encountered, program 
+execution pauses and a question mark is printed 
+to indicate the program is waiting for data. If 
+<"prompt string"> is included, the string is 
+printed before the question- mark. The required 
+data is then entered at the terminal. 
+
+A comma may be used instead of a semicolon after 
+the prompt string to suppress the question mark. 
+For example, the statement INPUT "ENTER 
+BIRTHDATE" ,B$ will print the prompt with no 
+question mark. 
+
+If INPUT is immediately followed by a semicolon, 
+then the carriage return typed by the user to 
+input data does not echo a carriage return/line 
+feed sequence. 
+
+The data that is entered is assigned to the 
+variable (s) given in <variable list>. The 
+number of data items supplied must be the same 
+as the number of variables in the list- Data 
+items are separated by commas- 
+
+The variable names in the list may be numeric or 
+string variable names (including subscripted 
+variables) . The type of each data item that is 
+input must agree with the type specified by the 
+variable name. (Strings input to an INPUT 
+statement need not be surrounded by quotation 
+marks- ) 
+
+Responding to INPUT with too many or too few 
+items, or with the wrong type of value (numeric 
+instead of string, etc.) causes the messsage 
+"?Redo from start" to be printed- No assignment 
+of input values is made until an acceptable 
+response is given, 
+
+In the 8K version, INPUT is illegal in the 
+direct mode. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-38 
+
+
+
+Examples: 10 INPUT X 
+
+20 PRINT X "SQUARED IS" X*2 
+
+30 END 
+
+RUN 
+
+? 5 (The 5 was typed in by the user 
+
+in response to the question mark.) 
+5 SQUARED IS 25 
+Ok 
+
+
+
+LIST 
+
+10 PI=3.14 
+
+20 INPUT "WHAT IS THE RADIUS" ;R 
+
+30 A=PI*R'*2 
+
+40 PRINT "THE AREA OF THE CIRCLE IS";A 
+
+50 PRINT 
+
+€0 GOTO 20 
+
+Ok 
+
+RUN 
+
+WHAT IS THE RADIUS? 7.4 (User types 7-4) 
+
+THE AREA OF THE CIRCLE IS 171.946 
+
+WHAT IS THE RADIUS? 
+etc- 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-39 
+
+
+
+2.28 INPUT# 
+
+
+
+Format: INPUTS<file number> , <variable list> 
+Version; Disk 
+
+Purpose: To read data items from a sequential disk file 
+
+and assign them to program variables- 
+Remarks; <f ile number > is the number used when the file 
+was OPENed for input. <variable list> contains 
+the variable names that will be assigned to the 
+items in the file. (The variable type must 
+match the type specified by the variable name- ) 
+With INPUT#, no question mark is printed, as 
+with INPUT. 
+
+The data items in the file should appear just as 
+they would if data were being typed in response 
+to an INPUT statement. With numeric values, 
+leading spaces, carriage returns and line feeds 
+are ignored. The first character encountered 
+that is not a space, carriage return or line 
+feed is assumed to be the start of a number. 
+The number terminates on a space, carriage 
+return , line feed or comma . 
+
+If BASIC-80 is scanning the sequential data file 
+for a string item, leading spaces, carriage 
+returns and line feeds are also ignored. The 
+first character encountered that is not a space, 
+carriage return, or line feed is assumed to be 
+the start of a string item. If this first 
+character is a quotation mark (") r the string 
+item will consist of all characters read between 
+the first quotation mark and the second. Thus, 
+a quoted string may not contain a quotation mark 
+as a character- If the first character of the 
+string is not a quotation mark, the string is an 
+unquoted string , and will terminate on a comma , 
+carriage or line feed (or after 255 characters 
+have been read) , If end of file is reached when 
+a numeric or string item is being INPUT, the 
+item is terminated. 
+
+Example: See Appendix B- 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-40 
+
+2.29 KILL 
+
+Focmat: KILL <filename> 
+
+Version: Disk 
+
+Purpose: To delete a file from disk. 
+
+Remarks: If a KILL statement is given for a file that is 
+currently OPEN, a "File already open" error 
+occurs- 
+
+KILL is used for all types of disk files: 
+program files, random data files and sequential 
+data files. 
+
+Example: 200 KILL "DATAl" 
+
+See also Appendix B, 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-41 
+
+
+
+2.30 LET 
+
+Format: [LET] <variable>=<expression> 
+
+Versions: 8K, Extended, Disk 
+
+Purpose: To assign the value of an expression to a 
+variable. 
+
+Remarks: Notice the word LET is optional, i.e., the equal 
+sign is sufficient when assigning an expression 
+to a variable name. 
+
+Example: 110 LET D=12 
+
+120 LET E=12"2 
+
+130 LET F=12"4 
+
+14 LET SUM=D+E+F 
+
+
+
+or 
+
+110 D=12 
+
+120 E=12"2 
+
+130 F=12''4 
+
+140 SUM=D-I-E+F 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-42 
+
+2.31 LINE INPUT 
+
+Format: LINE INPUT[ ;][< "prompt str ing'*> ; ] <string variable> 
+
+Versions; Extended, Disk 
+
+Purpose: To input an entire line (up to 254 characters) 
+to a string variable, without the use of 
+delimiters. 
+
+Remarks: The prompt string is a string literal that is 
+printed at the terminal before input is 
+accepted. A question mark is not printed unless 
+it is part of the prompt string. All input from 
+the end of the prompt to the carriage return is 
+assigned to <string vartabie>- However, if a 
+line feed/carriage return sequence (this order 
+only) is encountered , both characters are 
+echoed; but the carriage return is ignored, the 
+line feed is put into STRING variable>, and data 
+input continues. 
+
+If LINE INPUT is immediately followed by a 
+semicolon, then the carriage return typed by the 
+user to end the input line does not echo a 
+carriage return/line feed sequence at the 
+terminal- 
+
+A LINE INPUT may be escaped by typing Control-C- 
+BASIC-80 will return to command level and type 
+Ok. Typing CONT resumes execution at the LINE 
+INPUT. 
+
+Example: See Example, Section 2.32, LINE INPUTtt- 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-43 
+
+2.32 LINE INPUT! 
+
+Format: LINE INPUT#<file number> , <str ing variable> 
+
+Version: Disk 
+
+Purpose: To read an entire line (up to 254 characters), 
+without delimiters, from a sequential disk data 
+file to a string variable. 
+
+Remarks: <f ile number > is the number under which the file 
+was OPENed. < string variable> is the variable 
+name to which the line will be assigned. LINE 
+INPUT# reads all characters in the sequential 
+file up to a carriage return. It then skips 
+over the carriage return/line feed sequence, and 
+the next LINE INPUT# reads all characters up to 
+the next carriage return. (If a line 
+feed/carriage return sequence is encountered, it 
+is preserved.) 
+
+LINE INPUT# is especially useful if each line of 
+a data file has been broken into fields, or if a 
+BASIC-80 program saved in ASCII mode is being 
+read as data by another program. 
+
+Example: 10 OPEN "0",1,"LIST" 
+
+20 LINE INPUT "CUSTOMER INFORMATION? ";C$ 
+
+30 PRINT #1, C$ 
+
+40 CLOSE 1 
+
+50 OPEN "I", 1, "LIST" 
+
+60 LINE INPUT #1, C$ 
+
+70 PRINT C$ 
+
+80 CLOSE 1 
+
+RUN 
+
+CUSTOMER INFORMATION? LINDA JONES 234,4 MEMPHIS 
+
+LINDA JONES 234,4 MEMPHIS 
+
+Ok 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-4 4 
+
+
+
+2.33 LIST 
+
+
+
+Format 1: LIST [<line number>) 
+
+Versions: 8K, Extended, Disk 
+
+Format 2: LIST [<line number> [- C<line number>I]] 
+
+Versions: Extended, Disk 
+
+Purpose: To list all or part of the program currently in 
+memory at the terminal. 
+
+Remarks: BASIC-80 always returns to command level after a 
+LIST i s executed . 
+
+Format 1: If <line number> is omitted, the 
+program is listed beginning at the lowest line 
+number, (Listing is terminated either by the 
+end of the program or by typing Control-C- ) . If 
+<line number> is included, the 8K version will 
+list the program beginning at that line; and 
+the Extended and Disk versions will list only 
+the specified line. 
+
+Format 2 : This format allows the following 
+options: 
+
+1. If only the first number is specified, that 
+line and all higher-numbered lines are 
+listed. 
+
+2. If only the second number is specified, all 
+lines from the beginning of the program 
+through that line are listed, 
+
+3. If both numbers are specified, the entire 
+range is listed. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-45 
+
+
+
+Examples: Format 1 
+LIST 
+
+LIST 500 
+
+
+
+Lists the program currently 
+in memory. 
+
+In the 8K version, lists 
+all programs lines from 
+500 to the end. 
+In Extended and Disk , 
+lists line 500. 
+
+
+
+Format 2: 
+LIST 150- 
+
+LIST -1000 
+
+
+
+Lists all lines from 150 
+to the end. 
+
+Lists all lines from the 
+lowest number through 1000 
+
+
+
+LIST 150-1000 Lists lines 150 through 
+
+1000, inclusive. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-46 
+
+
+
+2.34 LLIST 
+
+
+
+Format: LLIST [<line number> [- [<line number>lll 
+Versions: Extended, Disk 
+
+Purpose; To list all or part of the program currently in 
+memory at the line printer. 
+
+Remarks: LLIST assumes a 132-character wide printer. 
+
+BASlC-80 always returns to command level after 
+an LLIST is executed. The options for LLIST are 
+the same as for LIST, Format 2. 
+
+
+
+NOTE: 
+
+
+
+LLIST and LPRINT are not included in all 
+implementations of BASIC-80. 
+
+
+
+Example: See the examples for LIST, Format 2. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-47 
+
+
+
+2.35 LOAD 
+
+Format: 
+Version: 
+Purpose: 
+Remarks: 
+
+
+
+LOAD <filename>[,R] 
+
+Disk 
+
+To load a file from disk into memory. 
+
+<filename> is the name that was used when the 
+file was SAVEd- (With CP/M, the default 
+extension .BAS is supplied.) 
+
+LOAD closes all open files and deletes all 
+variables and program lines currently residing 
+in memory before it loads the designated 
+program. However, if the "R" option is used 
+with LOAD, the program is RUN after it is 
+LOADed, and all open data files are kept open. 
+Thus, LOAD with the "R" option may be used to 
+chain several programs (or segments of the same 
+program) . Information may be passed between the 
+programs using their disk data files. 
+
+
+
+Example 
+
+
+
+LOAD "STRTRK",R 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-48 
+
+
+
+2.36 LPRINT AND LPRINT USING 
+
+
+
+Format: 
+
+Versions 
+Purpose: 
+Remarks: 
+
+
+
+NOTE: 
+
+
+
+LPRINT l<list of expressions>) 
+
+LPRINT USING <string exp>;<list of expressions> 
+Extended, Disk 
+
+To print data at the line printer- 
+Same as PRINT and PRINT USING, except output 
+goes to the line printer. See Section 2-49 and 
+Section 2.50. 
+
+LPRINT assumes a 132-character-wide printer. 
+
+LPRINT and LLIST are not included in all 
+implementations of BASIC-80. 
+
+
+
+BASlC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-49 
+
+
+
+2.37 LSET AND RSET 
+
+
+
+Format: 
+
+Version: 
+Purpose: 
+
+Remarks: 
+
+
+
+Examples: 
+
+
+
+NOTE: 
+
+
+
+LSET <string variable> 
+RSET < string variable > 
+
+Disk 
+
+
+
+< string expression> 
+< string expression> 
+
+
+
+To move data from memory to a random file buffer 
+(in preparation for a PUT statement) • 
+
+If < string expression> requires fewer bytes than 
+were FIELDed to < string variable>, LSET 
+left-justifies the string in the field, and RSET 
+right-justifies the string- (Spaces are used to 
+pad the extra positions-) If the string is too 
+long for the field, characters are dropped from 
+the right. Numeric values must be converted to 
+strings before they are LSET or RSET. See the 
+MKI$, MKS$, MKD$ functions. Section 3.25. 
+
+150 LSET A$=MKS$(AMT) 
+160 LSET D$=DESC($) 
+
+See also Appendix B. 
+
+LSET or RSET may also be used with a non-fielded 
+string variable to left-justify or right-justify 
+a string in a given field. For example, the 
+
+program lines 
+
+110 A$=SPACE5(20) 
+120 RSET A$=N$ 
+
+right- justify the string N$ in a 20 -character 
+field. This can be very handy for formatting 
+printed output* 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-50 
+
+
+
+2.38 MERGE 
+
+
+
+Format: 
+Version 
+Purpose 
+
+Remarks 
+
+
+
+MERGE <filename> 
+
+Disk 
+
+To merge a specified disk file into the 
+currently in memory. 
+
+
+
+program 
+
+
+
+Example: 
+
+
+
+<f ilename> is the name used when the file was 
+SAVEd. (With CP/M, the default extension ,BAS 
+is supplied.) The file must have been SAVEd in 
+ASCII format. (If not, a "Bad file mode" error 
+occurs.) 
+
+If any lines in the disk file have the same line 
+numbers as lines in the program in memory, the 
+lines from the file on disk will replace the 
+corresponding lines in memory. (MERGEing may be 
+thought of as "inserting" the program lines on 
+disk Into the program in memory.) 
+
+BASIC-80 always returns to command level after 
+executing a MERGE command. 
+
+MERGE "NUMBRS" 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-51 
+
+
+
+2.39 MID$ 
+
+
+
+Format: MID$(<string expl> ,n I ,ni] ) =<str ing exp2> 
+
+where n and m are integer expressions and 
+< string expl> and < string exp2> are string 
+expressions. 
+
+Versions: Extended, Disk 
+
+Purpose: To replace a portion of one string with another 
+string. 
+
+Remarks: The characters in <string expl>, beginning at 
+position n, are replaced by the characters in 
+< string exp2>- The optional m refers to the 
+number of characters from < string exp2> that 
+will be used in the replacement- If m is 
+omitted, all of <string exp2> is used. However, 
+regardless of whether m is omitted or included, 
+the replacement of characters never goes beyond 
+the original length of <string expl>. 
+
+Example: 10 A$="KANSAS CITY, MO" 
+20 MID$CA$,14) ="KS" 
+30 PRINT A$ 
+RUN 
+KANSAS CITY, KS 
+
+MID$ is also a function that returns a substring 
+of a given string. See Section 3.24. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-52 
+
+
+
+2.40 NAME 
+
+
+
+Format; NAME <old f ilenamo AS <new f ilenamO 
+
+Version: Disk 
+
+Purpose: To change the name of a disk file. 
+
+Remarks: <old filename> must exist and <new filename> 
+must not exist; otherwise an error will result. 
+After a NAME command ^ the file exists on the 
+same disk, in the same area of disk space, with 
+the new name. 
+
+Example: Ok 
+
+NAME "ACCTS" AS "LEDGER" 
+Ok 
+
+In this example, the file that was 
+
+formerly named ACCTS will now be named LEDGER: 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-53 
+
+
+
+2.41 NEW 
+
+
+
+Format: 
+
+Versions: 
+
+Purpose: 
+
+Remarks: 
+
+
+
+NEW 
+
+
+
+8K, Extended, Disk 
+
+
+
+To delete the program currently 
+clear all variables. 
+
+
+
+in memory and 
+
+
+
+NEW is entered at command level to clear memory 
+before entering a new program- BASIC-80 always 
+returns to command level after a NEW is 
+executed. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-54 
+
+2.42 NULL 
+
+Format: NULL <integer expression> 
+
+Versions: 8K, Extended, Disk 
+
+Purpose: To set the number of nulls to be printed at the 
+end of each line. 
+
+Remarks: For 10-character-per-second tape punches, 
+< integer expression> should be >=3. When tapes 
+are not being punched, < integer expression> 
+should be or 1 for Teletypes and 
+Teletype-compatible CRTs. <integer expression> 
+should be 2 or 3 for 30 cps hard copy printers. 
+The default value is 0. 
+
+
+
+Example : Ok 
+
+NULL 2 
+
+Ok 
+
+100 INPUT X 
+
+200 IF X<50 GOTO 800 
+
+
+
+Two null characters will be printed after each 
+line- 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-55 
+
+
+
+2.4 3 ON ERROR GOTO 
+
+
+
+Format; 
+Versions 
+
+Purpose: 
+
+Remarks: 
+
+
+
+NOTE: 
+
+
+
+ON ERROR GOTO <line number> 
+
+Extended, Disk 
+
+To enable error trapping and specify the first 
+line of the error handling subroutine. 
+
+Once error trapping has been enabled all errors 
+detected, including direct mode errors (e.g. , 
+Syntax errors) , will cause a jump to the 
+specified error handling subroutine- If <line 
+number> does not exist, an "Undefined line" 
+error results. To disable error trapping, 
+execute an ON ERROR GOTO 0- Subsequent errors 
+will print an error message and halt execution. 
+An ON ERROR GOTO statement that appears in an 
+error trapping subroutine causes BASIC-80 to 
+stop and print the error message for the error 
+that caused the trap. It is recommended that 
+all error trapping subroutines execute an ON 
+ERROR GOTO if an error is encountered for 
+which there is no recovery action. 
+
+If an error occurs during execution of an error 
+handling subroutine, the BASIC error message is 
+printed and execution terminates. Error 
+trapping does not occur within the error 
+handling subroutine. 
+
+
+
+Example: 
+
+
+
+10 ON ERROR GOTO 1000 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-56 
+
+
+
+2.44 ON...GOSUB AND ON. . .GOTO 
+
+
+
+Format: ON <expression> GOTO <list of line nuinbers> 
+
+ON <expression> GOSUB <list of line number s> 
+
+Versions: 8K, Extended, Disk 
+
+Purpose: To branch to one of several specified line 
+numbers , depending on the value returned when an 
+expression is evaluated. 
+
+Remarks: The value of <expression> determines which line 
+number in the list will be used for branching. 
+For example, if the value ife three, the third 
+line number in the list will be the destination 
+of the branch. (If the value is a non-integer, 
+the fractional portion is rounded.) 
+
+In the ON.. ,00506 statement, each line number in 
+the list must be the first line number of a 
+subroutine. 
+
+If the value of <expression> is zero or greater 
+than the number of items in the list (but less 
+than or equal to 255) , BASIC continues with the 
+next executable statement. If the value of 
+<expression> is negative or greater than 255, an 
+"Illegal function call" error occurs. 
+
+Example: 100 ON L-1 GOTO 150,300,320,390 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-57 
+
+
+
+2.45 OPEN 
+
+Format: OPEN <mode>, [i ] <f ile number >, <filename> , [<reclen>] 
+
+Version: Disk 
+
+Purpose: To allow I/O to a disk file. 
+
+Remarks; A disk file must be OPENed before any disk I/O 
+operation can be performed on that file- OPEN 
+allocates a buffer for I/O to the file and 
+determines the mode of access that will be used 
+with the buffer. 
+
+
+
+NOTE: 
+
+
+
+Example: 
+
+
+
+<mode> is a string expression whose 
+character is one of the following: 
+
+specifies sequential output mode 
+
+1 specifies sequential input mode 
+
+
+
+first 
+
+
+
+R 
+
+
+
+specifies random input/output mode 
+
+
+
+<file number> is an integer expression whose 
+value is between one and fifteen- The number is 
+then associated with the file for as long as it 
+is OPEN and is used to refer other disk I/O 
+statements to the file. 
+
+<f ilename> is a string expression containing a 
+name that conforms to your operating system' s 
+rules for disk filenames. 
+
+<reclen> is an integer expression which, if 
+included , sets the record length for random 
+files- The default record length is 128 bytes. 
+See also page A-3. 
+
+A file can be OPENed for sequential input or 
+random access on more than one file number at a 
+time. A file may be OPENed for output, however, 
+on only one file number at a time. 
+
+10 OPEN "I",2,"INVEN" 
+
+See also Appendix B. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-58 
+
+2.46 OPTION BASE 
+
+Format: OPTION BASE n 
+
+where n is 1 or 
+
+Versions: 8K, Extended, Disk 
+
+Purpose: To declare the minimum value for array 
+
+subscripts- 
+Remarks: The default base is 0. If the statement 
+
+OPTION BASE 1 
+
+is executed, the lowest value an array subscript 
+may have is one. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-59 
+
+2.47 OUT 
+
+Format: OUT I, J 
+
+where I and J are integer expressions in the 
+range to 255. 
+
+Versions: 8K, Extended, Disk 
+
+Purpose: To send a byte to a machine output port. 
+
+Remarks: The integer expression I is the port number, and 
+the integer expression J is the data to be 
+transmitted. 
+
+Example: 100 OUT 32,100 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-60 
+
+
+
+2.48 POKE 
+
+
+
+Format: POKE I, J 
+
+where I and J are integer expressions 
+
+Versions: 8K, Extended, Disk 
+
+Purpose: To write a byte into a memory location. 
+
+Remarks: The integer expression I is the address of the 
+memory location to be POKEd. The integer 
+expression J is the data to be pOKEd. J must be 
+in the range to 255. In the 8K version, I 
+must be less than 32768. In the Extended and 
+Disk versions, 1 must be in the range to 
+65536. 
+
+With the 8K version, data may be POKEd into 
+memory locations above 32768 by supplying a 
+negative number for I. The value of I is 
+computed by subtracting 65536 from the desired 
+address. For example, to POKE data into 
+location 45000, I = 45000-65536, or -20536. 
+
+The complementary function to POKE is PEEK. The 
+argument to PEEK is an address from which a byte 
+is to be read. See Section 3.. 27, 
+
+POKE and PEEK are useful foe efficient data 
+storage , loading assembly language subroutines, 
+and passing arguments and results to and from 
+assembly language subroutines. 
+
+Example: 10 POKE &H5AQ0,&HFF 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-61 
+
+
+
+2.49 PRINT 
+
+
+
+Format: PRINT [<list of expcessions>] 
+
+Versions: 8K, Extended, Disk 
+
+Purpose: To output data at the terminal. 
+
+Remarks: If <list of expressions> is omitted, a blank 
+line is printed. If <list of expressions> is 
+included, the values of the expressions are 
+printed at the terminal- The expressions in the 
+list may be numeric and/or string expressions. 
+(Strings must be enclosed in quotation marks,) 
+
+Print Positions 
+
+The position of each printed item is determined 
+by the punctuation used to separate the items in 
+the list. BASIC-80 divides the line into print 
+zones of 14 spaces each. In the list of 
+expressions, a comma causes the next value to be 
+printed at the beginning of the next zone. A 
+semicolon causes the next value to be printed 
+immediately after the last value- Typing one or 
+more spaces between expressions has the same 
+effect as typing a semicolon. 
+
+If a comma or a semicolon terminates the list of 
+expressions, the next PRINT statement begins 
+printing on the same line, spacing accordingly. 
+If the list of expressions terminates without a 
+comma or a semicolon, a carriage return is 
+printed at the end of the line. If the printed 
+line is longer than the terminal width, BASIC-80 
+goes to the next physical line and continues 
+printing- 
+Printed numbers are always followed by a space. 
+Positive numbers are preceded by a space. 
+Negative numbers are preceded by a minus sign. 
+Single precision numbers that can be represented 
+with 6 or fewer digits in the unsealed format no 
+less accurately than they can be represented in 
+the scaled format, are output using the unsealed 
+format. For example, lE-7 is output as .0000001 
+and lE-8(-7) is output as lE-OB- Double 
+precision numbers that can be represented with 
+16 or fewer digits in the unsealed format no 
+less accurately than they can be represented in 
+the scaled format, are output using the unsealed 
+format. For example, lD-15 is output as 
+.0000000000000001 and lD-16 is output as lD-16, 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-62 
+
+
+
+A question mark may be used in place of the word 
+PRINT in a PRINT statement. 
+
+Example 1: 10 X-5 
+
+20 PRINT X+5, X-5, X*(-5), X"5 
+
+30 END 
+
+RUN 
+
+10 -25 3125 
+
+Ok 
+
+In this example, the commas in the PRINT 
+statement cause each value to be printed at the 
+beginning of the next print zone. 
+
+
+
+Example 2: LIST 
+
+10 INPUT X 
+
+20 PRINT X "SQUARED IS" X'^2 "AND"; 
+30 PRINT X "CUBED IS" X"3 
+40 PRINT 
+50 GOTO 10 
+Ok 
+RUN 
+? 9 
+9 SQUARED IS 81 AND 9 CUBED IS 729 
+
+? 21 
+
+21 SQUARED IS 441 AND 21 CUBED IS 9261 
+
+
+
+In this example, the semicolon at the end of 
+line 20 causes both PRINT statements to be 
+printed on the same line, and line 40 causes a 
+blank line to be printed before the next prompt. 
+
+Example 3: 10 FOR X == 1 TO 5 
+20 J=J+5 
+30 K=K+10 
+40 ?J;K; 
+50 NEXT X 
+Ok 
+RUN 
+
+5 10 10 20 15 30 20 40 25 50 
+Ok 
+
+In this example, the semicolons in the PRINT 
+statement cause each value to be printed 
+immediately after the preceding value. (Don't 
+forget, a number is always followed by a space 
+and positive numbers are preceded by a space. ) 
+In line 40, a question mark is used instead of 
+the word PRINT. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-63 
+
+2.50 PRINT USING 
+
+Format; PRINT USING <string exp>;<list of expressions> 
+
+Versions: Extended, Disk 
+
+Purpose: To print strings or numbers using a specified 
+format. 
+
+Remarks <list of expressions> is comprised of the string 
+and expressions or numeric expressions that are to 
+Examples: be printed, separated by semicolons. < string 
+exp> is a string literal (or variable) comprised 
+of special formatting characters- These 
+formatting characters (see below) determine the 
+field and the format of the printed strings or 
+numbers. 
+
+String Fields 
+
+When PRINT USING is used to print strings, one 
+of three formatting characters may be used to 
+format the string field: 
+
+"!" Specifies that only the first character in the 
+given string is to be printed* 
+
+"\n spaces\" Specifies that 2+n characters from the string 
+are to be printed. If the backslashes are typed 
+with no spaces, two characters will be printed; 
+with one space, three characters will be 
+printed, and so on. If the string is longer 
+than the field, the extra characters are 
+ignored. If the field is lonnger than the 
+string, the string will be left-justified in the 
+field and padded with spaces on the right- 
+Example; 
+
+10 A$="LOOK":B$="OUT" 
+
+30 PRINT USING "!";A$;B$ 
+
+40 PRINT USING "\ \";A$;B$ 
+
+50 PRINT USING "\ \" ; A$ ;B$ ; " ! ! " 
+
+RUN 
+
+LO 
+
+LOOKOUT 
+
+LOOK OUT ! ! 
+
+
+
+BASIC-BO COMMANDS AND STATEMENTS Page 2-64 
+
+"S" Specifies a variable length string field. When 
+the field is specified with "&", the string is 
+output exactly as input. Example; 
+
+10 AS="LOOK":B$="OUT" 
+20 PRINT USING "!";A$; 
+30 PRINT USING "&";B$ 
+RUN 
+LOUT 
+
+
+
+Numeric Fields 
+
+When PRINT USING is used to print numbers, the 
+following special characters may be used to 
+format the numeric field: 
+
+A number sign is used to represent each digit 
+position. Digit positions are always filled. 
+If the number to be printed has fewer digits 
+than positions specified, the number will be 
+right- justified (preceded by spaces) in the 
+field. 
+
+A decimal point may be inserted at any position 
+in the field. If the format string specifies 
+that a digit is to precede the decimal point, 
+the digit will always be printed (as if 
+necessary) . Numbers are rounded as necessacy- 
+
+PRINT USING "##.## ";.7B 
+0.75 
+
+PRINT USING "###.##";9a7,6S4 
+987.65 
+
+PRINT USING "##.## ";10.2,5. 3,66.789, -234 
+10.20 5.30 66,79 0.23 
+
+In the last example, three spaces were inserted 
+at the end of the format string to separate the 
+printed values on the line- 
+
+A plus sign at the beginning or end of the 
+format string will cause the sign of the number 
+(plus or minus) to be printed before or after 
+the number- 
+
+
+
+BA5IC-80 COMMANDS AND STATEMENTS Page 2-65 
+
+A minus sign at the end of the format field will 
+cause negative numbers to be printed with a 
+trailing minus sign. 
+
+PRINT USING " + H.## ";-68.95,2.4,55.6,-.9 
+-68,95 +2-40 +55,60 -0.90 
+
+PRINT USING "##.##- ",--68.95,22. 449,-7.01 
+68.95- 22,45 7-01- 
+
+** A double asterisk at the beginning of the format 
+string causes leading spaces in the numeric 
+field to be filled with asterisks. The ** also 
+specifies positions for two more digits, 
+
+PRINT USING "**#,# ";12. 39, -0-9, 765.1 
+*12.4 *-0.9 765.1 
+
+$$ A double dollar sign causes a dollar sign to be 
+
+printed to the immediate left of the focraatted 
+number . The S$ specifies two more digit 
+positions, one of which is the dollar sign. The 
+exponential format cannot be used with 5$- 
+Negative numbers (pannot be used unless the minus 
+sign trails to th€ right- 
+
+PRINT USING ■'$$###. ##";456-78 
+5456.78 
+
+
+
+**i 
+
+
+
+The **$ at the beginning of a format string 
+combines the effects of the above two symbols. 
+Leading spaces will be aster i sk-filled and a 
+dollar sign will be printed before the number. 
+**$ specifies three more digit positions, one of 
+which is the doll a c sign- 
+
+PRINT USING "**5«*t.#»";2.34 
+***$2.34 
+
+A comma that is to the left of the decimal point 
+in a formatting string causes a comma to be 
+printed to the left of every third digit to the 
+left of the decimal point- A comma that is at 
+the end of the format string is printed as part 
+of the string, A comma specifies another digit 
+position- The comma has no effect if used with 
+the exponential (^^-'^) format, 
+
+PRINT USING "####, .##";1234. 5 
+1,234-50 
+
+PRINT USING "####. ##,";1234, 5 
+1234,50. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-66 
+
+
+
+/v/v/v/v 
+
+
+
+Four carats (or up-arrows) may be placed after 
+the digit position characters to specify 
+exponential format. The four carats allow space 
+for E+xx to be printed. Any decimal point 
+position may be specified. The significant 
+digits are left-justified, and the exponent is 
+adjusted. Unless a leading + or trailing + or - 
+is specified, one digit position will be used to 
+the left of the decimal point to print a space 
+or a minus sign. 
+
+PRINT USING "##.## ";234.56 
+
+2.35E+02 
+
+PRINT USING "-#### -";888888 
+
+.8889E+06 
+
+PRINT USING "+.## ";123 
+
++ .12E4-03 
+
+An underscore in the format string causes the 
+next character to be output as a literal 
+character. 
+
+PRINT USING "_!##. ##_i";12. 34 
+112.34! 
+
+The literal character itself may be an 
+underscore by placing " " in the format string. 
+
+If the number to be printed is larger than the 
+specified numeric field, a percent sign is 
+printed in front of the number. If rounding 
+causes the number to exceed the field, a percent 
+sign will be printed in front of the rounded 
+number - 
+
+PRINT USING "##.##"; 111. 22 
+%111.22 
+
+PRINT USING ".##"?. 999 
+%l-00 
+
+If the number of digits specified exceeds 24, an 
+"Illegal function call" error will result. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENT Page 2-67 
+
+2,51 PRINTt AND PRINTtt USING 
+
+Format: PRINT#<f ilenumbeo, [USING<string exp>;]<list of exps> 
+Version: Disk 
+
+Purpose: To write data to a sequential disk file- 
+Remarks: <file number> is the number used when the file 
+was OPENed for output. < string exp> is 
+comprised of formatting characters as described 
+in Section 2.50, PRINT USING. The expressions 
+in <li5t of expressions> are the numeric and/or 
+string expressions that will be written to the 
+file. 
+
+PRINT# does not compress data on the disk. An 
+image of the data is written to the disk, just 
+as it would be displayed on the terminal with a 
+PRINT statement. For this reason, care should 
+be taken to delimit the data on the disk, so 
+that it will be input correctly from the disk. 
+
+In the list of expressions , numeric expressions 
+should be delimited by semicolons. For example, 
+
+PRlNT#l,A;B;C;X;y;Z 
+
+(If commas are used as delimiters, the extra 
+blanks that are inserted between print fields 
+will also be written to disk.) 
+
+String expressions must be separated by 
+semicolons in the list. To format the string 
+expressions correctly on the disk, use explicit 
+delimiters in the list of expressions- 
+
+For example, let A$="CAMERA" and B$="93604-l". 
+The statement 
+
+PRINT#1,A$;B$ 
+
+would write CAMERA93604-1 to the disk. Because 
+there are no delimiters, this could not be input 
+as two separate strings. To correct the 
+problem, insert explicit delimiters into the 
+PRINTS statement as follows: 
+
+PRINT* 1,A$;",";BS 
+
+The image written to disk is 
+
+CAMERA, 93604-1 
+
+
+
+BASlC-80 COMMANDS AND STATEMENT Page 2-68 
+
+which can be read back into two string 
+variables. 
+
+If the strings themselves contain commas, 
+semicolons, significant leading blanks, carriage 
+returns, or line feeds, write them to disk 
+surrounded by explicit quotation marks, 
+CHR${34) . 
+
+For example, let A$="CAMERA, AUTOMATIC" and 
+B$=" 93604-1". The statement 
+
+PRINT#1,A$;B$ 
+
+would write the following image to disk: 
+
+CAMERA, AUTOMATIC 93604-1 
+
+and the statement 
+
+INPUT* 1,A$,B$ 
+
+would input "CAMERA" to AS and 
+
+"AUTOMATIC 93604-1" to B$- To separate these 
+
+strings properly on the disk, write double 
+
+quotes to the disk image using CHRS(34). The 
+statement 
+
+PRINT#1,CHR$(34) ;A$;CHR${34) ;CHR$(34) ;B$;CHR$(34) 
+
+writes the following image to disk: 
+
+"CAMERA, AUTOMATIC"" 93 604-1" 
+
+and the statement 
+
+INPUT#1,A$,B$ 
+
+would input "CAMERA, AUTOMATIC" to A$ and 
+93604-1" to BS. 
+
+The PRINTt statement may also be used with the 
+USING option to control the format of the disk 
+file. For example : 
+
+PRINT#l,USING"$$###.##,";J;K;r. 
+
+For more examples using PRINTS, see Appendix B. 
+
+See also WRITES, Section 2,68, 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-69 
+
+
+
+2.52 PUT 
+
+
+
+Format: 
+Version 
+Purpose 
+
+Remarks 
+
+
+
+Example 
+NOTE: 
+
+
+
+PUT [#]<file number> t f <record number>l 
+Disk 
+
+
+
+To write a record from 
+random disk f ile- 
+
+
+
+a random buffer to a 
+
+
+
+<f ile number > is the number under which the file 
+was OPENed. If < record number > is omitted, the 
+record will have the next available record 
+number (after the last PUT) - The largest 
+possible record number is 32767. The smallest 
+record number is 1, 
+
+See Appendix B. 
+
+PRINTS, PRINT# USING, and WRITE# may be used to 
+put characters in the random file buffer before 
+a PUT statement. 
+
+In the case of WRITE#, BASIC-80 pads the buffer 
+with spaces up to the carriage return. Any 
+attempt to read or write past the end of the 
+buffer causes a "Field overflow" error. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-70 
+
+2.53 RANDOMIZE 
+
+Format: RANDOMIZE [<expression>] 
+
+Versions; Extended, Disk 
+
+Purpose : To reseed the random number generator • 
+
+Remarks; If <expression> is omitted, BASIC-80 suspends 
+program execution and asks for a value by 
+
+printing 
+
+Random Number Seed (-32768 to 32767)? 
+before executing RANDOMIZE. 
+
+If the random number generator is not reseeded, 
+the RND function returns the same sequence of 
+random numbers each time the program is RUN. To 
+change the sequence of random numbers every time 
+the program is RUN, place a RANDOMIZE statement 
+at the beginning of the program and change the 
+argument with each RUN. 
+
+Example: 10 RANDOMIZE 
+
+20 FOR 1=1 TO 5 
+
+30 PRINT RND; 
+
+4 NEXT I 
+
+RUN 
+
+Random Number Seed (-32768 to 32767)? 3 (user 
+
+types 3) 
+
+.88598 .484668 .58 6328 .119426 .709225 
+Ok 
+RUN 
+
+Random Number Seed (-32768 to 32767)? 4 (user 
+types 4 for new sequence) 
+
+.803506 .1624 62 .929364 .292 4 43 .322921 
+Ok 
+RUN 
+
+Random Number Seed (-32768 to 32767)? 3 (same 
+sequence as first RUN) 
+
+,88598 .4 84668 .586328 .1194 26 .709225 
+Ok 
+
+
+
+BASIC-80 COMMANDS AND STATEMENT 
+
+
+
+Page 2-71 
+
+
+
+2.54 READ 
+
+Format: 
+
+Versions: 
+
+Purpose; 
+
+Remarks: 
+
+
+
+Example 1: 
+
+
+
+READ <list of variables> 
+
+8K, Extended, Disk 
+
+To read values from a DATA statement and assign 
+them to variables. (See DATA, Section 2.10.) 
+
+A READ statement must always be used in 
+conjunction with a DATA statement. READ 
+statements assign variables to DATA statement 
+values on a one-to-one basis- READ statement 
+variables may be numeric or string, and the 
+values read must agree with the variable types 
+specified. If they do not agree, a "Syntax 
+error" will result. 
+
+A single READ statement may access one or more 
+DATA statements (they will be accessed in 
+order) , or several READ statements may access 
+the same DATA statment. If the number of 
+variables in <list of variables> exceeds the 
+number of elements in the DATA statement (s) , an 
+OUT OF DATA message is printed. If the number 
+of variables specified is fewer than the number 
+of elements in the DATA statement (s) , subsequent 
+READ statements will begin reading data at the 
+first unread element- If there are no 
+subsequent READ statements, the extra data is 
+ignored. 
+
+To reread DATA statements from the start, use 
+the RESTORE statement (see RESTORE, Section 
+2.57) 
+
+
+
+80 FOR 1=1 TO 10 
+
+90 READ A (I) 
+
+100 NEXT I 
+
+110 DATA 3.08,5-19,3.12,3.98,4.24 
+
+120 DATA 5-08,5.55,4.00,3.16,3.37 
+
+
+
+This program segment READS the values from the 
+DATA Statements into the array A. After 
+execution, the value of A(l) will be 3-08, and 
+so on. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-72 
+
+
+
+Example 2: LIST 
+
+10 PRINT "CITY", "STATE", " ZIP" 
+
+20 READ C$,S$,Z 
+
+30 DATA "DENVER,", COLORADO, 80211 
+
+40 PRINT C$,S$,Z 
+
+Ok 
+
+RUN 
+
+CITY STATE ZIP 
+
+DENVER, COLORADO 80211 
+
+Ok 
+
+This program READs string and numeric data from 
+the DATA statement in line 30. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-73 
+
+
+
+2.55 REM 
+
+Format: 
+
+Versions: 
+
+Purpose: 
+
+Remarks: 
+
+
+
+Example: 
+
+
+
+REM <remark> 
+
+8K, Extended, Disk 
+
+To allow explanatory remarks to be inserted in a 
+program. 
+
+REM statements are not executed but are output 
+exactly as entered when the program is listed. 
+
+REM statements may be branched into (from a GOTO 
+or GOSUB statement) , and execution will continue 
+with the first executable statement after the 
+REM statement. 
+
+In the Extended and Disk versions, remarks may 
+be added to the end of a line by preceding the 
+remark with a single quotation mark instead of 
+:REM. 
+
+WARNING: Do not use this in a data statement as 
+it would be considered legal data. 
+
+
+
+120 REM CALCULATE AVERAGE VELOCITY 
+130 FOR 1=1 TO 20 
+140 SUM=SUM + V(I) 
+
+
+
+or, with Extended and Disk versions: 
+
+
+
+120 FOR 1=1 TO 20 
+
+130 SUM=SUM+VU) 
+140 WEXT I 
+
+
+
+'CALCULATE AVERAGE VELOCITY 
+
+
+
+BASIC-80 COMMANDS AND TATEMENT 
+
+
+
+Page 2-74 
+
+
+
+2.56 RENUM 
+
+
+
+Format: 
+
+Versions 
+
+Purpose: 
+
+Remarks: 
+
+
+
+NOTE: 
+
+
+
+RENUM [[<new number >][, I<old number>] [ ,<increment>] ] ] 
+
+Extended, Disk 
+
+To renumber program lines. 
+
+<new number> is the first line number to be used 
+in the new sequence. The default is 10- <old 
+number> is the line in the current program where 
+renumbering is to begin- The default is the 
+first line of the program. <increment> is the 
+increment to be used in the new sequence- The 
+default is 10. 
+
+RENUM also changes all line number references 
+following GOTO, GOSUB, THEN, ON. .-GOTO, 
+ON.-.GOSUB and ERL statements to reflect the new 
+line numbers. If a nonexistent line number 
+appears after one of these statements, the error 
+message "Undefined line xxxxx in yyyyy" is 
+printed. The incorrect line number reference 
+(xxxxx) is not changed by RENUM, but line number 
+yyyyy may be changed. 
+
+RENUM cannot be used to change the order of 
+program lines (for example, RENUM 15,30 when the 
+program has three lines numbered 10, 20 and 30) 
+or to create line numbers greater than 65529- 
+An "Illegal function call" error will result- 
+
+
+
+Examoles 
+
+
+
+RENUM 
+
+
+
+RENUM 300, ,50 
+
+
+
+RENUM 1000,900,20 
+
+
+
+Renumbers the entire program 
+The first new line number 
+will be 10, Lines will 
+increment by 10. 
+
+Renumbers the entire pro- 
+gram- The first new line 
+number will be 300- Lines 
+will increment by 50- 
+
+Renumbers the lines from 
+900 up so they start with 
+line number 1000 and 
+increment by 20. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-75 
+
+
+
+2.57 RESTORE 
+
+
+
+Format: 
+
+Versions 
+
+Purpose: 
+
+Remarks: 
+
+
+
+Example: 
+
+
+
+RESTORE [<line nuraber>] 
+
+8K, Extended, Disk 
+
+To allow DATA statements to 
+specified line. 
+
+
+
+be reread from a 
+
+
+
+After a RESTORE statement is executed, the next 
+READ statement accesses the first item in the 
+first DATA statement in the program. If <line 
+number > is specified, the next READ statement 
+accesses the first item in the specified DATA 
+statement. 
+
+10 READ A,B,C 
+
+20 RESTORE 
+
+30 READ D,E,F 
+
+40 DATA 57, 68, 79 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-76 
+
+
+
+2.58 RESUME 
+
+Formats: RESUME 
+
+RESUME 
+
+RESUME NEXT 
+
+RESUME <line nuraber> 
+
+Versions: Extended , Disk 
+
+Purpose: To continue program execution after an error 
+recovery procedure has been performed. 
+
+Remarks: Any one of the four formats shown above may be 
+used, depending upon where execution is to 
+resume: 
+
+
+
+RESUME 
+
+or 
+RESUME 
+
+RESUME NEXT 
+
+
+
+Example: 
+
+
+
+Execution resumes at the 
+statement which caused the 
+error- 
+Execution resumes at the 
+statement immediately fol- 
+lowing the one which 
+caused the error - 
+
+
+
+RESUME <line number > Execution resumes at 
+
+<line number >- 
+
+A RESUME statement that is not in an error trap 
+routine causes a "RESUME without error" message 
+to be printed* 
+
+10 ON ERROR GOTO 900 
+
+
+
+900 IF (ERR=230) AND(ERL=90) THEN PRINT "TRY 
+AGAIN": RESUME 80 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-77 
+
+
+
+2.59 RUN 
+
+
+
+Format It RUN [<line numbers) 
+
+Versions: 8K, Extended, Disk 
+
+Purpose: To execute the program currently in memory. 
+
+Remarks: If <line number> is specified, execution begins 
+on that line. Otherwise, execution begins at 
+the lowest line number, BASIC-80 always returns 
+to command level after a RUN is executed. 
+
+Example: RUN 
+
+
+
+Format 2: RUM <f ilename> { /R] 
+Version: Disk 
+
+Purpose: To load a file from disk into memory and run it- 
+Remarks: <filename> is the name used when the file was 
+
+SAVEd- (With Cp/M and ISIS-II, the default 
+
+extension .BAS is supplied.) 
+
+RUN closes all open files and deletes the 
+current contents of memory before loading the 
+designated program. However, with the "R" 
+option, all data files remain OPEN. 
+
+Example: RUN "NEWFIL",R 
+
+See also Appendix B, 
+
+NOTE,' The BASIC Compiler supports the RUN and RUN LINE 
+numbers forms of the RUN statement- The BASIC 
+Compiler does not support the "R" option with 
+RUN, If you want this feature, the CHAIN 
+statement should be used. 
+
+
+
+BASlC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-78 
+
+
+
+2.60 SAVE 
+
+
+
+Format; SAVE <f ilenanie> [ , A | ,P] 
+
+Version: Disk 
+
+Purpose: To save a program file on disk. 
+
+Remarks; <filenanie> is a quoted string that conforms to 
+your operating system' s requirements for 
+filenames- (With CP/M, the default extension 
+.BAS is supplied.) If <filename> already exists, 
+the file will be written over. 
+
+Use the A option to save the file in ASCII 
+format. Otherwise, BASIC saves the file in a 
+compressed binary format. ASCII format takes 
+more space on the disk, but some disk access 
+requires that files be in ASGii format. For 
+instance, the KERGE command requires and ASCII 
+format file, and some operating system commands 
+such as LIST may require an ASCII format file- 
+Use the P option to protect the file by saving 
+it in an encoded binary format. When a 
+protected file is later RUN (or LOADed) , any 
+attempt to list ot edit it will fail. 
+
+Examples: SAVE" COM2" ,A 
+SAVE"PROG",P 
+
+
+
+See also Appendix B. 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-79 
+
+2.61 STOP 
+
+Format: STOP 
+
+Versions: 8K, Extended, Disk 
+
+Purpose: To terminate program execution and return to 
+command level - 
+
+Remarks: STOP statements may be used anywhere in a 
+program to terminate execution. When a STOP is 
+encountered, the following message is printed: 
+
+Break in line nnnnn 
+
+Unlike the END statement, the STOP statement 
+does not close files- 
+
+BASIC-80 always returns to command level after a 
+STOP is executed. Execution is resumed by 
+issuing a CONT command (see Section 2.8). 
+
+Example: 10 INPUT A,B,C 
+
+20 K=A*2*5.3:L=B''3/-26 
+
+30 STOP 
+
+40 M=C*K+100:PRINT M 
+
+RUN 
+
+? 1,2,3 
+
+BREAK IN 30 
+
+Ok 
+
+PRINT L 
+
+30.7692 
+Ok 
+CONT 
+
+115.9 
+Ok 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-80 
+
+
+
+2.62 SWAP 
+
+
+
+Format: 
+Versions 
+Purpose: 
+Remarks: 
+
+
+
+Example; 
+
+
+
+SWAP <variable>,<variable> 
+
+Extended, Disk 
+
+To exchange the values of two variables. 
+
+Any type variable may be SWAPped (integer, 
+single precision, double precision, string) , but 
+the two variables must be of the same type or a 
+"Type mismatch" error results. 
+
+
+
+LIST 
+
+10 A$=" ONE " : B$=" ALL 
+
+20 PRINT A$ C$ B$ 
+
+30 SWAP A$, B$ 
+
+40 PRINT A$ C$ B$ 
+
+RUN 
+
+Ok 
+
+ONE FDR ALL 
+
+ALL FOR ONE 
+Ok 
+
+
+
+: CS="FOR" 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-81 
+
+
+
+2.63 TRON/TROFF 
+
+
+
+Format: TRON 
+
+TROFF 
+
+Versions: Extended, Disk 
+
+Purpose: To trace the execution of program statements. 
+
+Remarks: As an aid in debugging, the TRON statement 
+(executed in either the direct or indirect mode) 
+enables a trace flag that prints each line 
+number of the prog r am as it is executed - The 
+numbers appear enclosed in square brackets- The 
+trace flag is disabled with the TROFF statement 
+(or when a NEW command is executed) . 
+
+Example: TRON 
+Ok 
+
+LIST 
+10 K=10 
+
+FOR J=l TO 2 
+
+L=K + 10 
+
+PRINT J;K;I, 
+
+K=K+10 
+
+NEXT 
+
+END 
+
+
+
+20 
+
+30 
+
+40 
+
+50 
+
+60 
+
+70 
+
+Ok 
+
+RUN 
+
+[10] [20] [30] [40] 
+
+[50][60J [301(40] 
+
+[50] [60] [70] 
+
+Ok 
+
+TROFF 
+
+Ok 
+
+
+
+1 
+2 
+
+
+
+10 
+20 
+
+
+
+20 
+30 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-82 
+
+
+
+2.64 WAIT 
+
+
+
+Format: WAIT <port number >, If, J] 
+
+where I and J are integer expressions 
+
+Versions: 8K, Extended, Disk 
+
+Purpose: To suspend program execution while inonitoring 
+the status of a machine input port. 
+
+Remarks: The WAIT statement causes execution to be 
+suspended until a specified machine input port 
+develops a specified bit pattern. The data read 
+at the port is exclusive OR'ed with the integer 
+expression J, and then AND ' ed with I. If the 
+result is zero, BASIC-80 loops back and reads 
+the data at the port again. If the result is 
+nonzero, execution continues with the next 
+statement- If J is omitted, it is assumed to be 
+zero 
+
+CAUTION: It is possible to enter an infinite loop with 
+the WAIT statement, in which case it will be 
+necessary to manually restart the machine- 
+Example: 100 WAIT 32,2 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-83 
+
+
+
+2.65 WHILE... MEND 
+
+
+
+Format: 
+
+
+
+WHILE <expression> 
+
+
+
+[<loop statements>l 
+
+
+
+WEND 
+
+Versions: Extended, Disk 
+
+Purpose: To execute a series of statements in a loop as 
+long as a given condition is true. 
+
+Remarks: If <expression> is not zero (i.e., true), <loop 
+statements> are executed until the WEND 
+statement is encountered. BASIC then returns to 
+the WHILE statement and checks <expression>. If 
+it is still true, the process is repeated. If 
+it is not true, execution resumes with the 
+statement following the WEND statement. 
+
+WHILE/WEND loops may be nested to any level. 
+Each WEND will match the most recent WHILE. An 
+unmatched WHILE statement causes a "WHILE 
+without WEND" error , and an unmatched WEND 
+statement causes a "WEND without WHILE" error- 
+Example: 90 'BUBBLE SORT ARRAY A$ 
+
+100 FLIPS=1 'FORCE ONE PASS THRU LOOP 
+
+110 WHILE FLIPS 
+
+115 FLIPS=0 
+
+120 FOR 1=1 TO J-1 
+
+130 
+
+
+
+IF A${I)>A$(I+1) THEN 
+
+SWAP A$(I) ,A$(I+1) :FLIPS=1 
+
+
+
+140 
+
+150 WEND 
+
+
+
+NEXT I 
+
+
+
+BA5IC-80 COKKANOS AND STATEMENTS 
+
+
+
+Page 2-84 
+
+
+
+2.66 WIDTH 
+
+
+
+Format: WIDTH tLPRINT] <integer expression> 
+
+Versions: Extended, Disk 
+
+Purpose: To set the printed line width in number of 
+characters for the terminal or line printer. 
+
+Remarks: If the LPRINT option is omitted, the line width 
+is set at the terminal. If LPRINT is included, 
+the line width is set at the line printer, 
+
+< integer expression> must have a value in the 
+range 15 to 255. The default width is 72 
+characters. 
+
+If <integer expression> is 255, the line width 
+is "infinite," that is, BASIC never inserts a 
+carriage return. However, the position of the 
+cursor or the print head, as given by the POS or 
+LPOS function, returns to zero after position 
+255. 
+
+Example: 10 PRINT "ABCDEFGHIJKLMNOPQRSTUVWXY2" 
+
+RUN 
+
+ABCDEFGHIJKLMNOPQRSTUVWXY2 
+
+Ok 
+
+WIDTH 18 
+Ok 
+
+RUN 
+
+ABCDEFGHIJKLMNOPQR 
+
+STUVWXYZ 
+
+Ok 
+
+
+
+3ASIC-80 COMMANDS AND STATEMENTS 
+
+
+
+Page 2-85 
+
+
+
+2.67 WRITE 
+
+
+
+Format: WRITE(<list of expressions>] 
+
+Version: Disk 
+
+Purpose: To output data at the terminal. 
+
+Remarks; If <list of expre5sions> is omitted, a blank 
+line is output. If <list of expressions> is 
+included, the values of te expressions are 
+output at thee terminal. The expressions in the 
+list may be numeric and/or string expressions, 
+and they must be separated by commas. 
+
+When the printed items are output, each item 
+will be separated from the last by a comma. 
+Printed strings will be delimited by quotation 
+marks. After the last item in the list is 
+printed, BASIC inserts a carriage return/line 
+feed. 
+
+WRITE outputs numeric values using the same 
+format as the PRINT statement. Section 2.49» 
+
+Example: 10 A=80 :B=90 :C$="THAT'S ALL" 
+20 WRITE A,B,C$ 
+RUN 
+
+80, 90,"THAT'S ALL" 
+Ok 
+
+
+
+BASIC-80 COMMANDS AND STATEMENTS Page 2-86 
+
+2.68 WRITE# 
+
+Format: WRITER < file number >,< list of expressions> 
+
+Version: Disk 
+
+Purpose: To write data to a sequential file. 
+
+Remarks: <file number> is the number under which the file 
+was OPENed in "O" mode. The expressions in the 
+list are string or numeric expressions, and they 
+must be separated by commas - 
+
+The difference between WRITES and PRINT* is that 
+WRITE# inserts commas between the the items as 
+they are written to disk and delimits strings 
+with quotation marks. Therefore, it is not 
+necessary for the user to put explicit 
+delimiters in the list- A carriage return/line 
+feed sequence is inserted after the last item in 
+the list is written to disk. 
+
+Example: Let A$="CAMERA" and B$="93604-l" . The 
+statement: 
+
+WRITE#1,A$,B$ 
+
+writes the following image to disk: 
+
+"CAMERA", "93604-1" 
+
+A subsequent INPUT* statement, such as: 
+
+INPUT#1,A$,B$ 
+
+would input "CAMERA" to A$ and "93604-1" to B$. 
+
+
+
+CHAPTER 3 
+BASIC-80 FUNCTIONS 
+
+
+
+The intrinsic functions provided by BASrC-80 are presented 
+in this chapter- The functions may be called from any 
+program without further definition. 
+
+Arguments to functions are always enclosed in parentheses. 
+In the formats given for the functions in this chapter, the 
+arguments have been abbreviated as follows: 
+
+X and y Represent any numeric expressions 
+
+I and J Represent integer expressions 
+
+X$ and Y$ Represent string expressions 
+
+If a floating point value is supplied where an integer is 
+required, BASIC-80 will round the fractional portion and use 
+the resulting integer. 
+
+
+
+NOTE 
+
+With the BASIC-80 and BASIC-86 
+interpreters, only integer and 
+single precision results are 
+returned by functions. Double 
+precision functions are 
+supported only by the BASIC 
+compiler- 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-2 
+
+
+
+3.1 ABS 
+
+Format: ABS(X) 
+
+Versions: 8K, Extended, Disk 
+
+Action: Returns the absolute value of the expression X, 
+
+Example: PRINT ABS{7*(-5)) 
+35 
+Ok 
+
+3.2 ASC 
+
+
+
+Format: 
+
+Versions 
+
+Action: 
+
+
+
+Example : 
+
+
+
+ASC(X$) 
+
+8K, Extended, Disk 
+
+Returns a numerical value that is the ASCII code 
+of the first character of the string X$, (See 
+Appendix M for ASCII codes.) If X$ is null, an 
+"Illegal function call" error is returned. 
+
+10 X$ = "TEST" 
+20 PRINT ASC{X$) 
+RUN 
+84 
+Ok 
+
+
+
+See the CHR$ function 
+conversion. 
+
+
+
+for ASCII-to-string 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-3 
+
+
+
+3-3 ATN 
+
+Format: ATN(X) 
+
+Versions: 8K, Extended, Disk 
+
+Action: Returns the arctangent of X in radians. Result 
+is in the range -pi/2 to pi/2. The expression X 
+may be any numeric type, but the evaluation of 
+ATN is always performed in single precision. 
+
+Example: 10 INPUT X 
+
+20 PRINT ATN(X) 
+
+RUN 
+
+? 3 
+
+1.24905 
+Ok 
+
+
+
+3.4 CDBL 
+
+
+
+Format: CDBL(X) 
+
+Versions: Extended , Disk 
+
+Action: Converts X to a double precision number 
+
+Example: 10 A = 454.67 
+
+20 PRINT A;CDBL(A) 
+RUN 
+
+454.67 454.6700134277344 
+Ok 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-4 
+
+
+
+3.5 CHR$ 
+
+
+
+Format: CHR$(I) 
+
+Versions: 8K, Extended, Disk 
+
+Action: Returns a string whose one element has ASCII 
+code I. (ASCII codes are listed in Appendix M.) 
+CHR$ is commonly used to send a special 
+character to the terminal . For instance , the 
+BEL character could be sent (CHRS (7) ) as a 
+preface to an error message , or a form feed 
+could be sent (CHR$(12)) to clear a CRT screen 
+and return the cursor to the home position. 
+
+Example: PRINT CHR$(66) 
+B 
+Ok 
+
+See the ASC function for 
+conversion. 
+
+
+
+ASCI I- to-numeric 
+
+
+
+3,6 CINT 
+
+
+
+Format: CINT{X) 
+
+Versions: Extended, Disk 
+
+Action: Converts X to an integer by rounding the 
+fractional portion. If X is not in the range 
+-32768 to 32767, an "Overflow" error occurs. 
+
+Example: PRINT CINT(45-67) 
+46 
+Ok 
+
+
+
+See the CDBL and CSNG functions for converting 
+numbers to the double precision and single 
+precision data type. See also the FIX and INT 
+functions, both of which return integers. 
+
+
+
+BASIC-BO FUNCTIONS 
+
+
+
+Page 3-5 
+
+
+
+3.7 COS 
+
+
+
+Format: COS(X) 
+
+Versions: 8K, Extended, Disk 
+
+Action : Returns the cosine of 
+calculation of COS (X) 
+precision. 
+
+Example: 10 X = 2*COS(.4) 
+20 PRINT X 
+RUN 
+
+1.84212 
+Ok 
+
+
+
+X in radians. The 
+is performed in single 
+
+
+
+3.8 CSNG 
+
+
+
+Format: CSNG(X) 
+
+Versions: Extended, Disk 
+
+Action: Converts X to a single precision number. 
+
+Example: 10 A# = 975.3421# 
+
+20 PRINT A#; CSNG(A#) 
+RUN 
+
+975.3421 975.342 
+Ok 
+
+See the CINT and CDBL functions for converting 
+numbers to the integer and double precision data 
+types- 
+
+
+
+8ASIC-80 FUNCTIONS 
+
+
+
+Page 3-6 
+
+
+
+3.9 CVI, CVS, CVD 
+
+
+
+Format: 
+
+Version 
+Action: 
+
+
+
+Example: 
+
+
+
+CVI(<2-byte 
+CVS(<4-byte 
+CVD{<8-byte 
+
+Disk 
+
+
+
+string>) 
+string>) 
+string>) 
+
+
+
+Convert string values to numeric values. 
+Numeric values that are read in from a random 
+disk file must be converted from strings back 
+into numbers. CVI converts a 2-byte string to 
+an integer. CVS converts a 4-byte string to a 
+single precision number. CVD converts an 8-byte 
+string to a double precision number. 
+
+
+
+70 FIELD #1,4 AS N? , 12 AS B$, ... 
+80 GET #1 
+90 Y=CVS(N$) 
+
+
+
+See also MKI5, MKS$, MKD$ , Section 3-25 and 
+Appendix B, 
+
+
+
+3.10 EOF 
+
+
+
+Format: EOF(<file number>) 
+
+Version: Disk 
+
+Action: Returns -1 (true) if the end of a sequential 
+file has been reached. Use EOF to test for 
+end-of-file while INPUTting, to avoid "Input 
+past end" errors. 
+
+Example: 10 OPEN "I'M, "DATA" 
+20 C=0 
+
+30 IF EOF(l) THEN 100 
+40 INPUT #1,M(C) 
+50 C=C+l:GOTO 30 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-7 
+
+
+
+3.11 E)CP 
+
+Format; EXP(X) 
+
+Versions; 8K, Extended, Disk 
+
+Action: Returns e to the power of X. X must be 
+<=87.3365. If EXP overflows, the "Overflow" 
+error message is displayed, machine infinity 
+wi th the appropr iate sign is suppl ied as the 
+result, and execution continues. 
+
+Example; 10 X = 5 
+
+20 PRINT EXP (X-1) 
+RUN 
+
+54.5982 
+Ok 
+
+
+
+3.12 FIX 
+
+
+
+Format: FIX(X) 
+
+Versions: Extended, Disk 
+
+Action: Returns the truncated integer part of X. PIX(X) 
+is equivalent to SGN (X) *INT(ABS (X) ) - The major 
+difference between FIX and INT is that FIX does 
+not return the next lower number for negative X. 
+
+
+
+Examples: 
+
+
+
+PRINT 
+
+58 
+Ok 
+
+PRINT 
+
+-58 
+
+Ok 
+
+
+
+FIX(58.75) 
+
+
+
+FIX{-58.7S) 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-B 
+
+
+
+3.13 FRE 
+
+
+
+Format: FRE(O) 
+FRE(X$) 
+
+Versions: 8K, Extended, Disk 
+
+Action: Arguments to FRE are dummy arguments, FRE 
+returns the number of bytes in memory not being 
+used by BASlC-80. 
+
+FRE("") forces a garbage collection before 
+returning the number of free bytes- BE 
+PATIENT: garbage collection may take 1 to 1-1/2 
+minutes- BASIC will not initiate garbage 
+collection until all free memory has been used 
+up. Therefore, using FRE("") periodically will 
+result in shorter delays for each garbage 
+collection. 
+
+Example: PRINT FRE(O) 
+14542 
+Ok 
+
+
+
+3.14 HEX$ 
+
+
+
+Format: HEXS(X) 
+
+Versions: Extended, Disk 
+
+Action: Returns a string which represents the 
+
+hexadecimal value of the decimal argument. X is 
+
+rounded to an integer before HEX$ (X) is 
+evaluated. 
+
+Example; 10 INPUT X 
+
+20 A$ = HEX$(X) 
+
+30 PRINT X "DECIMAL IS " A$ " HEXADECIMAL" 
+
+RUN 
+
+? 32 
+
+32 DECIMAL IS 20 HEXADECIMAL 
+Ok 
+
+See the OCT$ function for octal conversion- 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-9 
+
+
+
+3.15 INKEY$ 
+
+
+
+Format: INKEY$ 
+
+Action: Returns either a one-character string containing 
+a character read from the terminal or a null 
+string if no character is pending at the 
+terminal. No characters will be echoed and all 
+characters are passed through tto the program 
+except for Control-C, which terminates the 
+program. (With the BASIC Compiler, Control-C is 
+also passed through to the program.) 
+
+Example: 1000 'TIMED INPUT SUBROUTINE 
+1010 RESPONSE$="" 
+1020 FOR I%=1 TO TIMELIMIT% 
+1030 A$=INKEy$ : IF LEN(A$)=0 THEN 1060 
+1040 IF ASC(A$)=13 THEN TIMEOUT%=0 : RETURN 
+1050 RESPONSE$=RESPONSE$+A$ 
+1060 NEXT 1% 
+1070 TIME0UT%=1 t RETURN 
+
+
+
+3.16 INP 
+
+
+
+Format: 
+
+Versions: 
+
+Action: 
+
+Example: 
+
+
+
+INP (I) 
+
+8K, Extended, Disk 
+
+Returns the byte read from port I. I must be in 
+the range to 255. INP is the complementary 
+function to the OUT statement. Section 2,47. 
+
+100 A=INP(255) 
+
+
+
+BASIC-BO FUNCTIONS 
+
+
+
+Page 3-10 
+
+
+
+3.17 INPU T$ 
+
+Format: 
+
+Version: 
+
+Action: 
+
+
+
+Example 1: 
+
+
+
+INPUT${Xt,[nYn 
+
+Disk 
+
+Returns a string of X characters, read from the 
+terminal or from file number Y. If the terminal 
+is used for input, no characters will be echoed 
+and all control characters are passed through 
+except Control-C, which is used to interrupt the 
+execution of the INPUT$ function. 
+
+5 'LIST THE CONTENTS OF A SEQUENTIAL FILE IN 
+
+HEXADECIMAL 
+
+10 0PEN"I",1,"DATA*' 
+
+20 IF EOF(l) THEN 50 
+
+30 PRINT HEX$ (ASC (INPUTS (1, #1) )) ; 
+
+40 GOTO 20 
+
+50 PRINT 
+
+60 END 
+
+
+
+Example 2 
+
+
+
+100 PRINT "TYPE P TO PROCEED OR S TO STOP' 
+
+110 X$=INPUTS(1) 
+
+120 IF X?="P" THEN 500 
+
+130 IF X$="S" THEN 700 ELSE 100 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-11 
+
+
+
+3.18 INSTR 
+
+
+
+Format : INSTR ( [ I , ] X$ , Y$) 
+
+Versions: Extended , Disk 
+
+Action: Searches for the first occurrence of string Y5 
+in X$ and returns the position at which the 
+match is found. Optional offset I sets the 
+position for starting the search. I must be in 
+the range 1 to 255. If I>LEN(X$) or if X$ is 
+null or if Y$ cannot be found, INSTR returns 0. 
+If y$ is null, INSTR returns I or 1- X$ and Y$ 
+may be string variables, string expressions or 
+string literals. 
+
+Example: 10 X$ = "ABCDEB" 
+20 Y$ = "B" 
+
+30 PRINT INSTR(X$,Y$) ;INSTR(4,X$,y$) 
+RUN 
+
+2 6 
+Ok 
+
+
+
+NOTE: 
+
+
+
+If 1=0 is specified, error message 
+
+
+
+ILLEGAL 
+
+
+
+ARGUMENT IN <line number >" will be returned 
+
+
+
+BASIC-*80 FUNCTIONS 
+
+
+
+Page 3-12 
+
+
+
+3-19 INT 
+
+Format: 
+
+Versions: 
+
+Action: 
+
+Examples: 
+
+
+
+INT(X) 
+
+8K, Extended, Disk 
+
+Returns the largest integer <=X. 
+
+PRINT INT(99.89) 
+
+99 
+Ok 
+
+PRINT INT{-12.11) 
+
+-13 
+
+Ok 
+
+See the FIX and CINT functions which also return 
+integer values. 
+
+
+
+3.20 LEFT$ 
+
+
+
+Format : LEFT$ (X$ , I) 
+
+Versions: 8K, Extended r Disk 
+
+Action: Returns a string comprised of the leftmost I 
+characters of X$. I must be in the range to 
+255- If I is greater than LEN(X$) , the entire 
+string (X$) will be returned. If 1=0, the null 
+string (length zero) is returned. 
+
+Example: 10 AS = "BASIC-80" 
+20 B$ = LEFT$(A$,5) 
+30 PRINT B$ 
+BASIC 
+Ok 
+
+Also see the MID? and RIGHTS functions- 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-13 
+
+
+
+3.21 LEN 
+
+Format: LEN{X$) 
+
+Versions; 8K, Extended, Disk 
+
+Action: Returns the number of characters in X$ 
+Non-printing characters and blanks are counted* 
+
+Example: 10 X$ = "PORTLAND, OREGON" 
+20 PRINT LEN(X$) 
+
+16 
+Ok 
+
+
+
+3.22 LOC 
+
+
+
+Format: 
+
+Version: 
+
+Action: 
+
+
+
+Example: 
+
+
+
+LOC (< file number >) 
+
+Disk 
+
+With random disk files , LOC returns the record 
+number just read or written from a GET or PUT- 
+If the file was opened but no disk I/O has been 
+performed yet, LOC returns a 0- With sequential 
+files, LOC returns the number of sectors (128 
+byte blocks) read from or written to the file 
+since it was OPENed- 
+
+200 IF LOC(1)>50 THEN STOP 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-14 
+
+
+
+3.23 LOG 
+
+
+
+Format: LOG{X) 
+
+Versions: 8K, Extended, Disk 
+
+Action: Returns the natural logarithm of X. 
+greater than zero. 
+
+Example: PRINT LOG (45/7) 
+1.86075 
+Ok 
+
+
+
+must be 
+
+
+
+3.24 LPOS 
+
+
+
+Format: LPOS(X) 
+
+Versions: Extended, Disk 
+
+Action: Returns the current position of the line printer 
+print head within the line printer buffer- Does 
+not necessarily give the physical position of 
+the print head. X is a dummy argument. 
+
+Example: 100 IF LPOS(X)>60 THEN LPRINT CHR$(13) 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-15 
+
+
+
+3.25 MID$ 
+
+
+
+Format: 
+
+Versions 
+
+Action; 
+
+
+
+Example: 
+
+
+
+NOTE: 
+
+
+
+MID${XS,I[,J]) 
+
+8K, Extended, Disk 
+
+Returns a string of length J characters from X$ 
+
+beginning with the Ith character. I and J must 
+be in the range 1 to 255. If J is omitted or if 
+there are fewer than J characters to the right 
+of the Ith character , all rightmost characters 
+beginning with the Ith character are returned. 
+If I>LEN(X$), MID$ returns a null string. 
+
+LIST 
+
+10 A$="GOOD " 
+
+20 B$="MORNING EVENING AFTERNOON" 
+
+30 PRINT A?;MIDS(B$,9,7) 
+
+Ok 
+
+RUN 
+
+GOOD EVENING 
+
+Ok 
+
+Also see the LEFTS and RIGHT? functions. 
+
+If 1=0 is specified, error message "ILLEGAL 
+ARGUMENT IN <line number>" will be returned- 
+
+
+
+3.26 MKI$, MKS$, MKD$ 
+
+
+
+Format: MKI? {<integer expression>) 
+
+MKS? (<single precision expression>) 
+MKDS (<double precision expression>) 
+
+Version: Disk 
+
+Action: Convert numeric values to string values. Any 
+numeric value that is placed in a random file 
+buffer with an LSET or RSET statement must be 
+converted to a string. MKI5 converts an integer 
+to a 2 -byte string- MKSS converts a single 
+precision number to a 4-byte string- MKD$ 
+converts a double precision number to an 8-byte 
+string - 
+
+Example: 90 AMT=(K+T) 
+
+100 FIELD #1, 8 AS D$ , 20 AS N$ 
+110 LSET DS = MKSS(AMT) 
+120 LSET NS = A$ 
+130 PUT #1 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-16 
+
+
+
+3,27 OCT$ 
+
+
+
+Format: OCT$(X) 
+
+Versions: Extended, Disk 
+
+Action: Returns a string which represents the octal 
+value of the decimal argument, X is rounded to 
+an integer before OCT$ (X) is evaluated. 
+
+Example: PRINT OCT$(24) 
+30 
+Ok 
+
+
+
+See the HEX$ 
+conversion- 
+
+
+
+function for 
+
+
+
+hexadecimal 
+
+
+
+3-28 PEEK 
+
+
+
+Format: PEEK (I) 
+
+Versions: 8K, Extended, Disk 
+
+Action: Returns the byte (decimal integer in the range 
+to 255) read from memory location I. With the 
+8K version of BASIC-80, I must be less than 
+32768, To PEEK at a memory location above 
+32768, subtract 65536 from the desired address- 
+With Extended and Disk BASIC-80, I must be in 
+the range to 65536, PEEK is the complementary 
+function to the POKE statement. Section 2.48, 
+
+
+
+Example: 
+
+
+
+A=PEEK(&H5A00) 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-17 
+
+
+
+3.29 POS 
+
+Format: POS (I) 
+
+Versions: 8K, Extended, Disk 
+
+Action: Returns the current cursor position. The 
+leftmost position is 1. X is a dummy argument. 
+
+Example: IF POS(X)>60 THEN PRINT CHR${13) 
+Also see the LPOS function- 
+
+3.30 RIGHT? 
+
+
+
+Format : RIGHT? (X$ , I) 
+Versions: 8K, Extended, Disk 
+
+Action: Returns the rightmost I characters of string X$. 
+If I=LEN(X$), returns X$ . If 1=0, the null 
+string (length zero) is returned. 
+
+Example: 10 A$="DISK BASIC-80" 
+20 PRINT RIGHT? (A5, 8) 
+RUN 
+
+BASIC-80 
+Ok 
+
+Also see the MID? and LEFT? functions. 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-18 
+
+
+
+3.31 RND 
+
+
+
+Format: RND [ (X) J 
+
+Versions: 8K, Extended, Disk 
+
+Action: Returns a random number between and 1. The 
+same sequence of random numbers is generated 
+each time the program is RUN unless the random 
+number generator is reseeded (see RANDOMIZE, 
+Section 2.53). However, X<0 always restarts the 
+same sequence for any given X. 
+
+X>0 or X omitted generates the next random 
+number in the sequence. X=0 repeats the last 
+number generated- 
+
+Exaraple: 10 FOR 1=1 TO 5 
+
+20 PRINT INT[RND*100) ; 
+
+30 NEXT 
+
+RUN 
+
+24 30 31 5i 5 
+Ok 
+
+
+
+3.32 SGN 
+
+
+
+Format: SGN(X) 
+
+Versions: 8K, Extended, Disk 
+
+Action: If X>0, SGN(X) returns 1. 
+If X=0, SGN(X) returns 0- 
+If X<0, SGN(X) returns -1. 
+
+Example: ON SGN(X)+2 GOTO 100,200,300 branches to 100 if 
+X is negative, 200 if X is and 300 if X is 
+
+positive. 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-19 
+
+
+
+3.33 SIN 
+
+
+
+Format: SIN{X) 
+
+Versions: 8K, Extended, Disk 
+
+Action: Returns the sine of X in radians 
+calculated in single 
+COS(X)=SIN(X+3-14159/2) . 
+
+Example: PRINT SIN (1.5) 
+.997495 
+Ok 
+
+
+
+SIN(X) is 
+precision. 
+
+
+
+3.34 SPACE$ 
+
+Format; SPACE? (X) 
+Versions: Extended, Disk 
+
+Action: Returns a string of spaces of length X. The 
+expression X is rounded to an integer and must 
+be in the range to 255, 
+
+Example: 10 FOR I = 1 TO 5 
+20 X$ = SPACE$(I) 
+30 PRINT X$;I 
+40 NEXT I 
+RUN 
+1 
+2 
+3 
+4 
+5 
+Ok 
+
+
+
+Also see the SPC function. 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-20 
+
+
+
+3.35 SPC 
+
+Format: 
+Versions: 
+
+Action: 
+
+
+
+Example: 
+
+
+
+SPC (I) 
+
+8K, Extended, Disk 
+
+Prints I blanks on the terminal. SPC may only 
+be used with PRINT and LPRINT statements. I 
+must be in the range to 255. A*;' is assumed 
+to follow the SPC{I) command. 
+
+PRINT "OVER" SPC (15) "THERE- 
+OVER THERE 
+Ok 
+
+Also see the SPACE$ function- 
+
+
+
+3.36 SQR 
+
+
+
+Format: SQR(X) 
+
+Versions: 8K, Extended, Disk 
+
+Action: Returns the square root of X. 
+
+Example: 10 FOR X = 10 TO 25 STEP 5 
+
+20 PRINT X, SQR(X) 
+
+30 NEXT 
+
+RUN 
+
+10 3.16228 
+
+15 3.87298 
+
+20 4.47214 
+
+25 5 
+
+Ok 
+
+
+
+X must be >=0 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-21 
+
+
+
+3.37 STR$ 
+
+Format: STR$(X) 
+
+Versions: 8K, Extended, Disk 
+
+Action: Returns a string representation of the value of 
+X. 
+
+Example: 5 REM ARITHMETIC FOR KIDS 
+10 INPUT "TYPE A NUMBER" ;N 
+20 ON LEN(STR$(N)) GOSUB 30,100,200,300,400,500 
+
+
+
+Also see the VAL function- 
+
+
+
+3.38 STRING$ 
+
+
+
+Formats: STRING$(I,J) 
+STRING? ( I, X$) 
+
+Versions: Extended, Disk 
+
+Action: Returns a string of length I whose characters 
+all have ASCII code J or the first character of 
+X§. 
+
+Example: 10 X$ = STRING$ {10 , 45) 
+
+20 PRINT X$ "MONTHLY REPORT" X$ 
+RUN 
+
+MONTHLY REPORT 
+
+Ok 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-22 
+
+
+
+3.39 TAB 
+
+
+
+Format: TAB (I) 
+
+Versions; 8K, Extended, Disk 
+
+Action: Spaces to position I on the terminal. If the 
+current print position is already beyond space 
+I, TAB goes to that position on the next line. 
+Space 1 is the leftmost position, and the 
+rightmost position is the width minus one. I 
+must be in the range 1 to 255. TAB may only be 
+used in PRINT and LPRINT statements- 
+Example: 10 PRINT "NAME" TAB (25) "AMOUNT" : PRINT 
+20 READ A$,B$ 
+30 PRINT A$ TAB (25) B$ 
+40 DATA "G- T. JONES" , "?25- 00" 
+RUN 
+NAME AMOUNT 
+
+
+
+G. T. JONES 
+Ok 
+
+
+
+$25.00 
+
+
+
+5.40 TAN 
+
+Format: TAN(X) 
+
+Versions: 8K, Extended, Disk 
+
+Action: Returns the tangent of X in radians- TAN (X) is 
+calculated in single precision. If TAN 
+overflows, the "Overflow" error message is 
+displayed, machine infinity with the appropriate 
+sign is supplied as the result, and execution 
+continues- 
+
+
+
+Example: 
+
+
+
+10 Y = Q*TAN(X)/2 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-23 
+
+
+
+3.41 USR 
+
+
+
+Format : 
+Versions 
+Action: 
+
+
+
+Example: 
+
+
+
+USR[<digit>] (X) 
+
+8K, Extended, Disk 
+
+Calls the user's assembly language subroutine 
+with the argument X- <digit> is allowed in the 
+Extended and Disk versions only. <digit> is in 
+the range to 9 and corresponds to the digit 
+supplied with the DBF USR statement for that 
+routine- If <digit> is omitted, USRO is 
+assumed- See Appendix x. 
+
+40 B = T*SIN{Y) 
+50 C = USR(B/2) 
+60 D = USR(B/3) 
+
+
+
+3.42 VAL 
+
+
+
+Format: VAL(X$) 
+
+Versions: 8K, Extended, Disk 
+
+Action: Returns the numerical value of string XS. The 
+
+VAL function also strips leading blanks, tabs, 
+
+and linefeeds from the argument string- For 
+example, 
+
+VAL(" -3) 
+
+returns -3- 
+
+Example: 10 READ NAME$ ,CITY$ , STATE$ , ZIP$ 
+
+20 IF VAL(2IP$)<90000 OR VAL ( ZIP$) >96699 THEN 
+PRINT NAME$ TAB (25) "OUT OF STATE" 
+
+30 IF VAL(SIP$) >=90801 AND VAL { ZIP$) <=90815 THEN 
+PRINT NAME$ TAB (25) "LONG BEACH" 
+
+
+
+See the STRS 
+conversion. 
+
+
+
+function for numeric to string 
+
+
+
+BASIC-80 FUNCTIONS 
+
+
+
+Page 3-24 
+
+
+
+3.43 VARP TR 
+
+Format 1: 
+Versions; 
+Format 2: 
+Version: 
+Action: 
+
+
+
+NOTE: 
+
+
+
+VARPTR (<vari able name>) 
+
+Extended, Disk 
+
+VARPTR (#<file number >) 
+
+
+
+Disk 
+
+Format 1 : 
+of data 
+value mus 
+to execu 
+function 
+name may 
+the addre 
+range 327 
+returned, 
+address. 
+
+
+
+Returns the address of the first byte 
+
+identified with <variable name>. A 
+
+t be assigned to <variable name> prior 
+
+tion of VARPTR. Otherwise an "Illegal 
+
+call" error results. Any type variable 
+
+be used (numeric, string, array) , and 
+
+ss returned will be an integer in the 
+
+67 to -32768. If a negative address is 
+
+add it to 65536 to obtain the actual 
+
+
+
+VARPTR is usually used to obtain the address of 
+a variable or array so it may be passed to an 
+assembly language subroutine . A function call 
+of the form VARPTR(A(0)) is usually specified 
+when passing an array, so that the 
+lowest-addressed element of the array is 
+returned. 
+
+All simple variables should be assigned before 
+calling VARPTR for an array, because the 
+addresses of the arrays change whenever a new 
+simple variable is assigned. 
+
+Format 2: For sequential files, returns the 
+starting address of the disk I/O buffer assigned 
+
+to <f ile number >. For random files, returns the 
+address of the FIELD buffer assigned to <file 
+number>. 
+
+In Standalone Disk BASIC, VARPTRC5<f ile number>) 
+returns the first byte of the file block- See 
+Appendix H. 
+
+
+
+Example 
+
+
+
+100 X=USR(VARPTR(Y) ) 
+
+
+
+APPENDIX C 
+Assembly Language Subroutines 
+
+
+
+All versions of BASIC-80 have provisions for interfacing 
+with assembly language subroutines- The USR function allows 
+assembly language subroutines to be called in the same way 
+BASIC'S intrinsic functions are called. 
+
+
+
+NOTE 
+
+The addresses of the DEINT, 
+GIVABF, MAKINT and FRCINT 
+routines are stored in 
+locations that must be 
+supplied individually for 
+different implementations of 
+BASIC. 
+
+
+
+C.l MEMORY ALLOCATION 
+
+Memory space must be set aside for an assembly language 
+subroutine before it can be loaded. During initialization, 
+enter the highest memory location minus the amount of memory 
+needed for the assembly language subroutine (s) . BASIC uses 
+all memory available from its starting location up, so only 
+the topmost locations in memory can be set aside for user 
+subroutines. 
+
+When an assembly language subroutine is called , the stack 
+pointer is set up for 8 levels (15 bytes) of stack storage. 
+If more stack space is needed , BASIC ' s stack can be saved 
+and a new stack set up for use by the assembly language 
+subroutine. BASIC'S stack must be restored, however, before 
+returning from the subroutine. 
+
+
+
+Page C-2 
+
+
+
+The assembly language subroutine may be loaded into memory 
+by means of the system monitor, or the BASIC POKE statement, 
+or (if the user has the MACRO-80 or FORTRAN-80 package) 
+routines may be assembled with MACRO-80 and loaded using 
+
+LINK-80. 
+
+
+
+C.2 ySR FUNCTION CALL S - 8K BASIC 
+
+The starting address of the assembly language subroutine 
+must be stored in USRLOC, a two-byte location in memory that 
+is supplied individually with different implementations of 
+BASIC-80. With 8K BASIC, the Starting address may be POKEd 
+into USRLOC. Store the low order byte first, followed by 
+the high order byte. 
+
+The function USR will call the routine whose address is in 
+USRLOC- Initially USRLOC contains the address of ILLFUN, 
+the routine that gives the "Illegal function call" error. 
+Therefore, if USR is called without changing the address in 
+USRLOC, an "Illegal function call" error results. 
+
+The format of a USR function call is 
+
+USR(argument) 
+
+where the argument is a numeric expression. To obtain the 
+argument, the assembly language subroutine must call the 
+routine DEINT. DEINT places the argument into the D,E 
+register pair as a 2-byte, 2's complement integer- (If the 
+argument is not in the range -32768 to 32767, an "Illegal 
+function call" error occurs.) 
+
+To pass the result back from an assembly language 
+subroutine, load the value in register pair [A,B] , and call 
+the routine GIVABF. If GIVABF is not called, USR{X) returns 
+X. To return to BASIC, the assembly language subroutine 
+must execute a RET instruction- 
+
+
+
+For example , here is an assembly 
+multiplies the argument by 2 : 
+
+
+
+language subroutine that 
+
+
+
+USRSUB: CALL DEINT 
+XCHG 
+DAD H 
+MOV A,H 
+MOV B,L 
+JMP GIVABF 
+
+
+
+;put arg in D,E 
+;move arg to H,L 
+7H,L=H,L+H,L 
+;move result to A,B 
+
+;pass result back and RETurn 
+
+
+
+Note that valid results will be obtained from this routine 
+for arguments in the range -16384<=x<=16383 - The single 
+instruction JMP GIVABF has the same effect as: 
+
+
+
+Page C-3 
+
+
+
+CALL GIVABF 
+RET 
+
+To return additional values to the program, load them into 
+memory and read them with the PEEK function. 
+
+There are several methods by which a program may call more 
+than one USR routine. For example, the starting address of 
+each routine may be POKEd into USRLOC prior to each USR 
+call, or the argument to USR could be an index into a table 
+of USR routines. 
+
+
+
+C-3 USR FUNCTION CALLS - EXTENDED AND DISK BASIC 
+
+In the Extended and Disk versions, the format of the USR 
+function is 
+
+USR[<digit>] (argument) 
+
+where DIGIT> is from to 9 and the argument is any numeric 
+or string expression. <digit> specifies which USR routine 
+is being called, and corresponds with the digit supplied in 
+the DEF USR statement for that routine. If <digit> is 
+omitted, USRO is assumed- The address given in the DEF USR 
+statement determines the starting address of the subroutine. 
+
+When the USR function call is made, register A contains a 
+value that specifies the type of argument that was given. 
+The value in A may be one of the following: 
+
+Value in A Type of Argument 
+
+2 Two-byte integer (two' s complement) 
+
+3 String 
+
+4 Single precision floating point number 
+
+8 Double precision floating point number 
+
+If the argument is a number , the [H,L] register pair points 
+to the Floating Point Accumulator (FAC) where the argument 
+is stored- 
+
+If the argument is an integer : 
+
+FAC-3 contains the lower 8 bits of the argument and 
+FAC-2 contains the upper 8 bits of the argument. 
+
+If the argument is a single precision floating point number: 
+
+FAC-3 contains the lowest 8 bits of mantissa and 
+
+
+
+Page C-4 
+
+
+
+FAC-2 contains the middle 8 bits of mantissa and 
+FAC-1 contains the highest 7 bits of mantissa 
+with leading 1 suppressed (implied) - Bit 7 is 
+the sign of the number (O=positive, l=negative) • 
+FAC is the exponent minus 128, and the binary 
+point is to the left of the most significant 
+bit of the mantissa. 
+
+If the argument is a double precision floating point number: 
+
+FAC-7 through FAC-4 contain four more bytes 
+of mantissa (FAC-7 contains the lowest 8 bits) - 
+
+If the argument is a string, the (D,E3 register pair points 
+to 3 bytes called the "string descriptor . " Byte of the 
+string descriptor contains the length of the string (0 to 
+255) . Bytes 1 and 2, respectively, are the lower and upper 
+8 bits of the string starting address in string space. 
+
+CAUTION: If the argument is a string literal in the 
+program, the string descriptor will point to program text. 
+Be careful not to alter or destroy your program this way. 
+To avoid unpredictable results, add +"" to the string 
+literal in the program. Example: 
+
+AS = "BASIC-80"+"" 
+
+This will copy the string literal into string space and will 
+prevent alteration of program text during a subroutine call. 
+
+Usually, the value returned by a USR function is the same 
+type (integer, string, single precision or double precision) 
+as the argument that was passed to it- However, calling the 
+MAKINT routine returns the integer in [H,L] as the value of 
+the function, forcing the value returned by the function to 
+be integer- To execute MAKINT, use the following sequence 
+to return from the subroutine: 
+
+PUSH H ;save value to be returned 
+LHLD XXX ;get address of MAKINT routine 
+XTHL ; save return on stack and 
+
+;get back [H,L] 
+RET ; return 
+
+Also, the argument of the function, regardless of its type , 
+may be forced to an integer by calling the FRCINT routine to 
+get the integer value of the argument in [H,L] . Execute the 
+following routine : 
+
+LXI H ;get address of subroutine 
+
+;continuation 
+;place on stack 
+;get address of FRCINT 
+
+
+
+PUSH 
+
+
+H 
+
+
+LHLD 
+
+
+XXX 
+
+
+PCHL 
+
+
+
+
+SUBl: . - 
+
+
+a ■ • 
+
+
+
+Page C-5 
+
+C,4 CALL STATEMENT 
+
+Extended and Disk BASIC-80 user function calls may also be 
+
+made with the CALL statement. The calling sequence used is 
+
+the same as that in Microsoft's FORTRAN, COBOL and BASIC 
+compilers. 
+
+A CALL statement with no arguments generates a simple "CALL" 
+instruction. The corresponding subroutine should return via 
+a simple "RET." (CALL and RET are 8080 opcodes - see an 8080 
+reference manual for details-) 
+
+A subroutine CALL with arguments results in a somewhat more 
+complex calling sequence. For each argument in the CALL 
+argument list, a parameter is passed to the subroutine. 
+That parameter is the address of the low byte of the 
+argument. Therefore, parameters always occupy two bytes 
+each, regardless of type. 
+
+The method of passing the parameters depends upon the number 
+
+of parameters to pass: 
+
+1. If the number of parameters is less than or equal 
+to 3, they are passed in the registers. Parameter 
+1 will be in HL, 2 in DE (if present) , and 3 in BC 
+(if present) - 
+
+2. If the number of parameters is greater than 3, they 
+are passed as follows: 
+
+1. Parameter 1 in HL. 
+
+2. Parameter 2 in DE- 
+
+3- Parameters 3 through n in a contiguous data 
+block, BC will point to the low byte of this 
+data block (i.e., to the low byte of parameter 
+3). 
+
+Note that, with this scheme, the subroutine must know how 
+many parameters to expect in order to find them. 
+Conversely, the calling program is responsible for passing 
+the correct number of parameters. There are no checks for 
+the correct number or type of parameters- 
+
+If the subroutine expects more than 3 parameters, and needs 
+to transfer them to a local data area, there is a system 
+subroutine which will perform this transfer. This argument 
+transfer routine is named $AT (located in the FORTRAN 
+library, FORLIB.REL), and is called with HL pointing to the 
+local data area, BC pointing to the third parameter, and A 
+containing the number of arguments to transfer (i.e. , the 
+total number of arguments minus 2) . The subroutine is 
+
+
+
+Page C-6 
+
+
+
+responsible for saving the first two parameters before 
+calling $AT. For example, if a subroutine expects 5 
+parameters, it should look like: 
+
+
+
+SUBR: 
+
+
+
+SHLD 
+
+
+Pi 
+
+
+XCHG 
+
+
+
+
+SHLD 
+
+
+P2 
+
+
+MVI 
+
+
+A, 3 
+
+
+LXI 
+
+
+H,P3 
+
+
+CALL 
+
+
+$AT 
+
+
+
+;SAVE PARAMETER 1 
+
+SAVE PARAMETER 2 
+
+NO- OF PARAMETERS LEFT 
+
+POINTER TO LOCAL AREA 
+
+TRANSFER THE OTHER 3 PARAMETERS 
+
+
+
+[Body of subroutine] 
+
+
+
+
+
+RET 
+
+
+
+
+PI: 
+
+
+DS 
+
+
+2 
+
+
+P2: 
+
+
+DS 
+
+
+2 
+
+
+P3: 
+
+
+DS 
+
+
+6 
+
+
+
+RETURN TO CALLER 
+SPACE FOR PARAMETER 1 
+SPACE FOR PARAMETER 2 
+SPACE FOR PARAMETERS 3-5 
+
+
+
+A listing of the argument transfer routine $AT follows. 
+
+
+
+00100 
+00200 
+00300 
+00400 
+00500 
+00600 
+00700 
+00800 
+00900 
+01000 
+01100 
+01200 
+01300 
+01400 
+01500 
+01600 
+01700 
+01800 
+01900 
+02000 
+02100 
+02200 
+02300 
+
+
+
+[B,C] 
+[H,L] 
+[A] 
+
+
+
+$AT: 
+
+
+
+ATI: 
+
+
+
+ARGUMENT TRANSFER 
+POINTS TO 3RD PARAM. 
+
+POINTS TO LOCAL STORAGE FOR PARAM 3 
+CONTAINS THE # OF PARAMS TO XFER (TOTAL-2) 
+
+
+
+ENTRY 
+
+XCHG 
+
+MOV 
+
+MOV 
+
+MOV 
+
+INX 
+
+MOV 
+
+INX 
+
+XCHG 
+
+MOV 
+
+INX 
+
+MOV 
+
+INX 
+
+XCHG 
+
+DCR 
+
+JNZ 
+
+RET 
+
+
+
+$AT 
+
+H,B 
+
+L,C 
+
+CM 
+
+H 
+
+B,M 
+
+H 
+
+M,C 
+
+H 
+
+M,B 
+
+H 
+
+A 
+ATI 
+
+
+
+;SAVE [H,L] IN [D,E] 
+;[H,L] = PTR TO PARAMS 
+
+
+
+; [B,C1 - PARAM ADR 
+
+;[H,L] POINTS TO LOCAL STORAGE 
+
+
+
+STORE PARAM IN LOCAL AREA 
+SINCE GOING BACK TO ATI 
+TRANSFERRED ALL PARAMS? 
+NO, COPY MORE 
+YES, RETURN 
+
+
+
+Page C-7 
+
+When accessing parameters in a subroutine, don*t forget that 
+they are pointers to the actual arguments passed, 
+
+
+
+NOTE 
+
+It is entirely up to the 
+programmer to see to it that 
+the arguments in the calling 
+program match in number , type , 
+and length with the parameters 
+expected by the subroutine. 
+This applies to BASIC 
+subroutines, as well as those 
+written in assembly language. 
+
+
+
+C.5 INTERRUPTS 
+
+Assembly language subroutines can be written to handle 
+interrupts. All interrupt handling routines should save the 
+stack, register A-t. and the PSW. Interrupts should always 
+be re-enabled before returning from the subroutine. , since 
+an interrupt automatically disables all further interrupts 
+once it is received. The user should be aware of which 
+interrupt vectors are free in the particular version of 
+BASIC that has been supplied. (Note to CP/M users: In CP/M 
+BASIC, all interrupt vectors are free.) 
+
+
+
+APPENDIX D 
+BASIC-80 with the CP/M Operating System 
+
+
+
+The CP/M version of BASIC-80 (MBASIC) is supplied on a 
+standard size 3740 single density diskette. The name of the 
+file is MBASIC-COM- (A 28K or larger CP/M system is 
+recommended.) 
+
+To run MBASIC, bring up CP/M and type the following: 
+
+A>MBASIC <carriage return> 
+
+The system will reply: 
+
+xxxx Bytes Free 
+
+BASIC-80 Version 5-0 
+
+(CP/M Version) 
+
+Copyright 1978 (C) by Microsoft 
+
+Created: dd-mmm-yy 
+
+Ok 
+
+MBASIC is the same as Disk BASIC-80 as described in this 
+manual, with the following exceptions: 
+
+
+
+D-1 INITIALIZATION 
+
+The initialization dialog has been replaced by a set of 
+options which are placed after the MBASIC command to CP/M- 
+The format of the command line is: 
+
+A>MBASIC [<filename>] [/F:<number of f iles> ] [/M: <highest memory location 
+[/S:<maxiraum record size>] 
+
+If <f ilename> is present, MBASIC proceeds as if a RUN 
+<filename> command were typed after initialization is 
+complete. A default extension of .BAS is used if none is 
+supplied and the filename is less than 9 characters long. 
+This allows BASIC programs to be executed in batch mode 
+using the SUBMIT facility of CP/M. Such programs should 
+include a SYSTEM statement (see below) to return to CP/M 
+when they have finished, allowing the next program in the 
+
+
+
+Page D-2 
+
+
+
+batch stream to execute. 
+
+
+
+If /F:<number of files> is present, it sets the number of 
+disk data files that may be open at any one time during the 
+execution of a BASIC program. Each file data block 
+allocated in this fashion requires 166 bytes of memory- If 
+the /F option is omitted, the number of files defaults to 3. 
+
+The /MKhighest memory location> option sets the highest 
+memory location that will be used by MBASIC- In some cases 
+it is desirable to set the amount of memory well below the 
+CP/M ' s FDOS to reserve space for assembly language 
+subroutines- In all cases, <highest memory location> should 
+be below the start of FDOS (whose address is contained in 
+locations 6 and 7) . If the /M option is omitted, all memory 
+up to the start of FDOS is used. 
+
+/S:<maximum record size> may be added at the end of the 
+command line to set the maximum record size for use with 
+random files. The default record size is 128 bytes. 
+
+
+
+NOTE 
+
+<number of f iles> , <highest 
+memory location>, and <maximum 
+record size> are numbers that 
+may be either decimal, octal 
+(preceded by SO) or 
+hexadecimal (preceded by &H) • 
+
+
+
+Examples: 
+
+A>MBASIC PAYROLL. BAS 
+
+A>MBASIC INVENT/F:6 
+
+A>MBASIC /M:32768 
+
+
+
+Use all memory and 3 files, 
+load and execute PAYROLL. BAS. 
+
+Use all memory and 6 files, 
+load and execute INVENT- BAS. 
+
+Use first 32k of memory and 
+3 files. 
+
+
+
+A>MBASIC DATACK/F:2/M:&H9 000 
+
+Use first 36K of memory, 2 
+files, and execute DATACK.BAS 
+
+
+
+D'2 DISK FILES 
+
+Disk filenames follow the normal CP/M naming conventions. 
+All filenames may include A; or B: as the first two 
+characters to specify a disk drive, otherwise the currently 
+selected drive is assumed- A default extension of -BAS is 
+
+
+
+Page D-3 
+
+
+
+used on LOAD, SAVE, MERGE and RUN <filename> commands if no 
+". " appears in the filename and the filename is less than 9 
+characters long. 
+
+For systems with CP/M 2.x, large random files are supported. 
+The maximum logical record number is 32767. If a record 
+size of 256 is specified, then files up to 8 megabytes can 
+be accessed. 
+
+
+
+D.3 FILES COMMAND 
+
+
+
+Format; FILES [<filename>] 
+
+Purpose: To print the names of files residing on the 
+current disk. 
+
+Remarks: If <f ilename> is omitted, all the files on the 
+currently selected drive will be listed. 
+<filename> is a string formula which may contain 
+question marks (?) to match any character in the 
+filename or extension. An asterisk (*) as the 
+first character of the filename or extension 
+will match any file or any extension. 
+
+Examples: FILES 
+
+FILES "*.BAS" 
+
+FILES "B:*.*" 
+
+FILES "TEST7.BAS" 
+
+
+
+D.4 RESET COMMAND 
+
+
+
+Format: 
+Purpose: 
+
+Remarks: 
+
+
+
+RESET 
+
+To close all disk files and write the 
+information to a diskette before it 
+from a disk drive. 
+
+
+
+directory 
+is removed 
+
+
+
+Always execute a RESET command before removing a 
+diskette from a disk drive. Otherwise, when the 
+diskette is used again, it will not have the 
+current directory information written on the 
+directory track, 
+
+RESET closes all open files on all drives and 
+writes the directory track to every diskette 
+with open files. 
+
+
+
+Page D-4 
+
+
+
+D.5 LOF FUNCTION 
+
+
+
+Format: XiOF{<file nuinber>) 
+
+Action: Returns the number of records present in the 
+
+last extent read or written. If the file does 
+not exceed one extent (128 records) , then LOF 
+returns the true length of the file. 
+
+Example: 110 IF NUM%>L0F(1) THEN PRINT "INVALID ENTRY" 
+
+
+
+D.6 EOF 
+
+With CP/M, the EOF function may be used with random files. 
+If a GET is done past the end of file, EOF will return -1. 
+This may be used to find the size of a file using a binary 
+search or other algorithra- 
+
+
+
+D-7 MISCELLANEOUS 
+
+1- CSAVE and CLOAD are not implemented. 
+
+2. To return to CP/M, use the SYSTEM command or 
+statement. SYSTEM closes all files and then 
+performs a CP/M warm start. Control-C always 
+returns to MBASIC, not to CP/M. 
+
+3. FRCINT is at 103 hex and MAKINT is at 105 hex- 
+(Add 1000 hex for ADDS versions, 4000 for SBC CP/M 
+versions- ) 
+
+
+
+INDEX 
+
+
+
+% INCLUDE L-4 
+
+ABS 3-2 
+
+Addition 1-10 
+
+ALL 2-4, 2-9 
+
+Arctangent 3-3 
+
+Array variables 1-7, 2-9, 2-19, L-5 
+
+Arrays 1-7, 2-7, 2-12, 2-25 
+
+ASC 3-2 
+
+ASCII codes 3-2, 3-4 
+
+ASCII format 2-4, 2-50, 2-78, L-1 
+
+Assembly language subroutines 2-3, 2-17, 2-60, 3-23 to 3-24, 
+
+C-1, L-2 
+
+ATN 3-3, L-4 
+
+ATTR$ H-5 
+
+ATTRIB E-2 
+
+AUTO 1-2, 2-2 
+
+Boolean operators 1-12 
+
+CALL 2-3, C-5, L-2 
+
+Carriage return 1-3, 2-37, 2-42 to 2-43, 
+
+2-84 to 2-86 
+
+Cassette tape , • 2-7, 2-12 
+
+CDBL 3-3 
+
+CHAIN 2-4, 2-9, L-2 
+
+Character set 1-3 
+
+CHR$ 3-4 
+
+CINT 3-4 
+
+CLEAR 2-6, A-1, L-2 
+
+CLOAD 2-7 
+
+CLOAD* - - . , 2-7 
+
+CLOAD? 2-7 
+
+CLOSE 2-8, B-3, B-8 
+
+Command level 1-1 
+
+COMMON 2-4, 2-9, L-2 
+
+Concatenation 1-15 
+
+Constants 1-4 
+
+CONT 2-11, 2-42 
+
+Control characters 1-4 
+
+Control-A 2-23 
+
+COS 3-5, L-4 
+
+CP/M 2-47, 2-50, 2-77 to 2-78, 
+
+B-1, D-1 
+
+CSAVE 2-12 
+
+CSAVE* 2-12 
+
+CSNG 3-5 
+
+CVD 3-6, B-8 
+
+CVI 3-6, B-8 
+
+CVS 3-6, B-8 
+
+
+
+DATA 2-13, 2-75 
+
+DEF FN 2-14 
+
+DEF USR 2-17, 3-23 
+
+DEFDBL 1-7, 2-16, L-2 
+
+DEFINT 1-7, 2-16, L-2 
+
+DEFSNG 1-7, 2-16, L-2 
+
+DEFSTR 1-7, 2-16, L-2 
+
+DEINT C-1, G-1 
+
+DELETE 1-2, 2-4, 2-18 
+
+DIM 2-19, L-3 
+
+Direct mode 1-lr 2-35, 2-55, L-1 
+
+Division 1-10 
+
+Double precision 1-5, 2-16, 2-61, 3-3, A-1, 
+
+L-4 
+
+DSKIS H-2, H-13 
+
+DSKO$ H-2, H-13 
+
+EDIT 1-2, 2-20 
+
+Edit mode 1-4, 2-20, L-1 
+
+END 2-8, 2-11, 2-24, 2-33, 
+
+L-3 
+
+EOF 3-6, B-3, B-5, D-4 
+
+ERASE 2-25, L-3 
+
+ERL 2-26 
+
+ERR 2-26 
+
+ERROR 2-27 
+
+Error codes 1-16, 2-26 to 2-27, J-1 
+
+Error messages 1-16, J-1, L-2 
+
+Error trapping 2-26 to 2-27, 2-55, 2-76, 
+
+B-7, L-3 
+
+Escape 1-3, 2-20 
+
+EXP 3-7, L-4 
+
+Exponentiation 1-10 to 1-11, L-4 
+
+Expressions --.. 1-9 
+
+FIELD 2-29, B-8, H-11 
+
+FILES D-3, H-2 
+
+FIX 3-7 
+
+FOR... NEXT 2-30, A-1, L-3 
+
+FORMAT program H-10 
+
+FPOS H-2 
+
+FRCINT C-1, C-4, D-4, G-1 
+
+FRE 3-8 
+
+Functions 1-14 , 2-14 , 3-1 , K-1 
+
+GET 2-29 , 2-32, B-8 , D-4 , 
+
+H-7 
+
+GIVABF C-1 to C-2, G-1 
+
+GIVINT E-2 
+
+GOSUB 2-33 
+
+GOTO 2-33 to 2-34 
+
+HEX$ 3-8 
+
+Hexadecimal 1-5, 3-8 
+
+IF. . .GOTO 2-35 
+
+IF. . .THEN 2-26, 2-35 
+
+IF. . .THEN. . .ELSE 2-35 
+
+
+
+Indirect mode 1-1 
+
+INKEY$ 3-9 
+
+INP 3-9 
+
+INPUT 2-11, 2-29, 2-37, A-2 , 
+
+B-9 
+
+INPUT$ 3-10 
+
+INPUT# H-7 
+
+INPUT# B-3 
+
+INPUT* 2-39 
+
+INSTR 3-11 
+
+INT 3-7, 3-12 
+
+Integer 3-4, 3-7, 3-12 
+
+Integer division 1-11 
+
+INTEL G-1 
+
+Interrupts C-7 
+
+ISIS-II 2-77, E-1 
+
+KILL 2-40, B-2 
+
+LEFT$ 3-12 
+
+LEN 3-13 
+
+LET ..... 2-29, 2-41, B-9 
+
+LFILES H-2 
+
+Line feed 1-2, 2-37, 2-42 to 2-43, 
+
+2-85 to 2-86, L-1 
+
+LINE INPUT 2-42 
+
+LINE INPUT# B-3 
+
+LINE INPUT# 2-43 
+
+Line numbers 1-1 to 1-2, 2-2, 2-74, 
+
+L-2 
+
+Line printer 2-46, 2-48, 2-84, 3-14, 
+
+A-2, E-2 
+
+Lines 1-1, L-1 
+
+LIST 1-2, 2-44 
+
+LLIST 2-46, F-1, G-2 
+
+LOAD 2-47, 2-78, B-1 
+
+LOG 3-13, B-3, B-5, B-8 , H-2 
+
+LOF D-4, H-2 
+
+LOG 3-14, L-4 
+
+Logical operators 1-12 
+
+Loops 2-30 , 2-83 
+
+LPOS 2-84, 3-14 
+
+LPRINT 2-48, 2-84, F-1, G-2 
+
+LPRINT USING 2-48 
+
+LSET 2-49, B-8 
+
+MAKINT C-1, C-4, D-4, E-2, G-1 
+
+MBASIC D-1 
+
+MDS G-1 
+
+MERGE 2-4, 2-50, B-2 
+
+MID$ 2-51, 3-15, I-l 
+
+MKD$ 3-15, B-8 
+
+MKI$ 3-15, B-8 
+
+MKS$ 3-15, B-8 
+
+MOD operator 1-11 
+
+Modulus arithmetic 1-11 
+
+MOUNT H-3 
+
+Multiplication 1-10 
+
+
+
+NAME 2-52 
+
+Negation 1-10 
+
+NEW 2-8, 2-53 
+
+NULL 2-54 
+
+Numeric constants 1-4 
+
+Numeric variables 1-7 
+
+0CT5 3-16 
+
+Octal 1-5 r 3-16 
+
+ON ERROR GOTO ..-.---.. 2-55, L-3 
+
+ON..-GOSUB 2-56 
+
+ON.. -GOTO 2-56 
+
+OPEN 2-8, 2-29, 2-57, B-3, 
+
+B-8, H-5 to H-6 
+Operators 1-9, 1-11 to 1-13, 1-15, 
+
+L-4 
+
+OPTION BASE 2-58 
+
+OUT 2-59 
+
+Overflow 1-11, 3-7, 3-22, A-1, 
+
+L-4 
+Overlay ..... 2-4 
+
+Paper tape 2-54 
+
+PEEK 2-60, 3-16 
+
+POKE 2-60, 3-16 
+
+POS 2-84, 3-17 
+
+PRINT 2-61, A-1 
+
+PRINT USING 2-63, A-2 
+
+PRINT! H-7 
+
+PRINT# USING B-5 
+
+PRINT# USING B-3 
+
+PRINT* B-3 
+
+PRINT* USING 2-67 
+
+PRINT* 2-67 
+
+Protected files ....... 2-78, A-2, B-2 
+
+PUT 2-29, 2-69, B-8, H-7 
+
+Random files 2-29, 2-32, 2-40, 2-49, 
+
+2-57, 2-69, 3-13, 3-15, 
+B-7, D-4 
+
+Random numbers 2-70, 3-18 
+
+RANDOMIZE 2-70, 3-18, A-1 
+
+READ 2-71, 2-7 5 
+
+Relational operators 1-11 
+
+REM 2-73, L-3 
+
+REMOVE H-3 
+
+RENUM 2-4, 2-26, 2-74 
+
+RESET D-3 
+
+RESTORE 2-75 
+
+RESUME 2-76, L-3 
+
+RETURN 2-33 
+
+RIGHT? 3-17 
+
+RND 2-70, 3-18, A-1 
+
+RSET 2-49, B-8 
+
+Rubout 1-3, 1-15, 2-21 
+
+RUN 2-77 to 2-78, B-2, L-2 
+
+SAVE 2-47, 2-77 to 2-78, B-1 
+
+
+
+SBC G-1 
+
+Sequential files 2-39 to 2-40, 2-43, 2-57, 
+
+2-67, 2-86, 3-6, 3-13, 
+
+B-3 
+
+SET H-4 
+
+SGN 3-18 
+
+SIN 3-19, L-4 
+
+Single precision 1-5, 2-16, 2-51, 3-5, A-1 
+
+Soace Requirements for variables 1-8 
+
+SPACES 3-19 
+
+SPC 3-20 
+
+SQR 3-20, L-4 
+
+Standalone Disk BASIC .... H-1 
+
+STOP 2-11, 2-24, 2-33, 2-79, 
+
+L-3 
+
+STR$ 3-21 
+
+String constants ....... 1-4 
+
+String functions 3-6, 3-11 to 3-13, 3-15, 
+
+3-17, 3-21, 3-23, I-l 
+
+String operators 1-15 
+
+String space 2-6, 3-8, A-1, B-9 
+
+String Variables L-4 
+
+String variables 1-7, 2-16, 2-42 to 2-43 
+
+STRING? 3-21 
+
+Subroutines 2-3, 2-33, 2-56, C-1 
+
+Subscripts 1-7, 2-19, 2-58, L-3 
+
+Subtraction .*. 1-10 
+
+SWAP 2-80 
+
+SYSTEM D-4, F-1 
+
+TAB 3-22 
+
+Tab 1-3 to 1-4 
+
+TAN 3-22, L-4 
+
+TEKDOS F-1 
+
+TROFF 2-81, L-3 
+
+TRON 2-81, L-3 
+
+USR 2-17, 3-23, C-1 
+
+USRLOC C-2, G-1 
+
+VAL 3-23 
+
+Variables 1-6, L-5 
+
+VARPTR 3-24, H-10 
+
+WAIT 2-82 
+
+WEND 2-83, L-3 
+
+WHILE 2-83, L-3 
+
+WIDTH 2-84, A-2 
+
+WIDTH LPRINT 2-84, A-2 
+
+WRITE 2-85 
+
+WRITE# B-3 
+
+WRITE* 2-86 
+
+

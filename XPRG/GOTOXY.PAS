@@ -15,12 +15,12 @@ begin
   clrscr;
 
   GotoXY(1, 1); write('Coucou 1');
-  cursor(2, 2); write('Coucou 2');
+  cursor(20, 2); write('Coucou 2');
 
   GotoXY(1, 3); write('Coucou 3');
-  cursor(2, 2); write('Coucou 4');
+  cursor(20, 3); write('Coucou 4');
 
   GotoXY(1, 5); write('Coucou 5');
-  cursor(2, 2); write('Coucou 6');
+  cursor(20, 4); write('Coucou 6');
 
 end.

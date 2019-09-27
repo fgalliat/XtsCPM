@@ -14,31 +14,7 @@
  * http://manpagesfr.free.fr/man/man4/console_codes.4.html
  * https://www.seasip.info/Cpm/cpm86esc.html
  * 
- * 
-Esc:=!d.
-Esc:="d.
-Esc:=#d.
-Esc:=$d.
-Esc:=%d.
-Esc:=&d.
-Esc:='d.
-Esc:=(d.
-Esc:=)d.
-Esc:=*d.
-Esc:=+d.
-Esc:=-d.
-Esc:=.d.
-Esc:=/d.
-Esc:=,d.
-Esc:=0d.
-Esc:=1d.
-Esc:=2d.
-Esc:=3d.
-Esc:=0d.
-Esc:=4d.
-Esc:=5d.
-Esc:=6d.
- * 
+ *  
  * Pascal :> GotoXY(1, 5);
  * ^ = (31+Y) (31+X) ....
  * ^ = (36) (32)
