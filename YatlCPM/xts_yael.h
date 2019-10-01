@@ -28,6 +28,9 @@
 
 #define MP3_BUSY_PIN 34
 
+#define SUBMCU_READY_PIN 35
+
+#define LED_BUILTIN_PIN 25
 
 //====================================================================================
 
@@ -104,6 +107,8 @@ void yael_buzzer_beep(int freq=440, int duration=200);
 // not concurent safe !
 char* yael_fs_getAssetsFileEntry(char* assetName);
 bool yael_fs_downloadFromSerial();
+
+bool yael_subMcuIsReady();
 
 void yael_dbug(char* str);
 void yael_dbug(const char* str);

@@ -112,6 +112,11 @@ void setupBridge() {
 void led(bool state, bool fastMode) {
     if ( state ) { bridgeSerial.write('L'); }
     else  { bridgeSerial.write('l'); }
+
+    if ( LED_BUILTIN_PIN > 0 ) {
+        digitalWrite(LED_BUILTIN_PIN, state ? HIGH : LOW);
+    }
+
     if (!fastMode) delay(1);
 }
 
@@ -338,6 +343,15 @@ bool Y_setup()
 {
   _setupCSlines();
 
+  if ( SUBMCU_READY_PIN > 0 ) {
+    pinMode(SUBMCU_READY_PIN, INPUT);
+  }
+
+  if ( LED_BUILTIN_PIN > 0 ) {
+   pinMode(LED_BUILTIN_PIN, OUTPUT);
+   digitalWrite(LED_BUILTIN_PIN, LOW);
+  }
+
   Serial.begin(115200); // Used for messages and the C array generator
 //   Serial.begin(9600); // Used for messages and the C array generator
 
@@ -518,15 +532,10 @@ bool yael_mp3IsPlaying() {
     return digitalRead(MP3_BUSY_PIN) == LOW; 
 }
 
-
-// void yael_mp3Play(int trackNum) { sndCard.play(trackNum); }
-// void yael_mp3Loop(int trackNum) { yael_lcd_print( (char*)"(!!) MP3 LOOP NYI" ); }
-// void yael_mp3Vol(int volume) { sndCard.volume( volume ); }
-// void yael_mp3Pause() { sndCard.pause(); }
-// void yael_mp3Stop() { sndCard.stop(); }
-// void yael_mp3Next() { sndCard.next(); }
-// void yael_mp3Prev() { sndCard.prev(); }
-// bool yael_mp3IsPlaying() { return sndCard.isPlaying(); }
+bool yael_subMcuIsReady() {
+    if ( SUBMCU_READY_PIN < 0 ) { return true; }
+    return digitalRead(SUBMCU_READY_PIN) == LOW; 
+}
 
 void yael_led(bool state, bool fastMode) { led(state, fastMode); }
 
