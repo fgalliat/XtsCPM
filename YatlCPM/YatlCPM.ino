@@ -235,6 +235,18 @@ void setup(void) {
   #endif
 #endif
 
+#if YAEL_PLATFORM
+    if ( yael_subMcuIsReady() ) {
+      yael_lcd_cls();
+      //              12345678901234567890
+      yael_lcd_print("Welcome @ Xtase YAEL\n");
+      yael_lcd_print("Running CP/M 2.2\n");
+      yael_lcd_print("On ESP32 Board\n");
+      yael_lcd_print("@Oct 2019 - Xtase");
+    }
+#endif
+
+
     // if (VersionCCP >= 0x10 || SD.exists(CCPname)) {
     if (VersionCCP >= 0x10 || SD.exists(ccpFileName)) {
       while (true) {

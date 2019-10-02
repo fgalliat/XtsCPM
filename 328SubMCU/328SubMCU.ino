@@ -23,7 +23,7 @@
  *         4|           |A1
  *         5|           |A0
  *         6|           |13  LED
- *         7|           |12
+ *         7|           |12  /READY 
  *  RX-MP3 8|           |11  TX-BRIDGE
  *  TX-MP3 9|___________|10  RX-BRIDGE
  */
@@ -32,6 +32,8 @@
 //                                    Settings
 //====================================================================================
 #define LED_PIN 13
+
+#define READY_PIN 12
 
 #include <SoftwareSerial.h>  // http://arduino.cc/en/Reference/softwareSerial
 
@@ -148,6 +150,9 @@ void setup()
 {
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, HIGH);
+  
+  pinMode(READY_PIN, OUTPUT);
+  digitalWrite(READY_PIN, HIGH); // NOT ready
 
   Serial.begin(9600);
 
@@ -165,6 +170,7 @@ void setup()
   lcd.setCursor(0,0);
   lcd.print("ready");
 
+  digitalWrite(READY_PIN, LOW); // ready !
 }
 
 //====================================================================================
