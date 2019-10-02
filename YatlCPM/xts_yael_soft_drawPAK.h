@@ -5,6 +5,8 @@
 */
 
 
+#define WEIRD_MODE 1
+
 // filename is "/Z/0/packXXX.pak"
 // reads&display image #numInPak of packed image from filename
 static void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
@@ -44,7 +46,7 @@ static void drawImgFromPAK(char* filename, int x, int y, int numInPak) {
         int ct = pakFile.read( (uint8_t*)scanArray, SCAN_ARRAY_HEIGHT * w*2 ); // *2 cf U16
         if ( ct <= 0 ) { Serial.println("Oups EOF !"); break; }
 
-#if MODE_4INCH
+#if WEIRD_MODE
         // Cf ESP32 isn't an ARM -> it's a RISC MCU
         // in reality I don't really know why .....
         for(int i=0; i < ct/2; i++) {

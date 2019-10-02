@@ -110,14 +110,15 @@ void setupBridge() {
 //====================================================================================
 
 void led(bool state, bool fastMode) {
-    if ( state ) { bridgeSerial.write('L'); }
-    else  { bridgeSerial.write('l'); }
-
     if ( LED_BUILTIN_PIN > 0 ) {
         digitalWrite(LED_BUILTIN_PIN, state ? HIGH : LOW);
     }
 
-    if (!fastMode) delay(1);
+    if (fastMode) { return; } 
+
+    if ( state ) { bridgeSerial.write('L'); }
+    else  { bridgeSerial.write('l'); }
+    delay(1);
 }
 
 void drive_led(bool state) {
@@ -192,7 +193,7 @@ void lcd_setCursor(int col, int row) {
     bridgeSerial.write( (uint8_t)'c' );
     bridgeSerial.write( (uint8_t)col );
     bridgeSerial.write( (uint8_t)row );
-    delay(2);
+    delay(4);
 }
 
 void lcd_home() {

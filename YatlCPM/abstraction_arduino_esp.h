@@ -137,13 +137,13 @@ int _sys_select(uint8 *disk) {
 	uint8 result = FALSE;
 	File f;
 
-	// driveLED(true);
+	driveLED(true);
 	if (f = SD.open( getFileEntryPath((char *)disk), O_READ)) {
 		if (f.isDirectory())
 			result = TRUE;
 		f.close();
 	}
-	// driveLED(false);
+	driveLED(false);
 	return(result);
 }
 
@@ -151,12 +151,12 @@ long _sys_filesize(uint8 *filename) {
 	long l = -1;
 	File f;
 
-	// driveLED(true);
+	driveLED(true);
 	if (f = SD.open( getFileEntryPath((char *)filename), O_RDONLY)) {
 		l = f.size();
 		f.close();
 	}
-	// driveLED(false);
+	driveLED(false);
 	return(l);
 }
 
@@ -173,20 +173,20 @@ void stopCounter(const char* signature) {
 
 
 int _sys_openfile(uint8 *filename) {
-	startCounter();
+	// startCounter();
 
 	File f;
 	int result = 0;
 
-	// driveLED(true);
+	driveLED(true);
 	f = SD.open( getFileEntryPath(((char *)filename) ), O_READ);
 	if (f) {
 		f.close();
 		result = 1;
 	}
-	// driveLED(false);
+	driveLED(false);
 
-	stopCounter("opnF");
+	// stopCounter("opnF");
 	return(result);
 }
 
@@ -194,14 +194,14 @@ int _sys_makefile(uint8 *filename) {
 	File f;
 	int result = 0;
 
-	// driveLED(true);
+	driveLED(true);
 	f = SD.open((char *)filename, O_CREAT | O_WRITE);
 	// f = SD.open( getFileEntryPath((char *)filename), O_WRITE);
 	if (f) {
 		f.close();
 		result = 1;
 	}
-	// driveLED(false);
+	driveLED(false);
 	return(result);
 }
 
@@ -258,7 +258,7 @@ bool _sys_extendfile(char *fn, unsigned long fpos)
 	File f;
 	unsigned long i;
 
-	// driveLED(true);
+	driveLED(true);
 	if (f = SD.open(fn, O_WRITE | O_APPEND)) {
 	// if (f = SD.open( getFileEntryPath(fn) , O_APPEND_WR)) {
 		if (fpos > f.size()) {
@@ -280,7 +280,7 @@ bool _sys_extendfile(char *fn, unsigned long fpos)
 	} else {
 		result = false;
 	}
-	// driveLED(false);
+	driveLED(false);
 	return(result);
 }
 
@@ -301,7 +301,7 @@ uint8 _sys_readseq(uint8 *filename, long fpos) {
 	uint8 dmabuf[128];
 	uint8 i;
 
-	// driveLED(true);
+	driveLED(true);
 
 	// 82ms
 	// if (_sys_extendfile((char*)filename, fpos))
@@ -367,7 +367,7 @@ uint8 _sys_readseq(uint8 *filename, long fpos) {
 		Serial.println("file was false");
 		result = 0x10;
 	}
-	// driveLED(false);
+	driveLED(false);
 
 	// stopCounter("redS");
 	return(result);
@@ -397,7 +397,7 @@ uint8 _sys_writeseq(uint8 *filename, long fpos) {
 }
 
 uint8 _sys_readrand(uint8 *filename, long fpos) {
-	startCounter();
+	// startCounter();
 
 	uint8 result = 0xff;
 	File f;
@@ -427,7 +427,7 @@ uint8 _sys_readrand(uint8 *filename, long fpos) {
 	}
 	driveLED(false);
 
-	stopCounter("redR");
+	// stopCounter("redR");
 	return(result);
 }
 
