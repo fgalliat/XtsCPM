@@ -239,10 +239,10 @@ void setup(void) {
     if ( yael_subMcuIsReady() ) {
       yael_lcd_cls();
       //              12345678901234567890
-      yael_lcd_print("Welcome @ Xtase YAEL\n");
-      yael_lcd_print("Running CP/M 2.2\n");
-      yael_lcd_print("On ESP32 Board\n");
-      yael_lcd_print("@Oct 2019 - Xtase");
+      yael_lcd_println("Welcome @ Xtase YAEL", 0);
+      yael_lcd_println("Running CP/M 2.2    ", 1);
+      yael_lcd_println("On ESP32 Board      ", 2);
+      yael_lcd_println("@Oct 2019 - Xtase", 3);
     }
 #endif
 

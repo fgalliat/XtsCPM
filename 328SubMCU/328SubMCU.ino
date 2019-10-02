@@ -191,12 +191,15 @@ int loopCpt = -1;
 #define PORT_NONE 0
 #define PORT_HARD 1
 #define PORT_SOFT 2
-char line[20+1];
+// +2 because terminator is never append to buffer
+// then return < 0 if next entry
+#define LINE_LEN (20+2)
+char line[LINE_LEN+1];
 
 int serReadLine(int port) {
-  memset(line, 0x00, 20+1);
-  if ( port == PORT_HARD ) { return Serial.readBytesUntil('\n', line, 20); }
-  return bridge.readBytesUntil('\n', line, 20);
+  memset(line, 0x00, LINE_LEN+1);
+  if ( port == PORT_HARD ) { return Serial.readBytesUntil('\n', line, LINE_LEN); }
+  return bridge.readBytesUntil('\n', line, LINE_LEN);
 }
 
 int serRead(int port) {

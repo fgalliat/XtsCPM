@@ -30,7 +30,7 @@
 
 #define SUBMCU_READY_PIN 35
 
-#define LED_BUILTIN_PIN 25
+#define LED_BUILTIN_PIN 27
 
 //====================================================================================
 

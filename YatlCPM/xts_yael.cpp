@@ -204,7 +204,7 @@ void lcd_print(char* str) {
     bridgeSerial.write( (uint8_t)'P' );
     bridgeSerial.print( str );
     bridgeSerial.write( (uint8_t)'\n' );
-    delay(2);
+    delay(4);
 }
 
 void lcd_println(char* str, int lineNum) {
@@ -212,8 +212,9 @@ void lcd_println(char* str, int lineNum) {
 
     bridgeSerial.write( (uint8_t)'P' );
     bridgeSerial.print( str );
+    // bridgeSerial.write( (uint8_t)'\r' );
     bridgeSerial.write( (uint8_t)'\n' );
-    delay(2);
+    delay(4);
 }
 
 //====================================================================================
@@ -260,9 +261,9 @@ TFT_eSPI tft = TFT_eSPI();
 //  TFT_DC    D15|           |D13 SD_CS
 //  SD_MISO   D02|           |D12 BUZZER - certified
 //  SD_MOSI   D04|           |D14 SD_CLK
-//  Sub_MCU   RX2|           |D27 
+//  Sub_MCU   RX2|           |D27 LED
 //  Sub_MCU   TX2|           |D26 TS_CS
-//  TFT_CS    D05|           |D25 (??) LED !! not sure
+//  TFT_CS    D05|           |D25 ~~
 //  TFT_CLK   D18|           |D33 TX1 (aux ExtPort)
 //  TFT_MISO  D19|           |D32 RX1 (aux ExtPort)
 //            D21|           |D35 (??) SubMCU /READY \__ Cf spec: INPUT ONLY
