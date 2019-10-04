@@ -134,6 +134,8 @@
    }
 
    void _consoleSetCursor(int col, int row) {
+      if ( col < 0 ) { col = 0; }
+      if ( row < 0 ) { row = 0; }
       consoleCursorX = col;
       consoleCursorY = row;
       __setCursor(consoleCursorX * consoleCurrentFontWidth, consoleCursorY * consoleCurrentFontHeight);
@@ -419,6 +421,7 @@
             if ( __escapeChar1 == 'C' ) { curTextAttr = 0x00; }
             else if ( __escapeChar1 == 'B' ) { curTextAttr = 0x01; }
             else if ( __escapeChar1 == '[' ) { __escapeSeq = true; }
+            else if ( __escapeChar1 == '=' ) { __escapeSeq = true; }
             else if ( __escapeChar1 == '$' ) { 
                // vt-MUSIC mode
                __escapeMSeq = true;
@@ -454,6 +457,21 @@
             } else 
 
             if ( __escapeSeq ) {
+               if ( __escapeChar1 == '=' ) {
+                  // Pascal GotoXY native cursor control
+                  vt100seq[ strlen(vt100seq) ] = ch;
+                  if ( strlen(vt100seq) >= 2 ) {
+                     __escapeSeq = false;
+                     uint8_t ch0 = vt100seq[0];
+                     uint8_t ch1 = vt100seq[1];
+                     ch0 -= 31; // Y
+                     ch1 -= 31; // X
+                     _consoleSetCursor(ch1-1, ch0-1);
+                     return;
+                  }
+               }
+
+
                if ( ch >= 'A' && ch <= 'z'  ) {
                   vt100seq[ strlen(vt100seq) ] = ch;
                   // Serial.println( ch );

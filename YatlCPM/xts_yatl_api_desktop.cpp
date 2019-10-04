@@ -58,6 +58,7 @@
         bool ok = sdlScreen.init();
         if ( !ok ) { return ok; }
         _setConsoleMode(LCD_CONSOLE_DEF_COLS);
+        // _setConsoleMode(LCD_CONSOLE_40_COLS);
         return ok;
     }
 
