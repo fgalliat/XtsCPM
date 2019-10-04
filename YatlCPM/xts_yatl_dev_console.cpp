@@ -460,15 +460,28 @@
                if ( __escapeChar1 == '=' ) {
                   // Pascal GotoXY native cursor control
                   vt100seq[ strlen(vt100seq) ] = ch;
+
                   if ( strlen(vt100seq) >= 2 ) {
                      __escapeSeq = false;
+                     __escapeChar = false;
                      uint8_t ch0 = vt100seq[0];
                      uint8_t ch1 = vt100seq[1];
-                     ch0 -= 31; // Y
-                     ch1 -= 31; // X
-                     _consoleSetCursor(ch1-1, ch0-1);
+                     int row = ch0 - 31; // Y
+                     int col = ch1 - 31; // X
+
+                     #if 0
+                       char msg[32];
+                       sprintf(msg, "cursor(%d,%d)", col, row);
+                       for(int i=0; i < strlen(msg); i++) {
+                          putchar(msg[i]);
+                       }
+                     #endif
+
+
+                     _consoleSetCursor(col-1, row-1);
                      return;
                   }
+                  return;
                }
 
 
