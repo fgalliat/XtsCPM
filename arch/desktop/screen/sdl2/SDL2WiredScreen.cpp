@@ -198,10 +198,15 @@ void *_xts_keyThread(void *argument){
 
     // called from Thread
     void __doBlitt() {
-        if (_BLITT_LOCKED) { return; }
+        if (_BLITT_LOCKED) { 
+            // char ch = '!'; putchar(ch); putchar(ch); putchar(ch); putchar(ch); putchar(ch); 
+            return; 
+        }
         SDL_UpdateTexture(texture, NULL, surface->pixels, surface->pitch);
         SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
+
+        // char ch = '$'; putchar(ch); putchar(ch); putchar(ch); putchar(ch); putchar(ch);
     }
 
     WiredScreen::WiredScreen() {
@@ -1078,6 +1083,7 @@ int_least16_t WiredScreen::drawChar(int_least16_t x, int_least16_t y, char c, ui
   if (size <= 1)
   {
     ret = x + width;
+
     if ((ret - 1) >= lcd_width)
     {
       return lcd_width + 1;
@@ -1086,6 +1092,12 @@ int_least16_t WiredScreen::drawChar(int_least16_t x, int_least16_t y, char c, ui
     {
       return lcd_width + 1;
     }
+
+// char msg[64];
+//         sprintf(msg, "A w:%d h:%d ret:%d, lw%d\n", width, height, ret, lcd_width);
+//         for(int i=0; i < strlen(msg); i++) {
+//             putchar(msg[i]);
+//         }
 
     //setArea(x, y, (x+width-1), (y+height-1));
 

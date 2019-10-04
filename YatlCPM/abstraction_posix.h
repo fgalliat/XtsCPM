@@ -113,6 +113,13 @@ uint8 _getch(void) {
 }
 
 void _putch(uint8 ch) {
+
+	// #ifdef DESKTOPYATL
+	// 	putchar( DESKTOPYATL ? 'Y' : 'N' );
+	// #else
+	//     putchar( '?' );
+	// #endif
+
 	putchar(ch);
 	#ifdef DESKTOPYATL
 	yatl.getScreen()->write(ch);
