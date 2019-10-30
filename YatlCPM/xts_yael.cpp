@@ -267,8 +267,8 @@ TFT_eSPI tft = TFT_eSPI();
 //  TFT_CS    D05|           |D25 ~~
 //  TFT_CLK   D18|           |D33 TX1 (aux ExtPort)
 //  TFT_MISO  D19|           |D32 RX1 (aux ExtPort)
-//            D21|           |D35 (??) SubMCU /READY \__ Cf spec: INPUT ONLY
-//            RX0|           |D34 (??) MP3 /BUSY     /
+//            D21|           |D35 SubMCU /READY \__ Cf spec: INPUT ONLY
+//            RX0|           |D34 MP3 /BUSY     /
 //            TX0|           |VN
 //            D22|           |VP
 //  TFT_MOSI  D23|___________|EN /RESET
