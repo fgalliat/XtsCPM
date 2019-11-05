@@ -79,24 +79,92 @@
       void __fillPixelRect(int x, int y, int w, int h, uint16_t* bgColor);
       void __write1char(char ch); // tft.write(ch)
 
-      void __setTextColor(uint16_t color) { tft.setTextColor( color ); }
       void __setFont(int fontMode) {
          // YAEL has ONLY ONE font for NOW
       }
-      void __setCursor(int xPx, int yPx) {
-         tft.setCursor(xPx, yPx);
-      }
-      void __clearScreen(uint16_t bgColor) { tft.fillScreen(bgColor); }
 
-      void __fillRect(int x, int y, int w, int h, uint16_t bgColor) {
-         tft.fillRect(x, y, w, h, bgColor);
-      }
+      void __setTextColor(uint16_t color) { tft.setTextColor( color ); }
 
       void __fillPixelRect(int x, int y, int w, int h, uint16_t* bgColor) {
          tft.pushRect(x, y, w, h, bgColor);
       }
 
-      void __write1char(char ch) { tft.write(ch); }
+// **************************************************
+#define HAS_SMALL_LCD 1
+// **************************************************
+#if HAS_SMALL_LCD
+   #include <Wire.h>
+   #include <I2C_LCD.h>
+   I2C_LCD LCD;
+   uint8_t I2C_LCD_ADDRESS = 0x51;
+
+bool LCD_inited = false;
+
+void setupI2CLCD(void)
+{
+    LCD_inited = false;
+
+    Wire.begin();         //I2C controller initialization.
+    LCD.WorkingModeConf( (LCD_SwitchState)OFF, (LCD_SwitchState)OFF, (LCD_WorkingMode)WM_CharMode );
+
+    //8*16 font size, auto new line, black character on white back ground.
+    //  LCD.FontModeConf(Font_8x16_1, FM_ANL_AAA, BLACK_BAC); 
+   //  LCD.FontModeConf(Font_6x8, FM_ANL_AAA, BLACK_BAC); 
+    LCD.FontModeConf(Font_6x8, FM_MNL_MAA, BLACK_BAC); 
+
+    LCD_inited = true;
+}
+
+int _lastCursX=0;
+int _lastCursY=0;
+
+bool checkInit() {
+   if (LCD_inited) { return true; }
+   setupI2CLCD();
+   return LCD_inited;
+}
+
+#endif
+
+      void __setCursor(int xPx, int yPx) {
+         tft.setCursor(xPx, yPx);
+         #if HAS_SMALL_LCD
+            _lastCursX = xPx;
+            _lastCursY = yPx;
+            if ( _lastCursX < 0 || _lastCursX > 127 || _lastCursY < 0 || _lastCursY > 63 ) { return; }
+            LCD.CharGotoXY(xPx,yPx);
+         #endif
+      }
+      void __clearScreen(uint16_t bgColor) { 
+         tft.fillScreen(bgColor); 
+         #if HAS_SMALL_LCD
+            
+            if (!LCD_inited) LCD.CleanAll(WHITE);
+            checkInit();
+            LCD.CharGotoXY(0,0);
+         #endif
+      }
+
+      void __fillRect(int x, int y, int w, int h, uint16_t bgColor) {
+         tft.fillRect(x, y, w, h, bgColor);
+         #if HAS_SMALL_LCD
+            if ( x < 0 || x > 127 || y < 0 || y > 63 ) { return; }
+            LCD.DrawRectangleAt(x, y, w, h, WHITE_FILL);
+         #endif
+      }
+
+      
+
+      void __write1char(char ch) { 
+         tft.write(ch); 
+         #if HAS_SMALL_LCD
+            if ( _lastCursX < 0 || _lastCursX > 127 || _lastCursY < 0 || _lastCursY > 63 ) { return; }
+
+            checkInit();
+            
+            LCD.write(ch);
+         #endif
+      }
 
   // ==========] Console Routines [==========
 
