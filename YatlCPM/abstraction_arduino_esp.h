@@ -85,8 +85,8 @@ char _msg[64];
 /* Memory abstraction functions */
 /*===============================================================================*/
 bool _RamLoad(char *filename, uint16 address) {
-	long t0, t1;
-	t0 = millis();
+	// long t0, t1;
+	// t0 = millis();
 	File f;
 	bool result = false;
 
@@ -96,9 +96,9 @@ bool _RamLoad(char *filename, uint16 address) {
 		f.close();
 		result = true;
 	}
-	t1 = millis();
-	sprintf( _msg, "RamL %lu ms", (t1-t0) ); 
-	Serial.println(_msg);
+	// t1 = millis();
+	// sprintf( _msg, "RamL %lu ms", (t1-t0) ); 
+	// Serial.println(_msg);
 	return(result);
 }
 
