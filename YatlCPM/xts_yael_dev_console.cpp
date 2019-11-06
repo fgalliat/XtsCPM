@@ -89,7 +89,12 @@
          tft.pushRect(x, y, w, h, bgColor);
       }
 
+
 // **************************************************
+int ttyFrameX = 0;
+int ttyFrameY = 0;
+int ttyFrameW = -1;
+int ttyFrameH = -1;
 #define HAS_SMALL_LCD 1
 // **************************************************
 #if HAS_SMALL_LCD
@@ -100,17 +105,28 @@
 
 bool LCD_inited = false;
 
+// forward symbols
+extern const int ttyConsoleWidth, ttyConsoleHeight;
+extern int consoleCursorX, consoleCursorY, consoleCurrentFontWidth, consoleCurrentFontHeight;
+extern bool yetFixedSmallLcdFont;
+
 void setupI2CLCD(void)
 {
     LCD_inited = false;
 
     Wire.begin();         //I2C controller initialization.
     LCD.WorkingModeConf( (LCD_SwitchState)OFF, (LCD_SwitchState)OFF, (LCD_WorkingMode)WM_CharMode );
+   //  LCD.WorkingModeConf( (LCD_SwitchState)OFF, (LCD_SwitchState)OFF, (LCD_WorkingMode)WM_RamMode );
 
     //8*16 font size, auto new line, black character on white back ground.
     //  LCD.FontModeConf(Font_8x16_1, FM_ANL_AAA, BLACK_BAC); 
    //  LCD.FontModeConf(Font_6x8, FM_ANL_AAA, BLACK_BAC); 
     LCD.FontModeConf(Font_6x8, FM_MNL_MAA, BLACK_BAC); 
+
+    ttyFrameX = 0;
+    ttyFrameY = 0;
+    ttyFrameW = 20;
+    ttyFrameH = 8; // -1 because of screen native scroll ?
 
     LCD_inited = true;
 }
@@ -119,8 +135,12 @@ int _lastCursX=0;
 int _lastCursY=0;
 
 bool checkInit() {
+   ttyFrameW = 20;
+   ttyFrameH = 8; // -1 because of screen native scroll ?
+
    if (LCD_inited) { return true; }
    setupI2CLCD();
+
    return LCD_inited;
 }
 
@@ -129,27 +149,63 @@ bool checkInit() {
       void __setCursor(int xPx, int yPx) {
          tft.setCursor(xPx, yPx);
          #if HAS_SMALL_LCD
-            _lastCursX = xPx;
-            _lastCursY = yPx;
-            if ( _lastCursX < 0 || _lastCursX > 127 || _lastCursY < 0 || _lastCursY > 63 ) { return; }
-            LCD.CharGotoXY(xPx,yPx);
+            // _lastCursX = xPx;
+            // _lastCursY = yPx;
+            // if ( _lastCursX < 0 || _lastCursX > 127 || _lastCursY < 0 || _lastCursY > 63 ) { return; }
+            // // LCD.CharGotoXY(xPx,yPx);
          #endif
       }
       void __clearScreen(uint16_t bgColor) { 
          tft.fillScreen(bgColor); 
          #if HAS_SMALL_LCD
-            
             if (!LCD_inited) LCD.CleanAll(WHITE);
             checkInit();
-            LCD.CharGotoXY(0,0);
+            
+            // LCD.CleanAll(WHITE);
+            int w = ttyFrameW;
+
+            char line[w+1];
+            memset( line, 0x00, w+1 ); // clear
+            memset( line, ' ', w ); // space
+
+            for(int row=0; row < ttyFrameH; row++) {
+               //   LCD.DispStringAt(line, 0, (row * consoleCurrentFontHeight) );
+               if ( !yetFixedSmallLcdFont ) {
+                  LCD.FontModeConf(Font_6x8, FM_ANL_AAA, BLACK_BAC); 
+                  yetFixedSmallLcdFont = true;
+               }
+               LCD.CharGotoXY(0,(row * consoleCurrentFontHeight));       //Set the start coordinate.
+               LCD.print(line);
+            }
          #endif
       }
 
       void __fillRect(int x, int y, int w, int h, uint16_t bgColor) {
          tft.fillRect(x, y, w, h, bgColor);
          #if HAS_SMALL_LCD
-            if ( x < 0 || x > 127 || y < 0 || y > 63 ) { return; }
-            LCD.DrawRectangleAt(x, y, w, h, WHITE_FILL);
+            checkInit();
+            // // if ( x < 0 || x > 127 || y < 0 || y > 63 ) { return; }
+
+            // if ( x < 0 ) { x = 0; }
+            // if ( y < 0 ) { y = 0; }
+            // if ( x >= 128 ) { x = 128-1; }
+            // if ( y >= 64 ) { y = 64-1; }
+            // if ( x + w > 128 ) { w = 128 - x; }
+            // if ( y + h > 64  ) { h = 64  - y; }
+
+            // if ( w <= 0 || h <= 0 ) { return; }
+
+            // // LCD.DrawRectangleAt(x, y, w, h, WHITE_FILL);
+            // // LCD.DrawRectangleAt(x, y, w, h, BLACK_FILL);
+            // // x /= consoleCurrentFontWidth; w /= consoleCurrentFontWidth;
+            // // x = 0; w = 20;
+            // w = 20 - (x/consoleCurrentFontWidth);
+            // if ( w <= 0 ) { return; }
+            // char line[w+1]; memset(line, '&', w); line[w] = 0x00;
+            // // for(int i=0; i < w; i++) {
+            // //    LCD.DispCharAt('#', (x+i)*consoleCurrentFontWidth, y);
+            // // }
+            // LCD.DispStringAt(line, x, y);
          #endif
       }
 
@@ -158,11 +214,18 @@ bool checkInit() {
       void __write1char(char ch) { 
          tft.write(ch); 
          #if HAS_SMALL_LCD
-            if ( _lastCursX < 0 || _lastCursX > 127 || _lastCursY < 0 || _lastCursY > 63 ) { return; }
-
             checkInit();
-            
-            LCD.write(ch);
+
+            // if ( _lastCursX < 0 || _lastCursX > 127 || _lastCursY < 0 || _lastCursY > 63 ) { return; }
+
+            if ( ttyFrameW < 0 ) { ttyFrameW = ttyConsoleWidth; }
+            if ( ttyFrameH < 0 ) { ttyFrameH = ttyConsoleHeight; }
+
+            if ( consoleCursorX >= ttyFrameX && consoleCursorX < ttyFrameX+ttyFrameW &&
+               consoleCursorY >= ttyFrameY && consoleCursorY < ttyFrameY+ttyFrameH ) {
+               // LCD.write(ch);
+               LCD.DispCharAt(ch, consoleCursorX*consoleCurrentFontWidth, consoleCursorY*consoleCurrentFontHeight);
+            }
          #endif
       }
 
@@ -246,6 +309,11 @@ bool checkInit() {
          consoleCurrentFontHeight = 8;
          consoleCurrentFontWidth  = 6;
       }
+
+      ttyFrameX = 0;
+      ttyFrameY = 0;
+      ttyFrameW = ttyConsoleWidth;
+      ttyFrameH = ttyConsoleHeight;
    }
 
    // 0 based
@@ -312,7 +380,45 @@ bool checkInit() {
    #define TTY_ATTR_ACCENT2  0x02
    #define TTY_ATTR_INVVIDEO 0x03
 
+   bool yetFixedSmallLcdFont = false;
+
    void _consoleRenderOneLine(int row, bool clearArea) {
+
+      #if HAS_SMALL_LCD
+        int w = ttyFrameW;
+
+        char line[w+1];
+        memset( line, 0x00, w+1 ); // clear
+        memset( line, ' ', w ); // space
+
+        char ch;
+        for(int i=0; i < w; i++) {
+           ch = ttyConsoleFrame[ (row*ttyConsoleWidth)+i ];
+           if ( ch == 0x00 ) { break; }
+           if ( ch <= 13 ) {
+            //   Serial.print("there was a ("); 
+            //   Serial.print((int)ch); 
+            //   Serial.print(") at "); 
+            //   Serial.println(i); 
+              continue; 
+           }
+           line[i] = ch;
+        }
+
+         //   LCD.DispStringAt(line, 0, (row * consoleCurrentFontHeight) );
+         if ( !yetFixedSmallLcdFont ) {
+            LCD.FontModeConf(Font_6x8, FM_ANL_AAA, BLACK_BAC); 
+            yetFixedSmallLcdFont = true;
+         }
+         LCD.CharGotoXY(0,(row * consoleCurrentFontHeight));       //Set the start coordinate.
+         LCD.print(line);
+
+      //   Serial.println( line );
+
+        return;
+      #endif
+
+
       if ( ttyConsoleFrame[ (row*ttyConsoleWidth)+0 ] == 0x00) {
          // do clear the area ????
          if ( clearArea ) {
@@ -323,10 +429,17 @@ bool checkInit() {
       memset(_c_line, 0x00, ttyConsoleWidth+1);
       memcpy(_c_line, &ttyConsoleFrame[ (row*ttyConsoleWidth)+0 ], ttyConsoleWidth );
 
+      // since 06/11/2019
+      __fillRect(0, row*consoleCurrentFontHeight, TFT_WIDTH, consoleCurrentFontHeight, TTY_COLOR_BG);
+
       #ifdef COLORED_CONSOLE
          // beware if not clearDisplay
          __setCursor(0, row * consoleCurrentFontHeight);
          int c=0;
+
+         consoleCursorX = 0;
+         consoleCursorY = row;
+
          while ( _c_line[c] != 0x00 ) {
             bool invVideo = ttyConsoleAttrs[ (row*ttyConsoleWidth)+c ] == TTY_ATTR_INVVIDEO;
 
@@ -344,7 +457,8 @@ bool checkInit() {
             }
 
             __write1char( _c_line[c] );
-
+            consoleCursorX++;
+            
             c++;
             
             #ifdef LCD_TINYFONT
@@ -360,9 +474,15 @@ bool checkInit() {
    }
 
    void consoleRenderFull(bool clearDisplay) {
-      if (clearDisplay) { __clearScreen(TTY_COLOR_BG); }
+      #if HAS_SMALL_LCD < 1
+         if (clearDisplay) { __clearScreen(TTY_COLOR_BG); }
+      #endif
       consoleCursorX = 0;
-      for(int y=0; y < ttyConsoleHeight; y++) {
+
+      int height = ttyConsoleHeight;
+      height = ttyFrameH;
+
+      for(int y=0; y < height; y++) {
          consoleCursorY = y;
          _consoleRenderOneLine(consoleCursorY, false);
       }
@@ -392,9 +512,17 @@ bool checkInit() {
 
       memmove( &ttyConsoleFrame[ 0 ], &ttyConsoleFrame[ ttyConsoleWidth ], ttyConsoleFrameSize - ttyConsoleWidth );
       memset( &ttyConsoleFrame[ ttyConsoleFrameSize - ttyConsoleWidth ], 0x00, ttyConsoleWidth );
-      consoleCursorX = 0;
-      consoleCursorY = ttyConsoleHeight - 1;
+      
       consoleRenderFull();
+
+// Serial.print("CON-BOUNDS ");
+// Serial.print(ttyFrameW);
+// Serial.print(" ");
+// Serial.print(ttyFrameH);
+// Serial.println("");
+
+      consoleCursorX = 0;
+      consoleCursorY = min(ttyConsoleHeight, ttyFrameH) - 1;
    }
 
    // erase from current position to EndOfLine
@@ -473,7 +601,7 @@ bool checkInit() {
          hideCursor();
          consoleCursorX = 0;
          consoleCursorY++;
-         if ( consoleCursorY >= ttyConsoleHeight ) {
+         if ( consoleCursorY >= min(ttyConsoleHeight, ttyFrameH) ) {
             _scrollUp();
          }
          // showCursor();
@@ -763,6 +891,11 @@ bool checkInit() {
             // render spaces Cf '\b'
             hideCursor();
          }
+
+         #if HAS_SMALL_LCD
+           __write1char( ' ' );
+         #endif
+
       } else {
 
          // if ( ch < 32 || ch >= 127 ) {
@@ -782,6 +915,7 @@ bool checkInit() {
             hideCursor();
          }
 
+
          __write1char( ch );
          __escapeChar1 = 0x00;
       }
@@ -789,7 +923,7 @@ bool checkInit() {
       consoleCursorX++;
       if ( consoleCursorX >= ttyConsoleWidth ) {
          consoleCursorY++;
-         if ( consoleCursorY >= ttyConsoleHeight ) {
+         if ( consoleCursorY >= min(ttyConsoleHeight, ttyFrameH) ) {
             _scrollUp();
          }
       }
