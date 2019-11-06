@@ -388,22 +388,27 @@ bool checkInit() {
         int w = ttyFrameW;
 
         char line[w+1];
-        memset( line, 0x00, w+1 ); // clear
         memset( line, ' ', w ); // space
 
-        char ch;
-        for(int i=0; i < w; i++) {
-           ch = ttyConsoleFrame[ (row*ttyConsoleWidth)+i ];
-           if ( ch == 0x00 ) { break; }
-           if ( ch <= 13 ) {
-            //   Serial.print("there was a ("); 
-            //   Serial.print((int)ch); 
-            //   Serial.print(") at "); 
-            //   Serial.println(i); 
-              continue; 
-           }
-           line[i] = ch;
-        }
+         //   char ch;
+         //   for(int i=0; i < w; i++) {
+         //      ch = ttyConsoleFrame[ (row*ttyConsoleWidth)+i ];
+         //      if ( ch == 0x00 ) { break; }
+         //      if ( ch <= 13 ) {
+         //       //   Serial.print("there was a ("); 
+         //       //   Serial.print((int)ch); 
+         //       //   Serial.print(") at "); 
+         //       //   Serial.println(i); 
+         //         continue; 
+         //      }
+         //      line[i] = ch;
+         //   }
+         int tlen = strlen( &ttyConsoleFrame[ (row*ttyConsoleWidth)+0 ] );
+         if ( tlen < 0 ) { tlen = 0; }
+         if ( tlen > w ) { tlen = w; }
+         memcpy(&line[0], &ttyConsoleFrame[ (row*ttyConsoleWidth)+0 ], tlen);
+
+        line[w] = 0x00;
 
          //   LCD.DispStringAt(line, 0, (row * consoleCurrentFontHeight) );
          if ( !yetFixedSmallLcdFont ) {
