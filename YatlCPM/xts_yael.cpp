@@ -342,7 +342,7 @@ void _yield() {
         }
     }
 
-    void telnetdInputAvailable() {
+    int telnetdInputAvailable() {
         if (!telnetdStarted) { return 0; }
         int i;
         for (i = 0; i < MAX_SRV_CLIENTS; i++) {
@@ -356,7 +356,7 @@ void _yield() {
         return 0;
     }
 
-    void telnetdInputRead() {
+    int telnetdInputRead() {
         if (!telnetdStarted) { return -1; }
         int i;
         for (i = 0; i < MAX_SRV_CLIENTS; i++) {
