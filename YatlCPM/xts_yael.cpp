@@ -373,6 +373,10 @@ void _yield() {
                 // working char by char is not very efficient
                 char ch = serverClients[i].read();
                     
+                serverClients[i].println("YAEL Bye");
+                serverClients[i].stop();
+
+
                 // if ( ch == 27 ) { // Esc.
                 //     ch = serverClients[i].read();
                 //     if ( ch == 'q' ) {
@@ -912,6 +916,15 @@ char* yael_wifi_getSSID() { return getSSID(); }
 bool yael_wifi_close() { stopWiFi(); return true; }
 bool yael_wifi_beginAP() { bool ok = startWiFi(false); return ok; }
 bool yael_wifi_startTelnetd() { stopTelnetd(); bool ok = startTelnetd(); return ok; }
+
+bool yael_wifi_loop() { loopTelnetd(); }
+
+
+// run-time handler function
+  void xts_hdl() {
+      yael_wifi_loop();
+  }
+
 // ==========================
 
 void yael_dbug(char* str) { 

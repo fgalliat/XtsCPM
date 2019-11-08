@@ -581,12 +581,19 @@ uint8 _getch(void) {
 		}
 
 		while (!Serial.available()) {
+#ifdef USE_XTS_HDL
+        xts_hdl();
+#endif
 			if ( !keybLocked && yatl.getKeyboard()->available() > 0 ) {
 				return yatl.getKeyboard()->read();
 			}
 		}
 	#else
-		while (!Serial.available());
+		while (!Serial.available()) {
+#ifdef USE_XTS_HDL
+        xts_hdl();
+#endif
+		}
 	#endif
 	return(Serial.read());
 }

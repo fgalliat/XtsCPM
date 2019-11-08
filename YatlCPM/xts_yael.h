@@ -33,6 +33,13 @@
 #define LED_BUILTIN_PIN 27
 
 //====================================================================================
+  // Xtase run-time Handler
+  #define USE_XTS_HDL 1
+  // run-time handler function
+  void xts_hdl();
+
+
+//====================================================================================
 
   static uint16_t rgb(uint8_t r,uint8_t g,uint8_t b) { return (uint16_t)( (( r *31/255 )<<11) | (( g *63/255 )<<5) | ( b *31/255 ) );}
 
@@ -117,6 +124,8 @@ char* yael_wifi_getSSID();
 bool yael_wifi_close();
 bool yael_wifi_beginAP();
 bool yael_wifi_startTelnetd();
+
+bool yael_wifi_loop();
 // ==========================
 
 void yael_dbug(char* str);
