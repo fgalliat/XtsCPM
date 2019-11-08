@@ -126,6 +126,10 @@ bool yael_wifi_beginAP();
 bool yael_wifi_startTelnetd();
 
 bool yael_wifi_loop();
+
+void yael_wifi_telnetd_broadcast(char ch);
+int  yael_wifi_telnetd_available();
+int  yael_wifi_telnetd_read();
 // ==========================
 
 void yael_dbug(char* str);

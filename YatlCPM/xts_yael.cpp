@@ -330,6 +330,46 @@ void _yield() {
 
     }
 
+    void broadcastToTelnetd(char ch) {
+        if (!telnetdStarted) { return; }
+        int i;
+        for (i = 0; i < MAX_SRV_CLIENTS; i++) {
+            if ( !serverClients[i] ) {
+                continue;
+            }
+
+            serverClients[i].write( ch );
+        }
+    }
+
+    void telnetdInputAvailable() {
+        if (!telnetdStarted) { return 0; }
+        int i;
+        for (i = 0; i < MAX_SRV_CLIENTS; i++) {
+            if ( !serverClients[i] ) {
+                continue;
+            }
+
+            int k = serverClients[i].available();
+            if ( k > 0 ) { return k; }
+        }
+        return 0;
+    }
+
+    void telnetdInputRead() {
+        if (!telnetdStarted) { return -1; }
+        int i;
+        for (i = 0; i < MAX_SRV_CLIENTS; i++) {
+            if ( !serverClients[i] ) {
+                continue;
+            }
+
+            int k = serverClients[i].available();
+            if ( k > 0 ) { return serverClients[i].read(); }
+        }
+        return -1;
+    }
+
 
     void loopTelnetd() {
         if (!telnetdStarted) { return; }
@@ -352,7 +392,7 @@ void _yield() {
             }
 
             //no free/disconnected spot so reject
-            if (i == MAX_SRV_CLIENTS) {
+            if (i >= MAX_SRV_CLIENTS) {
                 server.available().println("busy");
                 // hints: server.available() is a WiFiClient with short-term scope
                 // when out of scope, a WiFiClient will
@@ -919,6 +959,9 @@ bool yael_wifi_startTelnetd() { stopTelnetd(); bool ok = startTelnetd(); return 
 
 bool yael_wifi_loop() { loopTelnetd(); }
 
+void yael_wifi_telnetd_broadcast(char ch) { broadcastToTelnetd(ch); }
+int  yael_wifi_telnetd_available() { return telnetdInputAvailable(); }
+int  yael_wifi_telnetd_read() { return telnetdInputRead(); }
 
 // run-time handler function
   void xts_hdl() {

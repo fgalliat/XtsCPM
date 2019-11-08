@@ -557,12 +557,19 @@ uint8 _sys_makedisk(uint8 drive) {
 extern bool keybLocked;
 extern bool Serial_useable;
 
+#define USE_TELNETD_AS_IO 1
+
 int _kbhit(void) {
 	#ifdef HAS_KEYBOARD
 	  int kavail = keybLocked ? 0 : yatl.getKeyboard()->available();
 	  if ( kavail > 0 ) {
 			return kavail;
 	  }
+	#endif
+
+	#if USE_TELNETD_AS_IO
+	  int k = yael_wifi_telnetd_available();
+	  if ( k > 0 ) { return k; }
 	#endif
 
 	if ( !Serial_useable ) { return 0; }
@@ -584,6 +591,12 @@ uint8 _getch(void) {
 #ifdef USE_XTS_HDL
         xts_hdl();
 #endif
+
+#if USE_TELNETD_AS_IO
+	  int k = yael_wifi_telnetd_available();
+	  if ( k > 0 ) { return yael_wifi_telnetd_read(); }
+#endif
+
 			if ( !keybLocked && yatl.getKeyboard()->available() > 0 ) {
 				return yatl.getKeyboard()->read();
 			}
@@ -593,6 +606,12 @@ uint8 _getch(void) {
 #ifdef USE_XTS_HDL
         xts_hdl();
 #endif
+
+#if USE_TELNETD_AS_IO
+	  int k = yael_wifi_telnetd_available();
+	  if ( k > 0 ) { return yael_wifi_telnetd_read(); }
+#endif
+
 		}
 	#endif
 	return(Serial.read());
@@ -613,6 +632,11 @@ uint8 _getche(void) {
 	  #endif
   }
 #endif
+
+#if USE_TELNETD_AS_IO
+	  yael_wifi_telnetd_broadcast(ch);
+#endif
+
 	return(ch);
 }
 
@@ -628,6 +652,11 @@ void _putch(uint8 ch) {
 	else
 #endif
 	Serial.write(ch);
+
+#if USE_TELNETD_AS_IO
+	  yael_wifi_telnetd_broadcast(ch);
+#endif
+
 }
 
 void _clrscr(void) {
@@ -642,6 +671,11 @@ void _clrscr(void) {
 	else
 #endif
 	Serial.println("\e[H\e[J");
+
+#if USE_TELNETD_AS_IO
+	  yael_wifi_telnetd_broadcast( (char)26 );
+#endif
+
 }
 
 #endif
