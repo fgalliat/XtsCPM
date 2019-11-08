@@ -110,6 +110,15 @@ bool yael_fs_downloadFromSerial();
 
 bool yael_subMcuIsReady();
 
+// ==========================
+char* yael_wifi_getIP();
+char* yael_wifi_getSSID();
+
+bool yael_wifi_close();
+bool yael_wifi_beginAP();
+bool yael_wifi_startTelnetd();
+// ==========================
+
 void yael_dbug(char* str);
 void yael_dbug(const char* str);
 

@@ -326,33 +326,33 @@
         // Start the telnet server in APmode
         // See later for better
 
-        // // just to ensure WiFi will run...
-        // // Serial.println("Wasting IP");
-        // yatl.getWiFi()->getIP();
-        // // Serial.println("Closing WiFi");
-        // yatl.getWiFi()->close();
+        // just to ensure WiFi will run...
+        // Serial.println("Wasting IP");
+        yael_wifi_getIP();
+        // Serial.println("Closing WiFi");
+        yael_wifi_close();
 
-        // // Serial.println("Opening WiFi APmode");
-        // int ok = yatl.getWiFi()->beginAP();
-        // if ( ok <= 0 ) {
-        //   _puts("(!!) Wifi has not started !\n");
-        //   return 0;
-        // } else {
-        //   _puts("(ii) Wifi has started :");
-        //   _puts( (const char*) yatl.getWiFi()->getIP() );
-        //   _puts(" !\n");
-        // }
-        // ok = yatl.getWiFi()->startTelnetd();
-        // if ( ok <= 0 ) {
-        //   _puts("(!!) Telnetd has not started !\n");
-        //   return 0;
-        // } else {
-        //   _puts("(ii) Telnetd has started :23 !\n");
-        // }
+        // Serial.println("Opening WiFi APmode");
+        int ok = yael_wifi_beginAP();
+        if ( ok <= 0 ) {
+          _puts("(!!) Wifi has not started !\n");
+          return 0;
+        } else {
+          _puts("(ii) Wifi has started :");
+          _puts( (const char*) yael_wifi_getIP() );
+          _puts(" !\n");
+        }
+        ok = yael_wifi_startTelnetd();
+        if ( ok <= 0 ) {
+          _puts("(!!) Telnetd has not started !\n");
+          return 0;
+        } else {
+          _puts("(ii) Telnetd has started :23 !\n");
+        }
 
-        // return 1;
-        yael_dbug("Start Telnetd NYI");
-        return 0;
+        return 1;
+        // yael_dbug("Start Telnetd NYI");
+        // return 0;
       }
 
       return 0;

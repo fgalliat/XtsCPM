@@ -905,6 +905,15 @@ void yael_led(bool state, bool fastMode) { led(state, fastMode); }
 
 char yael_keyb_poll() { return pollKeyb(); }
 
+// ==========================
+char* yael_wifi_getIP() { return getLocalIP(); }
+char* yael_wifi_getSSID() { return getSSID(); }
+
+bool yael_wifi_close() { stopWiFi(); return true; }
+bool yael_wifi_beginAP() { bool ok = startWiFi(false); return ok; }
+bool yael_wifi_startTelnetd() { stopTelnetd(); bool ok = startTelnetd(); return ok; }
+// ==========================
+
 void yael_dbug(char* str) { 
     Serial.print("(ii) "); Serial.println(str); 
     yael_lcd_print(" (ii) ");
