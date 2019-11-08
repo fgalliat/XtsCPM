@@ -60,16 +60,33 @@ void _yield() {
 #define USE_WIFI 1
 
 #if USE_WIFI
-    #include <ESP8266WiFi.h>
+    // #include <ESP8266WiFi.h> // ESP-12 version (as ESP8266)
+    #include <WiFi.h>
 
     #include <algorithm> // std::min
 
     #warning "WiFi Active code"
 
-    void red(bool state) { yael_led(state); }
+    bool ledState = false;
+
+    void red(bool state) { ledState = state; yael_led(state); }
     void green(bool state) { /*yael_led(state);*/ }
     void blue(bool state) { /*yael_led(state);*/ }
 
+    void blink(int times, bool fast=true) {
+        long time = fast ? 100 : 400;
+        for(int i=0; i < times; i++) {
+            red(true);
+            delay(time);
+            red(false);
+            delay(time);
+        }
+    }
+
+    void toggleLed() {
+        ledState = !ledState;
+        red(ledState);
+    } 
 
     #define WIFI_CONN_MODE_NONE 0
     #define WIFI_CONN_MODE_STA  1
@@ -113,6 +130,140 @@ void _yield() {
     /*const*/ char* ssid = "None Yet";
     /*const*/ char* password = "None Yet";
 
+
+// =============] Server [================
+    const int port = 23;
+    WiFiServer server(port);
+    WiFiClient serverClients[MAX_SRV_CLIENTS];
+
+    bool wifiStarted = false;
+    bool telnetdStarted = false;
+
+    bool isWiFiStarted() { return wifiStarted; }
+    bool isTelnetdStarted() { return telnetdStarted; }
+
+    bool startWiFi(bool staMode=true) {
+        if ( wifiStarted ) {
+            return false;
+        }
+        wifiStarted = false;
+        wifiConnMode = WIFI_CONN_MODE_NONE;
+        if ( staMode ) {
+            WiFi.mode(WIFI_STA);
+            bool foundAsta = false;
+            int ssidIdx = 0;
+
+            while( !foundAsta ) {
+
+                ssid = (char*)ssids[ssidIdx];
+                password = (char*)pwds[ssidIdx];
+
+                WiFi.begin(ssid, password);
+                red(true); green(false);
+                int retry = 0;
+                while (WiFi.status() != WL_CONNECTED) {
+                    toggleLed();
+                    delay(500);
+                    if (retry > 6) { break; }
+                    retry++;
+                }
+
+                if (WiFi.status() == WL_CONNECTED) {
+                    foundAsta = true;
+                    break;
+                }
+
+                ssidIdx++;
+                if (ssidIdx >= STANB) {
+                    return false;
+                } 
+            }
+
+            red(false); green(true);
+            wifiConnMode = WIFI_CONN_MODE_STA;
+            wifiStarted = true;
+        } else {
+            WiFi.mode(WIFI_AP);
+            delay(200);
+            const char* _ssid = AP_SSID;
+            // must be longer then 8 chars
+            const char* _password = AP_PSK;
+            red(true); green(false); 
+            bool ok = WiFi.softAP(_ssid, _password);
+            if ( !ok ) {
+                return false;
+            }
+            red(false); green(true);
+            wifiConnMode = WIFI_CONN_MODE_AP;
+            wifiStarted = true;
+        }
+        return wifiStarted;
+    }
+
+    void stopWiFi() {
+        if (wifiConnMode == WIFI_CONN_MODE_AP) {
+            WiFi.softAPdisconnect();
+        } // else ?
+        WiFi.disconnect();
+        wifiStarted = false;
+        wifiConnMode = WIFI_CONN_MODE_NONE;
+    }
+
+    const int IPlen = 3+1+3+1+3+1+3;
+    char ip[IPlen+1];
+    char* getLocalIP() {
+        memset(ip, 0x00, IPlen+1);
+        if (wifiConnMode == WIFI_CONN_MODE_STA) {
+            strcpy(ip, WiFi.localIP().toString().c_str() );
+        } else if (wifiConnMode == WIFI_CONN_MODE_AP) {
+            strcpy(ip, WiFi.softAPIP().toString().c_str() );
+        } else {
+            strcpy(ip, "0.0.0.0");
+        }
+        return ip;
+    }
+
+    char currentSsid[32+1];
+    char* getSSID() {
+        memset(currentSsid, 0x00, 32+1);
+        if (wifiConnMode == WIFI_CONN_MODE_STA) {
+            strcpy(currentSsid, ssid );
+        } else if (wifiConnMode == WIFI_CONN_MODE_AP) {
+            // TODO : finish that
+            strcpy(currentSsid, AP_SSID );
+        } else {
+            strcpy(currentSsid, "None");
+        }
+        return currentSsid;
+    }
+
+    // ===] Server Mode[===
+
+    bool startTelnetd() {
+        if ( telnetdStarted ) { return false; }
+        if ( !wifiStarted ) { return false; }
+        telnetdStarted = false;
+        wifiUseMode = WIFI_USE_MODE_NONE;
+        server.begin();
+        server.setNoDelay(true);
+        telnetdStarted = true;
+        wifiUseMode = WIFI_USE_MODE_TELNETD;
+        return true;
+    }
+
+    void stopTelnetd() {
+        if ( !telnetdStarted ) { return; }
+        server.close();
+        telnetdStarted = false;
+        wifiUseMode = WIFI_USE_MODE_NONE;
+    }  
+
+    #define TELNET_MODE_NONE 0
+    #define TELNET_MODE_KEYB 1 
+
+    int telnetMode = TELNET_MODE_NONE;
+
+    // ================= Protocol ==========================
     void telnet_client_connected(int num) {
        WiFiClient clt = serverClients[num];
 
@@ -255,135 +406,11 @@ void _yield() {
 
     }
 
-// =============] Server [================
-    const int port = 23;
-    WiFiServer server(port);
-    WiFiClient serverClients[MAX_SRV_CLIENTS];
 
-    bool wifiStarted = false;
-    bool telnetdStarted = false;
 
-    bool isWiFiStarted() { return wifiStarted; }
-    bool isTelnetdStarted() { return telnetdStarted; }
-
-    bool startWiFi(bool staMode=true) {
-        if ( wifiStarted ) {
-            return false;
-        }
-        wifiStarted = false;
-        wifiConnMode = WIFI_CONN_MODE_NONE;
-        if ( staMode ) {
-            WiFi.mode(WIFI_STA);
-            bool foundAsta = false;
-            int ssidIdx = 0;
-
-            while( !foundAsta ) {
-
-                ssid = (char*)ssids[ssidIdx];
-                password = (char*)pwds[ssidIdx];
-
-                WiFi.begin(ssid, password);
-                red(true); green(false);
-                int retry = 0;
-                while (WiFi.status() != WL_CONNECTED) {
-                    toggleLed();
-                    delay(500);
-                    if (retry > 6) { break; }
-                    retry++;
-                }
-
-                if (WiFi.status() == WL_CONNECTED) {
-                    foundAsta = true;
-                    break;
-                }
-
-                ssidIdx++;
-                if (ssidIdx >= STANB) {
-                    return false;
-                } 
-            }
-
-            red(false); green(true);
-            wifiConnMode = WIFI_CONN_MODE_STA;
-            wifiStarted = true;
-        } else {
-            WiFi.mode(WIFI_AP);
-            delay(200);
-            const char* _ssid = AP_SSID;
-            // must be longer then 8 chars
-            const char* _password = AP_PSK;
-            red(true); green(false); 
-            bool ok = WiFi.softAP(_ssid, _password);
-            if ( !ok ) {
-                return false;
-            }
-            red(false); green(true);
-            wifiConnMode = WIFI_CONN_MODE_AP;
-            wifiStarted = true;
-        }
-        return wifiStarted;
-    }
-
-    void stopWiFi() {
-        if (wifiConnMode == WIFI_CONN_MODE_AP) {
-            WiFi.softAPdisconnect();
-        } // else ?
-        WiFi.disconnect();
-        wifiStarted = false;
-        wifiConnMode = WIFI_CONN_MODE_NONE;
-    }
-
-    const int IPlen = 3+1+3+1+3+1+3;
-    char ip[IPlen+1];
-    char* getLocalIP() {
-        memset(ip, 0x00, IPlen+1);
-        if (wifiConnMode == WIFI_CONN_MODE_STA) {
-            strcpy(ip, WiFi.localIP().toString().c_str() );
-        } else if (wifiConnMode == WIFI_CONN_MODE_AP) {
-            strcpy(ip, WiFi.softAPIP().toString().c_str() );
-        } else {
-            strcpy(ip, "0.0.0.0");
-        }
-        return ip;
-    }
-
-    char currentSsid[32+1];
-    char* getSSID() {
-        memset(currentSsid, 0x00, 32+1);
-        if (wifiConnMode == WIFI_CONN_MODE_STA) {
-            strcpy(currentSsid, ssid );
-        } else if (wifiConnMode == WIFI_CONN_MODE_AP) {
-            // TODO : finish that
-            strcpy(currentSsid, AP_SSID );
-        } else {
-            strcpy(currentSsid, "None");
-        }
-        return currentSsid;
-    }
-
-    // ===] Server Mode[===
-
-    bool startTelnetd() {
-        if ( telnetdStarted ) { return false; }
-        if ( !wifiStarted ) { return false; }
-        telnetdStarted = false;
-        wifiUseMode = WIFI_USE_MODE_NONE;
-        server.begin();
-        server.setNoDelay(true);
-        telnetdStarted = true;
-        wifiUseMode = WIFI_USE_MODE_TELNETD;
-        return true;
-    }
-
-    void stopTelnetd() {
-        if ( !telnetdStarted ) { return; }
-        server.close();
-        telnetdStarted = false;
-        wifiUseMode = WIFI_USE_MODE_NONE;
-    }  
 
 #endif
-
+// endif USE_WIFI 
 
 #include <HardwareSerial.h>
 //====================================================================================
