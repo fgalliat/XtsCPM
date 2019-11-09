@@ -404,49 +404,49 @@ void _yield() {
 
         // ---------------------
 
-        // === telnet as Keyb Mode ===
+        // // === telnet as Keyb Mode ===
 
-        //check TCP clients for data
-        for (int i = 0; i < MAX_SRV_CLIENTS; i++) {
-            bool hadSome = false;
-            while (serverClients[i].available() /*&& Serial.availableForWrite() > 0*/ ) {
-                // working char by char is not very efficient
-                char ch = serverClients[i].read();
+        // //check TCP clients for data
+        // for (int i = 0; i < MAX_SRV_CLIENTS; i++) {
+        //     bool hadSome = false;
+        //     while (serverClients[i].available() /*&& Serial.availableForWrite() > 0*/ ) {
+        //         // working char by char is not very efficient
+        //         char ch = serverClients[i].read();
                     
-                serverClients[i].println("YAEL Bye");
-                serverClients[i].stop();
+        //         serverClients[i].println("YAEL Bye");
+        //         serverClients[i].stop();
 
 
-                // if ( ch == 27 ) { // Esc.
-                //     ch = serverClients[i].read();
-                //     if ( ch == 'q' ) {
-                //         serverClients[i].stop();
-                //         break;
-                //     } else if ( ch == 'm' ) {
-                //         telnet_client_menu(i);
-                //         break;
-                //     } else if ( ch == 'r' ) {
-                //         telnet_client_uploadToYatl(i);
-                //         break;
-                //     }
-                //     if (telnetMode == TELNET_MODE_KEYB) {
-                //         keyboard0.injectChar(27);
-                //         if ( ch != 0xFF ) {
-                //             keyboard0.injectChar(ch);
-                //         }
-                //     } else {
-                //         _send(ch);
-                //     }
-                // }
-                // if (telnetMode == TELNET_MODE_KEYB) {
-                //     keyboard0.injectChar(ch);
-                // } else {
-                //     _send(ch);
-                // }
+        //         // if ( ch == 27 ) { // Esc.
+        //         //     ch = serverClients[i].read();
+        //         //     if ( ch == 'q' ) {
+        //         //         serverClients[i].stop();
+        //         //         break;
+        //         //     } else if ( ch == 'm' ) {
+        //         //         telnet_client_menu(i);
+        //         //         break;
+        //         //     } else if ( ch == 'r' ) {
+        //         //         telnet_client_uploadToYatl(i);
+        //         //         break;
+        //         //     }
+        //         //     if (telnetMode == TELNET_MODE_KEYB) {
+        //         //         keyboard0.injectChar(27);
+        //         //         if ( ch != 0xFF ) {
+        //         //             keyboard0.injectChar(ch);
+        //         //         }
+        //         //     } else {
+        //         //         _send(ch);
+        //         //     }
+        //         // }
+        //         // if (telnetMode == TELNET_MODE_KEYB) {
+        //         //     keyboard0.injectChar(ch);
+        //         // } else {
+        //         //     _send(ch);
+        //         // }
 
-                hadSome = true;
-            }
-        }
+        //         hadSome = true;
+        //     }
+        // }
 
     }
 
