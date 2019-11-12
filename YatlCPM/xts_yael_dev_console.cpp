@@ -108,7 +108,6 @@ bool LCD_inited = false;
 // forward symbols
 extern const int ttyConsoleWidth, ttyConsoleHeight;
 extern int consoleCursorX, consoleCursorY, consoleCurrentFontWidth, consoleCurrentFontHeight;
-extern bool yetFixedSmallLcdFont;
 
 extern uint8_t subSystemBdosCall(int value);
 
@@ -120,10 +119,9 @@ void setupI2CLCD(void)
     LCD.WorkingModeConf( (LCD_SwitchState)OFF, (LCD_SwitchState)OFF, (LCD_WorkingMode)WM_CharMode );
    //  LCD.WorkingModeConf( (LCD_SwitchState)OFF, (LCD_SwitchState)OFF, (LCD_WorkingMode)WM_RamMode );
 
-    //8*16 font size, auto new line, black character on white back ground.
-    //  LCD.FontModeConf(Font_8x16_1, FM_ANL_AAA, BLACK_BAC); 
-   //  LCD.FontModeConf(Font_6x8, FM_ANL_AAA, BLACK_BAC); 
-    LCD.FontModeConf(Font_6x8, FM_MNL_MAA, BLACK_BAC); 
+    //6*8 font size, auto new line, black character on white background.
+    LCD.FontModeConf(Font_6x8, FM_ANL_AAA, BLACK_BAC); 
+
 
     ttyFrameX = 0;
     ttyFrameY = 0;
@@ -136,12 +134,7 @@ void setupI2CLCD(void)
    // auto starts telnetd for YAEH config
    // Ugly !!!!!!
    subSystemBdosCall(64 * 256);
-
-
 }
-
-int _lastCursX=0;
-int _lastCursY=0;
 
 bool checkInit() {
    ttyFrameW = 20;
@@ -157,10 +150,6 @@ bool checkInit() {
 
       void __setCursor(int xPx, int yPx) {
          #if HAS_SMALL_LCD
-            // _lastCursX = xPx;
-            // _lastCursY = yPx;
-            // if ( _lastCursX < 0 || _lastCursX > 127 || _lastCursY < 0 || _lastCursY > 63 ) { return; }
-            // // LCD.CharGotoXY(xPx,yPx);
          #else
             tft.setCursor(xPx, yPx);
          #endif
@@ -178,13 +167,8 @@ bool checkInit() {
             int w = ttyFrameW;
 
             char line[w+1];
-            memset( line, 0x00, w+1 ); // clear
             memset( line, ' ', w ); // space
-
-            if ( !yetFixedSmallLcdFont ) {
-               LCD.FontModeConf(Font_6x8, FM_ANL_AAA, BLACK_BAC); 
-               yetFixedSmallLcdFont = true;
-            }
+            line[w] = 0x00; // clear
 
             for(int row=0; row < ttyFrameH; row++) {
                //   LCD.DispStringAt(line, 0, (row * consoleCurrentFontHeight) );
@@ -395,8 +379,6 @@ bool checkInit() {
    #define TTY_ATTR_ACCENT2  0x02
    #define TTY_ATTR_INVVIDEO 0x03
 
-   bool yetFixedSmallLcdFont = false;
-
    void _consoleRenderOneLine(int row, bool clearArea) {
 
       #if HAS_SMALL_LCD
@@ -405,35 +387,15 @@ bool checkInit() {
         char line[w+1];
         memset( line, ' ', w ); // space
 
-         //   char ch;
-         //   for(int i=0; i < w; i++) {
-         //      ch = ttyConsoleFrame[ (row*ttyConsoleWidth)+i ];
-         //      if ( ch == 0x00 ) { break; }
-         //      if ( ch <= 13 ) {
-         //       //   Serial.print("there was a ("); 
-         //       //   Serial.print((int)ch); 
-         //       //   Serial.print(") at "); 
-         //       //   Serial.println(i); 
-         //         continue; 
-         //      }
-         //      line[i] = ch;
-         //   }
          int tlen = strlen( &ttyConsoleFrame[ (row*ttyConsoleWidth)+0 ] );
          if ( tlen < 0 ) { tlen = 0; }
          if ( tlen > w ) { tlen = w; }
          memcpy(&line[0], &ttyConsoleFrame[ (row*ttyConsoleWidth)+0 ], tlen);
 
-        line[w] = 0x00;
+         line[w] = 0x00;
 
-         //   LCD.DispStringAt(line, 0, (row * consoleCurrentFontHeight) );
-         if ( !yetFixedSmallLcdFont ) {
-            LCD.FontModeConf(Font_6x8, FM_ANL_AAA, BLACK_BAC); 
-            yetFixedSmallLcdFont = true;
-         }
          LCD.CharGotoXY(0,(row * consoleCurrentFontHeight));       //Set the start coordinate.
          LCD.print(line);
-
-      //   Serial.println( line );
 
         return;
       #endif
@@ -534,12 +496,6 @@ bool checkInit() {
       memset( &ttyConsoleFrame[ ttyConsoleFrameSize - ttyConsoleWidth ], 0x00, ttyConsoleWidth );
       
       consoleRenderFull();
-
-// Serial.print("CON-BOUNDS ");
-// Serial.print(ttyFrameW);
-// Serial.print(" ");
-// Serial.print(ttyFrameH);
-// Serial.println("");
 
       consoleCursorX = 0;
       consoleCursorY = min(ttyConsoleHeight, ttyFrameH) - 1;
