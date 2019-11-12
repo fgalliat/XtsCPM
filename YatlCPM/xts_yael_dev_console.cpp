@@ -110,6 +110,8 @@ extern const int ttyConsoleWidth, ttyConsoleHeight;
 extern int consoleCursorX, consoleCursorY, consoleCurrentFontWidth, consoleCurrentFontHeight;
 extern bool yetFixedSmallLcdFont;
 
+extern uint8_t subSystemBdosCall(int value);
+
 void setupI2CLCD(void)
 {
     LCD_inited = false;
@@ -129,6 +131,13 @@ void setupI2CLCD(void)
     ttyFrameH = 8; // -1 because of screen native scroll ?
 
     LCD_inited = true;
+
+
+   // auto starts telnetd for YAEH config
+   // Ugly !!!!!!
+   subSystemBdosCall(64 * 256);
+
+
 }
 
 int _lastCursX=0;
