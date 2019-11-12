@@ -147,16 +147,20 @@ bool checkInit() {
 #endif
 
       void __setCursor(int xPx, int yPx) {
-         tft.setCursor(xPx, yPx);
          #if HAS_SMALL_LCD
             // _lastCursX = xPx;
             // _lastCursY = yPx;
             // if ( _lastCursX < 0 || _lastCursX > 127 || _lastCursY < 0 || _lastCursY > 63 ) { return; }
             // // LCD.CharGotoXY(xPx,yPx);
+         #else
+            tft.setCursor(xPx, yPx);
          #endif
       }
       void __clearScreen(uint16_t bgColor) { 
-         tft.fillScreen(bgColor); 
+         tft.fillScreen(bgColor);
+         tft.setCursor(0, 0);
+         tft.print("TFT deactivated !");
+
          #if HAS_SMALL_LCD
             if (!LCD_inited) LCD.CleanAll(WHITE);
             checkInit();
@@ -168,20 +172,22 @@ bool checkInit() {
             memset( line, 0x00, w+1 ); // clear
             memset( line, ' ', w ); // space
 
+            if ( !yetFixedSmallLcdFont ) {
+               LCD.FontModeConf(Font_6x8, FM_ANL_AAA, BLACK_BAC); 
+               yetFixedSmallLcdFont = true;
+            }
+
             for(int row=0; row < ttyFrameH; row++) {
                //   LCD.DispStringAt(line, 0, (row * consoleCurrentFontHeight) );
-               if ( !yetFixedSmallLcdFont ) {
-                  LCD.FontModeConf(Font_6x8, FM_ANL_AAA, BLACK_BAC); 
-                  yetFixedSmallLcdFont = true;
-               }
                LCD.CharGotoXY(0,(row * consoleCurrentFontHeight));       //Set the start coordinate.
                LCD.print(line);
             }
+         #else
+            tft.fillScreen(bgColor);
          #endif
       }
 
       void __fillRect(int x, int y, int w, int h, uint16_t bgColor) {
-         tft.fillRect(x, y, w, h, bgColor);
          #if HAS_SMALL_LCD
             checkInit();
             // // if ( x < 0 || x > 127 || y < 0 || y > 63 ) { return; }
@@ -206,18 +212,16 @@ bool checkInit() {
             // //    LCD.DispCharAt('#', (x+i)*consoleCurrentFontWidth, y);
             // // }
             // LCD.DispStringAt(line, x, y);
+         #else
+            tft.fillRect(x, y, w, h, bgColor);
          #endif
       }
 
       
 
       void __write1char(char ch) { 
-         tft.write(ch); 
          #if HAS_SMALL_LCD
             checkInit();
-
-            // if ( _lastCursX < 0 || _lastCursX > 127 || _lastCursY < 0 || _lastCursY > 63 ) { return; }
-
             if ( ttyFrameW < 0 ) { ttyFrameW = ttyConsoleWidth; }
             if ( ttyFrameH < 0 ) { ttyFrameH = ttyConsoleHeight; }
 
@@ -226,6 +230,8 @@ bool checkInit() {
                // LCD.write(ch);
                LCD.DispCharAt(ch, consoleCursorX*consoleCurrentFontWidth, consoleCursorY*consoleCurrentFontHeight);
             }
+         #else
+            tft.write(ch); 
          #endif
       }
 
@@ -592,7 +598,7 @@ bool checkInit() {
       cursorShown = true;
    }
 
-#define DBUG_VT_ESC 1
+// #define DBUG_VT_ESC 1
 
 
    void consoleWrite(char ch) {
@@ -685,14 +691,14 @@ bool checkInit() {
 
             else if ( __escapeChar1 == '=' ) { __escapeSeq = true; __escapeUnknownChar = true; }
 
-            else if ( __escapeChar1 == '!' ) { __escapeSeq = true; __escapeUnknownChar = true; }
-            else if ( __escapeChar1 == '(' ) { __escapeSeq = true; __escapeUnknownChar = true; }
-            else if ( __escapeChar1 == ')' ) { __escapeSeq = true; __escapeUnknownChar = true; }
-            else if ( __escapeChar1 == '%' ) { __escapeSeq = true; __escapeUnknownChar = true; }
-            else if ( __escapeChar1 == '+' ) { __escapeSeq = true; __escapeUnknownChar = true; }
-            else if ( __escapeChar1 == '-' ) { __escapeSeq = true; __escapeUnknownChar = true; }
-            else if ( __escapeChar1 == '/' ) { __escapeSeq = true; __escapeUnknownChar = true; }
-            else if ( __escapeChar1 == '*' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            // else if ( __escapeChar1 == '!' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            // else if ( __escapeChar1 == '(' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            // else if ( __escapeChar1 == ')' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            // else if ( __escapeChar1 == '%' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            // else if ( __escapeChar1 == '+' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            // else if ( __escapeChar1 == '-' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            // else if ( __escapeChar1 == '/' ) { __escapeSeq = true; __escapeUnknownChar = true; }
+            // else if ( __escapeChar1 == '*' ) { __escapeSeq = true; __escapeUnknownChar = true; }
             // ================================
             else if ( __escapeChar1 == '$' ) { 
                // vt-MUSIC mode
