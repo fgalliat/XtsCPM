@@ -1,3 +1,5 @@
+#if defined ESP32
+
 /**
  * Xtase - fgalliat @Sept2019
  * 
@@ -991,3 +993,6 @@ void yael_warn(char* str) {
 }
 
 void yael_warn(const char* str) { yael_warn( (char*)str ); }
+
+// end of if ESP32 ....
+#endif

@@ -1,3 +1,5 @@
+#if defined ESP32
+
 /**
  * 
  * DFPlayer mini Serial MP3 Playback module
@@ -211,7 +213,9 @@
   		delay(500);
 		
 		this->volume( _snd_vol );
+	return true;
     }
+
     void SoundCard::close() {
     	this->stop();
     }
@@ -288,3 +292,6 @@
 		_snd_isPlaying = false;
 		delay(100);
     }
+
+// end of if ESP32 ....
+#endif

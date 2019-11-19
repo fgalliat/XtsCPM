@@ -7,6 +7,16 @@
 
 // keep as custom entry point
 #ifdef XTASE_T36_YATL_LAYOUT
+
+  #if defined __IMXRT1062__
+  	// but redef. right layout
+    #undef XTASE_T36_YATL_LAYOUT
+    #define XTASE_T40_YATL_LAYOUT 1
+
+	#define YAT4L_PLATFORM 1
+    #warning "BEWARE : it's a YAT4L config"
+  #endif
+
   #if defined ESP32
     // but redef. right layout
     #undef XTASE_T36_YATL_LAYOUT

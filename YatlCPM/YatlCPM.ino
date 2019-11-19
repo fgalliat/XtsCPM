@@ -48,7 +48,7 @@
 #endif
 
 // Serial port speed
-#if YATL_PLATFORM || YAEL_PLATFORM
+#if YATL_PLATFORM || YAEL_PLATFORM || YAT4L_PLATFORM
   #define SERIALSPD 115200
 #else
   #define SERIALSPD 9600
@@ -99,6 +99,28 @@
     #define LED 14
     #define LEDinv 0    
     #define BOARD "TEENSY 3.6"
+  #elif XTASE_T40_YATL_LAYOUT
+    // Teensy 4.0 Board
+    // currently uses SdFat-Beta Lib
+
+    // @ 2019/11/19 -> had to modify :: C:\Users\....\Documents\Arduino\libraries\SdFat-beta-master\src\FatLib\FatVolume.h
+    // in order to make :: FatFile* vwd() {return &m_vwd;}
+    // as public instead of private ....
+
+    boolean Serial_useable = true;
+
+    // SPI1
+    // #define SD_CONFIG SdSpiConfig(0, DEDICATED_SPI, SD_SCK_MHZ(50), &SPI1)
+    #define SD_CONFIG SdSpiConfig(0, DEDICATED_SPI, SD_SCK_MHZ(50), &SPI1)
+    // SPI0
+    // #define SD_CONFIG SdSpiConfig(10, DEDICATED_SPI, SD_SCK_MHZ(50), &SPI)
+
+    #define SDINIT SD_CONFIG
+    SdFat SD;
+
+    #define LED 14
+    #define LEDinv 0    
+    #define BOARD "TEENSY 4.0"
   #else
     SdFatSdio SD;
     #define SDINIT
