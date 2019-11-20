@@ -18,10 +18,12 @@
   extern char charUpCase(char ch);
 
 
-  // #include "xts_yatl_settings.h"
-  // #include "xts_yatl_api.h"
-  // extern Yatl yatl;
-  #include "xts_yael.h"
+  #ifdef ESP32
+    #include "xts_yael.h"
+  #elif defined(__IMXRT1062__)
+    #include "xts_yat4l.h"
+  #endif
+
 
     // #include "xts_yael_dev_screen.h"
 

@@ -103,6 +103,8 @@
     // Teensy 4.0 Board
     // currently uses SdFat-Beta Lib
 
+    #include "xts_yat4l.h"
+
     // @ 2019/11/19 -> had to modify :: C:\Users\....\Documents\Arduino\libraries\SdFat-beta-master\src\FatLib\FatVolume.h
     // in order to make :: FatFile* vwd() {return &m_vwd;}
     // as public instead of private ....
@@ -118,7 +120,7 @@
     #define SDINIT SD_CONFIG
     SdFat SD;
 
-    #define LED 14
+    #define LED 5
     #define LEDinv 0    
     #define BOARD "TEENSY 4.0"
   #else
@@ -149,6 +151,8 @@
 
 #ifdef ESP32
   #include "abstraction_arduino_esp.h"
+#elif YAT4L_PLATFORM
+  #include "abstraction_arduino_yat4l.h"
 #else
   #include "abstraction_arduino.h"
 #endif
@@ -203,6 +207,8 @@ void setup(void) {
             yield();
         }
     }
+  #elif YAT4L_PLATFORM
+    bool ok = yat4l_setup();
   #else
     if ( LED > 0 ) {
       pinMode(LED, OUTPUT);

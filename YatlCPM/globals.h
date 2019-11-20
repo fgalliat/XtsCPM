@@ -14,6 +14,7 @@
     #define XTASE_T40_YATL_LAYOUT 1
 
 	#define YAT4L_PLATFORM 1
+
     #warning "BEWARE : it's a YAT4L config"
   #endif
 
