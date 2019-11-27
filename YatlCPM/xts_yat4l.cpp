@@ -206,7 +206,15 @@
 
   // ===========================================
 
-  void yat4l_reboot() { Serial.println("TEENSY4 rebooting"); }
+    void softReset() {
+        // Teensy 4.0 specify 
+        // but beware w/ some breakout boards
+
+        // semms more like halt than reboot
+        // SCB_AIRCR = 0x05FA0004;
+    }
+
+  void yat4l_reboot() { Serial.println("TEENSY4 rebooting"); softReset(); }
   void yat4l_halt() { Serial.println("TEENSY4 shutting down"); }
 
 #endif
