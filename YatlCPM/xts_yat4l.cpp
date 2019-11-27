@@ -24,6 +24,39 @@ Adafruit_ILI9486_Teensy tft;
   // ==================
 
     // ===================================================================================
+    //                                   WiFi
+    // ===================================================================================
+
+    char* yat4l_wifi_getIP() { return "0.0.0.0"; }
+    char* yat4l_wifi_getSSID() { return "NotConnetcted"; }
+
+    bool yat4l_wifi_close() { return true; }
+    bool yat4l_wifi_beginAP() { return false; }
+    bool yat4l_wifi_startTelnetd() { return false; }
+
+    bool yat4l_wifi_loop() { ; }
+
+    void yat4l_wifi_telnetd_broadcast(char ch)  { ; }
+    int  yat4l_wifi_telnetd_available()  { return 0; }
+    int  yat4l_wifi_telnetd_read() { return -1; }
+
+    // ===================================================================================
+    //                                   Music
+    // ===================================================================================
+
+
+    void yat4l_mp3Play(int trackNum) {}
+    void yat4l_mp3Loop(int trackNum) {}
+    void yat4l_mp3Vol(int volume) {}
+    void yat4l_mp3Pause() {}
+    void yat4l_mp3Stop() {}
+    void yat4l_mp3Next() {}
+    void yat4l_mp3Prev() {}
+    bool yat4l_mp3IsPlaying() {return false;}
+
+
+
+    // ===================================================================================
     //                                   Buzzer
     // ===================================================================================
     void yat4l_buzzer_init() {}
@@ -54,13 +87,15 @@ Adafruit_ILI9486_Teensy tft;
         led(state, true);
     }
 
-    // ====== Fs Routines =================
+    // ===================================================================================
+    //                                   FileSystem
+    // ===================================================================================
 
     const int _fullyQualifiedFileNameSize = 1+5 + (8+1+3) + 1;
     char _assetEntry[ _fullyQualifiedFileNameSize ];
 
     // not ThreadSafe !
-    char* yael_fs_getAssetsFileEntry(char* assetName) {
+    char* yat4l_fs_getAssetsFileEntry(char* assetName) {
         if ( assetName == NULL || strlen(assetName) <= 0 ) { yat4l_dbug("NULL filename"); return NULL; }
         memset(_assetEntry, 0x00, _fullyQualifiedFileNameSize);
 
@@ -75,6 +110,8 @@ Adafruit_ILI9486_Teensy tft;
 
         return _assetEntry;
     }
+
+    bool yat4l_fs_downloadFromSerial() { Serial.println("-- REQUEST FOR SERIAL UPLOAD --"); return false; }
 
     // ==================
   void yat4l_led(bool state, bool fastMode) { led(state, fastMode); }
@@ -118,13 +155,22 @@ Adafruit_ILI9486_Teensy tft;
     }
 
 
+    // ===================================================================================
+    //                                   TFT Screen
+    // ===================================================================================
 
-    // void yat4l_tft_cls() {
-    //     consoleCls(true);
-    // }
+    void yat4l_tft_cls() { tft.fillScreen(CLR_BLACK); tft.setCursor(0,0); }
+    void yat4l_tft_setCursor(int col, int row) { tft.setCursor(col,row); }
 
-void yat4l_tft_cls() { tft.fillScreen(CLR_BLACK); tft.setCursor(0,0); }
-void yat4l_tft_setCursor(int col, int row) { tft.setCursor(col,row); }
+    void yat4l_tft_drawBMP(char* filename, int x, int y) { Serial.print("drawBMP : "); Serial.println(filename); }
+    void yat4l_tft_drawPAK(char* filename, int x, int y, int imgNum) { Serial.print("drawPAK : "); Serial.println(filename); }
+
+    void yat4l_tft_drawRect(int x, int y, int w, int h, uint16_t color) { tft.drawRect(x, y, w, h, color); }
+    void yat4l_tft_fillRect(int x, int y, int w, int h, uint16_t color) { tft.fillRect(x, y, w, h, color); }
+    void yat4l_tft_drawCircle(int x, int y, int radius, uint16_t color) { tft.drawCircle(x, y, radius, color); }
+    void yat4l_tft_fillCircle(int x, int y, int radius, uint16_t color) { tft.fillCircle(x, y, radius, color); }
+    void yat4l_tft_drawLine(int x, int y, int x2, int y2, uint16_t color) { tft.drawLine(x, y, x2, y2, color); }
+
 
   // ===========================================
   // ===========================================

@@ -557,7 +557,7 @@ extern bool Serial_useable;
 #define USE_TELNETD_AS_IO 0
 
 int _kbhit(void) {
-	#ifdef HAS_KEYBOARD
+	#if HAS_KEYBOARD
 	  int kavail = keybLocked ? 0 : yatl.getKeyboard()->available();
 	  if ( kavail > 0 ) {
 			return kavail;
@@ -569,7 +569,11 @@ int _kbhit(void) {
 	  if ( k > 0 ) { return k; }
 	#endif
 
+// Serial.print('+');
+
 	if ( !Serial_useable ) { return 0; }
+
+// Serial.print('.');
 
 	return(Serial.available());
 }
@@ -607,6 +611,7 @@ uint8 _getch(void) {
 #if USE_TELNETD_AS_IO
 	  int k = yael_wifi_telnetd_available();
 	  if ( k > 0 ) { return yael_wifi_telnetd_read(); }
+#else 
 #endif
 
 		}

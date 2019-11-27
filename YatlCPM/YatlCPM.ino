@@ -221,6 +221,10 @@ void setup(void) {
 
   // SerialPort is useable or not .....
   Serial_useable = !(!Serial);
+  #if YAT4L_PLATFORM
+    // was an optim for Teensy 3.6
+    Serial_useable = true;
+  #endif
 
 #ifdef DEBUGLOG
   _sys_deletefile((uint8 *)LogName);

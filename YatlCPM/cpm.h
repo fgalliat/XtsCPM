@@ -735,7 +735,7 @@ void _Bdos(void) {
 		break;
 #endif
 
-#if YATL_PLATFORM || YAEL_PLATFORM
+#if YATL_PLATFORM || YAEL_PLATFORM || YAT4L_PLATFORM
 	case 225:
 	case 226:
 	case 227:
