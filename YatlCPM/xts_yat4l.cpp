@@ -11,11 +11,18 @@
  * part of XtsCPM project
  */
 
-#include "Adafruit_ILI9486_Teensy.h"
-#include <SPI.h>
+  #include "Adafruit_ILI9486_Teensy.h"
+  #include <SPI.h>
 
  // for pin definitions, please refer to the header file
-Adafruit_ILI9486_Teensy tft;
+  Adafruit_ILI9486_Teensy tft;
+
+
+  #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
+  extern SdFat SD;
+
+
+
 
   void xts_hdl() {
       // Xtase runtime handler
@@ -162,8 +169,17 @@ Adafruit_ILI9486_Teensy tft;
     void yat4l_tft_cls() { tft.fillScreen(CLR_BLACK); tft.setCursor(0,0); }
     void yat4l_tft_setCursor(int col, int row) { tft.setCursor(col,row); }
 
-    void yat4l_tft_drawBMP(char* filename, int x, int y) { Serial.print("drawBMP : "); Serial.println(filename); }
-    void yat4l_tft_drawPAK(char* filename, int x, int y, int imgNum) { Serial.print("drawPAK : "); Serial.println(filename); }
+    #include "xts_yat4l_soft_drawBMP.h"
+    #include "xts_yat4l_soft_drawPAK.h"
+
+    void yat4l_tft_drawBMP(char* filename, int x, int y) { 
+        tft.setRotation(DEFAULT_TFT_ROTATION == 1 ? 2 : 0);
+        drawBmp(filename, x, y);
+        tft.setRotation(DEFAULT_TFT_ROTATION);
+    }
+    void yat4l_tft_drawPAK(char* filename, int x, int y, int imgNum) { drawImgFromPAK(filename, x, y, imgNum); }
+
+
 
     void yat4l_tft_drawRect(int x, int y, int w, int h, uint16_t color) { tft.drawRect(x, y, w, h, color); }
     void yat4l_tft_fillRect(int x, int y, int w, int h, uint16_t color) { tft.fillRect(x, y, w, h, color); }
