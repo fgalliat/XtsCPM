@@ -118,7 +118,60 @@
         return _assetEntry;
     }
 
-    bool yat4l_fs_downloadFromSerial() { Serial.println("-- REQUEST FOR SERIAL UPLOAD --"); return false; }
+    bool yat4l_fs_downloadFromSerial() { 
+        while( Serial.available() ) { Serial.read(); delay(2); }
+        yat4l_warn("Download in progress");
+        Serial.println("+OK");
+        while( !Serial.available() ) { delay(2); }
+        // for now : file has to be like "/C/0/XTSDEMO.PAS"
+        int tlen = 0;
+        char txt[128+1]; 
+        char name[64+1]; memset(name, 0x00, 64); tlen = Serial.readBytesUntil(0x0A, name, 64);
+        if ( tlen <= 0 ) {
+            sprintf(txt, "Downloading %s (error)", name);
+            yat4l_warn((const char*)txt);
+            Serial.println("Download not ready");
+            Serial.println(name);
+            Serial.println("-OK");
+            return false;
+        }
+
+        // Cf CPM may padd the original file
+        File f = SD.open(name, O_CREAT | O_WRITE);
+        if ( !f ) {
+          Serial.println("-OK");
+          return false;    
+        }
+        f.remove();
+        f.close();
+        // Cf CPM may padd the original file
+
+        f = SD.open(name, O_CREAT | O_WRITE);
+        if ( !f ) {
+          Serial.println("-OK");
+          return false;    
+        }
+
+        Serial.println("+OK");
+        while( !Serial.available() ) { delay(2); }
+        char sizeStr[12+1]; memset(sizeStr, 0x00, 12); tlen = Serial.readBytesUntil(0x0A, sizeStr, 12);
+        long size = atol(sizeStr);
+        sprintf(txt, "Downloading %s (%ld bytes)", name, size);
+        yat4l_warn((const char*)txt);
+        char packet[128+1];
+        Serial.println("+OK");
+        for(int readed=0; readed < size;) {
+            while( !Serial.available() ) { delay(2); }
+            int packetLen = Serial.readBytes( packet, 128 );
+            f.write(packet, packetLen);
+            f.flush();
+            readed += packetLen;
+        }
+        f.close();
+        yat4l_warn("-EOF-");
+        yat4l_buzzer_beep();
+        return true;
+    }
 
     // ==================
   void yat4l_led(bool state, bool fastMode) { led(state, fastMode); }
@@ -191,6 +244,18 @@
   // ===========================================
   // ===========================================
 
+  void drawTextBox(const char* title, const char* msg, uint16_t color) {
+      // tft.fillRect( 20, 20, TFT_WIDTH-40, TFT_HEIGHT-40, mapColor(color) );
+      tft.fillRect( 20, 20, TFT_WIDTH-40, TFT_HEIGHT-40, color );
+      tft.drawRect( 20, 20, TFT_WIDTH-40, TFT_HEIGHT-40, CLR_WHITE );
+      tft.setTextColor(CLR_WHITE);
+      tft.setCursor( 40, 30 );
+      tft.print( title );
+      tft.setCursor( 40, 30+30 );
+      tft.print( msg );
+  }
+
+
   void yat4l_dbug(char* str) { 
     Serial.print("(ii) "); Serial.println(str); 
   }
@@ -200,9 +265,17 @@
   void yat4l_warn(char* str) { 
     // no serial write : because used while Serial copy
     // Serial.print("(!!) "); Serial.println(str); 
+    drawTextBox("WARNING", (const char*)str, CLR_CYAN);
   }
 
   void yat4l_warn(const char* str) { yat4l_warn( (char*)str ); }
+
+  void yat4l_error(char* str) { 
+    // no serial write : because used while Serial copy
+    drawTextBox("ERROR", (const char*)str, CLR_RED);
+  }
+
+  void yat4l_error(const char* str) { yat4l_error( (char*)str ); }
 
   // ===========================================
 

@@ -149,6 +149,9 @@ void yat4l_dbug(const char* str);
 void yat4l_warn(char* str);
 void yat4l_warn(const char* str);
 
+void yat4l_error(char* str);
+void yat4l_error(const char* str);
+
 // =========================
 
 void yat4l_reboot();
