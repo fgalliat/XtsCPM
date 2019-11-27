@@ -1,8 +1,8 @@
 // just for devl purposes
 //#define ARDUINO 1
 
-
-#if defined ARDUINO && defined CORE_TEENSY
+// ARDUINO+TEENSY-TEENSY4.0
+#if defined ARDUINO && defined CORE_TEENSY && not defined __IMXRT1062__
  /**
  * Xtase - fgalliat @Jun2019
  * 

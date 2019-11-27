@@ -4,6 +4,11 @@
  * YAT4L routines Headers
  * 
  * part of XtsCPM project
+ * 
+ * 
+ * uses Adafruit_ILI9486_Teensy -> in Adafruit_ILI9486_Teensy.h -> set RST to pin 6 
+ * uses SdFat-Beta -> in FatLib/Fat-Volume.h -> move vwd() from private to public
+ *
  */
 
 
@@ -143,3 +148,9 @@ void yat4l_dbug(const char* str);
 
 void yat4l_warn(char* str);
 void yat4l_warn(const char* str);
+
+// =========================
+
+void yat4l_reboot();
+void yat4l_halt();
+

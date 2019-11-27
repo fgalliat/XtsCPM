@@ -31,7 +31,7 @@ Adafruit_ILI9486_Teensy tft;
     void yat4l_buzzer_noTone() {}
     void yat4l_buzzer_playTuneString(char* sequence) {}
     bool yat4l_buzzer_playTuneFile(const char* tuneStreamName) {return true;}
-    void yat4l_buzzer_beep(int freq=440, int duration=200) {}
+    void yat4l_buzzer_beep(int freq, int duration) {}
 
 
     //====================================================================================
@@ -141,5 +141,10 @@ void yat4l_tft_setCursor(int col, int row) { tft.setCursor(col,row); }
   }
 
   void yat4l_warn(const char* str) { yat4l_warn( (char*)str ); }
+
+  // ===========================================
+
+  void yat4l_reboot() { Serial.println("TEENSY4 rebooting"); }
+  void yat4l_halt() { Serial.println("TEENSY4 shutting down"); }
 
 #endif

@@ -43,6 +43,10 @@
 
   #include "xts_yael_bdos.h"
 
+#elif defined XTASE_T40_YATL_LAYOUT
+  #include "xts_yat4l.h"
+  #include "xts_yat4l_bdos.h"
+  #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
 #else
   #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
 #endif
@@ -102,8 +106,6 @@
   #elif XTASE_T40_YATL_LAYOUT
     // Teensy 4.0 Board
     // currently uses SdFat-Beta Lib
-
-    #include "xts_yat4l.h"
 
     // @ 2019/11/19 -> had to modify :: C:\Users\....\Documents\Arduino\libraries\SdFat-beta-master\src\FatLib\FatVolume.h
     // in order to make :: FatFile* vwd() {return &m_vwd;}
