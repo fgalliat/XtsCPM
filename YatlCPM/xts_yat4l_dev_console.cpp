@@ -888,73 +888,73 @@ int ttyFrameH = -1;
    #define BUFFPIXEL 80
 
 
-   #if SPRITES_SUPPORT
+   // #if SPRITES_SUPPORT
 
-   uint16_t spriteArea[ SPRITE_AREA_SIZE ];
-   Sprite sprites[NB_SPRITES];
+   // uint16_t spriteArea[ SPRITE_AREA_SIZE ];
+   // Sprite sprites[NB_SPRITES];
 
-   int spriteInstanceCounter = 0; 
-   int lastAddr = 0;
+   // int spriteInstanceCounter = 0; 
+   // int lastAddr = 0;
 
-   void Sprite::drawClip(int x, int y) {
-      if ( w < 0 || h < 0 ) { return; }
-      if ( !isValid() ) { return; }
+   // void Sprite::drawClip(int x, int y) {
+   //    if ( w < 0 || h < 0 ) { return; }
+   //    if ( !isValid() ) { return; }
 
-      uint16_t row[ w ];
-      for(int i=0; i < h; i++) {
-         if ( i+y >= TFT_HEIGHT ) { break; }
-         // *2 cf uint16_t
-         memcpy( &row[0], &spriteArea[ ( (this->y+i) * SPRITE_AREA_WIDTH )+this->x ], w*2 );
-         __fillPixelRect(x, i+y, w, 1, row);
-      }
-   }
+   //    uint16_t row[ w ];
+   //    for(int i=0; i < h; i++) {
+   //       if ( i+y >= TFT_HEIGHT ) { break; }
+   //       // *2 cf uint16_t
+   //       memcpy( &row[0], &spriteArea[ ( (this->y+i) * SPRITE_AREA_WIDTH )+this->x ], w*2 );
+   //       __fillPixelRect(x, i+y, w, 1, row);
+   //    }
+   // }
    
-    void cleanSprites() {
-       memset(spriteArea, 0, SPRITE_AREA_SIZE);
-       spriteInstanceCounter = 0; 
-       lastAddr = 0;
-       for(int i=0; i < NB_SPRITES; i++) {
-          sprites[i].invalid();
-       }
-    }
+   //  void cleanSprites() {
+   //     memset(spriteArea, 0, SPRITE_AREA_SIZE);
+   //     spriteInstanceCounter = 0; 
+   //     lastAddr = 0;
+   //     for(int i=0; i < NB_SPRITES; i++) {
+   //        sprites[i].invalid();
+   //     }
+   //  }
 
-    void _feedSprites(char* filename, int x, int y);
-
-
-    void grabbSprites(char* imageName, int offsetX, int offsetY) {
-       char* fileName = yatl.getFS()->getAssetsFileEntry( imageName );
-       _feedSprites(fileName, offsetX, offsetY);
-    }
-
-    void grabbSpritesOfSize(char* imageName, int offsetX, int offsetY, int width, int height) {
-
-      //  char* fileName = this->yatl->getFS()->getAssetsFileEntry( imageName );
-      char* fileName = yat4l_fs_getAssetsFileEntry( imageName );
-
-       cleanSprites();
-       int nbW = 160/width;
-       int nbH = 120/height;
-       int howMany = nbW * nbH;
-       if ( howMany > NB_SPRITES ) { howMany = NB_SPRITES; }
-       int cpt = 0;
-       for(int y=0; y < nbH; y++) {
-         for(int x=0; x < nbW; x++) {
-            sprites[cpt].x = x*width;
-            sprites[cpt].y = y*height;
-            sprites[cpt].w = width;
-            sprites[cpt].h = height;
-            cpt++;
-            if ( cpt >= howMany ) { break; }
-         }
-       }
-       _feedSprites(fileName, offsetX, offsetY);
-    }
+   //  void _feedSprites(char* filename, int x, int y);
 
 
+   //  void grabbSprites(char* imageName, int offsetX, int offsetY) {
+   //     char* fileName = yatl.getFS()->getAssetsFileEntry( imageName );
+   //     _feedSprites(fileName, offsetX, offsetY);
+   //  }
 
-   // will takes only 160x120 px of bmp file
-   void _feedSprites(char* filename, int x, int y);
-   #endif
+   //  void grabbSpritesOfSize(char* imageName, int offsetX, int offsetY, int width, int height) {
+
+   //    //  char* fileName = this->yatl->getFS()->getAssetsFileEntry( imageName );
+   //    char* fileName = yat4l_fs_getAssetsFileEntry( imageName );
+
+   //     cleanSprites();
+   //     int nbW = 160/width;
+   //     int nbH = 120/height;
+   //     int howMany = nbW * nbH;
+   //     if ( howMany > NB_SPRITES ) { howMany = NB_SPRITES; }
+   //     int cpt = 0;
+   //     for(int y=0; y < nbH; y++) {
+   //       for(int x=0; x < nbW; x++) {
+   //          sprites[cpt].x = x*width;
+   //          sprites[cpt].y = y*height;
+   //          sprites[cpt].w = width;
+   //          sprites[cpt].h = height;
+   //          cpt++;
+   //          if ( cpt >= howMany ) { break; }
+   //       }
+   //     }
+   //     _feedSprites(fileName, offsetX, offsetY);
+   //  }
+
+
+
+   // // will takes only 160x120 px of bmp file
+   // void _feedSprites(char* filename, int x, int y);
+   // #endif
 
    // filename is "/Z/0/packXXX.pak"
    // reads&display image #numInPak of packed image from filename

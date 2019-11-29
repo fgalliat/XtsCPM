@@ -96,6 +96,12 @@ void yat4l_tft_drawCircle(int x, int y, int radius, uint16_t color);
 void yat4l_tft_fillCircle(int x, int y, int radius, uint16_t color);
 void yat4l_tft_drawLine(int x, int y, int x2, int y2, uint16_t color);
 
+void yat4l_tft_cleanSprites();
+
+void yat4l_tft_grabbSpritesOfSize(char* imageName, int offsetX=0, int offsetY=0, int width=32, int height=32);
+void yat4l_tft_grabbSprites(char* imageName, int offsetX=0, int offsetY=0);
+
+
 
 void yat4l_lcd_cls();
 void yat4l_lcd_setCursor(int col, int row);
@@ -156,4 +162,50 @@ void yat4l_error(const char* str);
 
 void yat4l_reboot();
 void yat4l_halt();
+
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+  #define SPRITES_SUPPORT 1
+
+  #if SPRITES_SUPPORT
+    #define SPRITE_AREA_WIDTH 160
+    #define SPRITE_AREA_HEIGHT 120
+    #define SPRITE_AREA_SIZE (SPRITE_AREA_WIDTH*SPRITE_AREA_HEIGHT)
+    
+    extern int spriteInstanceCounter;
+
+    class Sprite {
+       private:
+         int idx;
+         int addr;
+       public:
+         int x, y, w, h;
+
+         Sprite() {
+            this->invalid();
+            this->idx = spriteInstanceCounter++;
+            this->addr = -1;
+         }
+         ~Sprite() {}
+         void setBounds(int x, int y, int w, int h) {
+            this->x = x; this->y = y;
+            this->w = w; this->h = h;
+         }
+         bool isValid() {
+            return this->x > -1 && this->y > -1; 
+         }
+         void invalid() {
+            this->x = -1;
+            this->y = -1;
+            this->addr = -1;
+         }
+         
+         void drawClip(int x, int y);
+    };
+
+    #define NB_SPRITES 15
+    extern Sprite sprites[NB_SPRITES];
+
+
+  #endif
 

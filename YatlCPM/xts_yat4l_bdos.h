@@ -115,6 +115,8 @@
     return 0;
   }
 
+  extern Sprite sprites[];
+
   int32 drawRoutine(char* test) {
     // then draw it !!!!
     uint8_t OpType = test[1];
@@ -165,21 +167,21 @@
       uint16_t x = (uint16_t)((uint8_t)test[6] << 8) + (uint8_t)test[7];
       uint16_t y = (uint16_t)((uint8_t)test[8] << 8) + (uint8_t)test[9];
 
-      // if ( shapeType == 0x01 ) {
-      //   // define sprite
+      if ( shapeType == 0x01 ) {
+        // define sprite
 
-      //   uint16_t w = (uint16_t)((uint8_t)test[10] << 8) + (uint8_t)test[11];
-      //   uint16_t h = (uint16_t)((uint8_t)test[12] << 8) + (uint8_t)test[13];
+        uint16_t w = (uint16_t)((uint8_t)test[10] << 8) + (uint8_t)test[11];
+        uint16_t h = (uint16_t)((uint8_t)test[12] << 8) + (uint8_t)test[13];
 
-      //   uint8_t num = test[14];
+        uint8_t num = test[14];
 
-      //   sprites[num].setBounds( x, y, w, h );
-      // } else if ( shapeType == 0x02 ) {
-      //   // draw sprite
-      //   uint8_t num = test[10];
+        sprites[num].setBounds( x, y, w, h );
+      } else if ( shapeType == 0x02 ) {
+        // draw sprite
+        uint8_t num = test[10];
 
-      //   sprites[num].drawClip( x, y );
-      // }
+        sprites[num].drawClip( x, y );
+      }
 
     }
 
@@ -207,9 +209,8 @@
       if ( endsWith(test, (char*)".BMP") ) {
         if ( test[0] == '!' ) {
           yat4l_dbug("|  Wanna grabb a BMP SpriteBoard |");
-          // TODO : SpritesSupport to make work again !!!!
-          // yatl.getScreen()->cleanSprites();
-          // yatl.getScreen()->grabbSprites( &test[1], 0, 0 );
+          yat4l_tft_cleanSprites();
+          yat4l_tft_grabbSprites( &test[1], 0, 0 );
         } else {
           yat4l_dbug("|  Wanna draw a BMP wallpaper |");
           // yatl.getScreen()->drawWallpaper( test );
