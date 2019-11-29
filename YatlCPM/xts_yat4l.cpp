@@ -227,6 +227,15 @@
 
     void yat4l_tft_drawBMP(char* filename, int x, int y) { 
         tft.setRotation(DEFAULT_TFT_ROTATION == 1 ? 2 : 0);
+        // tft.setRotation(DEFAULT_TFT_ROTATION == 1 ? 0 : 2);
+
+        int swap = x;
+        x = y;
+        y = swap;
+        #if MODE_4INCH
+        y += ( 480 - 320 );
+        #endif
+
         drawBmp(filename, x, y);
         tft.setRotation(DEFAULT_TFT_ROTATION);
     }
