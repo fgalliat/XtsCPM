@@ -32,6 +32,24 @@ public class ESP8266Tester {
     }
 
     // ====================
+    static boolean testModule() throws Exception {
+      writeCMD("AT");
+      String line;
+      while( (line = readLine()) != null ) {
+        if ( line.equals("OK") ) { return true; }
+      }
+      return false;
+    }
+
+    static boolean resetModule() throws Exception {
+      writeCMD("AT+RST");
+      String line;
+      while( (line = readLine()) != null ) {
+        if ( line.equals("OK") ) { return true; }
+      }
+      return false;
+    }
+
     static final int WIFI_MODE_STA = 1;
     static final int WIFI_MODE_AP = 2;
 
@@ -187,6 +205,7 @@ public class ESP8266Tester {
     
     // ---------------
 
+    // "192.168.1.135" 8080 "/login.jsp?user=toto&pass=titi"
     static void wget(String host, int port, String query)  throws Exception {
       // start
       writeCMD("AT+CIPSTART=\"TCP\",\""+host+"\", port");
