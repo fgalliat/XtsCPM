@@ -30,9 +30,10 @@
 - TTS via 328P 16MHz 5v
 - Thermal Printer (9v)
 
-
-
-
+- Bdos ReadSerial / WriteSerial
+   -> w/ SerialXX choose
+   -> try to write a full SerialTerm App
+   -> ex. to TEST ESP8266, to check bridge, or Ext. Aux. Port ...
 
 
 
