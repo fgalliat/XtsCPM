@@ -4,13 +4,15 @@ Xtase - fgalliat @Dec 2019
 
 from : https://room-15.github.io/blog/2015/03/26/esp8266-at-command-reference/
 
+from : https://github.com/espressif/ESP8266_AT/wiki/CWLAP
+
 
 
 - ouputs after commands may vary from ESP01 to ESP12
 
 
 
-- waits for <CR><LF> @end of commands
+- waits for <CR><LF> @end of commands (on putty : use ENTER **+** CTRL-J)
 - test module
 
   - < AT
@@ -38,7 +40,7 @@ from : https://room-15.github.io/blog/2015/03/26/esp8266-at-command-reference/
     - 3 both modes
     - (ESP12 has an auto host mode - see -query- to find it)
 
-- connect to AP
+- connect to AP (wifi client)
 
   - query
     - < AT+CWJAP?
@@ -46,14 +48,18 @@ from : https://room-15.github.io/blog/2015/03/26/esp8266-at-command-reference/
   - set
     - < AT+CWJAP=`ssid`,`pwd`
     - \> OK
-  - list available APs
+      - AT+CWJAP="Livebox-52B8","..."
+      - AT+CWJAP="Fremen2","..."
+      - have to reconnect w/ psk each time you change network
+      - but keep after reset
+  - list available APs (AT+CWMODE=3 before ?)
     - < AT+CWLAP
     - (more infos on the URL above)
   - disconnect from AP
     - < AT+CWQAP
     - \> OK
 
-- STA mode
+- STA mode (wifi ~server)
 
   - get infos
     - < AT+CWSAP?
