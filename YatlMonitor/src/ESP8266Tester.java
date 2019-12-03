@@ -94,6 +94,9 @@ public class ESP8266Tester {
     }
 
     // return list of available APs
+    // for now requires setWifiMode(true, true) ... see later
+    // for setWifiMode(false, true)
+    // but seems must be called explicitly
     static String[] AP_allSSID() throws Exception {
       writeCMD("AT+CWLAP");
       List<String> result = new ArrayList<String>();
@@ -226,34 +229,81 @@ public class ESP8266Tester {
 
     // ======================
 
+    static void dbug(Object o) {
+      System.out.println("(dbg) "+o);
+    }
 
     static void process() throws Exception {
-        String ESPCommPort = "COM13";
-        Terminal.getInstance().setCommPort( ESPCommPort );
+        // lets use .properties file ....
+        // String ESPCommPort = "COM13";
+        // Terminal.getInstance().setCommPort( ESPCommPort );
         boolean ok = Terminal.getInstance().reconnect(false);
         if ( !ok ) {
             throw new Exception("Could not connect to ESP8266 !!!!");
         }
+
+        BufferedReader keyb = new BufferedReader( new InputStreamReader( System.in ) );
 
         String line = null;
         while( (line = readLine()) != null ) {
           System.out.println("? "+line);
         }
 
-        writeCMD("AT"); // test module
-        while( (line = readLine()) != null ) {
-          System.out.println("? "+line);
-          if ( line.equals("OK") ) { break; }
+        testModule();
+
+        while(true) {
+        dbug("a. test module");
+        dbug("b. reset module");
+
+        dbug("c. setAPmode + connectAP + getIP + getSSID");
+        dbug("d. scan APs SSIDs");
+        dbug("e. setSTAmode + getIP + getSSID");
+
+        dbug("f. wgetTest");
+
+        dbug("x. eXit");
+
+        String choice = keyb.readLine();
+
+        if (choice == null) { return; }
+        choice = (""+choice.charAt(0)).toLowerCase();
+        char ch = choice.charAt(0);
+
+        if ( ch == 'x' ) { break; }
+        else if ( ch == 'a' ) { testModule(); }
+        else if ( ch == 'b' ) { resetModule(); }
+        else if ( ch == 'c' ) { 
+          dbug("Connect to SSID ? ");
+          String ssid = keyb.readLine();
+          dbug("Connect with PSK ? ");
+          String psk = keyb.readLine();
+
+          setWifiMode(false, true);
+          AP_connect(ssid, psk);
+          String ip = IP_get();
+          dbug("IP : "+ip);
+          ssid = AP_getSSID();
+          dbug("SSID : "+ssid);
+        }
+        else if ( ch == 'd' ) { 
+          setWifiMode(false, true);
+          String[] ssids = AP_allSSID();
+          // deals  w/ that array ..
+        } else if ( ch == 'e' ) { 
+          dbug("Open SSID ? ");
+          String ssid = keyb.readLine();
+          dbug(" with PSK ? ");
+          String psk = keyb.readLine();
+          setWifiMode(true, false);
+          STA_set(ssid, psk);
+          String ip = IP_get();
+          dbug("IP : "+ip);
+          STA_infos();
+        } else if ( ch == 'f' ) {
+          wget("http://www.google.fr", 80, "/search?q=esp8266");
         }
 
-        write("j"); // read Joypad state
-        while( (line = readLine()) != null ) {
-          System.out.println("? "+line);
-        }
-        write("k"); // read keyboard buffer
-        while( (line = readLine()) != null ) {
-          System.out.println("? "+line);
-        }
+      }
 
     }
   
