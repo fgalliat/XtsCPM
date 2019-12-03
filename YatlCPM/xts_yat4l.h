@@ -25,7 +25,8 @@
 #if MODE_4INCH
  #define TFT_WIDTH 480
  #define TFT_HEIGHT 320
- #define DEFAULT_TFT_ROTATION 1
+//  #define DEFAULT_TFT_ROTATION 1
+ #define DEFAULT_TFT_ROTATION 3
 #else
  #define TFT_WIDTH 320
  #define TFT_HEIGHT 240
