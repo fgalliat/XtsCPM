@@ -18,15 +18,16 @@
 - WiFi
   - ESP12 or ESP01 ?
   - ATcmds or SubMCU code ?
-  - API
-    - test
-    - list AP / connect AP
-    - set STA/AP
-    - wget(url)
-    - startTelnetD
-    - getIP() (STA/AP mode same API method)
-    - disconnect
-    - reset
+  - API (AT cmds + Java API)
+    - [x] test
+    - [x] list APs / connect AP
+    - [x] set STA/AP
+    - [x] wget(url) (**to finish**)
+    - [ ] startTelnetD
+    - [x] getIP() (STA/AP mode same API method)
+    - [x] getSSID (STA/AP)
+    - [x] disconnect from AP
+    - [x] reset
 - TTS via 328P 16MHz 5v
 - Thermal Printer (9v)
 
