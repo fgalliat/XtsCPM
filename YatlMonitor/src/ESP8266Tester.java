@@ -321,6 +321,11 @@ public class ESP8266Tester {
       writeCMD("AT+CIPSEND="+fullQ.length() );
       writeCMD( fullQ );
       writeCMD("+++"); // EOT
+
+      while( (line = readLine()) != null ) {
+        if ( line.equals("ERROR") ) { closeSocket(); return; }
+        if ( line.equals("SEND OK") ) { break; }
+      }
       
       // listen for +IPD(s) ....
       String buffer = "";
@@ -449,7 +454,8 @@ public class ESP8266Tester {
         }
 
         else if ( ch == 'h' ) {
-          wget("www.google.fr", 80, "/search?q=esp8266");
+          // wget("www.google.fr", 80, "/search?q=esp8266");
+          wget("192.168.1.135", 8089, "/");
         }
 
       }
