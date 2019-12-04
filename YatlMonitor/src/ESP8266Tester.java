@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class ESP8266Tester {
@@ -38,8 +39,9 @@ public class ESP8266Tester {
       writeCMD("AT");
       String line;
       while( (line = readLine()) != null ) {
-        dbug(">>> "+line);
+        // dbug(">>> "+line);
         if ( line.equals("OK") ) { return true; }
+        if ( line.equals("ERROR") ) { return false; }
       }
       return false;
     }
@@ -48,7 +50,10 @@ public class ESP8266Tester {
       writeCMD("AT+RST");
       String line;
       while( (line = readLine()) != null ) {
-        if ( line.equals("OK") ) { return true; }
+        // if ( line.equals("OK") ) { return true; }
+        // ESP-!2
+        if ( line.contains("ready") ) { return true; }
+        if ( line.equals("ERROR") ) { return false; }
       }
       return false;
     }
@@ -57,6 +62,10 @@ public class ESP8266Tester {
     static final int WIFI_MODE_STA = 1;
     // AP : wifi soft AP server
     static final int WIFI_MODE_AP = 2;
+
+    static final String[] wifiModes = {
+      "none", "STA", "AP", "STA+AP"
+    };
 
     static int getWifiMode() throws Exception {
       writeCMD("AT+CWMODE?");
@@ -68,6 +77,7 @@ public class ESP8266Tester {
           result = Integer.parseInt( line.substring("+CWMODE:".length()) );
         }
         if ( line.equals("OK") ) { break; }
+        if ( line.equals("ERROR") ) { break; }
       }
       if ( line == null ) { dbug("NULL LINE !!!!!!"); }
       return result;
@@ -82,13 +92,14 @@ public class ESP8266Tester {
       while( (line = readLine()) != null ) {
         // System.out.println("...? "+line);
         if ( line.equals("OK") ) { return true; }
+        if ( line.equals("ERROR") ) { return false; }
       }
       if ( line == null ) { dbug("NULL LINE !!!!!!"); }
       return false;
     }
 
     // returns SSID
-    static String AP_getSSID() throws Exception {
+    static String STA_getSSID() throws Exception {
       writeCMD("AT+CWJAP?");
       String result = null;
       String line;
@@ -96,6 +107,7 @@ public class ESP8266Tester {
         // System.out.println("...? "+line);
         if ( line.length() == 0 ) { continue; }
         if ( line.equals("OK") ) { break; }
+        if ( line.equals("ERROR") ) { break; }
         if ( line.startsWith("+CWJAP") ) {
           line = line.substring(line.indexOf('"')+1);
           line = line.substring(0, line.indexOf('"'));
@@ -103,6 +115,39 @@ public class ESP8266Tester {
         }
       }
       return result;
+    }
+
+    // infos on AP mode
+    static String AP_infos() throws Exception {
+      writeCMD("AT+CWSAP?");
+      String line, result = null;
+      while( (line = readLine()) != null ) {
+        if ( line.length() == 0 ) { continue; }
+        if ( line.equals("OK") ) { break; }
+        if ( line.equals("ERROR") ) { return null; }
+        if ( line.startsWith("+CWSAP") ) {
+          // contains BOTH ssid + psk
+          System.out.println("? "+line);
+          line = line.substring(line.indexOf('"')+1);
+          line = line.substring(0, line.indexOf('"'));
+          result = line;
+        }
+      }
+      return result;
+    }
+
+    static String getSSID() throws Exception {
+      return (isStaMode() ? STA_getSSID() : AP_infos());
+    }
+
+    static boolean arrayContains(List<String> list, String key) {
+      // Ugly impl. just to be close to C++ impl.
+      for(int i=0; i < list.size(); i++) {
+        if ( list.get(i).equals(key) ) {
+          return true;
+        }
+      }
+      return false;
     }
 
     // return list of available APs
@@ -118,11 +163,24 @@ public class ESP8266Tester {
         if ( line.startsWith("+CWLAP:") ) {
           line = line.substring(line.indexOf('"')+1);
           line = line.substring(0, line.indexOf('"'));
-          result.add(line);
+          if ( !arrayContains(result, line) ) {
+            // beware there are really APs
+            // w/ same names & # MACs !!!!
+            result.add(line);
+          }
         }
         if ( line.equals("OK") ) { break; }
+        if ( line.equals("ERROR") ) { break; }
       }
       if ( line == null ) { dbug("NULL LINE"); }
+
+      // result.sort( new Comparator<String>() {
+      //   @Override
+      //   public int compare(String o1, String o2) {
+      //     return o1.compareTo(o2);
+      //   }
+      // } );
+
       return result.toArray( new String[ result.size() ] );
     }
 
@@ -133,6 +191,7 @@ public class ESP8266Tester {
       while( (line = readLine()) != null ) {
         System.out.println("? "+line);
         if ( line.equals("OK") ) { return true; }
+        if ( line.equals("ERROR") ) { return false; }
       }
       return false;
     }
@@ -144,28 +203,21 @@ public class ESP8266Tester {
       while( (line = readLine()) != null ) {
         // System.out.println("? "+line);
         if ( line.equals("OK") ) { return true; }
+        if ( line.equals("ERROR") ) { return false; }
       }
       return false;
     }
 
-    // infos on STA mode -or- AP ?????
-    static boolean STA_infos() throws Exception {
-      writeCMD("AT+CWSAP?");
-      String line;
-      while( (line = readLine()) != null ) {
-        System.out.println("? "+line);
-        if ( line.equals("OK") ) { return true; }
-      }
-      return false;
-    }
+    
 
     // set SoftAP mode
     static boolean AP_set(String ssid, String psk) throws Exception {
       writeCMD("AT+CWSAP=\""+ssid+"\",\""+psk+"\",5,3");
       String line;
       while( (line = readLine()) != null ) {
-        // System.out.println("? "+line);
+        System.out.println("? "+line);
         if ( line.equals("OK") ) { return true; }
+        if ( line.equals("ERROR") ) { return false; }
       }
       return false;
     }
@@ -179,6 +231,7 @@ public class ESP8266Tester {
         // System.out.println("? "+line);
         result.add(line);
         if ( line.equals("OK") ) { break; }
+        if ( line.equals("ERROR") ) { break; }
       }
       return result.toArray( new String[ result.size() ] );
     }
@@ -193,6 +246,7 @@ public class ESP8266Tester {
         // System.out.println("? "+line);
         if ( line.length() == 0 ) { continue; }
         if ( line.equals("OK") ) { break; }
+        if ( line.equals("ERROR") ) { return null; }
         if ( line.startsWith("+CIP") ) {
           // ip: / gateway: / netmask:
           if ( line.contains("ip:") ) {
@@ -215,6 +269,7 @@ public class ESP8266Tester {
         // System.out.println("? "+line);
         result = line;
         if ( line.equals("OK") ) { return true; }
+        if ( line.equals("ERROR") ) { return false; }
       }
       return false;
     }
@@ -223,7 +278,8 @@ public class ESP8266Tester {
       // TODO : better cf can be BOTH
       int wmode = getWifiMode();
       return wmode == WIFI_MODE_STA ||
-      wmode == WIFI_MODE_STA + WIFI_MODE_STA;
+      false;
+      // wmode == WIFI_MODE_STA + WIFI_MODE_STA;
     }
 
     static String IP_get()  throws Exception {
@@ -265,6 +321,8 @@ public class ESP8266Tester {
         // let's ignore .properties file ....
         String ESPCommPort = "COM4";
         Terminal.getInstance().setCommPort( ESPCommPort );
+        Terminal.getInstance().setSilent(true);
+
         boolean ok = Terminal.getInstance().reconnect(false);
         if ( !ok ) {
             throw new Exception("Could not connect to ESP8266 !!!!");
@@ -282,15 +340,19 @@ public class ESP8266Tester {
 
 
         while(true) {
+          int _mode = getWifiMode();
+          dbug( "Current mode is : "+wifiModes[_mode] );
+
         dbug("a. test module");
         dbug("b. reset module");
 
         dbug("c. setSTAmode + connectAP + getIP + getSSID");
         dbug("d. scan APs SSIDs");
-        dbug("e. setAPmode + getIP + getSSID");
-        dbug("f. setSTAmode + getIP + getSSID");
+        dbug("e. open APmode");
+        dbug("f. setSTAmode");
+        dbug("g. getIP + getSSID");
 
-        dbug("g. wgetTest");
+        dbug("h. wgetTest");
 
         dbug("x. eXit");
 
@@ -301,7 +363,7 @@ public class ESP8266Tester {
         char ch = choice.charAt(0);
 
         if ( ch == 'x' ) { break; }
-        else if ( ch == 'a' ) { testModule(); }
+        else if ( ch == 'a' ) { boolean _ok = testModule(); dbug("Module is "+(_ok ? "OK":"NOK")); }
         else if ( ch == 'b' ) { resetModule(); }
         else if ( ch == 'c' ) { 
           dbug("Connect to SSID ? ");
@@ -313,7 +375,7 @@ public class ESP8266Tester {
           AP_connect(ssid, psk);
           String ip = IP_get();
           dbug("IP : "+ip);
-          ssid = AP_getSSID();
+          ssid = getSSID();
           dbug("SSID : "+ssid);
         }
         else if ( ch == 'd' ) { 
@@ -328,18 +390,21 @@ public class ESP8266Tester {
           dbug(" with PSK ? ");
           String psk = keyb.readLine();
           setWifiMode(false, true);
-          AP_set(ssid, psk);
+          boolean _ok = AP_set(ssid, psk);
+          dbug("Soft AP opened = "+_ok);
           String ip = IP_get();
           dbug("IP : "+ip);
-          STA_infos();
+          AP_infos();
         } else if ( ch == 'f' ) { 
           setWifiMode(true, false);
+        } else if ( ch == 'g' ) { 
           String ip = IP_get();
           dbug("IP : "+ip);
-          String ssid = AP_getSSID();
+          String ssid = getSSID();
           dbug("SSID : "+ssid);
         }
-        else if ( ch == 'g' ) {
+
+        else if ( ch == 'h' ) {
           wget("http://www.google.fr", 80, "/search?q=esp8266");
         }
 

@@ -280,8 +280,13 @@ public class Terminal {
 //		System.out.println("-EOF-");
 //	}
 
+	boolean silent = false;
+	public void setSilent(boolean silent) {
+		this.silent = silent;
+	}
+
 	void serPrint(String str) throws Exception {
-		System.out.println(">>> " + str);
+		if (!silent) System.out.println(">>> " + str);
 		serWrite(str.getBytes(), str.length());
 	}
 
