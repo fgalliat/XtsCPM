@@ -343,21 +343,25 @@ public class ESP8266Tester {
           int len = -1;
           try { len = Integer.parseInt(line.substring(5, line.indexOf(":") )); }
           catch(Exception ex) {}
-          // dbug(len);
           String keptLine = line.substring(line.indexOf(":")+1);
-          // dbug("..{"+ keptLine.length() +"}.."+keptLine);
           if ( keptLine.length() < len) {
             buffer += keptLine + "\n"; //"\r\n";
+          } else if ( keptLine.length() == len) {
+            buffer += keptLine;
           } else {
+            // < len
             keptLine = keptLine.substring(0, len);
             buffer += keptLine; // w/o LF
             line = line.substring(5+len);
-            if ( line.equals("CLOSED") ) { break; }
+            if ( line.endsWith("CLOSED") ) { break; }
           }
-          // dbug(keptLine);
         } else if ( line.startsWith("CLOSED") ) { break; }
         else {
           buffer += line + "\n";
+          if ( line.endsWith("CLOSED") ) { 
+            buffer = buffer.substring( 0, buffer.length() - 7 ); 
+            break; 
+          }
         }
       }
 
