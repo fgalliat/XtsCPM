@@ -309,9 +309,12 @@ public class Terminal {
 //			// Zzz(2);
 //		}
 		
+
 //		Zzz(5);
 		Zzz(1);
+		// Zzz(10);
 		
+		// serialPort.purgePort( serialPort.PURGE_TXCLEAR );
 		// serialPort.purgePort( serialPort.PURGE_RXCLEAR | serialPort.PURGE_TXCLEAR );
 	}
 
@@ -347,27 +350,32 @@ public class Terminal {
 		try {
 			ch0 = serialPort.readBytes(1, timeout)[0];
 			if (ch0 == '\n' || ch0 == '\r') {
+				if (ch0 == '\r' && consumeBackRtoo) {
+					ch0 = serialPort.readBytes(1, timeout)[0];
+				}
 				LISTENER_LOCKED = false;
 				return "";
 			}
-			line = "" + (char) ch0;
+			// line = "" + (char) ch0;
+			line = "";
 			while (true) {
+				char ch = (ch0 < 0) ? (char) (256 + ch0) : (char) ch0;
+				line += ch;
+
 				// TODO : better
 				ch0 = serialPort.readBytes(1, timeout)[0];
 				if (ch0 == '\n' || ch0 == '\r') {
-					if (consumeBackRtoo && ch0 == '\r') {
-						continue;
+					if (ch0 == '\r' && consumeBackRtoo) {
+						ch0 = serialPort.readBytes(1, timeout)[0];
 					}
 					break;
 				}
-				line += (char) ch0;
 			}
 
 		} catch (Exception ex) {
 			LISTENER_LOCKED = false;
 			return null;
 		}
-		char ch = (ch0 < 0) ? (char) (256 + ch0) : (char) ch0;
 		LISTENER_LOCKED = false;
 		return line;
 	}
