@@ -292,23 +292,67 @@ public class ESP8266Tester {
     
     // ---------------
 
+    static boolean closeSocket() throws Exception {
+      writeCMD("AT+CIPCLOSE()");
+      String line;
+      while( (line = readLine()) != null ) {
+        // System.out.println("? "+line);
+        if ( line.equals("OK") ) { break; }
+        if ( line.equals("ERROR") ) { return false; }
+      }
+      return true;
+    }
+
     // "192.168.1.135" 8080 "/login.jsp?user=toto&pass=titi"
     static void wget(String host, int port, String query)  throws Exception {
       // start
-      writeCMD("AT+CIPSTART=\"TCP\",\""+host+"\", port");
-
-      String fullQ = "GET "+query;
-      writeCMD("AT+CIPSEND="+fullQ.length() );
-      writeCMD( fullQ );
-      
-      // listen for +IPD(s) ....
+      writeCMD("AT+CIPSTART=\"TCP\",\""+host+"\","+port);
       String line;
       while( (line = readLine()) != null ) {
         System.out.println("? "+line);
+        if ( line.equals("OK") ) { break; }
+        if ( line.equals("ERROR") ) { 
+          closeSocket();
+          return; 
+        }
       }
 
+      String fullQ = "GET "+query+"\r\n";
+      writeCMD("AT+CIPSEND="+fullQ.length() );
+      writeCMD( fullQ );
+      writeCMD("+++"); // EOT
+      
+      // listen for +IPD(s) ....
+      String buffer = "";
+      while( (line = readLine()) != null ) {
+        // System.out.println("? "+line);
+        // +IPD,$length:$content
+        if ( line.startsWith("+IPD,") ) {
+          int len = -1;
+          try { len = Integer.parseInt(line.substring(5, line.indexOf(":") )); }
+          catch(Exception ex) {}
+          // dbug(len);
+          String keptLine = line.substring(line.indexOf(":")+1);
+          // dbug("..{"+ keptLine.length() +"}.."+keptLine);
+          if ( keptLine.length() < len) {
+            buffer += keptLine + "\n"; //"\r\n";
+          } else {
+            keptLine = keptLine.substring(0, len);
+            buffer += keptLine; // w/o LF
+            line = line.substring(5+len);
+            if ( line.equals("CLOSED") ) { break; }
+          }
+          // dbug(keptLine);
+        } else if ( line.startsWith("CLOSED") ) { break; }
+        else {
+          buffer += line + "\n";
+        }
+      }
+
+      dbug(buffer);
+
       // close
-      writeCMD("AT+CIPCLOSE()");
+      closeSocket();
     }
 
     // ======================
@@ -405,7 +449,7 @@ public class ESP8266Tester {
         }
 
         else if ( ch == 'h' ) {
-          wget("http://www.google.fr", 80, "/search?q=esp8266");
+          wget("www.google.fr", 80, "/search?q=esp8266");
         }
 
       }
