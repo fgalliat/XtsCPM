@@ -18,12 +18,15 @@
 - WiFi
   - ESP12 or ESP01 ?
   - ATcmds or SubMCU code ?
-  - API (AT cmds + Java API)
+  - API (AT cmds + Java API for now)
     - [x] test
     - [x] list APs / connect AP
     - [x] set STA/AP
     - [x] wget(url) (**to finish**)
-    - [ ] startTelnetD
+      - [ ] act as a REST GET client (see Bearers too)
+      - [ ] add getHomeServer() method based on current SSID
+      - [ ] Z:/wifi.psk => ($HOME_SSID$:$HOME_HOST$:$REMOTE_HOST$\n) + ( $SSID$:$PSK$\n )[]
+    - [ ] startTelnetD (**later**)
     - [x] getIP() (STA/AP mode same API method)
     - [x] getSSID (STA/AP)
     - [x] disconnect from AP

@@ -1,7 +1,9 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ESP8266Tester {
 
@@ -366,7 +368,50 @@ public class ESP8266Tester {
       System.out.println("(dbg) "+o);
     }
 
+    static String HOME_SSID = null;
+    static String HOME_LOCAL_SRV = null;
+    static String HOME_REMOTE_SRV = null;
+
+    static Map<String,String> ssidPsks = new HashMap<String,String>();
+
+    static void parseWIFIconfig(String filename) throws Exception {
+      if ( ! new File( filename ).exists() ) {
+        dbug("Warning NO WiFi config found !");
+        return;
+      }
+
+      BufferedReader reader = new BufferedReader(new FileReader(filename));
+      String line;
+      line = reader.readLine();
+      if ( line == null || line.trim().isEmpty() ) {
+        dbug("Warning EMPTY WiFi config found !");
+        reader.close();
+        return;
+      }
+
+      // $HOME_SSID$:$HOME_HOST$:$REMOTE_HOST$\n
+      String[] tks = line.split(":");
+      // TODO : handle errors
+      HOME_SSID = tks[0];
+      HOME_LOCAL_SRV = tks[1];
+      HOME_REMOTE_SRV = tks[2];
+
+      // $SSID$:$PSK$\n (one line per SSID)
+      ssidPsks.clear();
+      while( (line = reader.readLine() ) != null ) {
+        tks = line.split(":");
+        // TODO : handle errors
+        ssidPsks.put( tks[0], tks[1] );
+      }
+
+      reader.close();
+      dbug("WiFi config successfully loaded");
+    }
+
     static void process() throws Exception {
+
+        parseWIFIconfig("./wifi.psk");
+
         // let's ignore .properties file ....
         String ESPCommPort = "COM4";
         Terminal.getInstance().setCommPort( ESPCommPort );
