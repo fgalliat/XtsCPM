@@ -374,6 +374,27 @@ public class ESP8266Tester {
 
     static Map<String,String> ssidPsks = new HashMap<String,String>();
 
+    static String getPskForSSID(String ssid) {
+      return ssidPsks.get(ssid);
+    }
+
+    static String getHomeServer() throws Exception {
+      if ( HOME_SSID == null ) {
+        return null;
+      }
+
+      String curSSID = getSSID();
+      if ( curSSID == null ) {
+        return null;
+      }
+
+      if ( curSSID.equals(HOME_SSID) ) {
+        return HOME_LOCAL_SRV;
+      } else {
+        return HOME_REMOTE_SRV;
+      }
+    }
+
     static void parseWIFIconfig(String filename) throws Exception {
       if ( ! new File( filename ).exists() ) {
         dbug("Warning NO WiFi config found !");
@@ -436,6 +457,8 @@ public class ESP8266Tester {
         while(true) {
           int _mode = getWifiMode();
           dbug( "Current mode is : "+wifiModes[_mode] );
+          dbug( "Home Server is : "+getHomeServer() );
+          dbug("");
 
         dbug("a. test module");
         dbug("b. reset module");
