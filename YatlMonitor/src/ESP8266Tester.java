@@ -307,6 +307,11 @@ public class ESP8266Tester {
 
     // "192.168.1.135" 8080 "/login.jsp?user=toto&pass=titi"
     static void wget(String host, int port, String query)  throws Exception {
+
+      if ( host.equals("$home") ) {
+        host = getHomeServer();
+      }
+
       // start
       writeCMD("AT+CIPSTART=\"TCP\",\""+host+"\","+port);
       String line;
@@ -523,7 +528,7 @@ public class ESP8266Tester {
 
         else if ( ch == 'h' ) {
           // wget("www.google.fr", 80, "/search?q=esp8266");
-          wget("192.168.1.135", 8089, "/");
+          wget("$home", 8089, "/");
         }
 
       }
