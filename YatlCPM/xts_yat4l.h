@@ -139,12 +139,40 @@ bool yat4l_subMcuIsReady();
 char* yat4l_wifi_getIP();
 char* yat4l_wifi_getSSID();
 
-bool yat4l_wifi_close();
-bool yat4l_wifi_beginAP();
-bool yat4l_wifi_startTelnetd();
+// @@
+#define WIFI_MODE_STA 1
+#define WIFI_MODE_AP 2
+
+bool yat4l_wifi_testModule();
+bool yat4l_wifi_resetModule();
+
+bool yat4l_wifi_setWifiMode(int mode);
+int yat4l_wifi_getWifiMode();
+
+// Soft AP
+bool yat4l_wifi_openAnAP(char* ssid, char* psk);
+
+// STA (client of an AP)
+bool yat4l_wifi_connectToAP(char* ssid, char* psk);
+bool yat4l_wifi_disconnectFromAP();
+// returns a 'ssid \n ssid \n ....'
+char* yat4l_wifi_scanAPs();
+
+// return type is not yet certified, may use a packetHandler ....
+// ex. yat4l_wifi_wget("www.google.com", 80, "/search?q=esp8266" 
+// ex. yat4l_wifi_wget("$home", 8089, "/login?username=toto&pass=titi" 
+char* yat4l_wifi_wget(char* host, int port, char* query);
+
+bool yat4l_wifi_isAtHome();
+char* yat4l_wifi_getHomeServer();
+// @@
+
+bool yat4l_wifi_close(); // will try to call yat4l_wifi_disconnectFromAP()
+bool yat4l_wifi_beginAP(); // will try to call yat4l_wifi_openAnAP("Yat4l_AP", "yat4l1234");
 
 bool yat4l_wifi_loop();
 
+bool yat4l_wifi_startTelnetd();
 void yat4l_wifi_telnetd_broadcast(char ch);
 int  yat4l_wifi_telnetd_available();
 int  yat4l_wifi_telnetd_read();
