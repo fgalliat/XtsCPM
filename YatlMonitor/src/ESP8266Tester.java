@@ -444,6 +444,9 @@ public class ESP8266Tester {
 
         // let's ignore .properties file ....
         String ESPCommPort = "COM4";
+
+        if ( true ) { ESPCommPort = "COM8"; }
+
         Terminal.getInstance().setCommPort( ESPCommPort );
         Terminal.getInstance().setSilent(true);
 
@@ -492,10 +495,17 @@ public class ESP8266Tester {
         else if ( ch == 'a' ) { boolean _ok = testModule(); dbug("Module is "+(_ok ? "OK":"NOK")); }
         else if ( ch == 'b' ) { resetModule(); }
         else if ( ch == 'c' ) { 
+          // STA mode - AP client
           dbug("Connect to SSID ? ");
           String ssid = keyb.readLine();
-          dbug("Connect with PSK ? ");
-          String psk = keyb.readLine();
+          String psk;
+          psk = getPskForSSID(ssid);
+          if ( psk == null ) {
+            dbug("Connect with PSK ? ");
+            psk = keyb.readLine();
+          } else {
+            dbug("Found a PSK ! ");
+          }
 
           setWifiMode(true, false);
           AP_connect(ssid, psk);
