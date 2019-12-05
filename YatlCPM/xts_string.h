@@ -145,6 +145,28 @@ bool endsWith(char* str, char* toFind) {
     return true;
 }
 
+bool startsWith(char* str, char* toFind) {
+    int slen = strlen( str );
+    int tlen = strlen( toFind );
+
+    if ( tlen > slen ) { return false; }
+
+    int tc = 0;
+
+    for(int i=0; i < tlen; i++) {
+        if ( str[i] == toFind[tc++] ) {
+            if (tc >= tlen) { break; }
+        } else { return false; }
+    }
+    return true;
+}
+
+bool equals(char* str, char* toFind) {
+    if ( str == NULL && toFind == NULL ) { return true; }
+    if ( str == NULL || toFind == NULL ) { return false; }
+    return strcmp(str, toFind) == 0;
+}
+
 char charUpCase(char ch) {
     if ( ch >= 'a' && ch <= 'z' ) {
         return ch - 'a' + 'A';
