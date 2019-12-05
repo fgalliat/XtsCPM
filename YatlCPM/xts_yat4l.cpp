@@ -34,18 +34,8 @@
     //                                   WiFi
     // ===================================================================================
 
-    char* yat4l_wifi_getIP() { return "0.0.0.0"; }
-    char* yat4l_wifi_getSSID() { return "NotConnetcted"; }
-
-    bool yat4l_wifi_close() { return true; }
-    bool yat4l_wifi_beginAP() { return false; }
-    bool yat4l_wifi_startTelnetd() { return false; }
-
-    bool yat4l_wifi_loop() { ; }
-
-    void yat4l_wifi_telnetd_broadcast(char ch)  { ; }
-    int  yat4l_wifi_telnetd_available()  { return 0; }
-    int  yat4l_wifi_telnetd_read() { return -1; }
+    // impl. include
+    #include "xts_yat4l_dev_wifi_esp_at.h"
 
     // ===================================================================================
     //                                   Music
