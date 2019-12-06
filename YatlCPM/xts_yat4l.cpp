@@ -56,12 +56,25 @@
     // ===================================================================================
     //                                   Buzzer
     // ===================================================================================
-    void yat4l_buzzer_init() {}
-    void yat4l_buzzer_tone(int freq, int duration) {}
-    void yat4l_buzzer_noTone() {}
-    void yat4l_buzzer_playTuneString(char* sequence) {}
-    bool yat4l_buzzer_playTuneFile(const char* tuneStreamName) {return true;}
-    void yat4l_buzzer_beep(int freq, int duration) {}
+    bool BUZZER_MUTE = false;
+
+    void yat4l_buzzer_init() {
+      pinMode(BUZZER_PIN, OUTPUT);
+      digitalWrite(BUZZER_PIN, LOW);
+    }
+
+    void yat4l_buzzer_tone(int freq, int duration) {
+      if ( !BUZZER_MUTE ) {
+        tone(BUZZER_PIN, freq, duration);
+      }
+    }
+    void yat4l_buzzer_noTone() {
+      noTone(BUZZER_PIN);
+    }
+
+    // void yat4l_buzzer_beep(int freq, int duration) {}
+    // void yat4l_buzzer_playTuneString(char* sequence) {}
+    // bool yat4l_buzzer_playTuneFile(const char* tuneStreamName) {return true;}
 
 
     //====================================================================================
@@ -186,6 +199,7 @@
 
 
         Serial.begin(115200);
+        bool ok = yat4l_wifi_setup();
 
 
         // SD is init by YatlCPM.ino

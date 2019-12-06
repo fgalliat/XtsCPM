@@ -41,7 +41,9 @@
 
 #define SUBMCU_READY_PIN 4
 
-#define LED_BUILTIN_PIN 5
+#define LED_BUILTIN_PIN 2
+
+#define BUZZER_PIN 5
 
 //====================================================================================
   // Xtase run-time Handler

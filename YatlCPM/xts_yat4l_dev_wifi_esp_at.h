@@ -5,7 +5,7 @@
  * Xtase - fgalliat @Dec2019
  * 
  */
-
+    bool yat4l_wifi_setup() { Serial2.begin(115200); return true; }
 
     char* yat4l_wifi_getIP() { return "0.0.0.0"; }
     char* yat4l_wifi_getSSID() { return "NotConnetcted"; }
