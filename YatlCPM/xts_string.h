@@ -163,8 +163,20 @@ bool startsWith(char* str, char* toFind) {
 
 bool equals(char* str, char* toFind) {
     if ( str == NULL && toFind == NULL ) { return true; }
+    // Serial.println("mB");
     if ( str == NULL || toFind == NULL ) { return false; }
-    return strcmp(str, toFind) == 0;
+    Serial.print("mA ");
+    Serial.print(str);
+    Serial.print(":");
+    Serial.println(toFind);
+    // Serial.println("mC");
+    int t1len = strlen(str);
+    // Serial.println("mD");
+    int t2len = strlen(toFind);
+    // Serial.println("mE");
+    bool ok = t1len == t2len && strncmp(str, toFind, t1len) == 0;
+    // Serial.println("mF");
+    return ok;
 }
 
 char charUpCase(char ch) {
