@@ -85,9 +85,24 @@ int readed = cpt;
     }
 
     // TODO : call it
-    bool yat4l_wifi_init() { 
-        _wifiReadline(500); // reads garbage
-        return yat4l_wifi_testModule(); 
+    bool yat4l_wifi_init() {
+        long t0 = millis();
+        Serial.println("Waiting for Serial2");
+        while( !WIFI_SERIAL ) {
+            delay(10);
+            if ( millis() - t0 >= 1500 ) { return false; }
+        } 
+        Serial.println("Flush for Serial2");
+        while(true) {
+            char* line = _wifiReadline(500); // reads garbage
+            // equals(line, "ready") -- ESP12 protocol
+            if ( line == NULL || equals(line, "ready") ) { break; }
+        }
+        Serial.println("Test for Module");
+        bool ok = yat4l_wifi_testModule();
+        Serial.print("Tested Module : "); 
+        Serial.println(ok ? "OK" : "NOK"); 
+        return ok;
     }
 
     bool yat4l_wifi_testModule() { 
