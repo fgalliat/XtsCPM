@@ -5,7 +5,62 @@
  * Xtase - fgalliat @Dec2019
  * 
  */
-    bool yat4l_wifi_setup() { Serial2.begin(115200); return true; }
+
+    #define WIFI_SERIAL Serial2
+    #define WIFI_CMD_TIMEOUT 6000
+
+    bool yat4l_wifi_setup() { WIFI_SERIAL.begin(115200); return true; }
+
+    void _wifiSendCMD(const char* cmd) {
+        // add CRLF
+        Serial.print("WIFI >");Serial.println(cmd);
+        char buff[128]; sprintf(buff, "%s\r\n", cmd);
+        WIFI_SERIAL.print( buff );
+        WIFI_SERIAL.flush();
+    }
+
+    char _line[512+1];
+    char* _wifiReadline(int timeout=WIFI_CMD_TIMEOUT) {
+        memset(_line, 0x00, 512+1);
+        // removes CRLF
+        Serial.print("WIFI READ >");Serial.println(timeout);
+        WIFI_SERIAL.setTimeout( timeout );
+        int readed = WIFI_SERIAL.readBytesUntil('\n', _line, 512);
+        if (readed < 0 ) return NULL;
+        int t = strlen(_line);
+        if ( t > 0 && _line[t-1] == '\r' ) {
+            _line[t-1] = 0x00;
+        }
+        return _line;
+    }
+
+    #define _RET_TIMEOUT 0
+    #define _RET_OK 1
+    #define _RET_ERROR 2
+
+    extern bool equals(char* s, char* t);
+
+    int _wifi_waitForOk() {
+        char* resp;
+        while (true) {
+            resp = _wifiReadline();
+            if ( resp == NULL ) { return _RET_TIMEOUT; }
+            if ( equals(resp, (char*)"OK") ) { return _RET_OK; }
+            if ( equals(resp, (char*)"ERROR") ) { return _RET_ERROR; }
+        }
+        return -1;
+    }
+
+    // TODO : call it
+    bool yat4l_wifi_init() { 
+        _wifiReadline(500); // reaads garbage
+        return yat4l_wifi_testModule(); 
+    }
+
+    bool yat4l_wifi_testModule() { 
+        _wifiSendCMD("AT"); 
+        return _wifi_waitForOk() == _RET_OK;
+    }
 
     char* yat4l_wifi_getIP() { return "0.0.0.0"; }
     char* yat4l_wifi_getSSID() { return "NotConnetcted"; }
@@ -21,7 +76,6 @@
     int  yat4l_wifi_telnetd_read() { return -1; }
 
 
-    bool yat4l_wifi_testModule() { return false; }
     bool yat4l_wifi_resetModule() { return false; }
 
     bool yat4l_wifi_setWifiMode(int mode) { return false; }

@@ -1,6 +1,7 @@
 #if defined __IMXRT1062__
 
  #include "Arduino.h"
+//  #include "xts_string.h"
  #include "xts_yat4l.h"
 
 /**

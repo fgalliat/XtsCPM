@@ -145,6 +145,7 @@ char* yat4l_wifi_getSSID();
 #define WIFI_MODE_STA 1
 #define WIFI_MODE_AP 2
 
+bool yat4l_wifi_init();
 bool yat4l_wifi_testModule();
 bool yat4l_wifi_resetModule();
 

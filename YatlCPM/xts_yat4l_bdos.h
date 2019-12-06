@@ -66,6 +66,17 @@
   int32 BdosTest229(int32 value) {
     yat4l_dbug("/===== BDos 229 call =====\\");
 
+    bool init = yat4l_wifi_init();
+    char tmp[128];
+    sprintf(tmp, "Module init : %d\r", init ? 1 : 0); 
+    Serial.println(tmp);
+    puts(tmp);
+
+    bool okMod = !init ? false : yat4l_wifi_testModule();
+    sprintf(tmp, "Module ready : %d\r", okMod ? 1 : 0); 
+    Serial.println(tmp);
+    puts(tmp);
+
     // yatl.getScreen()->grabbSpritesOfSize( (char*)"SPRITE1.BMP", 0, 0, 32, 32);
     // sprites[0].drawClip(0,20);
     // sprites[1].drawClip(50,20);
