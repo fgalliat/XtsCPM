@@ -15,8 +15,13 @@
         // add CRLF
         Serial.print("WIFI >");Serial.println(cmd);
         char buff[128]; sprintf(buff, "%s\r\n", cmd);
-        WIFI_SERIAL.print( buff );
-        WIFI_SERIAL.flush();
+        Serial.print("WIFI >>");Serial.println(buff);
+        WIFI_SERIAL.write( buff, strlen( buff ) );
+        // WIFI_SERIAL.flush();
+
+        // delay(10);
+        // yield();
+        Serial.println("Sent packet");
     }
 
     char _line[512+1];
@@ -24,13 +29,41 @@
         memset(_line, 0x00, 512+1);
         // removes CRLF
         Serial.print("WIFI READ >");Serial.println(timeout);
-        WIFI_SERIAL.setTimeout( timeout );
-        int readed = WIFI_SERIAL.readBytesUntil('\n', _line, 512);
-        if (readed < 0 ) return NULL;
+        // WIFI_SERIAL.setTimeout( timeout );
+
+        long t0 = millis();
+        while( WIFI_SERIAL.available() <= 0 ) {
+            delay(10);
+            // yield();
+            if ( millis() - t0 >= timeout ) {
+                Serial.println("EJECTED 2"); return NULL;
+            }
+        }
+
+
+        Serial.println(".before");
+        // int readed = WIFI_SERIAL.readBytesUntil('\n', _line, 512);
+int cpt = 0;
+while( WIFI_SERIAL.available() > 0 ) {
+    if ( cpt >= 512 ) { break; }
+    int ch0 = WIFI_SERIAL.read();
+    if ( ch0 == -1 ) { break; }
+    if ( (char)ch0 == '\n' ) { break; }
+
+    _line[cpt] = (char)ch0;
+    Serial.write( (char)ch0 );
+    cpt++;
+}
+int readed = cpt;
+
+        Serial.println(".after");
+        // if (readed <= 0 ) { Serial.println("EJECTED"); return NULL; }
+        if (readed < 0 ) { Serial.println("EJECTED"); return NULL; }
         int t = strlen(_line);
         if ( t > 0 && _line[t-1] == '\r' ) {
             _line[t-1] = 0x00;
         }
+        Serial.print("WIFI READ <");Serial.println(_line);
         return _line;
     }
 
@@ -53,7 +86,7 @@
 
     // TODO : call it
     bool yat4l_wifi_init() { 
-        _wifiReadline(500); // reaads garbage
+        _wifiReadline(500); // reads garbage
         return yat4l_wifi_testModule(); 
     }
 
