@@ -72,10 +72,10 @@
     Serial.println(tmp);
     puts(tmp);
 
-    bool okMod = !init ? false : yat4l_wifi_testModule();
-    sprintf(tmp, "Module ready : %d\r", okMod ? 1 : 0); 
-    Serial.println(tmp);
-    puts(tmp);
+    // bool okMod = !init ? false : yat4l_wifi_testModule();
+    // sprintf(tmp, "Module ready : %d\r", okMod ? 1 : 0); 
+    // Serial.println(tmp);
+    // puts(tmp);
 
     // yatl.getScreen()->grabbSpritesOfSize( (char*)"SPRITE1.BMP", 0, 0, 32, 32);
     // sprites[0].drawClip(0,20);

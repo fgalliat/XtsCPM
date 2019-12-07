@@ -11,12 +11,35 @@
     #define WIFI_SERIAL_BAUDS 115200 
     // #define WIFI_SERIAL_BAUDS 9600 
 
-    bool yat4l_wifi_setup() { WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS); return true; }
+    bool yat4l_wifi_setup() { 
+        WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS); 
+
+long t0 = millis();
+
+while( !WIFI_SERIAL ) {
+    ; // TODO : timeout
+    if ( millis() - t0 > 1500 ) {break;}
+}
+
+while(WIFI_SERIAL.available() == 0) {
+    delay(50);
+    if ( millis() - t0 > 1500 ) {break;}
+}
+
+        while(WIFI_SERIAL.available() > 0) {
+            int ch = WIFI_SERIAL.read();
+            Serial.write(ch);
+        }
+        Serial.println("module powered");
+
+
+        return true; 
+    }
 
     void _wifiSendCMD(const char* cmd) {
-        Serial.println("flush 1.a");
+        // Serial.println("flush 1.a");
         WIFI_SERIAL.flush();
-        Serial.println("flush 1.b");
+        // Serial.println("flush 1.b");
 
         // add CRLF
         Serial.print("WIFI >");Serial.println(cmd);
@@ -30,13 +53,13 @@
         }
 
         // Serial.print("WIFI >>");Serial.println(buff);
-        Serial.print("WIFI >>");Serial.println(cmd);
+        // Serial.print("WIFI >>");Serial.println(cmd);
         // WIFI_SERIAL.write( buff, tlen );
         WIFI_SERIAL.print( cmd );
         WIFI_SERIAL.print( "\r\n" );
-        Serial.println("flush 2.a");
+        // Serial.println("flush 2.a");
         WIFI_SERIAL.flush();
-        Serial.println("flush 2.b");
+        // Serial.println("flush 2.b");
 
         // delay(100);
         yield();
@@ -51,7 +74,7 @@
     int _wifiReadline(char* _line, int timeout=WIFI_CMD_TIMEOUT) {
         Serial.println("::_wifiReadline()");
 
-        WIFI_SERIAL.flush();
+        // WIFI_SERIAL.flush();
 
         memset(_line, 0x00, 512+1);
         // removes CRLF
@@ -73,10 +96,10 @@ if ( WIFI_SERIAL.available() >= 1 ) {
 if ( _line[0] == 0x00 ) { return 0; }
 
 int t = strlen(_line);
-        if ( t > 0 && _line[t-1] == '\r' ) {
-            _line[t-1] = 0x00;
-            t--;
-        }
+        // if ( t > 0 && _line[t-1] == '\r' ) {
+        //     _line[t-1] = 0x00;
+        //     t--;
+        // }
 
 if ( t < 0 ) { _line[0] = 0x00; return -1; }
 
@@ -139,7 +162,7 @@ return t;
     int _wifi_waitForOk() {
         char resp[512+1];
         while (true) {
-            Serial.println("--:beforeReadline");
+            // Serial.println("--:beforeReadline");
             // char* resp = _wifiReadline();
             int readed = _wifiReadline(resp);
             // if ( resp == NULL ) { Serial.println("TIMEOUT--"); return _RET_TIMEOUT; }
@@ -172,22 +195,37 @@ return t;
 
         long t0 = millis();
         Serial.println("Waiting for Serial2");
-        char line[512+1];
         while( !WIFI_SERIAL ) {
             delay(10);
             // delayMicroseconds(10);
             if ( millis() - t0 >= 1500 ) { return false; }
         }
 
+        // char line[512+1];
+        // while( _wifiReadline(line, 500) > -1 ) {
+        //     Serial.print("=>");
+        //     Serial.println(line);
+        // }
+        Serial.println("Check for garbage");
+        while(WIFI_SERIAL.available() > 0) {
+            WIFI_SERIAL.read();
+        }
+        Serial.println("Found some garbage");
+
         delay(300);
 
         Serial.println("Reset Module");
         yat4l_wifi_resetModule(); 
         
-        Serial.println("Test for Module");
-        bool ok = yat4l_wifi_testModule();
-        Serial.print("Tested Module : "); 
-        Serial.println(ok ? "OK" : "NOK"); 
+        // Serial.println("Test for Module");
+        // bool ok = yat4l_wifi_testModule();
+        // Serial.print("Tested Module : "); 
+        // Serial.println(ok ? "OK" : "NOK"); 
+
+
+Serial.println("Have finished !!!");
+
+        bool ok = true;
         return ok;
     }
 
@@ -195,28 +233,71 @@ return t;
         _wifiSendCMD("AT"); 
         return _wifi_waitForOk() == _RET_OK;
     }
+
     bool yat4l_wifi_resetModule() { 
         _wifiSendCMD("AT+RST"); 
 
-delay(700);
-WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS);
-while( !WIFI_SERIAL ) {
-    ; // beware w/ timeout
+Serial.println("======= 2nd pass =======");
+
+delay(300);
+        WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS);
+        delay(300);
+
+        long t0 = millis();
+        Serial.println("Waiting for Serial2");
+        while( !WIFI_SERIAL ) {
+            delay(10);
+            if ( millis() - t0 >= 1500 ) { return false; }
+        }
+
+        Serial.println("Check for garbage");
+
+while(WIFI_SERIAL.available() == 0) {
+    delay(50);
 }
 
-        // return _wifi_waitForOk() == _RET_OK;    
-        char line[512+1];
-        int cpt = 0;
-        while(true) {
-            // char* line = _wifiReadline(500); // reads garbage
-            int readed = _wifiReadline(line, 500); // reads garbage
-            // equals(line, "ready") -- ESP12 protocol
-            // if ( line == NULL || equals(line, "ready") ) { break; }
-            if ( 
-                 // readed < 0 || (readed == 0 && (cpt++) > 50) || 
-                 ( strlen(line) == 0 && (cpt++) > 50) ||
-                 equals(line, "ready") ) { break; }
+        while(WIFI_SERIAL.available() > 0) {
+            int ch = WIFI_SERIAL.read();
+            Serial.write(ch);
         }
+        Serial.println("Found some garbage");
+
+        delay(300);
+
+
+// delay(700);
+// // WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS);
+// // while( !WIFI_SERIAL ) {
+// //     ; // beware w/ timeout
+// // }
+
+// // delay(700);
+
+// while(WIFI_SERIAL.available() > 0) {
+//            int ch = WIFI_SERIAL.read();
+
+//            Serial.write( ch );
+//         }
+//         Serial.println("module reseted");
+
+// //         // return _wifi_waitForOk() == _RET_OK;    
+// //         char line[512+1];
+// //         int cpt = 0;
+// //         while(true) {
+// //             // char* line = _wifiReadline(500); // reads garbage
+// //             int readed = _wifiReadline(line, 500); // reads garbage
+// //             // equals(line, "ready") -- ESP12 protocol
+// //             // if ( line == NULL || equals(line, "ready") ) { break; }
+
+// // if (readed < 0) {
+// //     break;
+// // } 
+
+// //             if ( 
+// //                  // readed < 0 || (readed == 0 && (cpt++) > 50) || 
+// //                  ( strlen(line) == 0 && (cpt++) > 50) ||
+// //                  equals(line, "ready") ) { break; }
+// //         }
         return true;
     }
 
