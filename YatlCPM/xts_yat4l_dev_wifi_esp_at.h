@@ -68,7 +68,7 @@ while(WIFI_SERIAL.available() == 0) {
     }
 
     // char _line[512+1];
-    elapsedMillis sinceStartRead; // Teensy Specific
+    // elapsedMillis sinceStartRead; // Teensy Specific
 
     // assumes that _line is 512+1 bytes allocated 
     int _wifiReadline(char* _line, int timeout=WIFI_CMD_TIMEOUT) {
@@ -81,17 +81,45 @@ while(WIFI_SERIAL.available() == 0) {
         Serial.print("WIFI READ >");Serial.println(timeout);
         yield();
 
-        WIFI_SERIAL.setTimeout( timeout );
-// int readed = WIFI_SERIAL.readBytesUntil('\n', _line, 512);
-int readed = WIFI_SERIAL.readBytesUntil('\r', _line, 512);
-if ( readed <= 0 ) { _line[0] = 0x00; return -1; }
-
-if ( WIFI_SERIAL.available() >= 1 ) {
-    if (  WIFI_SERIAL.peek() == '\n' ) {
-        WIFI_SERIAL.read();
-    }
+long t0=millis();
+bool timReached = false;
+while (WIFI_SERIAL.available() <= 0)
+{
+    if ( millis() - t0 >= timeout ) { timReached = true; break; }
+    delay(10);
 }
+yield();
 
+if ( timReached ) { return -1; }
+
+int cpt = 0;
+int ch;
+while (WIFI_SERIAL.available() > 0)
+{
+if ( millis() - t0 >= timeout ) { timReached = true; break; }
+
+    ch = WIFI_SERIAL.read();
+    if ( ch == -1 ) { break; }
+    if ( ch == '\r' ) { continue; }
+    if ( ch == '\n' ) { break; }
+    _line[ cpt++ ] = (char)ch;
+}
+yield();
+
+
+//         WIFI_SERIAL.setTimeout( timeout );
+// // int readed = WIFI_SERIAL.readBytesUntil('\n', _line, 512);
+// int readed = WIFI_SERIAL.readBytesUntil('\r', _line, 512);
+// yield();
+// if ( readed <= 0 ) { _line[0] = 0x00; return -1; }
+
+// if ( WIFI_SERIAL.available() >= 1 ) {
+//     if (  WIFI_SERIAL.peek() == '\n' ) {
+//         WIFI_SERIAL.read();
+//     }
+// }
+
+yield();
 
 if ( _line[0] == 0x00 ) { return 0; }
 
@@ -165,6 +193,9 @@ return t;
             // Serial.println("--:beforeReadline");
             // char* resp = _wifiReadline();
             int readed = _wifiReadline(resp);
+
+yield();
+
             // if ( resp == NULL ) { Serial.println("TIMEOUT--"); return _RET_TIMEOUT; }
             if ( readed == -1 ) { Serial.println("TIMEOUT--"); return _RET_TIMEOUT; }
             if ( strlen( resp ) > 0 ) {
@@ -184,6 +215,7 @@ return t;
             // delayMicroseconds(10);
             // Serial.println("--:afterDelay");
         }
+        yield();
         // Serial.println("--:ejected");
         return -1;
     }
@@ -214,18 +246,18 @@ return t;
 
         delay(300);
 
-        Serial.println("Reset Module");
-        yat4l_wifi_resetModule(); 
+        // Serial.println("Reset Module");
+        // yat4l_wifi_resetModule(); 
         
-        // Serial.println("Test for Module");
-        // bool ok = yat4l_wifi_testModule();
+        Serial.println("Test for Module");
+        bool ok = yat4l_wifi_testModule();
         // Serial.print("Tested Module : "); 
         // Serial.println(ok ? "OK" : "NOK"); 
 
 
 Serial.println("Have finished !!!");
 
-        bool ok = true;
+        // bool ok = true;
         return ok;
     }
 
@@ -240,7 +272,7 @@ Serial.println("Have finished !!!");
 Serial.println("======= 2nd pass =======");
 
 delay(300);
-        WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS);
+        // WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS);
         delay(300);
 
         long t0 = millis();
@@ -252,52 +284,38 @@ delay(300);
 
         Serial.println("Check for garbage");
 
+t0 = millis();
+
+long timOut = 3500;
+
+yield();
+
+while( true ) {
+
+if ( millis() - t0 > timOut ) {break;}
+
 while(WIFI_SERIAL.available() == 0) {
+yield();
     delay(50);
+    if ( millis() - t0 > timOut ) {break;}
 }
+
+yield();
 
         while(WIFI_SERIAL.available() > 0) {
             int ch = WIFI_SERIAL.read();
             Serial.write(ch);
         }
+
+yield();
+
+}
+yield();
+
         Serial.println("Found some garbage");
 
-        delay(300);
+        // delay(300);
 
-
-// delay(700);
-// // WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS);
-// // while( !WIFI_SERIAL ) {
-// //     ; // beware w/ timeout
-// // }
-
-// // delay(700);
-
-// while(WIFI_SERIAL.available() > 0) {
-//            int ch = WIFI_SERIAL.read();
-
-//            Serial.write( ch );
-//         }
-//         Serial.println("module reseted");
-
-// //         // return _wifi_waitForOk() == _RET_OK;    
-// //         char line[512+1];
-// //         int cpt = 0;
-// //         while(true) {
-// //             // char* line = _wifiReadline(500); // reads garbage
-// //             int readed = _wifiReadline(line, 500); // reads garbage
-// //             // equals(line, "ready") -- ESP12 protocol
-// //             // if ( line == NULL || equals(line, "ready") ) { break; }
-
-// // if (readed < 0) {
-// //     break;
-// // } 
-
-// //             if ( 
-// //                  // readed < 0 || (readed == 0 && (cpt++) > 50) || 
-// //                  ( strlen(line) == 0 && (cpt++) > 50) ||
-// //                  equals(line, "ready") ) { break; }
-// //         }
         return true;
     }
 
@@ -308,7 +326,7 @@ while(WIFI_SERIAL.available() == 0) {
     bool yat4l_wifi_beginAP() { return false; }
     bool yat4l_wifi_startTelnetd() { return false; }
 
-    bool yat4l_wifi_loop() { ; }
+    bool yat4l_wifi_loop() { return false; }
 
     void yat4l_wifi_telnetd_broadcast(char ch)  { ; }
     int  yat4l_wifi_telnetd_available()  { return 0; }
