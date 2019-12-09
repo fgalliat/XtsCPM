@@ -1,0 +1,304 @@
+/**
+ * Yat4l Wifi by ESP8266 (esp12) AT cmds Driver impl.
+ * 
+ * 
+ * Xtase - fgalliat @Dec2019
+ * 
+ */
+
+// -------------------------------------
+// temp forward symbols
+bool yat4l_wifi_testModule();
+bool equals(char* s1, char* s2) {
+    if ( s1 == NULL && s2 == NULL ) { return true; }
+    if ( s1 == NULL || s2 == NULL ) { return false; }
+    return strcmp( s1, s2 ) == 0;
+}
+// -------------------------------------
+
+    #define WIFI_SERIAL Serial2
+    #define WIFI_CMD_TIMEOUT 6000
+    #define WIFI_SERIAL_BAUDS 115200 
+    // #define WIFI_SERIAL_BAUDS 9600 
+
+    bool yat4l_wifi_setup() { 
+        WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS); 
+
+        unsigned long t0 = millis();
+        unsigned long tmo = 1500;
+
+        while( !WIFI_SERIAL ) {
+            ; // TODO : timeout
+            if ( millis() - t0 > tmo ) { break; }
+        }
+
+        while(WIFI_SERIAL.available() == 0) {
+            delay(50);
+            if ( millis() - t0 > tmo ) { break; }
+        }
+
+        while(WIFI_SERIAL.available() > 0) {
+            int ch = WIFI_SERIAL.read();
+            Serial.write(ch);
+        }
+        Serial.println("module powered");
+
+
+        return true; 
+    }
+
+    void _wifiSendCMD(const char* cmd) {
+        // Serial.println("flush 1.a");
+        // WIFI_SERIAL.flush();
+        // Serial.println("flush 1.b");
+
+        // add CRLF
+        Serial.print("WIFI >");Serial.println(cmd);
+        // char buff[128]; memset(buff, 0x00, 128); sprintf(buff, "%s\r\n", cmd);
+
+
+        // int tlen = strlen( buff );
+        int tlen = strlen( cmd ) + 2;
+        if ( Serial.availableForWrite() < tlen ) {
+            Serial.println("NotEnoughtAvailableForWrite !!!!");
+        }
+
+        // Serial.print("WIFI >>");Serial.println(buff);
+        WIFI_SERIAL.print( cmd );
+        WIFI_SERIAL.print( "\r\n" );
+        WIFI_SERIAL.flush();
+
+        yield();
+        // delayMicroseconds(10);
+        Serial.println("Sent packet");
+    }
+
+    // removes CRLF
+    // assumes that _line is 512+1 bytes allocated 
+    int _wifiReadline(char* _line, unsigned int timeout=WIFI_CMD_TIMEOUT) {
+        Serial.println("::_wifiReadline()");
+
+        memset(_line, 0x00, 512+1);
+        Serial.print("WIFI READ >");Serial.println(timeout);
+        yield();
+
+        unsigned long t0=millis();
+        bool timReached = false;
+        while (WIFI_SERIAL.available() <= 0) {
+            if ( millis() - t0 >= timeout ) { timReached = true; break; }
+            delay(10);
+        }
+        yield();
+
+        if ( timReached ) { return -1; }
+
+        int cpt = 0;
+        int ch;
+        while (WIFI_SERIAL.available() > 0) {
+            if ( millis() - t0 >= timeout ) { timReached = true; break; }
+
+            ch = WIFI_SERIAL.read();
+            if ( ch == -1 ) { break; }
+            if ( ch == '\r' ) { 
+                if (WIFI_SERIAL.available() > 0) {
+                    if ( WIFI_SERIAL.peek() == '\n' ) {
+                        continue; 
+                    }
+                }
+                break;
+            }
+            if ( ch == '\n' ) { break; }
+            _line[ cpt++ ] = (char)ch;
+        }
+        yield();
+
+        if ( _line[0] == 0x00 && timReached ) {
+            return -1;
+        }
+
+
+//         WIFI_SERIAL.setTimeout( timeout );
+// // int readed = WIFI_SERIAL.readBytesUntil('\n', _line, 512);
+// int readed = WIFI_SERIAL.readBytesUntil('\r', _line, 512);
+
+        yield();
+
+        if ( _line[0] == 0x00 ) { return 0; }
+
+        int t = strlen(_line);
+        if ( t < 0 ) { _line[0] = 0x00; return -1; }
+
+        return t;
+    }
+
+    #define _RET_TIMEOUT 0
+    #define _RET_OK 1
+    #define _RET_ERROR 2
+
+    extern bool equals(char* s, char* t);
+
+    int _wifi_waitForOk() {
+        char resp[512+1];
+        while (true) {
+            // Serial.println("--:beforeReadline");
+            // char* resp = _wifiReadline();
+            int readed = _wifiReadline(resp);
+
+yield();
+
+            // if ( resp == NULL ) { Serial.println("TIMEOUT--"); return _RET_TIMEOUT; }
+            if ( readed == -1 ) { Serial.println("TIMEOUT--"); return _RET_TIMEOUT; }
+            if ( strlen( resp ) > 0 ) {
+                Serial.print("-->");
+                Serial.println(resp);
+
+                // Serial.print("-->a");
+                if ( equals(&resp[0], (char*)"OK") ) { Serial.println("OK--"); return _RET_OK; }
+                // Serial.print("-->b");
+                if ( equals(&resp[0], (char*)"ERROR") ) { Serial.println("ERROR--"); return _RET_ERROR; }
+
+            } else {
+                Serial.println("--:EMPTY");
+            }
+            // Serial.println("--:beforeDelay");
+            // delay(10);
+            // delayMicroseconds(10);
+            // Serial.println("--:afterDelay");
+        }
+        yield();
+        // Serial.println("--:ejected");
+        return -1;
+    }
+
+    // TODO : call it
+    bool yat4l_wifi_init() {
+        WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS);
+        delay(300);
+
+        unsigned long t0 = millis();
+        Serial.println("Waiting for Serial2");
+        while( !WIFI_SERIAL ) {
+            delay(10);
+            // delayMicroseconds(10);
+            if ( millis() - t0 >= 1500 ) { return false; }
+        }
+
+        Serial.println("Check for garbage");
+        while(WIFI_SERIAL.available() > 0) {
+            WIFI_SERIAL.read();
+        }
+        Serial.println("Found some garbage");
+
+        delay(300);
+
+        // Serial.println("Reset Module");
+        // yat4l_wifi_resetModule(); 
+        
+        Serial.println("Test for Module");
+        bool ok = yat4l_wifi_testModule();
+        // Serial.print("Tested Module : "); 
+        // Serial.println(ok ? "OK" : "NOK"); 
+
+
+        Serial.println("Have finished !!!");
+
+        // bool ok = true;
+        return ok;
+    }
+
+    bool yat4l_wifi_testModule() { 
+        _wifiSendCMD("AT"); 
+        return _wifi_waitForOk() == _RET_OK;
+    }
+
+    bool yat4l_wifi_resetModule() { 
+        _wifiSendCMD("AT+RST"); 
+
+Serial.println("======= 2nd pass =======");
+
+delay(300);
+        // WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS);
+        delay(300);
+
+        unsigned long t0 = millis();
+        Serial.println("Waiting for Serial2");
+        while( !WIFI_SERIAL ) {
+            delay(10);
+            if ( millis() - t0 >= 1500 ) { return false; }
+        }
+
+        Serial.println("Check for garbage");
+
+t0 = millis();
+
+unsigned long timOut = 3500;
+
+yield();
+
+while( true ) {
+
+if ( millis() - t0 > timOut ) {break;}
+
+while(WIFI_SERIAL.available() == 0) {
+yield();
+    delay(50);
+    if ( millis() - t0 > timOut ) {break;}
+}
+
+yield();
+
+        while(WIFI_SERIAL.available() > 0) {
+            int ch = WIFI_SERIAL.read();
+            Serial.write(ch);
+        }
+
+yield();
+
+}
+yield();
+
+        Serial.println("Found some garbage");
+
+        // delay(300);
+
+        return true;
+    }
+
+    char* yat4l_wifi_getIP() { return (char*)"0.0.0.0"; }
+    char* yat4l_wifi_getSSID() { return (char*)"NotConnected"; }
+
+    bool yat4l_wifi_close() { return true; }
+    bool yat4l_wifi_beginAP() { return false; }
+    bool yat4l_wifi_startTelnetd() { return false; }
+
+    bool yat4l_wifi_loop() { return false; }
+
+    void yat4l_wifi_telnetd_broadcast(char ch)  { ; }
+    int  yat4l_wifi_telnetd_available()  { return 0; }
+    int  yat4l_wifi_telnetd_read() { return -1; }
+
+
+
+    bool yat4l_wifi_setWifiMode(int mode) { return false; }
+    int yat4l_wifi_getWifiMode() { return -1; }
+
+    // Soft AP
+    bool yat4l_wifi_openAnAP(char* ssid, char* psk) { return false; }
+
+    // STA (client of an AP)
+    bool yat4l_wifi_connectToAP(char* ssid, char* psk) { return false; }
+    bool yat4l_wifi_disconnectFromAP() { return false; }
+    // returns a 'ssid \n ssid \n ....'
+    char* yat4l_wifi_scanAPs() { return (char*)""; }
+
+    // return type is not yet certified, may use a packetHandler ....
+    // ex. yat4l_wifi_wget("www.google.com", 80, "/search?q=esp8266" 
+    // ex. yat4l_wifi_wget("$home", 8089, "/login?username=toto&pass=titi" 
+    char* yat4l_wifi_wget(char* host, int port, char* query) {
+        return NULL;
+    }
+
+    bool yat4l_wifi_isAtHome() { return false; }
+    char* yat4l_wifi_getHomeServer() { return NULL; }
+
+
