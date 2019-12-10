@@ -9,11 +9,6 @@
     #define WIFI_SERIAL Serial2
     #define WIFI_CMD_TIMEOUT 6000
     #define WIFI_SERIAL_BAUDS 115200 
-    // #define WIFI_SERIAL_BAUDS 9600 
-
-    #define WIFI_SERIAL Serial2
-    #define WIFI_CMD_TIMEOUT 6000
-    #define WIFI_SERIAL_BAUDS 115200 
 
     bool yat4l_wifi_setup() { 
         WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS); 
@@ -42,6 +37,11 @@
     }
 
     void _wifiSendCMD(const char* cmd) {
+// flushRX
+while( WIFI_SERIAL.available() > 0) {
+  int c = WIFI_SERIAL.read();
+}
+
         // add CRLF
         Serial.print("WIFI >");Serial.println(cmd);
         int tlen = strlen( cmd ) + 2;
@@ -68,17 +68,24 @@
 
         unsigned long t0=millis();
         bool timReached = false;
+Serial.println("aa");
+        while( !WIFI_SERIAL ) {
+            if ( millis() - t0 >= timeout ) { timReached = true; break; }
+        }
+Serial.println("bb");
+        if ( timReached ) { return -1; }
         while (WIFI_SERIAL.available() <= 0) {
             if ( millis() - t0 >= timeout ) { timReached = true; break; }
             delay(10);
         }
         yield();
-
+Serial.println("cc");
         if ( timReached ) { return -1; }
 
         int cpt = 0;
         int ch;
         while (WIFI_SERIAL.available() > 0) {
+Serial.print("+");
             if ( millis() - t0 >= timeout ) { timReached = true; break; }
 
             ch = WIFI_SERIAL.read();
@@ -95,6 +102,7 @@
             _line[ cpt++ ] = (char)ch;
         }
         yield();
+Serial.println("dd");
 
         if ( _line[0] == 0x00 && timReached ) {
             return -1;

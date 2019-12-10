@@ -182,24 +182,27 @@
     extern void _setConsoleMode(int mode);
 
     bool yat4l_setup() {
+      // avoid SD_CS before booting
         const int SD_CS = 0;
         pinMode( SD_CS, OUTPUT );
         digitalWrite( SD_CS, HIGH );
+
+        Serial.begin(115200);
+        bool ok = yat4l_wifi_setup();
+Serial.println("WiFi module ready...");
+
 
         if ( SUBMCU_READY_PIN > 0 ) {
           pinMode(SUBMCU_READY_PIN, INPUT);
         }
 
         if ( LED_BUILTIN_PIN > 0 ) {
-        pinMode(LED_BUILTIN_PIN, OUTPUT);
-        digitalWrite(LED_BUILTIN_PIN, LOW);
+          pinMode(LED_BUILTIN_PIN, OUTPUT);
+          digitalWrite(LED_BUILTIN_PIN, LOW);
         }
 
 
-        Serial.begin(115200);
-        bool ok = yat4l_wifi_setup();
 
-Serial.println("WiFi module ready...");
 
         // SD is init by YatlCPM.ino
     
