@@ -3,10 +3,20 @@
 void setup() {
 
     Serial.begin(115200);
+
+    // while( !Serial ) { ; }
+
     Serial.println( "Setup.." );
 
     Serial.println( "WifiSetup.." );
     yat4l_wifi_setup();
+
+    if ( true ) {
+        Serial.println( "Waiting.." );
+        delay(5000);
+        Serial.println( "Waited.." );
+    }
+
 
     Serial.println( "WifiInit.." );
     yat4l_wifi_init();
@@ -15,8 +25,9 @@ void setup() {
 }
 
 
-
+bool first = true;
 void loop() {
-    Serial.println( "loop.." );
+    if (first) Serial.println( "loop.." );
+    first = false;
     delay(1000);
 }
