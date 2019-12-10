@@ -186,31 +186,34 @@
         pinMode( SD_CS, OUTPUT );
         digitalWrite( SD_CS, HIGH );
 
-  if ( SUBMCU_READY_PIN > 0 ) {
-    pinMode(SUBMCU_READY_PIN, INPUT);
-  }
+        if ( SUBMCU_READY_PIN > 0 ) {
+          pinMode(SUBMCU_READY_PIN, INPUT);
+        }
 
-  if ( LED_BUILTIN_PIN > 0 ) {
-   pinMode(LED_BUILTIN_PIN, OUTPUT);
-   digitalWrite(LED_BUILTIN_PIN, LOW);
-  }
+        if ( LED_BUILTIN_PIN > 0 ) {
+        pinMode(LED_BUILTIN_PIN, OUTPUT);
+        digitalWrite(LED_BUILTIN_PIN, LOW);
+        }
 
 
         Serial.begin(115200);
         bool ok = yat4l_wifi_setup();
 
+Serial.println("WiFi module ready...");
 
         // SD is init by YatlCPM.ino
     
         yat4l_buzzer_init();
 
-  // Now initialise the TFT
-        SPI.begin();
-        tft.begin();
-  tft.setRotation(DEFAULT_TFT_ROTATION);  // 0 & 2 Portrait. 1 & 3 landscape
-  tft.fillScreen(CLR_BLACK);
+        #if HAS_HAS_BUILTIN_LCD
+          // Now initialise the TFT
+          SPI.begin();
+          tft.begin();
+          tft.setRotation(DEFAULT_TFT_ROTATION);  // 0 & 2 Portrait. 1 & 3 landscape
+          tft.fillScreen(CLR_BLACK);
 
-  _setConsoleMode(1); // compute 80 cols mode
+          _setConsoleMode(1); // compute 80 cols mode
+        #endif
 
 
         return true;

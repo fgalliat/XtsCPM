@@ -579,7 +579,7 @@ int _kbhit(void) {
 }
 
 uint8 _getch(void) {
-	#ifdef HAS_KEYBOARD
+	#if HAS_KEYBOARD
 		if ( !Serial_useable ) {
 			// -= TODO BEWARE : keybLocked =-
 			while ( yatl.getKeyboard()->available() == 0 ) {
@@ -625,7 +625,7 @@ uint8 _getche(void) {
 		Serial.write(ch); // local echo 
 	}
 	
-#ifdef HAS_BUILTIN_LCD
+#if HAS_BUILTIN_LCD
   if ( currentlyUseScreen() ) { 
 	  #if YATL_PLATFORM
 	    yatl.getScreen()->write(ch); 
@@ -643,7 +643,7 @@ uint8 _getche(void) {
 }
 
 void _putch(uint8 ch) {
-#ifdef HAS_BUILTIN_LCD
+#if HAS_BUILTIN_LCD
   if ( currentlyUseScreen() ) { 
 	  #if YATL_PLATFORM
 	    yatl.getScreen()->write(ch); 
@@ -662,7 +662,7 @@ void _putch(uint8 ch) {
 }
 
 void _clrscr(void) {
-#ifdef HAS_BUILTIN_LCD
+#if HAS_BUILTIN_LCD
   if ( currentlyUseScreen() ) {
 	  #if YATL_PLATFORM
 	    yatl.getScreen()->cls(); 
