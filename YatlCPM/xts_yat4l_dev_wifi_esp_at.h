@@ -118,8 +118,9 @@
     #define _RET_ERROR 2
 
     extern bool equals(char* s, char* t);
+    extern bool startsWith(char* str, char* toFind);
 
-    int _wifi_waitForOk() {
+    int _wifi_waitForOk(char* dest=NULL) {
         char resp[512+1];
         while (true) {
             int readed = _wifiReadline(resp);
@@ -130,7 +131,7 @@
             if ( strlen( resp ) > 0 ) {
                 Serial.print("-->");
                 Serial.println(resp);
-
+                
                 if ( equals(&resp[0], (char*)"OK") ) { 
                     // Serial.println("OK--"); 
                     return _RET_OK; 
@@ -138,6 +139,11 @@
                 if ( equals(&resp[0], (char*)"ERROR") ) { 
                     // Serial.println("ERROR--"); 
                     return _RET_ERROR; 
+                }
+
+                if ( dest != NULL ) {
+                    // copy the last non-empty line
+                    sprintf(dest, "%s", resp);
                 }
 
             } else {
@@ -150,17 +156,8 @@
 
     // TODO : call it
     bool yat4l_wifi_init() {
-        // WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS);
-        // delay(300);
-
         unsigned long t0 = millis();
         Serial.println("Waiting for Serial2");
-        // while( !WIFI_SERIAL ) {
-        //     delay(10);
-        //     if ( millis() - t0 >= 1500 ) { return false; }
-        // }
-
-        // Serial.println("Check for garbage");
         while(WIFI_SERIAL.available() > 0) {
             WIFI_SERIAL.read();
         }
@@ -178,8 +175,12 @@
 
         Serial.println("set mode for Module");
         ok = yat4l_wifi_setWifiMode( WIFI_MODE_STA );
-        Serial.print("Module mode : "); 
+        Serial.print("Module mode set : "); 
         Serial.println(ok ? "OK" : "NOK"); 
+
+        int mode = yat4l_wifi_getWifiMode();
+        Serial.print("Module mode : "); 
+        Serial.println(mode); 
 
         Serial.println("Have finished !!!");
 
@@ -224,7 +225,6 @@
 
             while(WIFI_SERIAL.available() > 0) {
                 int ch = WIFI_SERIAL.read();
-                // Serial.write(ch);
                 if ( millis() - t0 > timOut ) {break;}
             }
 
@@ -260,7 +260,18 @@
         return _wifi_waitForOk() == _RET_OK;
     }
 
-    int yat4l_wifi_getWifiMode() { return -1; }
+    int yat4l_wifi_getWifiMode() { 
+        _wifiSendCMD("AT+CWMODE?");
+        char resp[128];
+        bool ok = _wifi_waitForOk( resp ) == _RET_OK;
+        int mode = -1;
+        if ( ok && startsWith(resp, (char*)"+CWMODE:") ) {
+            // Serial.println("Found a mode :");
+            // Serial.println(resp);
+            mode = atoi( &resp[8] );
+        }
+        return mode; 
+    }
 
     // Soft AP
     bool yat4l_wifi_openAnAP(char* ssid, char* psk) { return false; }
