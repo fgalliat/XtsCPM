@@ -69,9 +69,9 @@
     bool init = yat4l_wifi_init();
     Serial.println("229 inited");
     char tmp[128];
-    sprintf(tmp, "Module init : %d", init ? 1 : 0); 
-    Serial.println(tmp);
-    // puts(tmp);
+    sprintf(tmp, "Module init : %d\r\n", init ? 1 : 0); 
+    Serial.print(tmp);
+    _puts(tmp);
 
     // bool okMod = !init ? false : yat4l_wifi_testModule();
     // sprintf(tmp, "Module ready : %d\r", okMod ? 1 : 0); 

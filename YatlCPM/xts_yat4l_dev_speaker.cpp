@@ -114,7 +114,8 @@ extern bool BUZZER_MUTE;
 
 extern int _kbhit(void);
 extern uint8_t _getch(void);
-#define _puts Serial.print
+// #define _puts Serial.print
+extern void _puts(const char *str);
 
     bool checkbreak() { return false; }
     // bool anyBtn() { if (_kbhit() > 0) { _getch(); return true; } else { return false; } }
