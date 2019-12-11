@@ -70,13 +70,23 @@
     Serial.println("229 inited");
     char tmp[128];
     sprintf(tmp, "Module init : %d\r\n", init ? 1 : 0); 
-    Serial.print(tmp);
+    // Serial.print(tmp);
     _puts(tmp);
 
+
+    _puts( "IP : " );
+    _puts( yat4l_wifi_getIP() );
+    _puts( "\r\n" );
+
+    _puts( "SSID : " );
+    _puts( yat4l_wifi_getSSID() );
+    _puts( "\r\n" );
+
+    // puts(tmp); =====> Make Teensy DEADLOCK / use _puts(...)
+
     // bool okMod = !init ? false : yat4l_wifi_testModule();
-    // sprintf(tmp, "Module ready : %d\r", okMod ? 1 : 0); 
-    // Serial.println(tmp);
-    // puts(tmp);
+    // sprintf(tmp, "Module ready : %d\r\n", okMod ? 1 : 0); 
+    // _puts(tmp);
 
     // yatl.getScreen()->grabbSpritesOfSize( (char*)"SPRITE1.BMP", 0, 0, 32, 32);
     // sprites[0].drawClip(0,20);
