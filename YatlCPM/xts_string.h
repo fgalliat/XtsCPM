@@ -47,6 +47,13 @@ char* substring(char* str, int start, int stop=-1) {
     return res;
 }
 
+bool contains(char* str, char* toFind) {
+    if(strstr(str, toFind) != NULL) {
+        return true;
+    }
+    return false;
+}
+
 int indexOf(char* str, char ch, int start=0) {
   if ( start < 0 ) {
       start = 0;
@@ -146,19 +153,19 @@ bool endsWith(char* str, char* toFind) {
 }
 
 bool startsWith(char* str, char* toFind) {
+    if ( str == NULL || toFind == NULL ) { return false; }
     int slen = strlen( str );
     int tlen = strlen( toFind );
 
     if ( tlen > slen ) { return false; }
 
-    int tc = 0;
-
-    for(int i=0; i < tlen; i++) {
-        if ( str[i] == toFind[tc++] ) {
-            if (tc >= tlen) { break; }
-        } else { return false; }
-    }
-    return true;
+    // for(int i=0; i < tlen; i++) {
+    //     if ( str[i] != toFind[i] ) {
+    //         return false;
+    //     }
+    // }
+    // return true;
+    return strncmp( str, toFind, tlen) == 0;
 }
 
 bool equals(char* str, char* toFind) {

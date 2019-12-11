@@ -82,11 +82,12 @@
 
         int cpt = 0;
         int ch;
+        t0=millis();
         while (WIFI_SERIAL.available() > 0) {
             if ( millis() - t0 >= timeout ) { timReached = true; break; }
 
             ch = WIFI_SERIAL.read();
-            if ( ch == -1 ) { break; }
+            if ( ch == -1 ) { timReached = true; break; }
             if ( ch == '\r' ) { 
                 if (WIFI_SERIAL.available() > 0) {
                     if ( WIFI_SERIAL.peek() == '\n' ) {
@@ -119,6 +120,7 @@
 
     extern bool equals(char* s, char* t);
     extern bool startsWith(char* str, char* toFind);
+    extern bool contains(char* str, char* toFind);
 
     int _wifi_waitForOk(char* dest=NULL) {
         char resp[512+1];
@@ -238,21 +240,6 @@
         return true;
     }
 
-    char* yat4l_wifi_getIP() { return (char*)"0.0.0.0"; }
-    char* yat4l_wifi_getSSID() { return (char*)"NotConnected"; }
-
-    bool yat4l_wifi_close() { return true; }
-    bool yat4l_wifi_beginAP() { return false; }
-    bool yat4l_wifi_startTelnetd() { return false; }
-
-    bool yat4l_wifi_loop() { return false; }
-
-    void yat4l_wifi_telnetd_broadcast(char ch)  { ; }
-    int  yat4l_wifi_telnetd_available()  { return 0; }
-    int  yat4l_wifi_telnetd_read() { return -1; }
-
-
-
     bool yat4l_wifi_setWifiMode(int mode) {
         char cmd[32];
         sprintf(cmd, "AT+CWMODE=%d", mode);
@@ -272,6 +259,97 @@
         }
         return mode; 
     }
+
+    bool isStaMode() {
+      // TODO : better cf can be BOTH
+      int wmode = yat4l_wifi_getWifiMode();
+      return wmode == WIFI_MODE_STA ||
+      false;
+      // wmode == WIFI_MODE_STA + WIFI_MODE_STA;
+    }
+
+    char* NYF = (char*)"?NYF?";
+
+    char* XX_getIP(boolean STA) {
+      if ( STA ) { _wifiSendCMD("AT+CIPSTA?"); }
+      else { _wifiSendCMD("AT+CIPAP?"); }
+
+      char resp[256];
+
+    //   bool ok = _wifi_waitForOk( resp ) == _RET_OK;
+    //   int mode = -1;
+    //   if ( ok && startsWith(resp, (char*)"+CIP:") ) {
+    //         Serial.println("Found an IP :");
+    //         Serial.println(resp);
+    //   }
+        bool found = false;
+        while (!found) {
+            int readed = _wifiReadline(resp);
+            
+            Serial.print( "@" );
+            Serial.print( readed );
+            Serial.print( "@" );
+            Serial.println( resp );
+
+            if (readed < 0) {
+                // timeout
+                Serial.println( "EJECT" );
+                break;
+            }
+
+            // if ( readed == 0) { continue; }
+            if ( strlen(resp) == 0) { continue; }
+
+
+            // if ( startsWith(resp, (char*)"+CIP:") ) {
+            //     Serial.println( resp );
+            //     // ip: / gateway: / netmask:
+            //     if ( contains(resp, (char*)"ip:") ) {
+            //         Serial.println( resp );
+            //         found = true;
+            //         break;
+            //     }
+            // } else {
+            //     break;
+            // }
+        }
+
+      char* result = NYF;
+
+    //   String result = null;
+    //   String line;
+    //   while( (line = readLine()) != null ) {
+    //     // System.out.println("? "+line);
+    //     if ( line.length() == 0 ) { continue; }
+    //     if ( line.equals("OK") ) { break; }
+    //     if ( line.equals("ERROR") ) { return null; }
+    //     if ( line.startsWith("+CIP") ) {
+    //       // ip: / gateway: / netmask:
+    //       if ( line.contains("ip:") ) {
+    //         line = line.substring(line.indexOf('"')+1);
+    //         line = line.substring(0, line.indexOf('"'));
+    //         result = line;
+    //       }
+    //     }
+    //   }
+      return result;
+    }
+
+
+    char* yat4l_wifi_getIP() { return XX_getIP( isStaMode() ); }
+
+    char* yat4l_wifi_getSSID() { return (char*)"NotConnected"; }
+
+    bool yat4l_wifi_close() { return true; }
+    bool yat4l_wifi_beginAP() { return false; }
+    bool yat4l_wifi_startTelnetd() { return false; }
+
+    bool yat4l_wifi_loop() { return false; }
+
+    void yat4l_wifi_telnetd_broadcast(char ch)  { ; }
+    int  yat4l_wifi_telnetd_available()  { return 0; }
+    int  yat4l_wifi_telnetd_read() { return -1; }
+
 
     // Soft AP
     bool yat4l_wifi_openAnAP(char* ssid, char* psk) { return false; }
