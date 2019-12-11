@@ -125,29 +125,29 @@ void setupWiFi() {
 
 
     bool yat4l_wifi_setup() { 
-        WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS); 
+//         WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS); 
 
-        unsigned long t0 = millis();
-        unsigned long tmo = 1500;
+//         unsigned long t0 = millis();
+//         unsigned long tmo = 1500;
 
-        while( !WIFI_SERIAL ) {
-            ; // TODO : timeout
-            if ( millis() - t0 > tmo ) { break; }
-        }
+//         while( !WIFI_SERIAL ) {
+//             ; // TODO : timeout
+//             if ( millis() - t0 > tmo ) { break; }
+//         }
 
-        // while(WIFI_SERIAL.available() == 0) {
-        //     delay(50);
-        //     if ( millis() - t0 > tmo ) { break; }
-        // }
+//         // while(WIFI_SERIAL.available() == 0) {
+//         //     delay(50);
+//         //     if ( millis() - t0 > tmo ) { break; }
+//         // }
 
-        // while(WIFI_SERIAL.available() > 0) {
-        //     int ch = WIFI_SERIAL.read();
-        //     Serial.write(ch);
-        // }
+//         // while(WIFI_SERIAL.available() > 0) {
+//         //     int ch = WIFI_SERIAL.read();
+//         //     Serial.write(ch);
+//         // }
 
-// wait_for_esp_response(1000, (char*)"ready");
-
-        Serial.println("module powered");
+// // wait_for_esp_response(1000, (char*)"ready");
+// wait_for_esp_response(10000, (char)"ready\r\n");
+//         Serial.println("module powered");
 
 
         return true; 
@@ -386,21 +386,98 @@ int t = -1;
         return -1;
     }
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+#include "WiFiEsp.h"
+
+void printEncryptionType(int thisType) {
+  // read the encryption type and print out the name
+  switch (thisType) {
+    case ENC_TYPE_WEP:
+      Serial.print("WEP");
+      break;
+    case ENC_TYPE_WPA_PSK:
+      Serial.print("WPA_PSK");
+      break;
+    case ENC_TYPE_WPA2_PSK:
+      Serial.print("WPA2_PSK");
+      break;
+    case ENC_TYPE_WPA_WPA2_PSK:
+      Serial.print("WPA_WPA2_PSK");
+      break;
+    case ENC_TYPE_NONE:
+      Serial.print("None");
+      break;
+    default:
+      Serial.print("Oups");
+  }
+  Serial.println();
+}
+
+
+
+void listNetworks()
+{
+  // scan for nearby networks
+  int numSsid = WiFi.scanNetworks();
+  if (numSsid == -1) {
+    Serial.println("Couldn't get a wifi connection");
+    while (true);
+  }
+
+  // print the list of networks seen
+  Serial.print("Number of available networks:");
+  Serial.println(numSsid);
+
+  // print the network number and name for each network found
+  for (int thisNet = 0; thisNet < numSsid; thisNet++) {
+    Serial.print(thisNet);
+    Serial.print(") ");
+    Serial.print(WiFi.SSID(thisNet));
+    Serial.print("\tSignal: ");
+    Serial.print(WiFi.RSSI(thisNet));
+    Serial.print(" dBm");
+    Serial.print("\tEncryption: ");
+    printEncryptionType(WiFi.encryptionType(thisNet));
+  }
+
+  Serial.print("Listed all available networks !");
+}
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
     // TODO : call it
     bool yat4l_wifi_init() {
+
+  // scan for existing networks
+  Serial.println();
+  Serial.println("Scanning available networks...");
+  listNetworks();
+  delay(1000);
+
+        
         // WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS);
-        // delay(300);
+//         // delay(300);
 
-        unsigned long t0 = millis();
-        Serial.println("Waiting for Serial2 ab");
-        // while( !WIFI_SERIAL ) {
-        //     delay(10);
-        //     // delayMicroseconds(10);
-        //     if ( millis() - t0 >= 1500 ) { return false; }
-        // }
+//         unsigned long t0 = millis();
+//         Serial.println("Waiting for Serial2 ab");
+//         // while( !WIFI_SERIAL ) {
+//         //     delay(10);
+//         //     // delayMicroseconds(10);
+//         //     if ( millis() - t0 >= 1500 ) { return false; }
+//         // }
 
-setupWiFi();
+
+// WIFI_SERIAL.print("AT\r\n");
+// wait_for_esp_response(1000);
+
+// setupWiFi();
 bool ok = true;
+
+  Serial.println("END INIT...");
 
         // Serial.println("Check for garbage");
         // while(WIFI_SERIAL.available() > 0) {

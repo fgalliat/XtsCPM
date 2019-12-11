@@ -175,28 +175,72 @@
     }
 
     // ==================
+
   void yat4l_led(bool state, bool fastMode) { led(state, fastMode); }
 
     // see xts_yat4l_dev_console.cpp
     extern void consoleCls(bool clearDisplay);
     extern void _setConsoleMode(int mode);
 
+
+#include "WiFiEsp.h"
+
+
+void printMacAddress()
+{
+  // get your MAC address
+  byte mac[6];
+  WiFi.macAddress(mac);
+  
+  // print MAC address
+  char buf[20];
+  sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X", mac[5], mac[4], mac[3], mac[2], mac[1], mac[0]);
+  Serial.print("MAC address: ");
+  Serial.println(buf);
+}
+
+
+
+
     bool yat4l_setup() {
+
+       Serial.begin(115200);
+ 
+
+  // ===================================
+  // initialize serial for ESP module
+  Serial2.begin(115200);
+  // initialize ESP module
+  WiFi.init(&Serial2);
+
+  // check for the presence of the shield
+  if (WiFi.status() == WL_NO_SHIELD) {
+    Serial.println("WiFi shield not present");
+    // don't continue
+    while (true);
+  }
+
+  // Print WiFi MAC address
+  printMacAddress();
+  // ===================================
+
+        // unsigned long t0 = millis();
+        // while( !Serial ) {
+        //   if (millis() - t0 >= 500) { break; }
+        //   delay(50); 
+        // }
+
+
+
+
       // avoid SD_CS before booting
         const int SD_CS = 0;
         pinMode( SD_CS, OUTPUT );
         digitalWrite( SD_CS, HIGH );
 
-        Serial.begin(115200);
-        unsigned long t0 = millis();
-        while( !Serial ) {
-          if (millis() - t0 >= 500) { break; }
-          delay(50); 
-        }
 
-
-        bool ok = yat4l_wifi_setup();
-Serial.println("WiFi module ready !...");
+//         bool ok = yat4l_wifi_setup();
+// Serial.println("WiFi module ready !...");
 
 
         if ( SUBMCU_READY_PIN > 0 ) {
