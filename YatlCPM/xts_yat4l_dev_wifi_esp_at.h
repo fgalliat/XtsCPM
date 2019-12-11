@@ -633,11 +633,32 @@ bool ok = true;
     bool yat4l_wifi_setWifiMode(int mode) { return false; }
     int yat4l_wifi_getWifiMode() { return -1; }
 
+    int status = WL_IDLE_STATUS;     // the Wifi radio's status
+
     // Soft AP
     bool yat4l_wifi_openAnAP(char* ssid, char* psk) { return false; }
 
     // STA (client of an AP)
-    bool yat4l_wifi_connectToAP(char* ssid, char* psk) { return false; }
+    bool yat4l_wifi_connectToAP(char* ssid, char* psk) { 
+        int retry = 0;
+        // attempt to connect to WiFi network
+        while ( status != WL_CONNECTED) {
+            Serial.print("Attempting to connect to WPA SSID: ");
+            Serial.println(ssid);
+            // Connect to WPA/WPA2 network
+            status = WiFi.begin(ssid, psk);
+            retry++;
+            if ( retry >= 5 ) { 
+                Serial.println("failed to connect to SSID");
+                return false;
+            }
+        }
+
+        // you're connected now, so print out the data
+        Serial.println("You're connected to the network");
+        return true; 
+    }
+
     bool yat4l_wifi_disconnectFromAP() { return false; }
     // returns a 'ssid \n ssid \n ....'
     char* yat4l_wifi_scanAPs() { return (char*)""; }

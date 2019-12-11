@@ -73,6 +73,7 @@
     // Serial.print(tmp);
     _puts(tmp);
 
+    // yat4l_wifi_connectToAP("Fremen2", "...");
 
     _puts( "IP : " );
     _puts( yat4l_wifi_getIP() );
