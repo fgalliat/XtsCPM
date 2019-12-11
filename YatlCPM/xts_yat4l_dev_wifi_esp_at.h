@@ -124,7 +124,7 @@ void setupWiFi() {
 
 
 
-    bool yat4l_wifi_setup() { 
+    bool DISABLED_yat4l_wifi_setup() { 
 //         WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS); 
 
 //         unsigned long t0 = millis();
@@ -391,6 +391,21 @@ int t = -1;
 
 #include "WiFiEsp.h"
 
+
+void printMacAddress()
+{
+  // get your MAC address
+  byte mac[6];
+  WiFi.macAddress(mac);
+  
+  // print MAC address
+  char buf[20];
+  sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X", mac[5], mac[4], mac[3], mac[2], mac[1], mac[0]);
+  Serial.print("MAC address: ");
+  Serial.println(buf);
+}
+
+
 void printEncryptionType(int thisType) {
   // read the encryption type and print out the name
   switch (thisType) {
@@ -449,7 +464,30 @@ void listNetworks()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-    // TODO : call it
+
+bool yat4l_wifi_setup() {
+      // ===================================
+  // initialize serial for ESP module
+  Serial2.begin(115200);
+  // initialize ESP module
+  WiFi.init(&Serial2);
+
+  // check for the presence of the shield
+  if (WiFi.status() == WL_NO_SHIELD) {
+    Serial.println("WiFi shield not present");
+    // don't continue
+    // while (true);
+    return false;
+  }
+
+  // Print WiFi MAC address
+  printMacAddress();
+  // ===================================
+
+return true;
+}
+
+
     bool yat4l_wifi_init() {
 
   // scan for existing networks
