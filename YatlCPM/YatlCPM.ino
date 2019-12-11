@@ -122,7 +122,7 @@
     #define SDINIT SD_CONFIG
     SdFat SD;
 
-    #define LED 5
+    #define LED LED_BUILTIN_PIN
     #define LEDinv 0    
     #define BOARD "TEENSY 4.0"
   #else
@@ -320,6 +320,35 @@ void setup(void) {
   }
 }
 
+// #if YAT4L_PLATFORM
+//   static int cntr = 0; // file global, reset to 0 in loop
+//   elapsedMillis w_time;
+//   char rx_buf[512];
+
+// void serialEvent2() {
+//   char ich;
+//   if ( Serial2.available() ) {
+//     // qBlink();
+//     Serial.print( "@"); // debug
+//     Serial.print( w_time ); // debug
+//     w_time = 0;
+//     while ( Serial2.available() ) {   // Took off the -1 test ??????
+//       ich = Serial2.read();
+//       rx_buf[cntr] = ich;
+//       ++cntr;
+//       w_time = 0; // reset timer since data arrived
+//     }
+//     Serial.print( " #="); // debug
+//     Serial.print( cntr ); // debug
+//     Serial.print( ","); // debug
+//     // qBlink();
+//   }
+// }
+
+
+// #endif
+
+
 void loop(void) {
   #if YATL_PLATFORM
     yatl.blink(3);
@@ -344,5 +373,6 @@ void loop(void) {
       digitalWrite(LED, LOW^LEDinv);
     }
     delay(DELAY * 4);
+    Serial.println("Halted");
   #endif
 }

@@ -57,62 +57,185 @@ while( WIFI_SERIAL.available() > 0) {
         Serial.println("Sent packet");
     }
 
+    const int LINE_LEN = 1024;
+    char LINE[LINE_LEN+1];
+    bool LINE_INIT = false;
+    unsigned long lasttm = -1;
+
+int copyLineTo(char* dest, char* source) {
+  int tmp = strlen(source);
+  if ( tmp > 0 ) {
+    int i=0;
+    for(i=0; i < tmp; i++) {
+        char ch = source[i];
+        if ( i >= 512 ) { break; }
+        if ( ch == '\r' ) { continue; }
+        if ( ch == '\n' ) { break; }
+        dest[i] = ch;
+    }
+    // memmove(&source[0], &source[i], (tmp-i) );
+    // memmove(&source[0], &source[i], (tmp-i) );
+
+    if ( source[i] == '\n' ) {
+        i++;
+    }
+ 
+    for(int j=i; j < tmp; j++) {
+        source[j-i] = source[j];
+        source[j] = 0x00;
+    }
+
+// for(i=0;i<n-1;i++)
+//     {
+//         a[i]=a[i+1];
+//     }
+
+    // memcpy(&source[0], &source[i], (tmp-i) );
+    // memset(&source[i], 0x00, (tmp-i));
+
+    return strlen(dest);  
+  }
+  return tmp;
+}
+
+
     // removes CRLF
     // assumes that _line is 512+1 bytes allocated 
-    int _wifiReadline(char* _line, unsigned int timeout=WIFI_CMD_TIMEOUT) {
+    int _wifiReadline(char* _line, unsigned long timeout=WIFI_CMD_TIMEOUT) {
         // Serial.println("::_wifiReadline()");
+if ( !LINE_INIT ) {
+        memset(LINE, 0x00, LINE_LEN+1);
+    LINE_INIT = true;
+}
+
+if ( lasttm != timeout ) {
+    lasttm = timeout;
+    WIFI_SERIAL.setTimeout(timeout);
+}
+
 
         memset(_line, 0x00, 512+1);
         Serial.print("WIFI READ >");Serial.println(timeout);
-        yield();
 
-        unsigned long t0=millis();
-        bool timReached = false;
-Serial.println("aa");
-        while( !WIFI_SERIAL ) {
-            if ( millis() - t0 >= timeout ) { timReached = true; break; }
+int tmp = strlen(LINE);
+if ( tmp > 0 ) {
+    Serial.print("BUFFER not empty >> "); Serial.println(tmp);
+    int i = copyLineTo(_line, LINE);
+    Serial.print("Will return >> "); Serial.println(_line);
+    return i;
+} else {
+    Serial.println("BUFFER empty");
+    while( true ) {
+        tmp = strlen(LINE);
+        if ( tmp >= LINE_LEN ) { break; }
+        int howMany = 32;
+        if ( tmp + howMany >= LINE_LEN ) {
+            howMany = ( LINE_LEN - tmp );
         }
-Serial.println("bb");
-        if ( timReached ) { return -1; }
-        while (WIFI_SERIAL.available() <= 0) {
-            if ( millis() - t0 >= timeout ) { timReached = true; break; }
-            delay(10);
-        }
-        yield();
-Serial.println("cc");
-        if ( timReached ) { return -1; }
-
-        int cpt = 0;
-        int ch;
-        while (WIFI_SERIAL.available() > 0) {
-Serial.print("+");
-            if ( millis() - t0 >= timeout ) { timReached = true; break; }
-
-            ch = WIFI_SERIAL.read();
-            if ( ch == -1 ) { break; }
-            if ( ch == '\r' ) { 
-                if (WIFI_SERIAL.available() > 0) {
-                    if ( WIFI_SERIAL.peek() == '\n' ) {
-                        continue; 
-                    }
-                }
+        if ( howMany <= 0 ) { break; }
+        int r = Serial2.readBytes(&LINE[tmp], howMany);
+        if ( r == 0 ) {
+            if ( tmp == 0 ) {
+                Serial.println(")) FULLY FAILED");
+                return -1;
+            } else {
+                Serial.println(")) PARTIAL FAILED");
                 break;
             }
-            if ( ch == '\n' ) { break; }
-            _line[ cpt++ ] = (char)ch;
         }
-        yield();
-Serial.println("dd");
+        int tmp2 = strlen(LINE);
+        bool foundLF = false;
+        for(int i=tmp; i < tmp2; i++) {
+            if ( LINE[i] == '\n' ) {
+                foundLF = true;
+                break;
+            }
+        } 
+        if (foundLF) { break; }
+    }
 
-        if ( _line[0] == 0x00 && timReached ) {
-            return -1;
-        }
-        yield();
+    tmp = strlen(LINE);
+    int i = copyLineTo(_line, LINE);
+    Serial.print("2) Will return >> "); Serial.println(_line);
+    return i;
+}
 
-        if ( _line[0] == 0x00 ) { return 0; }
 
-        int t = strlen(_line);
-        if ( t < 0 ) { _line[0] = 0x00; return -1; }
+// // int r = Serial2.readBytesUntil( 0X0A, _line, 32 );
+// // int r = Serial2.readBytes(_line, 32);
+// if ( r == 0 ) { return -1; }
+// else { 
+//     int tt = strlen(_line);
+//     if ( tt > 0 && _line[tt-1] == '\r' ) { _line[tt-1] = 0x00; tt--; }
+//     return tt; 
+// }
+
+//         yield();
+
+//         unsigned long t0=millis();
+//         bool timReached = false;
+// Serial.println("aa");
+//         while( !WIFI_SERIAL ) {
+//             if ( millis() - t0 >= timeout ) { timReached = true; break; }
+//         }
+// Serial.println("bb");
+//         if ( timReached ) { Serial.println("EJECT"); return -1; }
+//         // while (WIFI_SERIAL.available() <= 0) {
+//         //     if ( millis() - t0 >= timeout ) { timReached = true; break; }
+//         //     delay(10);
+//         // }
+
+// unsigned long t1;
+// int ch_0;
+// while( (ch_0 = WIFI_SERIAL.read()) == -1 ) {
+// Serial.print("-");
+
+// t1 = millis();
+// Serial.print("/");
+
+//     if ( t1 - t0 >= timeout ) { timReached = true; break; }
+// }
+
+
+// Serial.println("cc1");
+//         yield();
+// Serial.println("cc2");
+//         if ( timReached ) { Serial.println("EJECT 4"); return -1; }
+
+//         int cpt = 0;
+//         int ch;
+//         while (WIFI_SERIAL.available() > 0) {
+// Serial.print("+");
+//             if ( millis() - t0 >= timeout ) { Serial.println("EJECT 2"); timReached = true; break; }
+
+//             ch = WIFI_SERIAL.read();
+//             if ( ch == -1 ) { break; }
+//             if ( ch == '\r' ) { 
+//                 if (WIFI_SERIAL.available() > 0) {
+//                     if ( WIFI_SERIAL.peek() == '\n' ) {
+//                         continue; 
+//                     }
+//                 }
+//                 break;
+//             }
+//             if ( ch == '\n' ) { break; }
+//             _line[ cpt++ ] = (char)ch;
+//         }
+//         yield();
+// Serial.println("dd");
+
+//         if ( _line[0] == 0x00 && timReached ) {
+//             Serial.println("EJECT 3");
+//             return -1;
+//         }
+//         yield();
+
+//         if ( _line[0] == 0x00 ) { return 0; }
+
+//         int t = strlen(_line);
+//         if ( t < 0 ) { _line[0] = 0x00; return -1; }
+
+int t = -1;
 
         return t;
     }
@@ -168,8 +291,8 @@ Serial.println("dd");
         delay(300);
 
         bool ok = false;
-        Serial.println("Reset Module");
-        yat4l_wifi_resetModule(); 
+        // Serial.println("Reset Module");
+        // yat4l_wifi_resetModule(); 
         
         Serial.println("Test for Module");
         ok = yat4l_wifi_testModule();

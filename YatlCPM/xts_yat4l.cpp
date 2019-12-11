@@ -188,6 +188,13 @@
         digitalWrite( SD_CS, HIGH );
 
         Serial.begin(115200);
+        unsigned long t0 = millis();
+        while( !Serial ) {
+          if (millis() - t0 >= 500) { break; }
+          delay(50); 
+        }
+
+
         bool ok = yat4l_wifi_setup();
 Serial.println("WiFi module ready...");
 
