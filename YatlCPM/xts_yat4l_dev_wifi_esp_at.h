@@ -4,11 +4,125 @@
  * 
  * Xtase - fgalliat @Dec2019
  * 
+ * 
+ * LOOK AT : https://forum.pjrc.com/threads/27850-A-Guide-To-Using-ESP8266-With-TEENSY-3
+ * 
+ * 
  */
 
     #define WIFI_SERIAL Serial2
     #define WIFI_CMD_TIMEOUT 6000
     #define WIFI_SERIAL_BAUDS 115200 
+
+#define BUFFER_SIZE 1024
+char buffer[BUFFER_SIZE];
+
+// By default we are looking for OK\r\n
+char OKrn[] = "OK\r\n";
+byte wait_for_esp_response(int timeout, char* term=OKrn) {
+  unsigned long t=millis();
+  bool found=false;
+  int i=0;
+  int len=strlen(term);
+  // wait for at most timeout milliseconds
+  // or if OK\r\n is found
+  while(millis()<t+timeout) {
+    if(WIFI_SERIAL.available()) {
+      buffer[i++]=WIFI_SERIAL.read();
+      if(i>=len) {
+        if(strncmp(buffer+i-len, term, len)==0) {
+          found=true;
+          break;
+        }
+      }
+    }
+  }
+  buffer[i]=0;
+  Serial.print(buffer);
+  return found;
+}
+
+bool read_till_eol() {
+  static int i=0;
+  if(WIFI_SERIAL.available()) {
+    buffer[i++]=WIFI_SERIAL.read();
+    if(i==BUFFER_SIZE)  i=0;
+    if(i>1 && buffer[i-2]==13 && buffer[i-1]==10) {
+      buffer[i]=0;
+      i=0;
+      Serial.print(buffer);
+      return true;
+    }
+  }
+  return false;
+}
+
+void setupWiFi() {
+
+  // turn on echo
+  WIFI_SERIAL.println("ATE1");
+  wait_for_esp_response(1000);
+  
+  // try empty AT command
+  //WIFI_SERIAL.println("AT");
+  //wait_for_esp_response(1000);
+
+//   // set mode 1 (client)
+//   WIFI_SERIAL.println("AT+CWMODE=3");
+//   wait_for_esp_response(1000); 
+ 
+//   // reset WiFi module
+//   WIFI_SERIAL.print("AT+RST\r\n");
+//   wait_for_esp_response(1500);
+
+//   // test WiFi module
+//   WIFI_SERIAL.print("AT\r\n");
+//   wait_for_esp_response(1500);
+
+//    //join AP
+//   WIFI_SERIAL.print("AT+CWJAP=\"");
+//   WIFI_SERIAL.print(SSID);
+//   WIFI_SERIAL.print("\",\"");
+//   WIFI_SERIAL.print(PASS);
+//   WIFI_SERIAL.println("\"");
+//   wait_for_esp_response(5000);
+
+//   // start server
+//   WIFI_SERIAL.println("AT+CIPMUX=1");
+//    wait_for_esp_response(1000);
+  
+//   //Create TCP Server in 
+//   WIFI_SERIAL.print("AT+CIPSERVER=1,"); // turn on TCP service
+//   WIFI_SERIAL.println(PORT);
+//    wait_for_esp_response(1000);
+  
+//   WIFI_SERIAL.println("AT+CIPSTO=30");  
+//   wait_for_esp_response(1000);
+
+//   WIFI_SERIAL.println("AT+GMR");
+//   wait_for_esp_response(1000);
+  
+//   WIFI_SERIAL.println("AT+CWJAP?");
+//   wait_for_esp_response(1000);
+  
+//   WIFI_SERIAL.println("AT+CIPSTA?");
+//   wait_for_esp_response(1000);
+  
+//   WIFI_SERIAL.println("AT+CWMODE?");
+//   wait_for_esp_response(1000);
+  
+//   WIFI_SERIAL.println("AT+CIFSR");
+//   wait_for_esp_response(5000);
+  
+//   WIFI_SERIAL.println("AT+CWLAP");
+//   wait_for_esp_response(5000);
+  
+  Serial.println("---------------*****##### READY TO SERVE #####*****---------------");
+  
+}
+
+
+
 
     bool yat4l_wifi_setup() { 
         WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS); 
@@ -21,15 +135,18 @@
             if ( millis() - t0 > tmo ) { break; }
         }
 
-        while(WIFI_SERIAL.available() == 0) {
-            delay(50);
-            if ( millis() - t0 > tmo ) { break; }
-        }
+        // while(WIFI_SERIAL.available() == 0) {
+        //     delay(50);
+        //     if ( millis() - t0 > tmo ) { break; }
+        // }
 
-        while(WIFI_SERIAL.available() > 0) {
-            int ch = WIFI_SERIAL.read();
-            Serial.write(ch);
-        }
+        // while(WIFI_SERIAL.available() > 0) {
+        //     int ch = WIFI_SERIAL.read();
+        //     Serial.write(ch);
+        // }
+
+// wait_for_esp_response(1000, (char*)"ready");
+
         Serial.println("module powered");
 
 
@@ -271,36 +388,39 @@ int t = -1;
 
     // TODO : call it
     bool yat4l_wifi_init() {
-        WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS);
-        delay(300);
+        // WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS);
+        // delay(300);
 
         unsigned long t0 = millis();
-        Serial.println("Waiting for Serial2");
-        while( !WIFI_SERIAL ) {
-            delay(10);
-            // delayMicroseconds(10);
-            if ( millis() - t0 >= 1500 ) { return false; }
-        }
+        Serial.println("Waiting for Serial2 ab");
+        // while( !WIFI_SERIAL ) {
+        //     delay(10);
+        //     // delayMicroseconds(10);
+        //     if ( millis() - t0 >= 1500 ) { return false; }
+        // }
 
-        Serial.println("Check for garbage");
-        while(WIFI_SERIAL.available() > 0) {
-            WIFI_SERIAL.read();
-        }
-        Serial.println("Found some garbage");
+setupWiFi();
+bool ok = true;
 
-        delay(300);
+        // Serial.println("Check for garbage");
+        // while(WIFI_SERIAL.available() > 0) {
+        //     WIFI_SERIAL.read();
+        // }
+        // Serial.println("Found some garbage");
 
-        bool ok = false;
-        // Serial.println("Reset Module");
-        // yat4l_wifi_resetModule(); 
+        // delay(300);
+
+        // bool ok = false;
+        // // Serial.println("Reset Module");
+        // // yat4l_wifi_resetModule(); 
         
-        Serial.println("Test for Module");
-        ok = yat4l_wifi_testModule();
-        Serial.print("Tested Module : "); 
-        Serial.println(ok ? "OK" : "NOK"); 
+        // Serial.println("Test for Module");
+        // ok = yat4l_wifi_testModule();
+        // Serial.print("Tested Module : "); 
+        // Serial.println(ok ? "OK" : "NOK"); 
 
 
-        Serial.println("Have finished !!!");
+        // Serial.println("Have finished !!!");
 
         return ok;
     }

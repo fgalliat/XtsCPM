@@ -196,7 +196,7 @@
 
 
         bool ok = yat4l_wifi_setup();
-Serial.println("WiFi module ready...");
+Serial.println("WiFi module ready !...");
 
 
         if ( SUBMCU_READY_PIN > 0 ) {
