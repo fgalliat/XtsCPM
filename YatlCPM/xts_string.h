@@ -165,10 +165,10 @@ bool equals(char* str, char* toFind) {
     if ( str == NULL && toFind == NULL ) { return true; }
     // Serial.println("mB");
     if ( str == NULL || toFind == NULL ) { return false; }
-    Serial.print("mA ");
-    Serial.print(str);
-    Serial.print(":");
-    Serial.println(toFind);
+    // Serial.print("mA ");
+    // Serial.print(str);
+    // Serial.print(":");
+    // Serial.println(toFind);
     // Serial.println("mC");
     int t1len = strlen(str);
     // Serial.println("mD");
