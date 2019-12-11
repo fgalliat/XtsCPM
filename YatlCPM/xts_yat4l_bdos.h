@@ -63,6 +63,9 @@
      return 0;
   }
 
+  // extern int WIFI_MODE_STA;
+  // extern int WIFI_MODE_AP;
+
   int32 BdosTest229(int32 value) {
     yat4l_dbug("/===== BDos 229 call =====\\");
 

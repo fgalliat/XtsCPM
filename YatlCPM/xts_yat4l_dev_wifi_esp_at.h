@@ -14,6 +14,10 @@
     #define WIFI_CMD_TIMEOUT 6000
     #define WIFI_SERIAL_BAUDS 115200 
 
+    // STA : wifi AP client
+    // const int WIFI_MODE_STA = 1;
+    // AP : wifi soft AP server
+    // const int WIFI_MODE_AP = 2;
 
     bool yat4l_wifi_setup() { 
         WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS); 
@@ -127,11 +131,17 @@
                 Serial.print("-->");
                 Serial.println(resp);
 
-                if ( equals(&resp[0], (char*)"OK") ) { Serial.println("OK--"); return _RET_OK; }
-                if ( equals(&resp[0], (char*)"ERROR") ) { Serial.println("ERROR--"); return _RET_ERROR; }
+                if ( equals(&resp[0], (char*)"OK") ) { 
+                    // Serial.println("OK--"); 
+                    return _RET_OK; 
+                }
+                if ( equals(&resp[0], (char*)"ERROR") ) { 
+                    // Serial.println("ERROR--"); 
+                    return _RET_ERROR; 
+                }
 
             } else {
-                Serial.println("--:EMPTY");
+                // Serial.println("--:EMPTY");
             }
         }
         yield();
@@ -140,34 +150,36 @@
 
     // TODO : call it
     bool yat4l_wifi_init() {
-        WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS);
-        delay(300);
+        // WIFI_SERIAL.begin(WIFI_SERIAL_BAUDS);
+        // delay(300);
 
         unsigned long t0 = millis();
         Serial.println("Waiting for Serial2");
-        while( !WIFI_SERIAL ) {
-            delay(10);
-            // delayMicroseconds(10);
-            if ( millis() - t0 >= 1500 ) { return false; }
-        }
+        // while( !WIFI_SERIAL ) {
+        //     delay(10);
+        //     if ( millis() - t0 >= 1500 ) { return false; }
+        // }
 
-        Serial.println("Check for garbage");
+        // Serial.println("Check for garbage");
         while(WIFI_SERIAL.available() > 0) {
             WIFI_SERIAL.read();
         }
         Serial.println("Found some garbage");
 
-        delay(300);
 
         bool ok = false;
-        Serial.println("Reset Module");
-        yat4l_wifi_resetModule(); 
+        // Serial.println("Reset Module");
+        // yat4l_wifi_resetModule(); 
         
         Serial.println("Test for Module");
         ok = yat4l_wifi_testModule();
         Serial.print("Tested Module : "); 
         Serial.println(ok ? "OK" : "NOK"); 
 
+        Serial.println("set mode for Module");
+        ok = yat4l_wifi_setWifiMode( WIFI_MODE_STA );
+        Serial.print("Module mode : "); 
+        Serial.println(ok ? "OK" : "NOK"); 
 
         Serial.println("Have finished !!!");
 
@@ -241,7 +253,13 @@
 
 
 
-    bool yat4l_wifi_setWifiMode(int mode) { return false; }
+    bool yat4l_wifi_setWifiMode(int mode) {
+        char cmd[32];
+        sprintf(cmd, "AT+CWMODE=%d", mode);
+        _wifiSendCMD(cmd);
+        return _wifi_waitForOk() == _RET_OK;
+    }
+
     int yat4l_wifi_getWifiMode() { return -1; }
 
     // Soft AP
