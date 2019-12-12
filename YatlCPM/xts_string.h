@@ -157,15 +157,23 @@ bool startsWith(char* str, char* toFind) {
     int slen = strlen( str );
     int tlen = strlen( toFind );
 
-    if ( tlen > slen ) { return false; }
+    if ( tlen > slen ) { 
+        // Serial.println("aa) too long"); 
+        return false; 
+    }
 
-    // for(int i=0; i < tlen; i++) {
-    //     if ( str[i] != toFind[i] ) {
-    //         return false;
-    //     }
-    // }
-    // return true;
-    return strncmp( str, toFind, tlen) == 0;
+    for(int i=0; i < tlen; i++) {
+        if ( str[i] != toFind[i] ) {
+            // Serial.print("aa) no match[");
+            // Serial.print(str[i]);
+            // Serial.print("]-[");
+            // Serial.print(toFind[i]);
+            // Serial.println("]");
+            return false;
+        }
+    }
+    return true;
+    // return strncmp( str, toFind, tlen) == 0;
 }
 
 bool equals(char* str, char* toFind) {
@@ -181,7 +189,8 @@ bool equals(char* str, char* toFind) {
     // Serial.println("mD");
     int t2len = strlen(toFind);
     // Serial.println("mE");
-    bool ok = t1len == t2len && strncmp(str, toFind, t1len) == 0;
+    // bool ok = t1len == t2len && strncmp(str, toFind, t1len) == 0;
+    bool ok = t1len == t2len && strcmp(str, toFind) == 0;
     // Serial.println("mF");
     return ok;
 }

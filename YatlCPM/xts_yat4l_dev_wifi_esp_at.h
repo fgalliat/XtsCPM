@@ -82,7 +82,7 @@
 
         int cpt = 0;
         int ch;
-        t0=millis();
+        // t0=millis();
         while (WIFI_SERIAL.available() > 0) {
             if ( millis() - t0 >= timeout ) { timReached = true; break; }
 
@@ -121,6 +121,7 @@
     extern bool equals(char* s, char* t);
     extern bool startsWith(char* str, char* toFind);
     extern bool contains(char* str, char* toFind);
+    extern char* str_split(char* stringToSplit, char delim, int tokenNum);
 
     int _wifi_waitForOk(char* dest=NULL) {
         char resp[512+1];
@@ -268,71 +269,52 @@
       // wmode == WIFI_MODE_STA + WIFI_MODE_STA;
     }
 
-    char* NYF = (char*)"?NYF?";
+    char* NOIP = (char*)"x.x.x.x";
+    char CURIP[16+1];
 
-    char* XX_getIP(boolean STA) {
+    char* XX_getIP(bool STA) {
       if ( STA ) { _wifiSendCMD("AT+CIPSTA?"); }
       else { _wifiSendCMD("AT+CIPAP?"); }
 
-      char resp[256];
+      memset(CURIP, 0x00, 16+1);
 
-    //   bool ok = _wifi_waitForOk( resp ) == _RET_OK;
-    //   int mode = -1;
-    //   if ( ok && startsWith(resp, (char*)"+CIP:") ) {
-    //         Serial.println("Found an IP :");
-    //         Serial.println(resp);
-    //   }
+      // char resp[256+1]; memset(resp, 0x00, 256+1);
+      //   _wifi_waitForOk( resp )    --->> 256 is enought
+      char resp[512+1]; // _wifiReadline(resp); requires 512 bytes long
+
         bool found = false;
         while (!found) {
             int readed = _wifiReadline(resp);
             
-            Serial.print( "@" );
-            Serial.print( readed );
-            Serial.print( "@" );
-            Serial.println( resp );
-
             if (readed < 0) {
-                // timeout
-                Serial.println( "EJECT" );
                 break;
             }
 
-            // if ( readed == 0) { continue; }
-            if ( strlen(resp) == 0) { continue; }
+            // when not connected seems to finish with "+" (no netmask)
+            if ( equals( resp, "+" ) ) {
+                // Serial.println( "EJECT II" );
+                break;
+            }
 
-
-            // if ( startsWith(resp, (char*)"+CIP:") ) {
-            //     Serial.println( resp );
-            //     // ip: / gateway: / netmask:
-            //     if ( contains(resp, (char*)"ip:") ) {
-            //         Serial.println( resp );
-            //         found = true;
-            //         break;
-            //     }
-            // } else {
-            //     break;
-            // }
+            if ( startsWith(resp, (char*)"+CIP") ) {
+                // ip: / gateway: / netmask:
+                if ( contains(resp, (char*)"ip:") ) {
+                    // +CIPSTA:ip:"0.0.0.0"
+                    char* subResult = str_split(resp, '"', 1);
+                    if ( subResult == NULL ) {
+                        sprintf(CURIP, "%s", NOIP);
+                    } else {
+                        sprintf(CURIP, "%s", subResult);
+                        free(subResult);
+                    }
+                    found = true;
+                    break;
+                }
+            }
         }
 
-      char* result = NYF;
-
-    //   String result = null;
-    //   String line;
-    //   while( (line = readLine()) != null ) {
-    //     // System.out.println("? "+line);
-    //     if ( line.length() == 0 ) { continue; }
-    //     if ( line.equals("OK") ) { break; }
-    //     if ( line.equals("ERROR") ) { return null; }
-    //     if ( line.startsWith("+CIP") ) {
-    //       // ip: / gateway: / netmask:
-    //       if ( line.contains("ip:") ) {
-    //         line = line.substring(line.indexOf('"')+1);
-    //         line = line.substring(0, line.indexOf('"'));
-    //         result = line;
-    //       }
-    //     }
-    //   }
-      return result;
+        // must not return an function-local pointer
+      return CURIP;
     }
 
 
