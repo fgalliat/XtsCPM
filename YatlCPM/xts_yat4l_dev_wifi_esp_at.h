@@ -14,6 +14,8 @@
     #define WIFI_CMD_TIMEOUT 6000
     #define WIFI_SERIAL_BAUDS 115200 
 
+    #define DBUG_WIFI 0
+
     // STA : wifi AP client
     // const int WIFI_MODE_STA = 1;
     // AP : wifi soft AP server
@@ -47,7 +49,7 @@
 
     void _wifiSendCMD(const char* cmd) {
         // add CRLF
-        Serial.print("WIFI >");Serial.println(cmd);
+        if (DBUG_WIFI) { Serial.print("WIFI >");Serial.println(cmd); }
         int tlen = strlen( cmd ) + 2;
         if ( Serial.availableForWrite() < tlen ) {
             Serial.println("NotEnoughtAvailableForWrite !!!!");
@@ -132,8 +134,7 @@
 
             if ( readed == -1 ) { Serial.println("TIMEOUT--"); return _RET_TIMEOUT; }
             if ( strlen( resp ) > 0 ) {
-                Serial.print("-->");
-                Serial.println(resp);
+                if (DBUG_WIFI) { Serial.print("-->"); Serial.println(resp); }
                 
                 if ( equals(&resp[0], (char*)"OK") ) { 
                     // Serial.println("OK--"); 
@@ -160,32 +161,32 @@
     // TODO : call it
     bool yat4l_wifi_init() {
         unsigned long t0 = millis();
-        Serial.println("Waiting for Serial2");
+        if (DBUG_WIFI) { Serial.println("Waiting for Serial2"); }
         while(WIFI_SERIAL.available() > 0) {
             WIFI_SERIAL.read();
         }
-        Serial.println("Found some garbage");
+        if (DBUG_WIFI) { Serial.println("Found some garbage"); }
 
 
         bool ok = false;
         // Serial.println("Reset Module");
         // yat4l_wifi_resetModule(); 
         
-        Serial.println("Test for Module");
+        if (DBUG_WIFI) { Serial.println("Test for Module"); }
         ok = yat4l_wifi_testModule();
-        Serial.print("Tested Module : "); 
-        Serial.println(ok ? "OK" : "NOK"); 
+        if (DBUG_WIFI) { Serial.print("Tested Module : "); 
+        Serial.println(ok ? "OK" : "NOK"); }
 
-        Serial.println("set mode for Module");
+        if (DBUG_WIFI) { Serial.println("set mode for Module"); }
         ok = yat4l_wifi_setWifiMode( WIFI_MODE_STA );
-        Serial.print("Module mode set : "); 
-        Serial.println(ok ? "OK" : "NOK"); 
+        if (DBUG_WIFI) { Serial.print("Module mode set : "); 
+        Serial.println(ok ? "OK" : "NOK"); }
 
         int mode = yat4l_wifi_getWifiMode();
-        Serial.print("Module mode : "); 
-        Serial.println(mode); 
+        if (DBUG_WIFI) { Serial.print("Module mode : "); 
+        Serial.println(mode); }
 
-        Serial.println("Have finished !!!");
+        if (DBUG_WIFI) { Serial.println("Have finished !!!"); }
 
         return ok;
     }
