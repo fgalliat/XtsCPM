@@ -8,6 +8,33 @@
  * LOOK AT : https://forum.pjrc.com/threads/27850-A-Guide-To-Using-ESP8266-With-TEENSY-3
  * NO MORE USES : https://github.com/bportaluri/WiFiEsp
  * 
+ * 
+ * STILL TODO
+ *  connectToAp(SSID, ?PSK?) -> PSK : from file / from interactive KB read
+ *  listAPs()
+ *  getSSID()
+ *  isAtHome()
+ *  getHomeServerName()
+ *  wget(server, port, query)
+ * 
+ * Cf z:/wifi.psk
+ *  storeAP(ssid, psk)
+ *  getAPpsk(ssid)
+ *  setHome(ssid, local_home, remote_home)
+ *  isAtHome()
+ * 
+ * Cf textFile(s)
+ *  write(char* content)
+ *  read() => char* => split(content, '\n', x)
+ *  appendLine(char*) => appends line+"\n"
+ * 
+ * Cf input
+ *  _kbreadLine() => char* (w/o CR/LF)
+ *  may be based on _kbhit() + _getch() / _getche()
+ * 
+ * Make an interactive system
+ *  prompt SSID, PSK => add it
+ *  prompt SSID, PSK => change it
  */
 
     #define WIFI_SERIAL Serial2
