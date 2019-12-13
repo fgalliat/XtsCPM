@@ -42,8 +42,8 @@ void _wifi_refreshHomeConf() {
 // DUMMY MOCK
 
 char* yat4l_wifi_getSSID() {
-    // return (char*)"xxxxxx";
-    return (char*)"xxxxxy";
+    return (char*)"xxxxxx";
+    // return (char*)"xxxxxy";
 }
 
 // ==========================================
@@ -72,7 +72,6 @@ char* yat4l_wifi_getHomeServer(bool refresh=false) {
     if ( refresh || !wifi_home_conf_init ) { _wifi_refreshHomeConf(); }
 
     int confNum = yat4l_wifi_isAtHome() ? 1 : 2;
-
     char* tokn = str_split(wifi_home_conf, ':', confNum);
     sprintf( homeSRV, "%s", tokn );
     free(tokn);

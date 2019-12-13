@@ -87,7 +87,9 @@ char* str_split(char* stringToSplit, char delim, int tokenNum) {
         lastIdx = idx;
         idx = indexOf(stringToSplit, delim, idx);
         if ( idx < 0 ) {
-            return NULL;
+            // return NULL;
+            // THERE WAS A BUG HERE !!!
+            return substring(stringToSplit, lastIdx, strlen( stringToSplit ) );
         }
         if ( curToken == tokenNum ) {
             return substring(stringToSplit, lastIdx, idx);
