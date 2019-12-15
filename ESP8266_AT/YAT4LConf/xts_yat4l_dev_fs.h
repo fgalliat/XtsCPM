@@ -45,6 +45,8 @@ int yat4l_fs_writeTextFile(char* fileName, char* source, int maxLen) {
     if ( !f ) {
         return -1;
     }
+    // erase file content
+    f.truncate(0);
 
     int ch,i;
     for(i=0; i < maxLen; i++) {
