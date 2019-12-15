@@ -149,6 +149,7 @@ void __DBUG_WIFI_CONF() {
 
 void __ERASE_WIFI_CONF() {
     Serial.println("Erasing Wifi Conf");
-    return SD.remove( WIFI_CONF_FILE );
+    SD.remove( WIFI_CONF_FILE );
+    memset(fullWifiConf, 0x00, WIFI_FULL_CONF_LEN);
 }
 

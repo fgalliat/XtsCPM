@@ -59,5 +59,60 @@ void setup() {
 
 
 void loop() {
-  delay(1000);
+  Serial.println("");
+  Serial.println("A. ERASE config");
+  Serial.println("B. SHOW config");
+  Serial.println("C. setHomeConfig(..)");
+  Serial.println("D. addSSID(.., ..)");
+  Serial.println("");
+  char* line = _kbReadLine();
+
+  if ( strlen(line) == 1 ) {
+      char ch = line[0];
+           if ( ch == 'A' ) { __ERASE_WIFI_CONF(); }
+      else if ( ch == 'B' ) { __DBUG_WIFI_CONF(); }
+      else if ( ch == 'C' ) { 
+          Serial.println("Home SSID ?");
+          line = _kbReadLine();
+          char ssid[64+1]; memset(ssid, 0x00, 64+1);
+          sprintf(ssid, "%s", line);
+          Serial.println("Home LOCAL ?");
+          line = _kbReadLine();
+          char homeLocal[32+1]; memset(homeLocal, 0x00, 32+1);
+          sprintf(homeLocal, "%s", line);
+          Serial.println("Home REMOTE ?");
+          line = _kbReadLine();
+          char homeRemote[32+1]; memset(homeRemote, 0x00, 32+1);
+          sprintf(homeRemote, "%s", line);
+
+          if ( strlen(ssid) > 0 && strlen(homeLocal) > 0 && strlen(homeRemote) > 0 ) {
+              bool ok = yat4l_wifi_setHomeConfig(ssid, homeLocal, homeRemote);
+              Serial.print("Home Config Saved : ");
+              Serial.println( ok );
+          } else {
+              Serial.println("Invalid Home Config");
+          }
+
+      }
+      else if ( ch == 'D' ) { 
+          Serial.println("New SSID ?");
+          line = _kbReadLine();
+          char ssid[64+1]; memset(ssid, 0x00, 64+1);
+          sprintf(ssid, "%s", line);
+          Serial.println("PSK ?");
+          line = _kbReadLine();
+          char psk[32+1]; memset(psk, 0x00, 32+1);
+          sprintf(psk, "%s", line);
+          if ( strlen(ssid) > 0 ) {
+              bool ok = yat4l_wifi_addWifiPSK(ssid, psk);
+              Serial.print("New WIFI Config Saved : ");
+              Serial.println( ok );
+          } else {
+              Serial.println("Invalid New Config");
+          }
+
+      }
+  }
+
+  delay(100);
 }
