@@ -28,10 +28,10 @@ char* _kbReadLine(bool echo=true) {
         if ( ch == '\r' ) {
             delay(10);
             // reads trailing "\n" if any
-            if ( _kbhit() ) { ch = echo ? _getche() : _getch(); }
-            break;
+            if ( _kbhit() && Serial.peek() == '\n' ) { ch = echo ? _getche() : _getch(); }
+            return _kline;
         } else if ( ch == '\n' ) {
-            break;
+            return _kline;
         } else if ( ch == 0x03 ) {
             // Ctrl-C
             return NULL;

@@ -65,23 +65,25 @@ void loop() {
   Serial.println("C. setHomeConfig(..)");
   Serial.println("D. addSSID(.., ..)");
   Serial.println("");
-  char* line = _kbReadLine();
+
+  char* line = _kbReadLine(false);
+  Serial.println("");
 
   if ( strlen(line) == 1 ) {
       char ch = line[0];
-           if ( ch == 'A' ) { __ERASE_WIFI_CONF(); }
-      else if ( ch == 'B' ) { __DBUG_WIFI_CONF(); }
+           if ( ch == 'A' ) { Serial.println("Erase conf"); __ERASE_WIFI_CONF(); }
+      else if ( ch == 'B' ) { Serial.println("Show conf"); __DBUG_WIFI_CONF(); }
       else if ( ch == 'C' ) { 
           Serial.println("Home SSID ?");
-          line = _kbReadLine();
+          line = _kbReadLine(); Serial.println("");
           char ssid[64+1]; memset(ssid, 0x00, 64+1);
           sprintf(ssid, "%s", line);
           Serial.println("Home LOCAL ?");
-          line = _kbReadLine();
+          line = _kbReadLine(); Serial.println("");
           char homeLocal[32+1]; memset(homeLocal, 0x00, 32+1);
           sprintf(homeLocal, "%s", line);
           Serial.println("Home REMOTE ?");
-          line = _kbReadLine();
+          line = _kbReadLine(); Serial.println("");
           char homeRemote[32+1]; memset(homeRemote, 0x00, 32+1);
           sprintf(homeRemote, "%s", line);
 
@@ -96,11 +98,11 @@ void loop() {
       }
       else if ( ch == 'D' ) { 
           Serial.println("New SSID ?");
-          line = _kbReadLine();
+          line = _kbReadLine(); Serial.println("");
           char ssid[64+1]; memset(ssid, 0x00, 64+1);
           sprintf(ssid, "%s", line);
           Serial.println("PSK ?");
-          line = _kbReadLine();
+          line = _kbReadLine(false);
           char psk[32+1]; memset(psk, 0x00, 32+1);
           sprintf(psk, "%s", line);
           if ( strlen(ssid) > 0 ) {
@@ -110,9 +112,8 @@ void loop() {
           } else {
               Serial.println("Invalid New Config");
           }
-
-      }
-  }
+      } 
+  } else Serial.print(line);
 
   delay(100);
 }

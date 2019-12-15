@@ -85,6 +85,7 @@ char* yat4l_wifi_getHomeServer(bool refresh=false) {
 
 bool _wifi_readConf() {
     int read = yat4l_fs_readTextFile( WIFI_CONF_FILE, fullWifiConf, WIFI_FULL_CONF_LEN );
+    _wifi_refreshHomeConf(); 
     return read > -1;
 }
 
@@ -95,11 +96,14 @@ bool _wifi_savePSKs() {
 
     if ( tlen == 0 ) {
         // nothing saved
+        Serial.println(" nothing saved");
         if ( !wifi_home_conf_init ) {
+            Serial.println(" nothing to save");
             // nothing to save
             // but no error
             return true;
         } else {
+            Serial.println(" save home conf");
             sprintf( fullWifiConf, "%s\n", wifi_home_conf );
             yat4l_fs_writeTextFile( WIFI_CONF_FILE, fullWifiConf, strlen( fullWifiConf ) );
             return true;
@@ -107,15 +111,22 @@ bool _wifi_savePSKs() {
     }
 
     if ( wifi_home_conf_init ) {
+        Serial.println(" save home conf");
         int i = indexOf(fullWifiConf, '\n');
         char tmp[WIFI_FULL_CONF_LEN]; memset(tmp, 0x00, WIFI_FULL_CONF_LEN);
-        sprintf( tmp, "%s\n", wifi_home_conf );
-        sprintf( &tmp[ strlen(tmp) ], "%s", &fullWifiConf[i+1] );
+        sprintf( tmp, "%s\n%s", wifi_home_conf, &fullWifiConf[i+0] );
+        Serial.println(" saved other conf");
+        memset(fullWifiConf, 0x00, WIFI_FULL_CONF_LEN);
         sprintf( fullWifiConf, "%s", tmp );
+
+        Serial.println("---------------");
+        Serial.println(fullWifiConf);
+        Serial.println("---------------");
 
         bool ok = yat4l_fs_writeTextFile( WIFI_CONF_FILE, fullWifiConf, strlen( fullWifiConf ) ) > -1;
         return ok;
     } else {
+        Serial.println(" saved dummy conf");
         bool ok = yat4l_fs_writeTextFile( WIFI_CONF_FILE, fullWifiConf, strlen( fullWifiConf ) ) > -1;
         return ok;
     }
@@ -135,15 +146,17 @@ bool yat4l_wifi_setNoHomeConfig() {
 }
 
 bool yat4l_wifi_addWifiPSK(char* ssid, char* psk) {
+    _wifi_readConf();
     if ( ssid == NULL || psk == NULL || strlen(ssid) == 0 ) { return false; }
     if ( strlen( fullWifiConf ) + 64 + 64 +1 >= WIFI_FULL_CONF_LEN ) { return false; }
-    sprintf( &fullWifiConf[ strlen( fullWifiConf ) ], "%s:%s\n", ssid, psk );
+    sprintf( fullWifiConf, "%s%s:%s\n", fullWifiConf, ssid, psk );
 
     return _wifi_savePSKs();
 }
 
 // not to expose public
 void __DBUG_WIFI_CONF() {
+    _wifi_readConf();
     Serial.print( fullWifiConf );
 }
 
