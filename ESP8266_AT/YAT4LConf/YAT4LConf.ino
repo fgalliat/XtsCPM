@@ -5,6 +5,8 @@ SdFat SD;
 
 #include "xts_string.h"
 
+#include "xts_io.h"
+
 #include "xs_yat4l_impl.h"
 
 #include "xts_yat4l_dev_fs.h"

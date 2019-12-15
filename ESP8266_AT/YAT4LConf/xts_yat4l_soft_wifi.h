@@ -77,3 +77,19 @@ char* yat4l_wifi_getHomeServer(bool refresh=false) {
     free(tokn);
     return homeSRV;
 }
+
+bool _wifi_savePSKs() {
+    // TODO
+    return false;
+}
+
+bool yat4l_wifi_setHomeConfig(char* homeSSID, char* homeLocal, char* homeRemote) {
+    // TODO : BEWARE 64+32+32
+    sprintf(wifi_home_conf, "%s:%s:%s", homeSSID, homeLocal, homeRemote);
+    wifi_home_conf_init = true;
+   return _wifi_savePSKs();
+}
+
+bool yat4l_wifi_setNoHomeConfig() {
+    return yat4l_wifi_setHomeConfig( (char*)"#####", (char*)"##.##.##.##", (char*)"##.####.###");
+}
