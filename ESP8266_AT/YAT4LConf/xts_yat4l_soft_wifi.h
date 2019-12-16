@@ -85,7 +85,7 @@ char* yat4l_wifi_getHomeServer(bool refresh=false) {
 
 bool _wifi_readConf() {
     int read = yat4l_fs_readTextFile( WIFI_CONF_FILE, fullWifiConf, WIFI_FULL_CONF_LEN );
-    _wifi_refreshHomeConf(); 
+    if (read > 0 && !wifi_home_conf_init) _wifi_refreshHomeConf(); 
     return read > -1;
 }
 
@@ -96,37 +96,45 @@ bool _wifi_savePSKs() {
 
     if ( tlen == 0 ) {
         // nothing saved
-        Serial.println(" nothing saved");
+        // Serial.println(" nothing saved");
         if ( !wifi_home_conf_init ) {
-            Serial.println(" nothing to save");
+            // Serial.println(" nothing to save");
             // nothing to save
             // but no error
             return true;
         } else {
-            Serial.println(" save home conf");
+            // Serial.println(" save home conf : ");
+            // Serial.println(wifi_home_conf);
             sprintf( fullWifiConf, "%s\n", wifi_home_conf );
-            yat4l_fs_writeTextFile( WIFI_CONF_FILE, fullWifiConf, strlen( fullWifiConf ) );
-            return true;
+            bool ok = yat4l_fs_writeTextFile( WIFI_CONF_FILE, fullWifiConf, strlen( fullWifiConf ) );
+            return ok;
         }
     }
 
-    if ( wifi_home_conf_init ) {
-        Serial.println(" save home conf");
+    if ( wifi_home_conf_init && strlen(wifi_home_conf) > 0 ) {
+        // Serial.println(" save home conf");
+        // Serial.println(wifi_home_conf);
+
         int i = indexOf(fullWifiConf, '\n');
+
+        // Serial.println(" save other conf");
+        // Serial.println( &fullWifiConf[i+1] );
+        // Serial.println("----------");
+
         char tmp[WIFI_FULL_CONF_LEN]; memset(tmp, 0x00, WIFI_FULL_CONF_LEN);
-        sprintf( tmp, "%s\n%s", wifi_home_conf, &fullWifiConf[i+0] );
-        Serial.println(" saved other conf");
-        memset(fullWifiConf, 0x00, WIFI_FULL_CONF_LEN);
+        sprintf( tmp, "%s\n%s", wifi_home_conf, &fullWifiConf[i+1] );
+        // Serial.println(" saved other conf");
+        memset( fullWifiConf, 0x00, WIFI_FULL_CONF_LEN);
         sprintf( fullWifiConf, "%s", tmp );
 
-        Serial.println("---------------");
-        Serial.println(fullWifiConf);
-        Serial.println("---------------");
+        // Serial.println("---------------");
+        // Serial.println(fullWifiConf);
+        // Serial.println("---------------");
 
         bool ok = yat4l_fs_writeTextFile( WIFI_CONF_FILE, fullWifiConf, strlen( fullWifiConf ) ) > -1;
         return ok;
     } else {
-        Serial.println(" saved dummy conf");
+        // Serial.println(" saved dummy conf");
         bool ok = yat4l_fs_writeTextFile( WIFI_CONF_FILE, fullWifiConf, strlen( fullWifiConf ) ) > -1;
         return ok;
     }
@@ -136,7 +144,13 @@ bool _wifi_savePSKs() {
 
 bool yat4l_wifi_setHomeConfig(char* homeSSID, char* homeLocal, char* homeRemote) {
     // TODO : BEWARE 64+32+32
+    memset( wifi_home_conf, 0x00, WIFI_HOME_CONF_LEN);
     sprintf(wifi_home_conf, "%s:%s:%s", homeSSID, homeLocal, homeRemote);
+
+    // Serial.print(">>");
+    // Serial.print(wifi_home_conf);
+    // Serial.print("<<");
+
     wifi_home_conf_init = true;
    return _wifi_savePSKs();
 }
@@ -151,7 +165,13 @@ bool yat4l_wifi_addWifiPSK(char* ssid, char* psk) {
     if ( strlen( fullWifiConf ) + 64 + 64 +1 >= WIFI_FULL_CONF_LEN ) { return false; }
     sprintf( fullWifiConf, "%s%s:%s\n", fullWifiConf, ssid, psk );
 
-    return _wifi_savePSKs();
+        // Serial.println("---------------");
+        // Serial.println(fullWifiConf);
+        // Serial.println("---------------");
+
+    // return _wifi_savePSKs();
+    bool ok = yat4l_fs_writeTextFile( WIFI_CONF_FILE, fullWifiConf, strlen( fullWifiConf ) ) > -1;
+    return ok;
 }
 
 // not to expose public
