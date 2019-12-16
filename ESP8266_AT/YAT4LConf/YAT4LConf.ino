@@ -64,6 +64,7 @@ void loop() {
   Serial.println("B. SHOW config");
   Serial.println("C. setHomeConfig(..)");
   Serial.println("D. addSSID(.., ..)");
+  Serial.println("E. getPSK(..)");
   Serial.println("");
 
   char* line = _kbReadLine(false);
@@ -111,6 +112,20 @@ void loop() {
               Serial.println( ok );
           } else {
               Serial.println("Invalid New Config");
+          }
+      } 
+      else if ( ch == 'E' ) { 
+          Serial.println("Known SSID ?");
+          line = _kbReadLine(); Serial.println("");
+          char ssid[64+1]; memset(ssid, 0x00, 64+1);
+          sprintf(ssid, "%s", line);
+          
+          if ( strlen(ssid) > 0 ) {
+              char* psk = __WIFI_GET_PSK(ssid);
+              Serial.print("WIFI PSK : ");
+              Serial.println( psk );
+          } else {
+              Serial.println("Invalid SSID");
           }
       } 
   } else Serial.print(line);

@@ -186,3 +186,47 @@ void __ERASE_WIFI_CONF() {
     memset(fullWifiConf, 0x00, WIFI_FULL_CONF_LEN);
 }
 
+// later => directly set on connectToAp(ssid, PSK=NULL)
+char pskRes[32+1];
+char* __WIFI_GET_PSK(char* ssid) {
+    _wifi_readConf();
+
+    memset(pskRes, 0x00, 32+1);
+    int pskResCurs = 0;
+
+    int tlen = strlen( fullWifiConf );
+    if ( tlen < 1 ) { return NULL; }
+    bool lineHome = true;
+    int cpt = 0; 
+    bool found = false; bool sfound = false; bool readPSK = false;
+    for(int i=0; i < tlen; i++) {
+        char ch = fullWifiConf[i];
+        if ( lineHome && ch != '\n' ) { continue; }
+        else if ( lineHome && ch == '\n' ) { lineHome = false; continue; }
+        else {
+            if ( ch == '\n' ) {
+                if (found) return pskRes;
+                sfound = false;
+                readPSK = false;
+            }
+            else {
+                if ( readPSK ) {
+                  pskRes[ pskResCurs++ ] = ch;
+                } else
+                if (ch == ssid[cpt++]) {
+                    sfound = true;
+                } else if (ch != ssid[cpt++] && sfound) {
+                    if ( ch == ':' ) {
+                        readPSK = true;
+                        found = true;
+                    } else {
+                        sfound = false;
+                    }
+                }
+            }
+        }
+    }
+
+    return NULL;
+}
+
