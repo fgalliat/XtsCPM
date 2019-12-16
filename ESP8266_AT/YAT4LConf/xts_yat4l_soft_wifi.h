@@ -208,6 +208,7 @@ char* __WIFI_GET_PSK(char* ssid) {
                 if (found) return pskRes;
                 sfound = false;
                 readPSK = false;
+                cpt = 0;
             }
             else {
                 if ( readPSK ) {
