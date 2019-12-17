@@ -86,6 +86,10 @@
     _puts( yat4l_wifi_getSSID() );
     _puts( "\r\n" );
 
+    _puts( "HOME : " );
+    _puts( yat4l_wifi_getHomeServer() );
+    _puts( "\r\n" );
+
     // puts(tmp); =====> Make Teensy DEADLOCK / use _puts(...)
 
     // bool okMod = !init ? false : yat4l_wifi_testModule();
