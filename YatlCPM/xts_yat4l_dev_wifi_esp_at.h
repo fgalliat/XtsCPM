@@ -180,6 +180,12 @@
         return -1;
     }
 
+
+// forwards
+extern int _kbhit();
+extern uint8_t _getch();
+extern uint8_t _getche();
+
     // TODO : call it
     bool yat4l_wifi_init() {
         unsigned long t0 = millis();
@@ -212,11 +218,33 @@
         Serial.println("Configured APs ...");
         Serial.println(ssids);
 
-        Serial.println("Connecting to AP ...");
-        ok = yat4l_wifi_connectToAP("Fremen2");
-        // if (DBUG_WIFI) 
-        { Serial.print("Connect to AP : ");
-        Serial.println(ok ? "OK" : "NOK"); }
+        if ( ssids != NULL ) {
+            Serial.println("Select your AP (1 to 9)");
+            int ch = -1;
+            while( _kbhit() <= 0 ) {
+                delay(5);
+            }
+            ch = _getch(); // no echo
+
+            while( _kbhit() > 0  ) {
+                _getch(); // read trailling chars
+            }
+
+            if ( ch != -1 ) {
+                ch = ch - '1';
+                if ( ch >= 0 ) {
+                    char ssid[32+1]; memset(ssid, 0x00, 32+1);
+                    char* vol = str_split(ssids, '\n', ch);
+                    sprintf(ssid, "%s", vol);
+                    Serial.println("Connecting to AP ...");
+                    Serial.println(ssid);
+                    ok = yat4l_wifi_connectToAP(ssid);
+                    // if (DBUG_WIFI) 
+                    { Serial.print("Connected to AP : ");
+                    Serial.println(ok ? "OK" : "NOK"); }
+                }
+            }
+        }
 
 
         if (DBUG_WIFI) { Serial.println("Have finished !!!"); }
