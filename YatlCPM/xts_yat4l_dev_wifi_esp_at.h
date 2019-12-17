@@ -147,11 +147,6 @@
     #define _RET_OK 1
     #define _RET_ERROR 2
 
-    extern bool equals(char* s, char* t);
-    extern bool startsWith(char* str, char* toFind);
-    extern bool contains(char* str, char* toFind);
-    extern char* str_split(char* stringToSplit, char delim, int tokenNum);
-
     int _wifi_waitForOk(char* dest=NULL) {
         char resp[512+1];
         while (true) {
@@ -377,7 +372,7 @@
         return NULL;
     }
 
-    bool yat4l_wifi_isAtHome() { return false; }
-    char* yat4l_wifi_getHomeServer() { return NULL; }
+    // bool yat4l_wifi_isAtHome() { return false; }
+    // char* yat4l_wifi_getHomeServer() { return NULL; }
 
 

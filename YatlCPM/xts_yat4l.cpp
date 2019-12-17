@@ -3,6 +3,8 @@
  #include "Arduino.h"
  #include "xts_yat4l.h" 
 
+//  #include "xts_string.h" 
+
 /**
  * Xtase - fgalliat @Nov2019
  * 
@@ -10,6 +12,12 @@
  * 
  * part of XtsCPM project
  */
+
+    extern bool equals(char* s, char* t);
+    extern bool startsWith(char* str, char* toFind);
+    extern bool contains(char* str, char* toFind);
+    extern int indexOf(char* str, char toFind);
+    extern char* str_split(char* stringToSplit, char delim, int tokenNum);
 
   #include "Adafruit_ILI9486_Teensy.h"
   #include <SPI.h>
@@ -21,6 +29,7 @@
   #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
   extern SdFat SD;
 
+  #include "xts_yat4l_dev_fs.h"
 
   void xts_hdl() {
       // Xtase runtime handler
@@ -33,6 +42,7 @@
     // ===================================================================================
 
     // impl. include
+    #include "xts_yat4l_soft_wifi.h"
     #include "xts_yat4l_dev_wifi_esp_at.h"
 
     // ===================================================================================

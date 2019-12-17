@@ -167,8 +167,8 @@ char* yat4l_wifi_scanAPs();
 // ex. yat4l_wifi_wget("$home", 8089, "/login?username=toto&pass=titi" 
 char* yat4l_wifi_wget(char* host, int port, char* query);
 
-bool yat4l_wifi_isAtHome();
-char* yat4l_wifi_getHomeServer();
+bool yat4l_wifi_isAtHome(bool refresh=false);
+char* yat4l_wifi_getHomeServer(bool refresh=false);
 // @@
 
 bool yat4l_wifi_close(); // will try to call yat4l_wifi_disconnectFromAP()
