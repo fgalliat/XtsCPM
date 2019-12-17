@@ -18,6 +18,7 @@
     extern bool contains(char* str, char* toFind);
     extern int indexOf(char* str, char toFind);
     extern char* str_split(char* stringToSplit, char delim, int tokenNum);
+    extern bool endsWith(char* str, char* toFind);
 
   #include "Adafruit_ILI9486_Teensy.h"
   #include <SPI.h>

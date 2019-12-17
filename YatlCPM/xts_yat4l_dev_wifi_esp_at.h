@@ -37,6 +37,11 @@
  *  prompt SSID, PSK => change it
  */
 
+// forwards
+extern int _kbhit();
+extern uint8_t _getch();
+extern uint8_t _getche();
+
     #define WIFI_SERIAL Serial2
     #define WIFI_CMD_TIMEOUT 6000
     #define WIFI_SERIAL_BAUDS 115200 
@@ -66,10 +71,9 @@
 
         while(WIFI_SERIAL.available() > 0) {
             int ch = WIFI_SERIAL.read();
-            Serial.write(ch);
+            // Serial.write(ch);
         }
         Serial.println("module powered");
-
 
         return true; 
     }
@@ -181,10 +185,7 @@
     }
 
 
-// forwards
-extern int _kbhit();
-extern uint8_t _getch();
-extern uint8_t _getche();
+
 
     // TODO : call it
     bool yat4l_wifi_init() {
@@ -245,6 +246,9 @@ extern uint8_t _getche();
                 }
             }
         }
+
+        Serial.println("Try to GET / @Home Server...");
+        char* ignored = yat4l_wifi_wget((char*)"$home", 8089, "/");
 
 
         if (DBUG_WIFI) { Serial.println("Have finished !!!"); }
@@ -478,12 +482,114 @@ extern uint8_t _getche();
     // returns a 'ssid \n ssid \n ....'
     char* yat4l_wifi_scanAPs() { return (char*)""; }
 
+
+    void yat4l_wifi_closeSocket() {
+        _wifiSendCMD("AT+CIPCLOSE()");
+        if ( ! _wifi_waitForOk() ) { return false; }
+        return true;
+    }
+
     // return type is not yet certified, may use a packetHandler ....
     // ex. yat4l_wifi_wget("www.google.com", 80, "/search?q=esp8266" 
     // ex. yat4l_wifi_wget("$home", 8089, "/login?username=toto&pass=titi" 
     char* yat4l_wifi_wget(char* host, int port, char* query) {
-        return NULL;
+
+      char* usedHOST = host;
+
+      if ( equals(host, (char*)"$home") ) {
+        char* homeSrv = yat4l_wifi_getHomeServer();
+        if ( homeSrv != NULL ) {
+            usedHOST = homeSrv;
+        }          
+      }
+
+      char cmd[128];
+      sprintf(cmd, "AT+CIPSTART=\"TCP\",\"%s\",%d", usedHOST, port);
+      Serial.println(cmd);
+
+      _wifiSendCMD(cmd);
+      if (! _wifi_waitForOk() ) {
+          yat4l_wifi_closeSocket();
+          return NULL;
+      }
+      Serial.println("OK");
+
+      char resp[512+1]; // _wifiReadline(resp); requires 512 bytes long
+      char fullQ[128];
+      sprintf( fullQ, "GET %s\r\n", query );
+
+      sprintf(cmd, "AT+CIPSEND=%d", strlen( fullQ ));
+      _wifiSendCMD( cmd );
+      _wifiReadline(resp);
+      Serial.println(cmd);
+
+      _wifiSendCMD( fullQ );
+      _wifiReadline(resp);
+      Serial.println(fullQ);
+
+      _wifiSendCMD("+++"); // EOT
+      _wifiReadline(resp);
+      Serial.println("+++");
+
+
+        bool found = false;
+        while (!found) {
+            int readed = _wifiReadline(resp);
+            
+            if (readed < 0) {
+                yat4l_wifi_closeSocket();
+                return NULL;
+            }
+
+            if ( equals( resp, "ERROR" ) ) {
+                yat4l_wifi_closeSocket();
+                return NULL;
+            } else if ( equals( resp, "SEND OK" ) ) {
+                break;
+            }
+
+            Serial.print("SEND>");
+            Serial.println(resp);
+        }
+        Serial.println("SEND OK");
+
+
+        found = false;
+        while (!found) {
+            int readed = _wifiReadline(resp);
+            
+            if (readed < 0) {
+                yat4l_wifi_closeSocket();
+                return NULL;
+            }
+
+            if ( equals( resp, "CLOSED" ) ) {
+                yat4l_wifi_closeSocket();
+                break;
+            } else if ( endsWith( resp, "CLOSED" ) ) {
+                Serial.println( resp );
+                break;
+            }
+
+            Serial.println( resp );
+        }
+        Serial.println("READ OK");
+
+
+        yat4l_wifi_closeSocket();
+
+
+        // must not return an function-local pointer
+      return NULL;
     }
+
+
+    // // return type is not yet certified, may use a packetHandler ....
+    // // ex. yat4l_wifi_wget("www.google.com", 80, "/search?q=esp8266" 
+    // // ex. yat4l_wifi_wget("$home", 8089, "/login?username=toto&pass=titi" 
+    // char* yat4l_wifi_wget(char* host, int port, char* query) {
+    //     return NULL;
+    // }
 
     // bool yat4l_wifi_isAtHome() { return false; }
     // char* yat4l_wifi_getHomeServer() { return NULL; }
