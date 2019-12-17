@@ -208,8 +208,16 @@
         if (DBUG_WIFI) { Serial.print("Module mode : "); 
         Serial.println(mode); }
 
+        Serial.println("Connecting to AP ...");
+        ok = yat4l_wifi_connectToAP("Fremen2");
+        // if (DBUG_WIFI) 
+        { Serial.print("Connect to AP : ");
+        Serial.println(ok ? "OK" : "NOK"); }
+
+
         if (DBUG_WIFI) { Serial.println("Have finished !!!"); }
 
+        ok = true;
         return ok;
     }
 
@@ -341,9 +349,65 @@
     }
 
 
-    char* yat4l_wifi_getIP() { return XX_getIP( isStaMode() ); }
+    // --------------------
 
-    char* yat4l_wifi_getSSID() { return (char*)"NotConnected"; }
+    char* NOSSID = (char*)"NotConnected";
+    char CURSSID[32+1];
+
+    char* XX_getSSID(bool STA) {
+      if ( STA ) { _wifiSendCMD("AT+CWJAP?"); }
+      else { _wifiSendCMD("AT+CWSAP?"); }
+
+      memset(CURSSID, 0x00, 32+1);
+
+      char resp[512+1]; // _wifiReadline(resp); requires 512 bytes long
+
+        bool found = false;
+        while (!found) {
+            int readed = _wifiReadline(resp);
+            
+            if (readed < 0) {
+                break;
+            }
+
+            // when not connected seems to finish with "+" (no netmask)
+            if ( equals( resp, "+" ) ) {
+                // Serial.println( "EJECT II" );
+                break;
+            }
+
+            if ( equals( resp, "OK" ) ) {
+                break;
+            }
+
+            if ( equals( resp, "ERROR" ) ) {
+                return NOSSID;
+            }
+
+            if ( startsWith(resp, (char*)"+CW") ) {
+                    // +CWJAP:__?__"MySSID"
+                    char* subResult = str_split(resp, '"', 1);
+                    if ( subResult == NULL ) {
+                        sprintf(CURSSID, "%s", NOIP);
+                    } else {
+                        sprintf(CURSSID, "%s", subResult);
+                        free(subResult);
+                    }
+                    found = true;
+                    break;
+            }
+        }
+
+        // must not return an function-local pointer
+      return CURSSID;
+    }
+
+    // --------------------
+
+    char* yat4l_wifi_getIP() { return XX_getIP( isStaMode() ); }
+    char* yat4l_wifi_getSSID() { return XX_getSSID( isStaMode() ); }
+
+    // --------------------
 
     bool yat4l_wifi_close() { return true; }
     bool yat4l_wifi_beginAP() { return false; }
@@ -360,8 +424,25 @@
     bool yat4l_wifi_openAnAP(char* ssid, char* psk) { return false; }
 
     // STA (client of an AP)
-    bool yat4l_wifi_connectToAP(char* ssid, char* psk) { return false; }
+    bool yat4l_wifi_connectToAP(char* ssid, char* psk) { 
+        if ( psk == NULL ) {
+            psk = __WIFI_GET_PSK(ssid);
+        }
+
+        if ( psk == NULL ) {
+            yat4l_dbug("No PSK provided for that SSID");
+            return false;
+        }
+
+        char cmd[96+1]; memset(cmd, 0x00, 96+1);
+        sprintf(cmd, "AT+CWJAP=\"%s\",\"%s\"", ssid, psk);
+        _wifiSendCMD(cmd);
+
+        return _wifi_waitForOk() == _RET_OK;
+    }
+
     bool yat4l_wifi_disconnectFromAP() { return false; }
+
     // returns a 'ssid \n ssid \n ....'
     char* yat4l_wifi_scanAPs() { return (char*)""; }
 
