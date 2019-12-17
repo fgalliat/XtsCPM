@@ -208,6 +208,10 @@
         if (DBUG_WIFI) { Serial.print("Module mode : "); 
         Serial.println(mode); }
 
+        char* ssids = __WIFI_GET_KNWON_SSIDS();
+        Serial.println("Configured APs ...");
+        Serial.println(ssids);
+
         Serial.println("Connecting to AP ...");
         ok = yat4l_wifi_connectToAP("Fremen2");
         // if (DBUG_WIFI) 

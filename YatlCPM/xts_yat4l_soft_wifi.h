@@ -189,7 +189,7 @@ void __ERASE_WIFI_CONF() {
 // later => directly set on connectToAp(ssid, PSK=NULL)
 char pskRes[32+1];
 char* __WIFI_GET_PSK(char* ssid) {
-    _wifi_readConf();
+    if ( ! _wifi_readConf() ) { return NULL; }
 
     memset(pskRes, 0x00, 32+1);
     int pskResCurs = 0;
@@ -229,5 +229,47 @@ char* __WIFI_GET_PSK(char* ssid) {
     }
 
     return NULL;
+}
+
+
+#define known_ssidsLEN (20*32)+1 
+char known_ssids[known_ssidsLEN];
+char* __WIFI_GET_KNWON_SSIDS() {
+    if ( ! _wifi_readConf() ) { return NULL; }
+
+    memset(known_ssids, 0x00, known_ssidsLEN);
+    int ssidResCurs = 0;
+
+    int tlen = strlen( fullWifiConf );
+    if ( tlen < 1 ) { return NULL; }
+    bool lineHome = true;
+    int sfound = -1; bool readPSK = false;
+    for(int i=0; i < tlen; i++) {
+        char ch = fullWifiConf[i];
+        if ( lineHome && ch != '\n' ) { continue; }
+        else if ( lineHome && ch == '\n' ) { lineHome = false; continue; }
+        else {
+            if ( ch == '\n' ) {
+                known_ssids[sfound++] = '\n';
+                // sfound = -1;
+                readPSK = false;
+            }
+            else {
+                if ( !readPSK && sfound < 0 ) { sfound = 0; }
+                if ( readPSK ) {
+                    // nothing
+                } else
+                if (ch != ':') {
+                    known_ssids[sfound++] = ch;
+                } else if (ch == ':' && sfound > -1) {
+                    if ( ch == ':' ) {
+                        readPSK = true;
+                    }
+                }
+            }
+        }
+    }
+
+    return known_ssids;
 }
 
