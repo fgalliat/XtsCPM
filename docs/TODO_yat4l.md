@@ -3,9 +3,9 @@
 - [x] Enclosure 
 - [ ] LEDs
 - [x] Buzzer
-- [ ] DFPlayer
-- [ ] Keyboard
-  - HT USB board ?
+- [x] DFPlayer
+- [x] Keyboard
+  - HT USB board ? [x]
   - MS ChatPad ?
 - [ ] Serial To VGA board ?
   - both VGA Text boards are soldered but one is on a BUS-CARD
@@ -24,8 +24,8 @@
     - [x] set STA/AP [x]
     - [x] wget(url) (**to finish**) [ ]
       - [ ] act as a REST GET client (see Bearers too)
-      - [ ] add getHomeServer() method based on current SSID
-      - [ ] Z:/wifi.psk => ($HOME_SSID$:$HOME_HOST$:$REMOTE_HOST$\n) + ( $SSID$:$PSK$\n )[]
+      - [x] add getHomeServer() method based on current SSID
+      - [x] Z:/wifi.psk => ($HOME_SSID$:$HOME_HOST$:$REMOTE_HOST$\n) + ( $SSID$:$PSK$\n )[]
     - [ ] startTelnetD (**later**) [ ]
     - [x] getIP() (STA/AP mode same API method) [x]
     - [x] getSSID (STA/AP) [x]

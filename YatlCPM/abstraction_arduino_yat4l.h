@@ -556,7 +556,16 @@ extern bool Serial_useable;
 // #define USE_TELNETD_AS_IO 1
 #define USE_TELNETD_AS_IO 0
 
+// TODO : BETTER
+#define HAS_T4_KEYB 1
+
 int _kbhit(void) {
+
+	#if HAS_T4_KEYB
+	  int a = yat4l_keyb_available();
+	  if ( a > 0 ) { return a; }
+	#endif
+
 	#if HAS_KEYBOARD
 	  int kavail = keybLocked ? 0 : yatl.getKeyboard()->available();
 	  if ( kavail > 0 ) {
@@ -579,6 +588,24 @@ int _kbhit(void) {
 }
 
 uint8 _getch(void) {
+
+	#if HAS_T4_KEYB
+	  int a;
+	  while( (a = yat4l_keyb_available() ) <= 0 ) {
+
+#ifdef USE_XTS_HDL
+        xts_hdl();
+#endif
+
+		  if (Serial.available() > 0 ) {
+			  return Serial.read();
+		  }
+	  } 
+	  if ( a > -1 ) {
+		  return yat4l_keyb_read();
+	  }
+	#endif
+
 	#if HAS_KEYBOARD
 		if ( !Serial_useable ) {
 			// -= TODO BEWARE : keybLocked =-

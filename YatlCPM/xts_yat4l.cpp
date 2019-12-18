@@ -39,6 +39,30 @@
   // ==================
 
     // ===================================================================================
+    //                                   Keyboard
+    // ===================================================================================
+    // Hobytronics USB HOST KEYB BOARD impl.
+    void yat4l_keyb_init() { KEYB_UART.begin(9600); }
+
+    int yat4l_keyb_available() { return KEYB_UART.available(); }
+    
+    uint8_t yat4l_keyb_read() {
+      uint8_t ch = KEYB_UART.read();
+      if ( ch != 0xFF ) {
+        if ( ch == 'a' ) return 'q';
+        if ( ch == 'q' ) return 'a'; // BEWARE : Ctrl + A
+        if ( ch == 'z' ) return 'w';
+        if ( ch == 'w' ) return 'z';
+        if ( ch == 'A' ) return 'Q';
+        if ( ch == 'Q' ) return 'A';
+        if ( ch == 'Z' ) return 'W';
+        if ( ch == 'W' ) return 'Z';
+        // map todo !!!!
+      }
+      return ch;
+    }
+
+    // ===================================================================================
     //                                   WiFi
     // ===================================================================================
 
@@ -234,6 +258,8 @@
           pinMode(LED_BUILTIN_PIN, OUTPUT);
           digitalWrite(LED_BUILTIN_PIN, LOW);
         }
+
+        yat4l_keyb_init();
 
         yat4l_mp3_init();
 
