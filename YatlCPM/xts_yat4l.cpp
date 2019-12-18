@@ -64,6 +64,12 @@
       if ( ch != 0xFF && ch <= 127 ) {
         ch = keyMap[lang][ch];
       }
+
+      // CR+LF => CR (only)
+      if ( ch == 13 && KEYB_UART.available() >= 1 && KEYB_UART.peek() == '\n') {
+        KEYB_UART.read();
+      }
+
       return ch;
     }
 
