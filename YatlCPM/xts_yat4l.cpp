@@ -41,23 +41,28 @@
     // ===================================================================================
     //                                   Keyboard
     // ===================================================================================
+    #include "xts_kbmap.h"
+    #define KEYMAP_EN 0
+    #define KEYMAP_FR 1
+    int lang = KEYMAP_FR;
+
     // Hobytronics USB HOST KEYB BOARD impl.
     void yat4l_keyb_init() { KEYB_UART.begin(9600); }
 
+    bool yat4l_keyb_setLang(int _lang) {
+      if ( _lang == KEYMAP_EN || _lang == KEYMAP_FR ) {
+        lang = lang;
+        return true;
+      }
+      return false;
+    }
+
     int yat4l_keyb_available() { return KEYB_UART.available(); }
-    
+
     uint8_t yat4l_keyb_read() {
       uint8_t ch = KEYB_UART.read();
-      if ( ch != 0xFF ) {
-        if ( ch == 'a' ) return 'q';
-        if ( ch == 'q' ) return 'a'; // BEWARE : Ctrl + A
-        if ( ch == 'z' ) return 'w';
-        if ( ch == 'w' ) return 'z';
-        if ( ch == 'A' ) return 'Q';
-        if ( ch == 'Q' ) return 'A';
-        if ( ch == 'Z' ) return 'W';
-        if ( ch == 'W' ) return 'Z';
-        // map todo !!!!
+      if ( ch != 0xFF && ch <= 127 ) {
+        ch = keyMap[lang][ch];
       }
       return ch;
     }

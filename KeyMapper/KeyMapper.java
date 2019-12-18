@@ -16,7 +16,7 @@ public class KeyMapper {
             for(int i=0; i < 128; i++) {
                 if ( i % 32 == 0 ) { sb.append("   "); }
                 if ( i >= 1 && i <= 26+1 ) { sb.append("   "); }
-                sb.append( (i >= 32 && i != 127) ? "'"+((char)i)+"'" : i );
+                sb.append( (i >= 32 && i != 127) ? "'"+ ( i == '\'' || i == '\\' ? "\\" : "" )+ ((char)i)+"'" : i );
                 sb.append(", ");
                 
                 if ( i == 0 ) { sb.append("\n"); }
@@ -32,7 +32,7 @@ public class KeyMapper {
             sb.append(" },\n");
         }
 
-        sb.append("}\n");
+        sb.append("};\n");
 
         System.out.println(sb.toString());
     }
