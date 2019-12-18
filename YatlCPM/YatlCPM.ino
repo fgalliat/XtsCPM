@@ -5,8 +5,6 @@
 #include <SPI.h>
 
 
-
-
 #ifdef XTASE_T36_YATL_LAYOUT
   // maybe slower but as direct truncate, rename, .... routines that are required by the system
   #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
@@ -190,6 +188,11 @@ int lst_open = FALSE;
 #endif
 
 void setup(void) {
+  // pinMode(5, OUTPUT);
+  // digitalWrite(5, LOW);
+  // tone(5, 440, 500);
+
+
   // pinMode(LED, OUTPUT);
   // digitalWrite(LED, LOW);
   // Serial.begin(SERIALSPD);

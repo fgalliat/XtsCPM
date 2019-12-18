@@ -485,8 +485,7 @@ extern uint8_t _getche();
 
     void yat4l_wifi_closeSocket() {
         _wifiSendCMD("AT+CIPCLOSE()");
-        if ( ! _wifi_waitForOk() ) { return false; }
-        return true;
+        if ( ! _wifi_waitForOk() ) { return; }
     }
 
     // return type is not yet certified, may use a packetHandler ....

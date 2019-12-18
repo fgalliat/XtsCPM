@@ -1,4 +1,4 @@
-#if defined __IMXRT1062__
+#if defined(ARDUINO) && defined(__IMXRT1062__) 
 /**
  * Xtase - fgalliat @Dec 2019
  * 
@@ -20,8 +20,22 @@ extern bool BUZZER_MUTE;
 
     // ===================================================
 
+extern void _putch(uint8_t ch);
+
+// don't know why : need to redef. if HAS_BUILTIN_LCD .. !!
+void _puts(const char *str) {
+	while (*str) _putch(*(str++));
+}
+
+    // ===================================================
+
 
     void yat4l_buzzer_beep(int freq, int duration) { 
+
+// Serial.print("PIN  : "); Serial.println(BUZZER_PIN);
+// Serial.print("MUTE : "); Serial.println(BUZZER_MUTE);
+
+
         // if (this->_mute) { return; } 
         yat4l_buzzer_tone( freq, duration ); 
         delay( duration );
@@ -34,6 +48,11 @@ extern bool BUZZER_MUTE;
      */
     void yat4l_buzzer_playNote(int noteOrFreq, int duration) {
         // if (this->_mute) { return; } 
+
+
+// Serial.print("PIN  : "); Serial.println(BUZZER_PIN);
+// Serial.print("MUTE : "); Serial.println(BUZZER_MUTE);
+
 
         if ( noteOrFreq >= 1 && noteOrFreq <= 48 ) {
             // 0..48 octave2 to 5
@@ -55,6 +74,11 @@ extern bool BUZZER_MUTE;
 
     // plays a "c#ab" sequence
     void yat4l_buzzer_playTuneString(char* strTune) {
+
+// Serial.print("PIN  : "); Serial.println(BUZZER_PIN);
+// Serial.print("MUTE : "); Serial.println(BUZZER_MUTE);
+
+
         // if (this->_mute) { return; } 
         yat4l_buzzer_noTone();
 

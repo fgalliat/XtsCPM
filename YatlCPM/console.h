@@ -1,6 +1,7 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
+
 /* see main.c for definition */
 
 uint8 mask8bit = 0x7f;		// TO be used for masking 8 bit characters (XMODEM related)

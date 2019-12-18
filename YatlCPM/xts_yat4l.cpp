@@ -23,7 +23,7 @@
   #include "Adafruit_ILI9486_Teensy.h"
   #include <SPI.h>
 
- // for pin definitions, please refer to the header file
+  // for pin definitions, please refer to the header file
   Adafruit_ILI9486_Teensy tft;
 
 
@@ -50,15 +50,30 @@
     //                                   Music
     // ===================================================================================
 
+    #include "xts_yael_dev_dfplayer.h"
 
-    void yat4l_mp3Play(int trackNum) {}
-    void yat4l_mp3Loop(int trackNum) {}
-    void yat4l_mp3Vol(int volume) {}
-    void yat4l_mp3Pause() {}
-    void yat4l_mp3Stop() {}
-    void yat4l_mp3Next() {}
-    void yat4l_mp3Prev() {}
-    bool yat4l_mp3IsPlaying() {return false;}
+    #define mp3Serial Serial5
+    SoundCard snd( &mp3Serial );
+
+    bool yat4l_mp3_init() { 
+      if ( MP3_BUSY_PIN > -1 ) {
+        pinMode(MP3_BUSY_PIN, INPUT);
+      }
+      mp3Serial.begin(9600);
+      snd.init();
+
+      return true; 
+    }
+    
+    bool yat4l_mp3IsPlaying() { return digitalRead(MP3_BUSY_PIN) == LOW; }
+
+    void yat4l_mp3Play(int trackNum) { snd.play(trackNum); }
+    void yat4l_mp3Loop(int trackNum) { Serial.println("NYI"); }
+    void yat4l_mp3Vol(int volume) { snd.volume(volume); } // 0..30 ?
+    void yat4l_mp3Pause() { snd.pause(); }
+    void yat4l_mp3Stop() { snd.stop(); }
+    void yat4l_mp3Next() { snd.next(); }
+    void yat4l_mp3Prev() { snd.prev(); }
 
 
 
@@ -204,28 +219,29 @@
 
        Serial.begin(115200);
 
-
       // avoid SD_CS before booting
         const int SD_CS = 0;
         pinMode( SD_CS, OUTPUT );
         digitalWrite( SD_CS, HIGH );
 
 
-        if ( SUBMCU_READY_PIN > 0 ) {
-          pinMode(SUBMCU_READY_PIN, INPUT);
-        }
+        // if ( SUBMCU_READY_PIN > 0 ) {
+        //   pinMode(SUBMCU_READY_PIN, INPUT);
+        // }
 
+        
         if ( LED_BUILTIN_PIN > 0 ) {
           pinMode(LED_BUILTIN_PIN, OUTPUT);
           digitalWrite(LED_BUILTIN_PIN, LOW);
         }
 
+        yat4l_mp3_init();
 
         // SD is init by YatlCPM.ino
     
         yat4l_buzzer_init();
 
-        #if HAS_HAS_BUILTIN_LCD
+        #if HAS_BUILTIN_LCD
           // Now initialise the TFT
           SPI.begin();
           tft.begin();

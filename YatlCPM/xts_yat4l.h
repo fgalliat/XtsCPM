@@ -16,8 +16,8 @@
 //                                    Settings
 //====================================================================================
 
-	// #define HAS_BUILTIN_LCD 1
-  #define HAS_BUILTIN_LCD 0
+	#define HAS_BUILTIN_LCD 1
+  // #define HAS_BUILTIN_LCD 0
 	#define USE_BUILTIN_LCD HAS_BUILTIN_LCD
 	#define HAS_KEYBOARD 0
 	#undef HAS_KEYBOARD
@@ -38,9 +38,9 @@
 //                     Pins
 //====================================================================================
 
-#define MP3_BUSY_PIN 3
+#define MP3_BUSY_PIN 22
 
-#define SUBMCU_READY_PIN 4
+#define SUBMCU_READY_PIN -1
 
 #define LED_BUILTIN_PIN 2
 

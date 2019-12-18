@@ -11,7 +11,7 @@
 
 #ifdef HAS_BUILTIN_LCD
   bool currentlyUseScreen() {
-	  #ifdef USE_BUILTIN_LCD
+	  #if USE_BUILTIN_LCD
 	    bool curStdOutIsScreen = true;
 	    return curStdOutIsScreen;
 	  #else
@@ -643,16 +643,22 @@ uint8 _getche(void) {
 }
 
 void _putch(uint8 ch) {
-#if HAS_BUILTIN_LCD
-  if ( currentlyUseScreen() ) { 
-	  #if YATL_PLATFORM
-	    yatl.getScreen()->write(ch); 
-	  #elif YAT4L_PLATFORM
-	    yat4l_tft_print(ch); 
-	  #endif
-  }
-	else
+// #if HAS_BUILTIN_LCD
+//   if ( currentlyUseScreen() ) { 
+// 	  #if YATL_PLATFORM
+// 	    yatl.getScreen()->write(ch); 
+// 	  #elif YAT4L_PLATFORM
+// 	    yat4l_tft_print(ch); 
+// 	  #endif
+//   }
+// 	else
+// #endif
+
+#if YAT4L_PLATFORM && USE_BUILTIN_LCD
+  // else no vt100 && NO vtExt (buzzer ...)
+  yat4l_tft_print(ch); 
 #endif
+
 	Serial.write(ch);
 
 #if USE_TELNETD_AS_IO
