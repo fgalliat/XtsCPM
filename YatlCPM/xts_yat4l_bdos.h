@@ -35,6 +35,13 @@
       return getPascalStringFromRam(addr, dest, maxLen);
   }
 
+  // use to 'return' values from BdosCall
+  int sendStringInKeybBuff(char* toAppend) {
+    Serial.print("NYI : sendStringInKeybBuff > ");
+    Serial.println(toAppend);
+    return strlen(toAppend);
+  }
+
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
   int32 xbdos_console(int32 value) {
@@ -385,6 +392,18 @@
         // yat4l_dbug("Start Telnetd NYI");
         // return 0;
       }
+      else if ( hiB == 65 ) {
+        return sendStringInKeybBuff( yat4l_wifi_getIP() );
+      }
+      else if ( hiB == 66 ) {
+        return sendStringInKeybBuff( yat4l_wifi_getSSID() );
+      }
+      else if ( hiB == 67 ) {
+        uint8_t loB = LOW_REGISTER(value);
+        yat4l_wifi_setWifiMode( WIFI_MODE_STA );
+        bool ok = yat4l_wifi_connectToAP( loB );
+        return ok ? 1 : 0;
+      }
 
       return 0;
   }
@@ -407,9 +426,9 @@
          a0 -= 64;
          int trkNum = (a0<<8) + a1;
 
-if ( loopMode ) yat4l_dbug("mp3 LOOP");
-yat4l_dbug("mp3 play");
-// yat4l_dbug(trkNum);
+         if ( loopMode ) yat4l_dbug("mp3 LOOP");
+          // yat4l_dbug("mp3 play");
+          // yat4l_dbug(trkNum);
 
          if ( loopMode ) { yat4l_mp3Loop(trkNum); }
          else { yat4l_mp3Play(trkNum); }

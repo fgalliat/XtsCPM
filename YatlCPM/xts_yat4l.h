@@ -168,6 +168,7 @@ bool yat4l_wifi_openAnAP(char* ssid, char* psk);
 
 // STA (client of an AP)
 bool yat4l_wifi_connectToAP(char* ssid, char* psk=NULL);
+bool yat4l_wifi_connectToAP(int conf);
 bool yat4l_wifi_disconnectFromAP();
 // returns a 'ssid \n ssid \n ....'
 char* yat4l_wifi_scanAPs();

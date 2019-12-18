@@ -273,3 +273,11 @@ char* __WIFI_GET_KNWON_SSIDS() {
     return known_ssids;
 }
 
+bool yat4l_wifi_connectToAP(int conf) {
+    if ( conf < -1 || conf > 99 ) { return false; }
+    char* ssids = __WIFI_GET_KNWON_SSIDS();
+    if ( ssids == NULL ) { return false; }
+    char* ssid = str_split( ssids, '\n', conf );
+    if ( ssid == NULL ) { return false; }
+    return yat4l_wifi_connectToAP( ssid );
+}
