@@ -317,6 +317,10 @@
   }
 
   // ==============] Deep Hardware Control [==========
+
+  // TEMP : 
+  extern char* __WIFI_GET_KNWON_SSIDS();
+
   uint8_t subSystemBdosCall(int32 value) {
       // Serial.println("bridge Bdos call");
       uint8_t hiB = HIGH_REGISTER(value);
@@ -403,6 +407,15 @@
         yat4l_wifi_setWifiMode( WIFI_MODE_STA );
         bool ok = yat4l_wifi_connectToAP( loB );
         return ok ? 1 : 0;
+      } 
+      else if ( hiB == 68 ) {
+        sendStringInKeybBuff( __WIFI_GET_KNWON_SSIDS() ); // '\n' separated
+      }
+      else if ( hiB == 69 ) {
+        sendStringInKeybBuff( yat4l_wifi_scanAPs() ); // '\n' separated
+      }
+      else if ( hiB == 70 ) {
+        return yat4l_wifi_openAnAP((char*) "Yat4L_net", "yatl1234");
       }
 
       return 0;
