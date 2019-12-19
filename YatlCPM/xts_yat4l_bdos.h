@@ -397,24 +397,43 @@
         // return 0;
       }
       else if ( hiB == 65 ) {
-        return sendStringInKeybBuff( yat4l_wifi_getIP() );
+        // Get IP
+        char* ip = yat4l_wifi_getIP();
+        if ( ip == NULL ) { return 0; }
+        bool ok = sendStringInKeybBuff( ip );
+        if ( !ok ) { return 0; }
+        ok = sendStringInKeybBuff( "\n" );
+        return ok;
       }
       else if ( hiB == 66 ) {
-        return sendStringInKeybBuff( yat4l_wifi_getSSID() );
+        // Get SSID
+        char* ssid = yat4l_wifi_getSSID();
+        if ( ssid == NULL ) { return 0; }
+        bool ok = sendStringInKeybBuff( ssid );
+        if ( !ok ) { return 0; }
+        ok = sendStringInKeybBuff( "\n" );
+        return ok;
+
       }
       else if ( hiB == 67 ) {
+        // Connect to configured SSID:PSK (via conf-index)
         uint8_t loB = LOW_REGISTER(value);
         yat4l_wifi_setWifiMode( WIFI_MODE_STA );
         bool ok = yat4l_wifi_connectToAP( loB );
         return ok ? 1 : 0;
       } 
       else if ( hiB == 68 ) {
+        // Get all configurated SSIDs
         sendStringInKeybBuff( __WIFI_GET_KNWON_SSIDS() ); // '\n' separated
+        sendStringInKeybBuff( "-EOF-\n" );
       }
       else if ( hiB == 69 ) {
+        // Get all available SSIDs
         sendStringInKeybBuff( yat4l_wifi_scanAPs() ); // '\n' separated
+        sendStringInKeybBuff( "-EOF-\n" );
       }
       else if ( hiB == 70 ) {
+        // Open a Soft AP w/ predef. settings
         return yat4l_wifi_openAnAP((char*) "Yat4L_net", "yatl1234");
       }
 
