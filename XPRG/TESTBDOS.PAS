@@ -8,7 +8,7 @@ begin
   writeln('A0 ', a0);
 
   { callBdos :=  0; }
-  callBdos :=  Bdos(bd, (a1*8)+a0 );
+  callBdos :=  Bdos(bd, (a1 shl 8)+a0 );
 end;
 
 
