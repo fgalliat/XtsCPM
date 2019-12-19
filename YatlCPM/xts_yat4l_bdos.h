@@ -36,10 +36,18 @@
   }
 
   // use to 'return' values from BdosCall
+  // requires an external trailling "\n" to end the line
   int sendStringInKeybBuff(char* toAppend) {
-    Serial.print("NYI : sendStringInKeybBuff > ");
-    Serial.println(toAppend);
-    return strlen(toAppend);
+
+    bool ok = yat4l_keyb_injectString(toAppend);
+    if ( ok ) { return strlen(toAppend); }
+    else {
+      return -1;
+    }
+
+    // Serial.print("NYI : sendStringInKeybBuff > ");
+    // Serial.println(toAppend);
+    // return strlen(toAppend);
   }
 
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

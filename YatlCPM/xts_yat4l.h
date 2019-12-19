@@ -62,6 +62,12 @@ void yat4l_keyb_init();
 int yat4l_keyb_available();
 uint8_t yat4l_keyb_read();
 
+bool yat4l_keyb_inject(char ch);
+bool yat4l_keyb_injectString(char* str);
+
+
+// NYI ....
+char yat4l_keyb_poll();
 
 //====================================================================================
 
@@ -132,8 +138,6 @@ void yat4l_mp3Prev();
 bool yat4l_mp3IsPlaying();
 
 void yat4l_led(bool state, bool fastMode=false);
-
-char yat4l_keyb_poll();
 
 void yat4l_buzzer_init();
 void yat4l_buzzer_tone(int freq, int duration);

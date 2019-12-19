@@ -46,8 +46,17 @@
     #define KEYMAP_FR 1
     int lang = KEYMAP_FR;
 
+    // 255 because of TP3 Strings maxLen
+    #define SOFTBUFF_LEN 255
+    char softBuff[SOFTBUFF_LEN +1];
+    int softBuffCursor = 0;
+
     // Hobytronics USB HOST KEYB BOARD impl.
-    void yat4l_keyb_init() { KEYB_UART.begin(9600); }
+    void yat4l_keyb_init() { 
+      KEYB_UART.begin(9600); 
+      memset( softBuff, 0x00, SOFTBUFF_LEN+1 );
+      softBuffCursor = 0;
+    }
 
     bool yat4l_keyb_setLang(int _lang) {
       if ( _lang == KEYMAP_EN || _lang == KEYMAP_FR ) {
@@ -57,10 +66,49 @@
       return false;
     }
 
-    int yat4l_keyb_available() { return KEYB_UART.available(); }
+
+    // ------------------------------------
+    // Software Keyb injection
+    // ------------------------------------
+    bool yat4l_keyb_inject(char ch) {
+      // overflow ??
+      if ( softBuffCursor >= SOFTBUFF_LEN ) { return false; }
+
+      // ?? does reaplace '\n' by '\r' ??
+      if ( ch == '\n' ) { ch = '\r'; }
+
+      softBuff[ softBuffCursor++ ] = ch;
+
+      return true;
+    }
+
+    bool yat4l_keyb_injectString(char* str) {
+      bool ok;
+      while (*str) {
+        ok = yat4l_keyb_inject(*(str++));
+        if ( !ok ) { return false; }
+      }
+      return true;
+    }
+    // ------------------------------------
+
+
+    int yat4l_keyb_available() { 
+      if ( softBuffCursor > 0 ) { return softBuffCursor; }
+      return KEYB_UART.available(); 
+    }
 
     uint8_t yat4l_keyb_read() {
-      uint8_t ch = KEYB_UART.read();
+      uint8_t ch;
+      if ( softBuffCursor > 0 ) { 
+        ch = softBuff[0];
+        memcpy( &softBuff[0], &softBuff[1], softBuffCursor );
+        softBuff[softBuffCursor] = 0x00;
+        softBuffCursor--;
+        return ch;
+      }
+
+      ch = KEYB_UART.read();
       if ( ch != 0xFF && ch <= 127 ) {
         ch = keyMap[lang][ch];
       }
