@@ -420,7 +420,7 @@
         bool ok = sendStringInKeybBuff( ssid );
         if ( !ok ) { return 0; }
         ok = sendStringInKeybBuff( "\n" );
-        return ok;
+        return ok ? 1 : 0;
 
       }
       else if ( hiB == 67 ) {
@@ -434,15 +434,17 @@
         // Get all configurated SSIDs
         sendStringInKeybBuff( __WIFI_GET_KNWON_SSIDS() ); // '\n' separated
         sendStringInKeybBuff( "-EOF-\n" );
+        return 1;
       }
       else if ( hiB == 69 ) {
         // Get all available SSIDs
         sendStringInKeybBuff( yat4l_wifi_scanAPs() ); // '\n' separated
         sendStringInKeybBuff( "-EOF-\n" );
+        return 1;
       }
       else if ( hiB == 70 ) {
         // Open a Soft AP w/ predef. settings
-        return yat4l_wifi_openAnAP((char*) "Yat4L_net", "yatl1234");
+        return yat4l_wifi_openAnAP((char*) "Yat4L_net", "yatl1234") ? 1 : 0;
       }
 
       return 0;
