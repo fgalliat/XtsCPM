@@ -27,7 +27,27 @@ procedure DrawBox(X1,Y1,X2,Y2: Integer);
 
    DrawBox(X1,Y1+2,X2,Y2);
    GotoXY(X1+2,I); Write(title);
+ end;
 
+ { =========================== }
+
+ const 
+   WIFI_BDOS = 228;
+
+ function wifi_getIP : aStr;
+ var ip : aStr;
+     bdRes : integer;
+ begin
+   bdRes := Bdos(WIFI_BDOS, (65 shl 8)+0 );
+   if ( bdRes = 0 ) then
+   begin
+     wifi_getIP := 'Error';
+   end {* no ';' *}
+  else
+  begin
+    readln(ip);
+    wifi_getIP := ip;
+  end;
  end;
 
 
@@ -59,5 +79,9 @@ begin
 
   GotoXY(x, 23); Write('> ');
   readln(choice);
+
+  GotoXY(x + 10, 23);
+  if ( choice = 1 ) then
+    writeln( wifi_getIP );
 
 end.
