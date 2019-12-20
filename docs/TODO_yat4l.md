@@ -15,6 +15,8 @@
     - have to see MAX resolution I could have
     - 160 width seems to be the max (because of pin usage)
     - https://sourceforge.net/p/arduino-tvout/wiki/Useage/
+  - https://www.instructables.com/id/MRETV-Video-Stereo-Sound-and-much-more-from-a-s/
+    - 47x29 chars in 8x8 (376x216 ??)
 - [ ] WiFi
   - ESP12 ~~or ESP01 ?~~
   - ATcmds ~~or SubMCU code ?~~
