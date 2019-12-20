@@ -411,7 +411,7 @@
         bool ok = sendStringInKeybBuff( ip );
         if ( !ok ) { return 0; }
         ok = sendStringInKeybBuff( "\n" );
-        return ok;
+        return ok ? 1 : 0;
       }
       else if ( hiB == 66 ) {
         // Get SSID
