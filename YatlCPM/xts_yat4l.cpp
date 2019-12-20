@@ -72,10 +72,13 @@
     // ------------------------------------
     bool yat4l_keyb_inject(char ch) {
       // overflow ??
-      if ( softBuffCursor >= SOFTBUFF_LEN ) { return false; }
+      if ( softBuffCursor+1 >= SOFTBUFF_LEN ) { return false; }
 
       // ?? does reaplace '\n' by '\r' ??
-      if ( ch == '\n' ) { ch = '\r'; }
+      // if ( ch == '\n' ) { ch = '\r'; }
+      if ( ch == '\n' ) { 
+        softBuff[ softBuffCursor++ ] = '\r';
+      }
 
       softBuff[ softBuffCursor++ ] = ch;
 
@@ -83,12 +86,20 @@
     }
 
     bool yat4l_keyb_injectString(char* str) {
+      if ( str == NULL ) { return false; }
       bool ok;
       while (*str) {
         ok = yat4l_keyb_inject(*(str++));
         if ( !ok ) { return false; }
       }
       return true;
+      // if ( str == NULL ) { return false; }
+      // int tlen = strlen(str);
+      // if ( softBuffCursor + tlen >= SOFTBUFF_LEN ) { return false; }
+      // // for(int i=0; i < tlen; i++) { if ( str[i] == '\n' ) { str[i] = '\r'; } }
+      // strcat(softBuff, str);
+      // softBuffCursor += tlen;
+      // return true;
     }
     // ------------------------------------
 
@@ -102,7 +113,8 @@
       uint8_t ch;
       if ( softBuffCursor > 0 ) { 
         ch = softBuff[0];
-        memcpy( &softBuff[0], &softBuff[1], softBuffCursor );
+        // memcpy( &softBuff[0], &softBuff[1], softBuffCursor );
+        memmove( &softBuff[0], &softBuff[1], softBuffCursor-1 );
         softBuff[softBuffCursor] = 0x00;
         softBuffCursor--;
         return ch;

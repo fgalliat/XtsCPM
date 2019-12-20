@@ -37,13 +37,14 @@
 
   // use to 'return' values from BdosCall
   // requires an external trailling "\n" to end the line
-  int sendStringInKeybBuff(char* toAppend) {
+  bool sendStringInKeybBuff(char* toAppend) {
 
     bool ok = yat4l_keyb_injectString(toAppend);
-    if ( ok ) { return strlen(toAppend); }
-    else {
-      return -1;
-    }
+    // if ( ok ) { return strlen(toAppend); }
+    // else {
+    //   return -1;
+    // }
+    return ok;
 
     // Serial.print("NYI : sendStringInKeybBuff > ");
     // Serial.println(toAppend);
@@ -407,18 +408,16 @@
       else if ( hiB == 65 ) {
         // Get IP
         char* ip = yat4l_wifi_getIP();
-        if ( ip == NULL ) { return 0; }
+        if ( ip == NULL ) { sendStringInKeybBuff( "\n" ); return 0; }
         bool ok = sendStringInKeybBuff( ip );
-        if ( !ok ) { return 0; }
         ok = sendStringInKeybBuff( "\n" );
         return ok ? 1 : 0;
       }
       else if ( hiB == 66 ) {
         // Get SSID
         char* ssid = yat4l_wifi_getSSID();
-        if ( ssid == NULL ) { return 0; }
+        if ( ssid == NULL ) { sendStringInKeybBuff( "\n" ); return 0; }
         bool ok = sendStringInKeybBuff( ssid );
-        if ( !ok ) { return 0; }
         ok = sendStringInKeybBuff( "\n" );
         return ok ? 1 : 0;
 
