@@ -670,7 +670,7 @@ int ttyFrameH = -1;
                         __escapeUnknownChar = false;
 
                         uint8_t y = vt100seq[0] - 31;
-                        uint8_t x = vt100seq[1] - 31;
+                        uint8_t x = vt100seq[1] - 31 -1;
                         _consoleSetCursor(x,y);
 
                         memset(vt100seq, 0x00, strlen(vt100seq));
