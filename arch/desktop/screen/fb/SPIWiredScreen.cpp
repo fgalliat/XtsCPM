@@ -23,11 +23,12 @@
 int SCREEN_WIDTH = 320;
 int SCREEN_HEIGHT = 240;
 
+/*
 const uint16_t CLR_CYAN  = rgb16(0,255,255);
 const uint16_t CLR_PINK  = rgb16(255,0,150);
 const uint16_t CLR_RED   = rgb16(255,0,0);
 const uint16_t CLR_BLUE  = rgb16(0,0,255);
-
+*/
 
 #define TINYFONT 1
 
@@ -53,6 +54,24 @@ const uint16_t CLR_BLUE  = rgb16(0,0,255);
     }
     WiredScreen::~WiredScreen() {
     }
+
+// ===================
+
+void WiredScreen::screenRotate(bool portrait) {}
+void WiredScreen::setFont(int font) {}
+
+
+int cX=0,cY=0;
+unsigned short tCol = CLR_WHITE;
+
+void WiredScreen::setTextColor(unsigned short color) { tCol = color; }
+void WiredScreen::setCursorPx(int x, int y) { cX = x; cY = y; }
+void WiredScreen::write(char ch) {
+    this->DrawChar( ch , cX, cY, tCol);
+}
+
+// ===================
+
 
     bool WiredScreen::init(int arg) {
         char fbDesc[16];

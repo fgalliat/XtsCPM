@@ -16,7 +16,7 @@ CFLAGS = -D$(ARCH) -Wall -O3 -fPIC -Wno-unused-variable
 #CFLAGS = -Wall -O0 -fPIC -Wno-unused-variable -g
 
 # Flags to pass to the linker
-LDFLAGS = -lncurses -lm -ldl -lSDL2 -lpthread
+LDFLAGS = -lncurses -lm -ldl -lpthread
 
 # Objects to build
 OBJS = main.o lua/liblua.a Desktop.o xts_yatl_api_desktop.o SPIWiredScreen.o xts_yatl_dev_console.o
