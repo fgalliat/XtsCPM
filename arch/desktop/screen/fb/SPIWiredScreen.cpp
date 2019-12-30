@@ -31,6 +31,7 @@ int SCREEN_HEIGHT = 320;
 #else
 int SCREEN_WIDTH = 320;
 int SCREEN_HEIGHT = 240;
+#define TINYFONT 1
 #endif
 
 /*
@@ -40,7 +41,7 @@ const uint16_t CLR_RED   = rgb16(255,0,0);
 const uint16_t CLR_BLUE  = rgb16(0,0,255);
 */
 
-#define TINYFONT 1
+
 
 #if TINYFONT
  const int ttyFontWidth = 4;
