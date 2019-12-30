@@ -28,9 +28,19 @@
   #define ZOOM 2
 #endif
 
+
+#ifndef MODE_480
+  #define MODE_480 1
+#endif
+
+
+#if MODE_480
+int SCREEN_WIDTH = 480;
+int SCREEN_HEIGHT = 320;
+#else
 int SCREEN_WIDTH = 320;
 int SCREEN_HEIGHT = 240;
-
+#endif
 
 // experimental for now 
 bool screenRotated = false; // for Bitmap WallPaper
@@ -1034,6 +1044,9 @@ void *_xts_keyThread(void *argument){
 // ==== Fonts ==================================
 
 void WiredScreen::setFont(int ftSize) {
+    #if MODE_480
+      ftSize = FONT_REGULAR;
+    #endif
     currentFont = ftSize;
     if ( ftSize == FONT_TINY ) {
         ttyFontWidth = ttyFontWidthTiny;

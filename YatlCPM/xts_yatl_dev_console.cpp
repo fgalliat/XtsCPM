@@ -9,6 +9,11 @@
 
 #include "xts_yatl_dev_console.h"
 
+
+#ifndef MODE_480
+  #define MODE_480 1
+#endif
+
   
 //   // forward symbols
 //   void _setConsoleMode(int mode);
@@ -123,9 +128,18 @@
    void _setConsoleMode(int mode) {
       consoleMode = mode;
       if ( mode == LCD_CONSOLE_80_COLS ) {
+
+#if MODE_480
+   __setFont( FONT_NORMAL );
+   consoleCurrentFontHeight = 8;
+   consoleCurrentFontWidth  = 6;
+#else
          consoleCurrentFontHeight = 5+1;
          consoleCurrentFontWidth  = 3+1;
          __setFont( FONT_TINY );
+#endif
+
+
       } else {
          __setFont( FONT_NORMAL );
          consoleCurrentFontHeight = 8;

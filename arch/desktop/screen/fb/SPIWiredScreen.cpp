@@ -20,8 +20,18 @@
 #include "../WiredScreen.h"
 #include "../FX_starfield.h"
 
+#ifndef MODE_480
+  #define MODE_480 1
+#endif
+
+
+#if MODE_480
+int SCREEN_WIDTH = 480;
+int SCREEN_HEIGHT = 320;
+#else
 int SCREEN_WIDTH = 320;
 int SCREEN_HEIGHT = 240;
+#endif
 
 /*
 const uint16_t CLR_CYAN  = rgb16(0,255,255);
@@ -58,7 +68,11 @@ const uint16_t CLR_BLUE  = rgb16(0,0,255);
 // ===================
 
 void WiredScreen::screenRotate(bool portrait) {}
-void WiredScreen::setFont(int font) {}
+void WiredScreen::setFont(int font) {
+  #if MODE_480
+      // ftSize = FONT_REGULAR;
+  #endif
+}
 
 
 int cX=0,cY=0;
