@@ -84,7 +84,9 @@ int altKeyFlag;
 
 // Define the row and column pins
 
-byte colPins[NUM_COLS] = {13, 12, 11, 10, 9};
+// byte colPins[NUM_COLS] = {13, 12, 11, 10, 9};
+// Arduino micro pins
+byte colPins[NUM_COLS] = {12, 11, 10, 9, 8};
 byte rowPins[NUM_ROWS] = {7, 6, 5, 4, 3, 2, 1, 0};
 
 // SETUP
