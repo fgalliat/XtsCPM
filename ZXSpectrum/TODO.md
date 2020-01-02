@@ -6,9 +6,10 @@ Xtase - fgalliat
 
 
 
-- [ ] wire the keyboard matrix
-- [ ] test arduino MICRO code
-- [ ] deactivate Serial debugging
+- [x] wire the keyboard matrix
+- [x] test arduino MICRO code
+  - [ ] remap sereval keyCodes ...
+- [ ] RPI deactivate Serial debugging
 - [ ] mount a subMCU
   - [ ] mount a DFPlayer on subMCU
   - [ ] mount a Buzzer on SubMCU

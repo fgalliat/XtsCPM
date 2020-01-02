@@ -28,7 +28,8 @@
 #define SHIFT_COL 4
 #define SHIFT_ROW 5
 
-#define DEBOUNCE_VALUE 250
+// #define DEBOUNCE_VALUE 250
+#define DEBOUNCE_VALUE 150
 #define REPEAT_DELAY 500
 
 #define ALT_KEY_ON 255
@@ -38,14 +39,14 @@
 
 byte keyMap[NUM_ROWS][NUM_COLS] =
 {
-  {'5', '4', '3', '2', '1'},
-  {'t', 'r', 'e', 'w', 'q'},
-  {'6', '7', '8', '9', '0'},
-  {'g', 'f', 'd', 's', 'a'},
-  {'y', 'u', 'i', 'o', 'p'},
-  {'v', 'c', 'x', 'z', 0},
-  {'h', 'j', 'k', 'l', KEY_RETURN},
-  {'b', 'n', 'm', '.', ' '}
+  {'5', '4', '3', '2', '1'},  // 0
+  {'t', 'r', 'e', 'w', 'q'},  // 1
+  {'6', '7', '8', '9', '0'},  // 2 
+  {'g', 'f', 'd', 's', 'a'},  // 3
+  {'y', 'u', 'i', 'o', 'p'},  // 4
+  {'v', 'c', 'x', 'z', 0},    // 5
+  {'h', 'j', 'k', 'l', KEY_RETURN}, // 6
+  {'b', 'n', 'm', '.', ' '}   // 7
 };
 
 // Keymap if Shift is pressed
@@ -67,11 +68,11 @@ byte keyMapShifted[NUM_ROWS][NUM_COLS] =
 
 byte keyMapAlt[NUM_ROWS][NUM_COLS] =
 {
-  {KEY_LEFT_ARROW, '}}', '{{', ']', '['},
-  {'=', '$', '(', ')', '""'},
+  {KEY_LEFT_ARROW, '}', '{', ']', '['},
+  {'=', '$', '(', ')', '"'},
   {KEY_DOWN_ARROW, KEY_UP_ARROW, KEY_RIGHT_ARROW, '!', KEY_BACKSPACE},
   {0, '_', '~', '|', '@'},
-  {'>', '$', '(', ')', '""'},
+  {'>', '$', '(', ')', '"'},
   {'/', '?', ';', ':', 0},
   {'*', '-', '+', '=', KEY_RETURN},
   {'*', '<', '>', '\'', '#'}
@@ -85,9 +86,11 @@ int altKeyFlag;
 // Define the row and column pins
 
 // byte colPins[NUM_COLS] = {13, 12, 11, 10, 9};
+// byte rowPins[NUM_ROWS] = {7, 6, 5, 4, 3, 2, 1, 0};
+
 // Arduino micro pins
-byte colPins[NUM_COLS] = {12, 11, 10, 9, 8};
-byte rowPins[NUM_ROWS] = {7, 6, 5, 4, 3, 2, 1, 0};
+byte colPins[NUM_COLS] = {8, 9, 10, 11, 12};
+byte rowPins[NUM_ROWS] = {7, 6, 4, 5, 3, 2, 1, 0};
 
 // SETUP
 
@@ -227,4 +230,7 @@ void pressKey(byte r, byte c, bool shifted)
   // send the key
   
   if (key > 0) Keyboard.write(key);
+  // Keyboard.print( r );
+  // Keyboard.print( 'x' );
+  // Keyboard.println( c );
 }
