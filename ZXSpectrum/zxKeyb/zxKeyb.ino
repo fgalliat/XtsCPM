@@ -78,8 +78,8 @@ byte keyMapAlt[NUM_ROWS][NUM_COLS] =
   {'*', '<', '>', '\'', '#'}
 };
 
-// Global Variables
 
+// Global Variables
 int debounceCount[NUM_ROWS][NUM_COLS];
 int altKeyFlag;
 
@@ -92,8 +92,6 @@ int altKeyFlag;
 byte colPins[NUM_COLS] = {8, 9, 10, 11, 12};
 byte rowPins[NUM_ROWS] = {7, 6, 4, 5, 3, 2, 1, 0};
 
-// SETUP
-
 void setup()
 {
   // Set all pins as inputs and activate pull-ups
@@ -104,7 +102,6 @@ void setup()
     digitalWrite(colPins[c], HIGH);
     
     // Clear debounce counts
-    
     for (byte r = 0 ; r < NUM_ROWS ; r++)
     {
       debounceCount[r][c] = 0;
@@ -112,22 +109,18 @@ void setup()
   }
   
   // Set all pins as inputs
-  
   for (byte r = 0 ; r < NUM_ROWS ; r++)
   {
     pinMode(rowPins[r], INPUT);
   }
   
   // Function key is NOT pressed
-  
   altKeyFlag = ALT_KEY_OFF;
   
   // Initialise the keyboard
-  
+  // EN layout
   Keyboard.begin();  
 }
-
-// LOOP
 
 void loop()
 {
@@ -135,23 +128,23 @@ void loop()
   bool keyPressed = false;
   
   // Check for the Shift key being pressed
-  
-  pinMode(rowPins[SHIFT_ROW], OUTPUT);
-  
-  if (digitalRead(colPins[SHIFT_COL]) == LOW) shifted = true;
-  
-  if (shifted == true && altKeyFlag == ALT_KEY_ON)
+// volountary TEMP commented...  
+  // pinMode(rowPins[SHIFT_ROW], OUTPUT);
+  // if (digitalRead(colPins[SHIFT_COL]) == LOW) shifted = true;
+// volountary TEMP commented...
+  // if (shifted == true && altKeyFlag == ALT_KEY_ON)
+  // {
+  //   // NOP to prevent Function selection from autorepeating
+  //   Keyboard.println("NOPKey");
+  // }
+  // else
   {
-    // NOP to prevent Function selection from autorepeating
-  }
-  else
-  {
-    pinMode(rowPins[SHIFT_ROW], INPUT);
+// volountary TEMP commented...
+//    pinMode(rowPins[SHIFT_ROW], INPUT);
     
     for (byte r = 0 ; r < NUM_ROWS ; r++)
     {
       // Run through the rows, turn them on
-      
       pinMode(rowPins[r], OUTPUT);
       digitalWrite(rowPins[r], LOW);
       
@@ -160,48 +153,60 @@ void loop()
         if (digitalRead(colPins[c]) == LOW)
         {
           // Increase the debounce count
-          
           debounceCount[r][c]++;
           
           // Has the switch been pressed continually for long enough?
-          
           int count = debounceCount[r][c];
-          if (count == DEBOUNCE_VALUE)
-          {
-            // First press
-            
-            keyPressed = true;
-            pressKey(r, c, shifted);
-          }
-          else if (count > DEBOUNCE_VALUE)
-          {
-            // Check for repeats
-            
-            count -= DEBOUNCE_VALUE;
-            if (count % REPEAT_DELAY == 0)
-            {
-              // Send repeat
-              
-              keyPressed = true;
-              pressKey(r, c, shifted);
-            }
-          }
-        }
+
+
+          // if (count == DEBOUNCE_VALUE)
+          // {
+          //   // First press
+          //   keyPressed = true;
+          //   pressKey(r, c, shifted);
+          // }
+          // else if (count > DEBOUNCE_VALUE)
+          // {
+          //   // Check for repeats
+          //   count -= DEBOUNCE_VALUE;
+          //   if (count % REPEAT_DELAY == 0)
+          //   {
+          //     // Send repeat
+          //     keyPressed = true;
+          //     pressKey(r, c, shifted);
+          //   }
+          // }
+        } // key LOW
         else
         {
           // Not pressed; reset debounce count
-          
-          debounceCount[r][c] = 0;
+// volountary TEMP commented...
+//          debounceCount[r][c] = 0;
         }
       }
      
-    // Turn the row back off
-     
-    pinMode(rowPins[r], INPUT);
+      // Turn the row back off
+      pinMode(rowPins[r], INPUT);
+    } // for col
+
+// volountary TEMP commented...    
+//    digitalWrite(rowPins[SHIFT_ROW], LOW);
+  } // for row
+
+  for(int r=0; r < NUM_ROWS; r++) {
+    for(int c=0; c < NUM_COLS; c++) {
+      if (debounceCount[r][c] > 0) {
+        Keyboard.print( r );
+        Keyboard.print( ',' );
+        Keyboard.print( c );
+        Keyboard.println(' ');
+
+        debounceCount[r][c] = 0;
+      }
     }
-    
-    digitalWrite(rowPins[SHIFT_ROW], LOW);
   }
+
+
 }
 
 long lastKey = -1;
@@ -216,11 +221,11 @@ void pressKey(byte r, byte c, bool shifted)
     #if DBUG
       Keyboard.write(KEY_RETURN);
     #endif
+    lastKey = millis();
   }
 
 
   // Send the keypress
-  
   byte key = shifted ? keyMapShifted[r][c] : keyMap[r][c];
 
   if (key == KEY_F5)
