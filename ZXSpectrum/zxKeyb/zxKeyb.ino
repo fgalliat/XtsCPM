@@ -1,8 +1,9 @@
 /**
  * 
- * ZX Spectrum 8x5 keyboard decoding
+ * ZX Spectrum+ 8x5 keyboard decoding
  * 
  * found @ : https://smittytone.wordpress.com/2014/02/16/the-sinclair-zx81-a-raspberry-pi-retro-restyle-part-1/
+ * was initialy for a regular ZX Spectrum keyboard
  * 
  * 
  * for a 32u4 board
@@ -15,7 +16,6 @@
 // ZX81 USB Keyboard for Leonardo
 // (c) Dave Curran
 // 2013-04-27
-
 // Modified with Function keys by Tony Smith
 // 2014-02-15
 
@@ -204,8 +204,21 @@ void loop()
   }
 }
 
+long lastKey = -1;
+
+#define DBUG 1
+
 void pressKey(byte r, byte c, bool shifted)
 {  
+
+  if ( lastKey == -1 ) { lastKey = millis(); }
+  else if ( millis() - lastKey >= 500 ) {
+    #if DBUG
+      Keyboard.write(KEY_RETURN);
+    #endif
+  }
+
+
   // Send the keypress
   
   byte key = shifted ? keyMapShifted[r][c] : keyMap[r][c];
@@ -230,7 +243,11 @@ void pressKey(byte r, byte c, bool shifted)
   // send the key
   
   if (key > 0) Keyboard.write(key);
-  // Keyboard.print( r );
-  // Keyboard.print( 'x' );
-  // Keyboard.println( c );
+  #if DBUG
+    Keyboard.print( " [" );
+    Keyboard.print( r );
+    Keyboard.print( 'x' );
+    Keyboard.print( c );
+    Keyboard.println( "]" );
+  #endif
 }
