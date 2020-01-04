@@ -122,6 +122,10 @@ void setup()
   Keyboard.begin();  
 }
 
+byte rows[NUM_ROWS];
+
+const byte bits[8] = {1,2,4,8,16,32,64,128};
+
 void loop()
 {
   bool shifted = false;
@@ -147,10 +151,34 @@ void loop()
       // Run through the rows, turn them on
       pinMode(rowPins[r], OUTPUT);
       digitalWrite(rowPins[r], LOW);
-      
+
+       // port D is pins 0 to 7
+        // PORTD writes 
+        // PIND reads
+        byte pin0_7 = PIND;
+rows[r] = pin0_7;
+
+// for (int c = 7; c >= 0; c--)
+// {
+//     // int shifted = pin0_7 >> c;
+//     // Take the bottom-most bit of the shifted value
+//     // Console.Write("{0} ", shifted & 1);
+
+//     // if ( !(shifted & 1 > 0) ) {
+//     if ( (pin0_7 & bits[c]) == 0 ) {
+
+//       debounceCount[r][c]++;
+//     }
+
+// }
+//       // Turn the row back off
+//       pinMode(rowPins[r], INPUT);
+// continue;
+
       for (byte c = 0 ; c < NUM_COLS ; c++)
       { 
-        if (digitalRead(colPins[c]) == LOW)
+
+         if (digitalRead(colPins[c]) == LOW)
         {
           // Increase the debounce count
           debounceCount[r][c]++;
@@ -183,15 +211,16 @@ void loop()
 // volountary TEMP commented...
 //          debounceCount[r][c] = 0;
         }
-      }
+      } // for col
      
       // Turn the row back off
       pinMode(rowPins[r], INPUT);
-    } // for col
+      // pinMode(rowPins[r], INPUT_PULLUP);
+    } // for row
 
 // volountary TEMP commented...    
 //    digitalWrite(rowPins[SHIFT_ROW], LOW);
-  } // for row
+  } // else NOP
 
   for(int r=0; r < NUM_ROWS; r++) {
     for(int c=0; c < NUM_COLS; c++) {
@@ -200,6 +229,10 @@ void loop()
         Keyboard.print( ',' );
         Keyboard.print( c );
         Keyboard.println(' ');
+
+for(int i=0; i < NUM_ROWS; i++) {
+  Keyboard.println( rows[i], BIN );
+}
 
         debounceCount[r][c] = 0;
       }
