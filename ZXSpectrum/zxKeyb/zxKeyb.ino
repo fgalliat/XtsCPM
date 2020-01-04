@@ -43,7 +43,7 @@ byte keyMap[NUM_ROWS][NUM_COLS] =
   {'t', 'r', 'e', 'w', 'q'},  // 1
   {'6', '7', '8', '9', '0'},  // 2 
   {'g', 'f', 'd', 's', 'a'},  // 3
-  {'y', 'u', 'i', 'o', 'p'},  // 4
+  {'y', 'u', 'i', 'o', 'p'},  // 4 ->
   {'v', 'c', 'x', 'z', 0},    // 5
   {'h', 'j', 'k', 'l', KEY_RETURN}, // 6
   {'b', 'n', 'm', '.', ' '}   // 7
@@ -84,34 +84,55 @@ int debounceCount[NUM_ROWS][NUM_COLS];
 int altKeyFlag;
 
 // Define the row and column pins
-
-// byte colPins[NUM_COLS] = {13, 12, 11, 10, 9};
-// byte rowPins[NUM_ROWS] = {7, 6, 5, 4, 3, 2, 1, 0};
-
 // Arduino micro pins
 byte colPins[NUM_COLS] = {8, 9, 10, 11, 12};
 byte rowPins[NUM_ROWS] = {7, 6, 4, 5, 3, 2, 1, 0};
 
-void setup()
-{
+
+#define CAP_KEY 0xFF 
+#define SYM_KEY 0xFE 
+
+// row 4 seems to be mis wired ...
+char keyMapDef[NUM_COLS][NUM_ROWS] = {
+  // 0    1    2    3    4    5    6     7
+  { '5', 't', '6', 'g', '?', 'v', 'h',  'b' },
+  { '4', 'r', '7', 'f', '?', 'c', 'j',  'n' },
+  { '3', 'e', '8', 'd', '?', 'x', 'k',  'm' },
+  { '2', 'w', '9', 's', '?', 'z', 'l', 0xfe }, // 7,3 Symb SHIFT
+  { '1', 'q', '0', 'a', '?',0xff,'\n',  ' ' }  // 5,4 Cap SHIFT
+};
+
+// // char* to handle '<>' or '<=' sequences
+// const char* keyMapDefGraph[NUM_COLS][NUM_ROWS] = {
+//   { "%", "$", "#", "@", "!" } //...
+// };
+
+
+
+// 8 rows - input
+// 5 cols - ouputs
+
+void setup() {
   // Set all pins as inputs and activate pull-ups
-  
-  for (byte c = 0 ; c < NUM_COLS ; c++)
-  {
-    pinMode(colPins[c], INPUT);
-    digitalWrite(colPins[c], HIGH);
+  // 0 to 4
+  for (byte c = 0 ; c < NUM_COLS ; c++) {
+        pinMode(colPins[c], INPUT_PULLUP);
+    // pinMode(colPins[c], OUTPUT);
+    // digitalWrite(colPins[c], HIGH);
     
-    // Clear debounce counts
-    for (byte r = 0 ; r < NUM_ROWS ; r++)
-    {
+    for (byte r = 0 ; r < NUM_ROWS ; r++) {
       debounceCount[r][c] = 0;
     }
   }
   
   // Set all pins as inputs
-  for (byte r = 0 ; r < NUM_ROWS ; r++)
-  {
-    pinMode(rowPins[r], INPUT);
+  // 0 to 7
+  for (byte r = 0 ; r < NUM_ROWS ; r++) {
+    // pinMode(rowPins[r], INPUT);
+    // digitalWrite(rowPins[r], HIGH);
+    // pinMode(rowPins[r], INPUT_PULLUP);
+    pinMode(rowPins[r], OUTPUT);
+    digitalWrite(rowPins[r], HIGH);
   }
   
   // Function key is NOT pressed
@@ -122,170 +143,107 @@ void setup()
   Keyboard.begin();  
 }
 
-byte rows[NUM_ROWS];
+// rows 8
+// cols 5
+byte cols[NUM_COLS];
 
 const byte bits[8] = {1,2,4,8,16,32,64,128};
 
-void loop()
-{
+void loop() {
   bool shifted = false;
   bool keyPressed = false;
   
-  // Check for the Shift key being pressed
-// volountary TEMP commented...  
-  // pinMode(rowPins[SHIFT_ROW], OUTPUT);
-  // if (digitalRead(colPins[SHIFT_COL]) == LOW) shifted = true;
-// volountary TEMP commented...
-  // if (shifted == true && altKeyFlag == ALT_KEY_ON)
-  // {
-  //   // NOP to prevent Function selection from autorepeating
-  //   Keyboard.println("NOPKey");
-  // }
-  // else
-  {
-// volountary TEMP commented...
-//    pinMode(rowPins[SHIFT_ROW], INPUT);
-    
-    for (byte r = 0 ; r < NUM_ROWS ; r++)
-    {
-      // Run through the rows, turn them on
-      pinMode(rowPins[r], OUTPUT);
-      digitalWrite(rowPins[r], LOW);
+  for (byte r = 0 ; r < NUM_ROWS ; r++) {
+    digitalWrite(rowPins[r], LOW);
 
-       // port D is pins 0 to 7
-        // PORTD writes 
-        // PIND reads
-        byte pin0_7 = PIND;
-rows[r] = pin0_7;
+      // 0 to 4
+      for (byte c = 0 ; c < NUM_COLS ; c++) { 
 
-// for (int c = 7; c >= 0; c--)
-// {
-//     // int shifted = pin0_7 >> c;
-//     // Take the bottom-most bit of the shifted value
-//     // Console.Write("{0} ", shifted & 1);
-
-//     // if ( !(shifted & 1 > 0) ) {
-//     if ( (pin0_7 & bits[c]) == 0 ) {
-
-//       debounceCount[r][c]++;
-//     }
-
-// }
-//       // Turn the row back off
-//       pinMode(rowPins[r], INPUT);
-// continue;
-
-      for (byte c = 0 ; c < NUM_COLS ; c++)
-      { 
-
-         if (digitalRead(colPins[c]) == LOW)
-        {
+        // if (digitalRead(rowPins[r]) == LOW) {
+        if (digitalRead(colPins[c]) == LOW) {
           // Increase the debounce count
           debounceCount[r][c]++;
-          
-          // Has the switch been pressed continually for long enough?
-          int count = debounceCount[r][c];
-
-
-          // if (count == DEBOUNCE_VALUE)
-          // {
-          //   // First press
-          //   keyPressed = true;
-          //   pressKey(r, c, shifted);
-          // }
-          // else if (count > DEBOUNCE_VALUE)
-          // {
-          //   // Check for repeats
-          //   count -= DEBOUNCE_VALUE;
-          //   if (count % REPEAT_DELAY == 0)
-          //   {
-          //     // Send repeat
-          //     keyPressed = true;
-          //     pressKey(r, c, shifted);
-          //   }
-          // }
-        } // key LOW
-        else
-        {
-          // Not pressed; reset debounce count
-// volountary TEMP commented...
-//          debounceCount[r][c] = 0;
         }
-      } // for col
-     
-      // Turn the row back off
-      pinMode(rowPins[r], INPUT);
-      // pinMode(rowPins[r], INPUT_PULLUP);
     } // for row
+    digitalWrite(rowPins[r], HIGH);
+  } // for col
 
-// volountary TEMP commented...    
-//    digitalWrite(rowPins[SHIFT_ROW], LOW);
-  } // else NOP
 
-  for(int r=0; r < NUM_ROWS; r++) {
-    for(int c=0; c < NUM_COLS; c++) {
+  char found = 0x00;
+  bool cap = false;
+  bool sym = false;
+
+  for(int c=0; c < NUM_COLS; c++) {
+    for(int r=0; r < NUM_ROWS; r++) {
       if (debounceCount[r][c] > 0) {
-        Keyboard.print( r );
-        Keyboard.print( ',' );
-        Keyboard.print( c );
-        Keyboard.println(' ');
 
-for(int i=0; i < NUM_ROWS; i++) {
-  Keyboard.println( rows[i], BIN );
-}
+        char defMapKey = keyMapDef[c][r];
 
+        if ( defMapKey < 127 ) {
+          found = defMapKey;
+        } else {
+          if ( defMapKey == CAP_KEY ) { cap = true; }
+          if ( defMapKey == SYM_KEY ) { sym = true; }
+        } 
+        
         debounceCount[r][c] = 0;
       }
     }
   }
 
+  if ( found > 0x00 ) {
+      Keyboard.print( found );
+      if ( cap ) { Keyboard.print( " SHIFT" ); }
+      if ( sym ) { Keyboard.print( " SYMB" ); }
+      Keyboard.println(' ');
+  }
 
 }
 
-long lastKey = -1;
+// long lastKey = -1;
 
-#define DBUG 1
+// #define DBUG 1
 
-void pressKey(byte r, byte c, bool shifted)
-{  
+// void pressKey(byte r, byte c, bool shifted)
+// {  
 
-  if ( lastKey == -1 ) { lastKey = millis(); }
-  else if ( millis() - lastKey >= 500 ) {
-    #if DBUG
-      Keyboard.write(KEY_RETURN);
-    #endif
-    lastKey = millis();
-  }
+//   if ( lastKey == -1 ) { lastKey = millis(); }
+//   else if ( millis() - lastKey >= 500 ) {
+//     #if DBUG
+//       Keyboard.write(KEY_RETURN);
+//     #endif
+//     lastKey = millis();
+//   }
 
 
-  // Send the keypress
-  byte key = shifted ? keyMapShifted[r][c] : keyMap[r][c];
+//   // Send the keypress
+//   byte key = shifted ? keyMapShifted[r][c] : keyMap[r][c];
 
-  if (key == KEY_F5)
-  {
-    // If the Function key pressed (Shift + New Line)
+//   if (key == KEY_F5)
+//   {
+//     // If the Function key pressed (Shift + New Line)
     
-    altKeyFlag = ALT_KEY_ON;
-    key = 0;
-    debounceCount[r][c] = 0;
-  }
+//     altKeyFlag = ALT_KEY_ON;
+//     key = 0;
+//     debounceCount[r][c] = 0;
+//   }
   
-  if (altKeyFlag == ALT_KEY_ON)
-  {
-    // Get the Alt key pressed after Function has been selected
+//   if (altKeyFlag == ALT_KEY_ON)
+//   {
+//     // Get the Alt key pressed after Function has been selected
     
-    key = keyMapAlt[r][c];
-    altKeyFlag = ALT_KEY_OFF;
-  }
+//     key = keyMapAlt[r][c];
+//     altKeyFlag = ALT_KEY_OFF;
+//   }
 
-  // send the key
+//   // send the key
   
-  if (key > 0) Keyboard.write(key);
-  #if DBUG
-    Keyboard.print( " [" );
-    Keyboard.print( r );
-    Keyboard.print( 'x' );
-    Keyboard.print( c );
-    Keyboard.println( "]" );
-  #endif
-}
+//   if (key > 0) Keyboard.write(key);
+//   #if DBUG
+//     Keyboard.print( " [" );
+//     Keyboard.print( r );
+//     Keyboard.print( 'x' );
+//     Keyboard.print( c );
+//     Keyboard.println( "]" );
+//   #endif
+// }
