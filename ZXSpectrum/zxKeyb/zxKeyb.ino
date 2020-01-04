@@ -93,7 +93,7 @@ byte rowPins[NUM_ROWS] = {7, 6, 4, 5, 3, 2, 1, 0};
 #define SYM_KEY 0xFE 
 
 // row 4 seems to be mis wired ...
-char keyMapDef[NUM_COLS][NUM_ROWS] = {
+unsigned char keyMapDef[NUM_COLS][NUM_ROWS] = {
   // 0    1    2    3    4    5    6     7
   { '5', 't', '6', 'g', '?', 'v', 'h',  'b' },
   { '4', 'r', '7', 'f', '?', 'c', 'j',  'n' },
@@ -109,28 +109,21 @@ char keyMapDef[NUM_COLS][NUM_ROWS] = {
 
 
 
-// 8 rows - input
-// 5 cols - ouputs
+// 8 rows - ouputs
+// 5 cols - inputs
 
 void setup() {
-  // Set all pins as inputs and activate pull-ups
   // 0 to 4
   for (byte c = 0 ; c < NUM_COLS ; c++) {
-        pinMode(colPins[c], INPUT_PULLUP);
-    // pinMode(colPins[c], OUTPUT);
-    // digitalWrite(colPins[c], HIGH);
+    pinMode(colPins[c], INPUT_PULLUP);
     
     for (byte r = 0 ; r < NUM_ROWS ; r++) {
       debounceCount[r][c] = 0;
     }
   }
   
-  // Set all pins as inputs
   // 0 to 7
   for (byte r = 0 ; r < NUM_ROWS ; r++) {
-    // pinMode(rowPins[r], INPUT);
-    // digitalWrite(rowPins[r], HIGH);
-    // pinMode(rowPins[r], INPUT_PULLUP);
     pinMode(rowPins[r], OUTPUT);
     digitalWrite(rowPins[r], HIGH);
   }
@@ -145,29 +138,31 @@ void setup() {
 
 // rows 8
 // cols 5
-byte cols[NUM_COLS];
-
-const byte bits[8] = {1,2,4,8,16,32,64,128};
 
 void loop() {
   bool shifted = false;
   bool keyPressed = false;
-  
+
+for(int i=0; i < 5; i++) {
   for (byte r = 0 ; r < NUM_ROWS ; r++) {
     digitalWrite(rowPins[r], LOW);
-
+    delay(1);
       // 0 to 4
       for (byte c = 0 ; c < NUM_COLS ; c++) { 
-
-        // if (digitalRead(rowPins[r]) == LOW) {
         if (digitalRead(colPins[c]) == LOW) {
           // Increase the debounce count
           debounceCount[r][c]++;
+          keyPressed = true;
         }
     } // for row
     digitalWrite(rowPins[r], HIGH);
   } // for col
+}
 
+if ( !keyPressed ) {
+  delay(10);
+  return;
+}
 
   char found = 0x00;
   bool cap = false;
@@ -177,11 +172,12 @@ void loop() {
     for(int r=0; r < NUM_ROWS; r++) {
       if (debounceCount[r][c] > 0) {
 
-        char defMapKey = keyMapDef[c][r];
-
-        if ( defMapKey < 127 ) {
+        unsigned char defMapKey = keyMapDef[c][r];
+        // Keyboard.print( (int)defMapKey );
+        if ( defMapKey < 0x7F ) {
           found = defMapKey;
         } else {
+          // >> no ELSE cf CAP+SYM => EXT MODE key
           if ( defMapKey == CAP_KEY ) { cap = true; }
           if ( defMapKey == SYM_KEY ) { sym = true; }
         } 
