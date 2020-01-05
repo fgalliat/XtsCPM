@@ -81,6 +81,7 @@ byte keyMapAlt[NUM_ROWS][NUM_COLS] =
 
 // Global Variables
 int debounceCount[NUM_ROWS][NUM_COLS];
+int debounceTotal[NUM_ROWS][NUM_COLS];
 int altKeyFlag;
 
 // Define the row and column pins
@@ -112,20 +113,33 @@ unsigned char keyMapDef[NUM_COLS][NUM_ROWS] = {
 // 8 rows - ouputs
 // 5 cols - inputs
 
+// #define COLS_AS_INPUT 1
+#define COLS_AS_INPUT 0
+
 void setup() {
   // 0 to 4
   for (byte c = 0 ; c < NUM_COLS ; c++) {
+    #if COLS_AS_INPUT
     pinMode(colPins[c], INPUT_PULLUP);
+    #else
+    pinMode(colPins[c], OUTPUT);
+    digitalWrite(colPins[c],HIGH);
+    #endif
     
     for (byte r = 0 ; r < NUM_ROWS ; r++) {
       debounceCount[r][c] = 0;
+      debounceTotal[r][c] = 0;
     }
   }
   
   // 0 to 7
   for (byte r = 0 ; r < NUM_ROWS ; r++) {
+    #if COLS_AS_INPUT
     pinMode(rowPins[r], OUTPUT);
     digitalWrite(rowPins[r], HIGH);
+    #else
+    pinMode(rowPins[r], INPUT_PULLUP);
+    #endif
   }
   
   // Function key is NOT pressed
@@ -143,24 +157,44 @@ void loop() {
   bool shifted = false;
   bool keyPressed = false;
 
-for(int i=0; i < 10; i++) {
+for(int i=0; i < 3; i++) {
+#if COLS_AS_INPUT  
   for (byte r = 0 ; r < NUM_ROWS ; r++) {
     digitalWrite(rowPins[r], LOW);
-    // delay(3);
+#else
+  for (byte c = 0 ; c < NUM_COLS ; c++) {
+    digitalWrite(colPins[c], LOW);
+#endif    
       // 0 to 4
+#if COLS_AS_INPUT      
       for (byte c = 0 ; c < NUM_COLS ; c++) { 
         if (digitalRead(colPins[c]) == LOW) {
+#else
+      for (byte r = 0 ; r < NUM_ROWS ; r++) { 
+        if (digitalRead(rowPins[r]) == LOW) {
+#endif
           // Increase the debounce count
           debounceCount[r][c]++;
           keyPressed = true;
         }
     } // for row
+#if COLS_AS_INPUT    
     digitalWrite(rowPins[r], HIGH);
+#else
+    digitalWrite(colPins[c], HIGH);
+#endif
   } // for col
 }
 
 if ( !keyPressed ) {
-  delay(3);
+
+  for (byte c = 0 ; c < NUM_COLS ; c++) {
+    for (byte r = 0 ; r < NUM_ROWS ; r++) {
+      debounceTotal[r][c] = 0;
+    }
+  }
+
+  // delay(3);
   return;
 }
 
@@ -168,6 +202,7 @@ if ( !keyPressed ) {
   bool cap = false;
   bool sym = false;
   int pressedR=-1, pressedC=-1;
+  int debounce = 0;
 
   for(int c=0; c < NUM_COLS; c++) {
     for(int r=0; r < NUM_ROWS; r++) {
@@ -181,6 +216,8 @@ if ( !keyPressed ) {
           found = defMapKey;
           pressedR = r;
           pressedC = c;
+          debounceTotal[r][c]++;
+          debounce = debounceTotal[r][c];
         } else {
           // >> no ELSE cf CAP+SYM => EXT MODE key
           if ( defMapKey == CAP_KEY ) { cap = true; }
@@ -193,8 +230,15 @@ if ( !keyPressed ) {
   }
 
   if ( found != 0x00 ) {
+
+    #define DEBOUNCE_VALUE_XTS 5
+    #define DEBOUNCE_REPEAT_XTS 20
+
+    if ( debounce == DEBOUNCE_VALUE_XTS ) {
       Keyboard.print( found );
 
+      Keyboard.print( "  " );
+      Keyboard.print( debounce );
       // Keyboard.print( "  " );
       // Keyboard.print( pressedR );
       // Keyboard.print( ',' );
@@ -203,6 +247,7 @@ if ( !keyPressed ) {
       if ( cap ) { Keyboard.print( " SHIFT" ); }
       if ( sym ) { Keyboard.print( " SYMB" ); }
       Keyboard.println(' ');
+    }
   } else {
       // Keyboard.print( "  " );
       // Keyboard.print( pressedR );
