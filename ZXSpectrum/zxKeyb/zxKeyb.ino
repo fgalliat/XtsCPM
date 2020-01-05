@@ -143,10 +143,10 @@ void loop() {
   bool shifted = false;
   bool keyPressed = false;
 
-for(int i=0; i < 5; i++) {
+for(int i=0; i < 10; i++) {
   for (byte r = 0 ; r < NUM_ROWS ; r++) {
     digitalWrite(rowPins[r], LOW);
-    delay(1);
+    // delay(3);
       // 0 to 4
       for (byte c = 0 ; c < NUM_COLS ; c++) { 
         if (digitalRead(colPins[c]) == LOW) {
@@ -160,22 +160,27 @@ for(int i=0; i < 5; i++) {
 }
 
 if ( !keyPressed ) {
-  delay(10);
+  delay(3);
   return;
 }
 
   char found = 0x00;
   bool cap = false;
   bool sym = false;
+  int pressedR=-1, pressedC=-1;
 
   for(int c=0; c < NUM_COLS; c++) {
     for(int r=0; r < NUM_ROWS; r++) {
       if (debounceCount[r][c] > 0) {
+          pressedR = r;
+          pressedC = c;
 
         unsigned char defMapKey = keyMapDef[c][r];
         // Keyboard.print( (int)defMapKey );
         if ( defMapKey < 0x7F ) {
           found = defMapKey;
+          pressedR = r;
+          pressedC = c;
         } else {
           // >> no ELSE cf CAP+SYM => EXT MODE key
           if ( defMapKey == CAP_KEY ) { cap = true; }
@@ -187,11 +192,22 @@ if ( !keyPressed ) {
     }
   }
 
-  if ( found > 0x00 ) {
+  if ( found != 0x00 ) {
       Keyboard.print( found );
+
+      // Keyboard.print( "  " );
+      // Keyboard.print( pressedR );
+      // Keyboard.print( ',' );
+      // Keyboard.print( pressedC );
+
       if ( cap ) { Keyboard.print( " SHIFT" ); }
       if ( sym ) { Keyboard.print( " SYMB" ); }
       Keyboard.println(' ');
+  } else {
+      // Keyboard.print( "  " );
+      // Keyboard.print( pressedR );
+      // Keyboard.print( ',' );
+      // Keyboard.print( pressedC );
   }
 
 }
