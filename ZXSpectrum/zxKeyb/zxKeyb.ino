@@ -86,7 +86,7 @@ int altKeyFlag;
 // Define the row and column pins
 // Arduino micro pins
 byte colPins[NUM_COLS] = {8, 9, 10, 11, 12};
-byte rowPins[NUM_ROWS] = {7, 6, 4, 5, 3, 2, 1, 0};
+byte rowPins[NUM_ROWS] = {7, 6, 5, 4, 3, 2, 1, 0};
 
 
 #define CAP_KEY 0xFF 
@@ -95,11 +95,11 @@ byte rowPins[NUM_ROWS] = {7, 6, 4, 5, 3, 2, 1, 0};
 // row 4 seems to be mis wired ...
 unsigned char keyMapDef[NUM_COLS][NUM_ROWS] = {
   // 0    1    2    3    4    5    6     7
-  { '5', 't', '6', 'g', '?', 'v', 'h',  'b' },
-  { '4', 'r', '7', 'f', '?', 'c', 'j',  'n' },
-  { '3', 'e', '8', 'd', '?', 'x', 'k',  'm' },
-  { '2', 'w', '9', 's', '?', 'z', 'l', 0xfe }, // 7,3 Symb SHIFT
-  { '1', 'q', '0', 'a', '?',0xff,'\n',  ' ' }  // 5,4 Cap SHIFT
+  { '5', 't', 'g', '6', 'y', 'v', 'h',  'b' },
+  { '4', 'r', 'f', '7', 'u', 'c', 'j',  'n' },
+  { '3', 'e', 'd', '8', 'i', 'x', 'k',  'm' },
+  { '2', 'w', 's', '9', 'o', 'z', 'l', 0xfe }, // 7,3 Symb SHIFT
+  { '1', 'q', 'a', '0', 'p',0xff,'\n',  ' ' }  // 5,4 Cap SHIFT
 };
 
 // // char* to handle '<>' or '<=' sequences
