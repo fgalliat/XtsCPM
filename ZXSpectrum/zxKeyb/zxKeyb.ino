@@ -95,6 +95,9 @@ byte rowPins[NUM_ROWS] = {7, 6, 5, 4, 3, 2, 1, 0};
 #define CAPLOCK_KEY 0xFD 
 #define CTRL_KEY 0xFD 
 
+// Ctrl is a toggleKey -> use a led for that
+// CapLOCK is a toggleKey -> use a led for that too
+
 unsigned char keyMapDef[NUM_COLS][NUM_ROWS] = {
   // 0    1    2    3    4    5    6     7
   { '5', 't', 'g', '6', 'y', 'v', 'h',  'b' },
@@ -266,6 +269,12 @@ if ( !keyPressed ) {
       if ( cap ) { Keyboard.print( " SHIFT" ); }
       if ( sym ) { Keyboard.print( " SYMB" ); }
       Keyboard.println(' ');
+    } else if ( debounce >= DEBOUNCE_REPEAT_XTS ) {
+      if ( (debounce % DEBOUNCE_VALUE_XTS) == 0 ) {
+        Keyboard.print( found );
+        if ( cap ) { Keyboard.print( " SHIFT" ); }
+        if ( sym ) { Keyboard.print( " SYMB" ); }
+      }
     }
   } else {
       // Keyboard.print( "  " );
