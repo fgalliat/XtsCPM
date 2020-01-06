@@ -92,8 +92,9 @@ byte rowPins[NUM_ROWS] = {7, 6, 5, 4, 3, 2, 1, 0};
 
 #define CAP_KEY 0xFF 
 #define SYM_KEY 0xFE 
+#define CAPLOCK_KEY 0xFD 
+#define CTRL_KEY 0xFD 
 
-// row 4 seems to be mis wired ...
 unsigned char keyMapDef[NUM_COLS][NUM_ROWS] = {
   // 0    1    2    3    4    5    6     7
   { '5', 't', 'g', '6', 'y', 'v', 'h',  'b' },
@@ -103,10 +104,23 @@ unsigned char keyMapDef[NUM_COLS][NUM_ROWS] = {
   { '1', 'q', 'a', '0', 'p',0xff,'\n',  ' ' }  // 5,4 Cap SHIFT
 };
 
-// // char* to handle '<>' or '<=' sequences
-// const char* keyMapDefGraph[NUM_COLS][NUM_ROWS] = {
-//   { "%", "$", "#", "@", "!" } //...
-// };
+unsigned char keyMapCap[NUM_COLS][NUM_ROWS] = {
+  { KEY_LEFT_ARROW, 'T', 'G', KEY_DOWN_ARROW, 'Y', 'V', 'H',  'B' },
+  { KEY_TAB,        'R', 'F', KEY_UP_ARROW,   'U', 'C', 'J',  'N' },
+  { KEY_ESC,        'E', 'D', KEY_RIGHT_ARROW,'I', 'X', 'K',  'M' },
+  { CAPLOCK_KEY,    'W', 'S', CTRL_KEY,       'O', 'Z', 'L',  0xfe}, // 7,3 Symb SHIFT
+  { KEY_F12,        'Q', 'A', KEY_BACKSPACE,  'P',0xff,'\n',  0x03}  // 5,4 Cap SHIFT // 0x03 BREAK / CtrlC
+};
+
+const char* keyMapSymb[NUM_COLS][NUM_ROWS] = {
+  // 0    1    2    3    4    5    6     7
+  { "%",  ">", "}",  "&",  "[", "/", "^",  "*" },
+  { "$",  "<", "{",  "'",  "]", "?", "-",  "," },
+  { "#", ">=", "\\", "(",  "@", "X", "+",  "." },
+  { "@", "<>", "|",  ")",  ";", ":", "=", 0xfe }, // 7,3 Symb SHIFT
+  { "!", "<=", '~',  "_", "\"",0xff,"\n",  " " }  // 5,4 Cap SHIFT
+};
+
 
 
 
@@ -116,11 +130,14 @@ unsigned char keyMapDef[NUM_COLS][NUM_ROWS] = {
 // #define COLS_AS_INPUT 1
 #define COLS_AS_INPUT 0
 
+// #define INPUT_TYPE INPUT_PULLUP
+#define INPUT_TYPE INPUT
+
 void setup() {
   // 0 to 4
   for (byte c = 0 ; c < NUM_COLS ; c++) {
     #if COLS_AS_INPUT
-    pinMode(colPins[c], INPUT_PULLUP);
+    pinMode(colPins[c], INPUT_TYPE);
     #else
     pinMode(colPins[c], OUTPUT);
     digitalWrite(colPins[c],HIGH);
@@ -138,7 +155,7 @@ void setup() {
     pinMode(rowPins[r], OUTPUT);
     digitalWrite(rowPins[r], HIGH);
     #else
-    pinMode(rowPins[r], INPUT_PULLUP);
+    pinMode(rowPins[r], INPUT_TYPE);
     #endif
   }
   
@@ -152,6 +169,8 @@ void setup() {
 
 // rows 8
 // cols 5
+
+bool capLock = false;
 
 void loop() {
   bool shifted = false;
