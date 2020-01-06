@@ -35,50 +35,6 @@
 #define ALT_KEY_ON 255
 #define ALT_KEY_OFF 0
 
-// Keymap for normal use
-
-byte keyMap[NUM_ROWS][NUM_COLS] =
-{
-  {'5', '4', '3', '2', '1'},  // 0
-  {'t', 'r', 'e', 'w', 'q'},  // 1
-  {'6', '7', '8', '9', '0'},  // 2 
-  {'g', 'f', 'd', 's', 'a'},  // 3
-  {'y', 'u', 'i', 'o', 'p'},  // 4 ->
-  {'v', 'c', 'x', 'z', 0},    // 5
-  {'h', 'j', 'k', 'l', KEY_RETURN}, // 6
-  {'b', 'n', 'm', '.', ' '}   // 7
-};
-
-// Keymap if Shift is pressed
-
-byte keyMapShifted[NUM_ROWS][NUM_COLS] =
-{
-  {KEY_LEFT_ARROW, '$', '\\', '@', KEY_ESC},
-  {'T', 'R', 'E', 'W', 'Q'},
-  {KEY_DOWN_ARROW, KEY_UP_ARROW, KEY_RIGHT_ARROW, '!', KEY_BACKSPACE},
-  {'G', 'F', 'D', 'S', 'A'},
-  {'Y', 'U', 'I', 'O', 'P'},
-  {'V', 'C', 'X', 'Z', 0},
-  {'H', 'J', 'K', 'L', KEY_F5},
-  {'B', 'N', 'M', ',', '#'} 
-};
-
-// Keymap if Function-Shift pressed
-// NEXT key read should be from this table
-
-byte keyMapAlt[NUM_ROWS][NUM_COLS] =
-{
-  {KEY_LEFT_ARROW, '}', '{', ']', '['},
-  {'=', '$', '(', ')', '"'},
-  {KEY_DOWN_ARROW, KEY_UP_ARROW, KEY_RIGHT_ARROW, '!', KEY_BACKSPACE},
-  {0, '_', '~', '|', '@'},
-  {'>', '$', '(', ')', '"'},
-  {'/', '?', ';', ':', 0},
-  {'*', '-', '+', '=', KEY_RETURN},
-  {'*', '<', '>', '\'', '#'}
-};
-
-
 // Global Variables
 int debounceCount[NUM_ROWS][NUM_COLS];
 int debounceTotal[NUM_ROWS][NUM_COLS];
@@ -109,10 +65,10 @@ unsigned char keyMapDef[NUM_COLS][NUM_ROWS] = {
 
 unsigned char keyMapCap[NUM_COLS][NUM_ROWS] = {
   { KEY_LEFT_ARROW, 'T', 'G', KEY_DOWN_ARROW, 'Y', 'V', 'H',  'B' },
-  { KEY_TAB,        'R', 'F', KEY_UP_ARROW,   'U', 'C', 'J',  'N' },
+  {  KEY_F1,        'R', 'F', KEY_UP_ARROW,   'U', 'C', 'J',  'N' },
   { KEY_ESC,        'E', 'D', KEY_RIGHT_ARROW,'I', 'X', 'K',  'M' },
-  { CAPLOCK_KEY,    'W', 'S', CTRL_KEY,       'O', 'Z', 'L',  0xfe}, // 7,3 Symb SHIFT
-  { KEY_F12,        'Q', 'A', KEY_BACKSPACE,  'P',0xff,'\n',  0x03}  // 5,4 Cap SHIFT // 0x03 BREAK / CtrlC
+  { CAPLOCK_KEY,    'W', 'S', KEY_F12,        'O', 'Z', 'L',  0xfe}, // 7,3 Symb SHIFT
+  { KEY_TAB,        'Q', 'A', KEY_BACKSPACE,  'P',0xff,'\n',  0x03}  // 5,4 Cap SHIFT // 0x03 BREAK / CtrlC
 };
 
 const char* keyMapSymb[NUM_COLS][NUM_ROWS] = {
@@ -120,11 +76,18 @@ const char* keyMapSymb[NUM_COLS][NUM_ROWS] = {
   { "%",  ">", "}",  "&",  "[", "/", "^",  "*" },
   { "$",  "<", "{",  "'",  "]", "?", "-",  "," },
   { "#", ">=", "\\", "(",  "@", "X", "+",  "." },
-  { "@", "<>", "|",  ")",  ";", ":", "=", 0xfe }, // 7,3 Symb SHIFT
-  { "!", "<=", '~',  "_", "\"",0xff,"\n",  " " }  // 5,4 Cap SHIFT
+  { "@", "<>", "|",  ")",  ";", ":", "=", "??" }, // 7,3 Symb SHIFT
+  { "!", "<=", '~',  "_", "\"","??","\n",  " " }  // 5,4 Cap SHIFT
 };
 
-
+// [EXTEND MODE] key (cap+sym)
+unsigned char keyMapCtrl[NUM_COLS][NUM_ROWS] = {
+  { 0x00, 20,  7, 0x00, 25,  22,   8,   2 },
+  { 0x00, 18,  6, 0x00, 21,   3,  10,  14 },
+  { 0x00,  5,  4, 0x00,  9,  24,  11,  13 },
+  { 0x00, 23, 19, 0x00, 15,  26,  12, 0x00}, // 7,3 Symb SHIFT
+  { 0x00, 17,  1, 0x00, 16,0x00,0x00, 0x00}  // 5,4 Cap SHIFT // 0x03 BREAK / CtrlC
+};
 
 
 // 8 rows - ouputs
@@ -180,7 +143,7 @@ bool capLock = false;
 
 bool scanKey(byte* d0, int d0Size,byte* d1, int d1Size, bool rotated) {
   bool keyPressed = false;
-  for(int i=0; i < 1; i++) {
+  for(int i=0; i < 5; i++) {
   for (byte y = 0 ; y < d0Size ; y++) {
 
     pinMode(d0[y], OUTPUT);
@@ -227,17 +190,30 @@ if ( !keyPressed ) {
   keyPressed = scanKey(colPins, NUM_COLS, rowPins, NUM_ROWS, true);
 
 
+// if ( !keyPressed ) {
+
+//   for (byte c = 0 ; c < NUM_COLS ; c++) {
+//     for (byte r = 0 ; r < NUM_ROWS ; r++) {
+//       debounceTotal[r][c] = 0;
+//     }
+//   }
+
+//   return;
+// }
+
+
   char found = 0x00;
   bool cap = false;
   bool sym = false;
+  bool ctrl = false;
   int pressedR=-1, pressedC=-1;
   int debounce = 0;
 
   for(int c=0; c < NUM_COLS; c++) {
     for(int r=0; r < NUM_ROWS; r++) {
       if (debounceCount[r][c] > 0) {
-          pressedR = r;
-          pressedC = c;
+          // pressedR = r;
+          // pressedC = c;
 
         unsigned char defMapKey = keyMapDef[c][r];
         // Keyboard.print( (int)defMapKey );
@@ -251,43 +227,64 @@ if ( !keyPressed ) {
           // >> no ELSE cf CAP+SYM => EXT MODE key
           if ( defMapKey == CAP_KEY ) { cap = true; }
           if ( defMapKey == SYM_KEY ) { sym = true; }
+
+          ctrl = ( cap && sym );
         } 
         
         debounceCount[r][c] = 0;
       }
     }
   }
+  if ( ctrl ) { cap = false; sym = false; }
+
+  char* strRepr = (char*)"Oups";
 
   if ( found != 0x00 ) {
 
-    #define DEBOUNCE_VALUE_XTS 5
-    #define DEBOUNCE_REPEAT_XTS 20
+    #define DEBOUNCE_VALUE_XTS 15
+    #define DEBOUNCE_REPEAT_XTS 30
+
+    if ( debounce >= DEBOUNCE_VALUE_XTS ) {
+
+      if ( ctrl ) {
+        found = keyMapCtrl[pressedC][pressedR];
+      } else if ( cap ) {
+        found = keyMapCap[pressedC][pressedR];
+      } else if ( sym ) {
+        strRepr = (char*)keyMapSymb[pressedC][pressedR];
+      }
+    }
+
+    if (found == 0x00) { return; }
 
     if ( debounce == DEBOUNCE_VALUE_XTS ) {
-      Keyboard.print( found );
-
-      Keyboard.print( "  " );
-      Keyboard.print( debounce );
+      if ( sym ) { Keyboard.print( strRepr ); }
+      else if (ctrl || cap ) { 
+        if ( found >= '0' && found <= 'z' ) { Keyboard.print( found );  }
+        else { Keyboard.press( found ); delay(5); Keyboard.release( found ); }
+      }
+      else { Keyboard.print( found ); }
+      
       // Keyboard.print( "  " );
-      // Keyboard.print( pressedR );
-      // Keyboard.print( ',' );
-      // Keyboard.print( pressedC );
+      // Keyboard.print( debounce );
 
-      if ( cap ) { Keyboard.print( " SHIFT" ); }
-      if ( sym ) { Keyboard.print( " SYMB" ); }
-      Keyboard.println(' ');
+      // if ( cap ) { Keyboard.print( " SHIFT" ); }
+      // if ( sym ) { Keyboard.print( " SYMB" ); }
+      // Keyboard.println(' ');
     } else if ( debounce >= DEBOUNCE_REPEAT_XTS ) {
-      if ( (debounce % DEBOUNCE_VALUE_XTS) == 0 ) {
-        Keyboard.print( found );
-        if ( cap ) { Keyboard.print( " SHIFT" ); }
-        if ( sym ) { Keyboard.print( " SYMB" ); }
+      if ( (debounce % DEBOUNCE_REPEAT_XTS) == 0 ) {
+        if ( sym ) { Keyboard.print( strRepr ); }
+        else if (ctrl || cap ) { 
+          if ( found >= '0' && found <= 'z' ) { Keyboard.print( found );  }
+          else { Keyboard.press( found ); delay(5); Keyboard.release( found ); }
+        }
+        else { Keyboard.print( found ); }
+        // Keyboard.print( found );
+        // if ( cap ) { Keyboard.print( " SHIFT" ); }
+        // if ( sym ) { Keyboard.print( " SYMB" ); }
       }
     }
   } else {
-      // Keyboard.print( "  " );
-      // Keyboard.print( pressedR );
-      // Keyboard.print( ',' );
-      // Keyboard.print( pressedC );
   }
 
 }
