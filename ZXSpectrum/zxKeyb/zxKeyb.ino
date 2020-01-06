@@ -133,8 +133,11 @@ const char* keyMapSymb[NUM_COLS][NUM_ROWS] = {
 // #define COLS_AS_INPUT 1
 #define COLS_AS_INPUT 0
 
-// #define INPUT_TYPE INPUT_PULLUP
-#define INPUT_TYPE INPUT
+#define INPUT_TYPE INPUT_PULLUP
+// #define INPUT_TYPE INPUT
+
+#define ACTIVE LOW
+#define INACTIVE HIGH
 
 void setup() {
   // 0 to 4
@@ -143,7 +146,7 @@ void setup() {
     pinMode(colPins[c], INPUT_TYPE);
     #else
     pinMode(colPins[c], OUTPUT);
-    digitalWrite(colPins[c],HIGH);
+    digitalWrite(colPins[c],INACTIVE);
     #endif
     
     for (byte r = 0 ; r < NUM_ROWS ; r++) {
@@ -156,7 +159,7 @@ void setup() {
   for (byte r = 0 ; r < NUM_ROWS ; r++) {
     #if COLS_AS_INPUT
     pinMode(rowPins[r], OUTPUT);
-    digitalWrite(rowPins[r], HIGH);
+    digitalWrite(rowPins[r], INACTIVE);
     #else
     pinMode(rowPins[r], INPUT_TYPE);
     #endif
@@ -175,38 +178,38 @@ void setup() {
 
 bool capLock = false;
 
+bool scanKey(byte* d0, int d0Size,byte* d1, int d1Size, bool rotated) {
+  bool keyPressed = false;
+  for(int i=0; i < 1; i++) {
+  for (byte y = 0 ; y < d0Size ; y++) {
+
+    pinMode(d0[y], OUTPUT);
+
+    digitalWrite(d0[y], ACTIVE);
+      // 0 to 4
+      for (byte x = 0 ; x < d1Size ; x++) { 
+        pinMode(d1[x], INPUT_TYPE);
+
+        if (digitalRead(d1[x]) == ACTIVE) {
+          debounceCount[rotated ? x : y][rotated ? y : x]++;
+          keyPressed = true;
+        }
+    } // for row
+    digitalWrite(d0[y], INACTIVE);
+  } // for col
+}
+return keyPressed;
+}
+
+
+
+
+
 void loop() {
   bool shifted = false;
   bool keyPressed = false;
 
-for(int i=0; i < 3; i++) {
-#if COLS_AS_INPUT  
-  for (byte r = 0 ; r < NUM_ROWS ; r++) {
-    digitalWrite(rowPins[r], LOW);
-#else
-  for (byte c = 0 ; c < NUM_COLS ; c++) {
-    digitalWrite(colPins[c], LOW);
-#endif    
-      // 0 to 4
-#if COLS_AS_INPUT      
-      for (byte c = 0 ; c < NUM_COLS ; c++) { 
-        if (digitalRead(colPins[c]) == LOW) {
-#else
-      for (byte r = 0 ; r < NUM_ROWS ; r++) { 
-        if (digitalRead(rowPins[r]) == LOW) {
-#endif
-          // Increase the debounce count
-          debounceCount[r][c]++;
-          keyPressed = true;
-        }
-    } // for row
-#if COLS_AS_INPUT    
-    digitalWrite(rowPins[r], HIGH);
-#else
-    digitalWrite(colPins[c], HIGH);
-#endif
-  } // for col
-}
+  keyPressed = scanKey(rowPins, NUM_ROWS, colPins, NUM_COLS, false);
 
 if ( !keyPressed ) {
 
@@ -216,9 +219,13 @@ if ( !keyPressed ) {
     }
   }
 
-  // delay(3);
   return;
 }
+
+  // if found something : rotate 90deg then re-scan
+  // Cf key combos ....
+  keyPressed = scanKey(colPins, NUM_COLS, rowPins, NUM_ROWS, true);
+
 
   char found = 0x00;
   bool cap = false;
