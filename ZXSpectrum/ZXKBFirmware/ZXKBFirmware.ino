@@ -8,16 +8,21 @@
 
 const int dataLines = 5;
 const int addressLines = 8;
-const int dataPin[dataLines] = {A0, A1, A2, A3, 15};          // The Pro-Micro does not have an A4 pin so using 15
-const int address[addressLines] = {2, 3, 4, 5, 6, 7, 8, 9};
-const int keyboardModeSpeakerPin = 10;                        // Speaker will beep based on mode 1 = Spectrum, 2 = Fuse, 3 = PC
-const int keyboardModeButtonPin = 14;                         
+// const int dataPin[dataLines] = {A0, A1, A2, A3, 15};          // The Pro-Micro does not have an A4 pin so using 15
+// const int address[addressLines] = {2, 3, 4, 5, 6, 7, 8, 9};
+// const int keyboardModeSpeakerPin = 10;                        // Speaker will beep based on mode 1 = Spectrum, 2 = Fuse, 3 = PC
+// const int keyboardModeButtonPin = 14;                         
+const int dataPin[dataLines] = {12, 11, 10, 9, 8};          // The Pro-Micro does not have an A4 pin so using 15
+const int address[addressLines] = {7, 6, 5, 4, 3, 2, 1, 0};
+const int keyboardModeSpeakerPin = 13;                        // Speaker will beep based on mode 1 = Spectrum, 2 = Fuse, 3 = PC
+const int keyboardModeButtonPin = A0;                         
 
 // Tracking when special keys that need us to send specific USB keyboard values have been pressed means that
 // we can release them correctly without constantly sending Keyboard.release commands for those keys
 bool symbolShiftPressed = false;
 bool capsShiftPressed = false;
 bool keyboardModeButtonPressed = false;
+
 bool debug = false;
 
 enum {
@@ -107,13 +112,15 @@ bool keyPressed[addressLines][dataLines] = {
   {false, false, false, false, false}
 };
 
+
 // *** SETUP ***
 void setup() {
 
   // Setup the keyboard default mode, LED and button pins
   pinMode(keyboardModeSpeakerPin, OUTPUT);
   digitalWrite(keyboardModeSpeakerPin, LOW);
-  pinMode(keyboardModeButtonPin, INPUT);
+  // pinMode(keyboardModeButtonPin, INPUT);
+  pinMode(keyboardModeButtonPin, INPUT_PULLUP);
   keyboardMode = MODE_SPECTRUM;
 
   // Set the address line pins to output and set HIGH
@@ -124,7 +131,7 @@ void setup() {
 
   // Set the data line pins to INPUT
   for (int d = 0; d < dataLines; d++) {
-    pinMode(dataPin[d], INPUT);
+    pinMode(dataPin[d], INPUT_PULLUP);
   }
 
   // Start the keyboard
