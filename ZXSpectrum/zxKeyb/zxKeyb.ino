@@ -66,10 +66,10 @@ unsigned char keyMapDef[NUM_COLS][NUM_ROWS] = {
 
 unsigned char keyMapCap[NUM_COLS][NUM_ROWS] = {
   { KEY_LEFT_ARROW, 'T', 'G', KEY_DOWN_ARROW, 'Y', 'V', 'H',  'B' },
-  {  KEY_F1,        'R', 'F', KEY_UP_ARROW,   'U', 'C', 'J',  'N' },
-  { CTRL_KEY,       'E', 'D', KEY_RIGHT_ARROW,'I', 'X', 'K',  'M' },
-  { CAPLOCK_KEY,    'W', 'S', KEY_TAB,        'O', 'Z', 'L',  0xfe}, // 7,3 Symb SHIFT
-  { KEY_TAB,        'Q', 'A', KEY_BACKSPACE,  'P',0xff,'\n',  0x03}  // 5,4 Cap SHIFT // 0x03 BREAK / CtrlC
+  {         KEY_F1, 'R', 'F', KEY_UP_ARROW,   'U', 'C', 'J',  'N' },
+  {       CTRL_KEY, 'E', 'D', KEY_RIGHT_ARROW,'I', 'X', 'K',  'M' },
+  {    CAPLOCK_KEY, 'W', 'S', KEY_TAB,        'O', 'Z', 'L',  0xfe}, // 7,3 Symb SHIFT
+  {        KEY_TAB, 'Q', 'A', KEY_BACKSPACE,  'P',0xff,'\n',  0x03}  // 5,4 Cap SHIFT // 0x03 BREAK / CtrlC
 };
 
 const char* keyMapSymb[NUM_COLS][NUM_ROWS] = {
@@ -260,9 +260,10 @@ void loop() {
       if ( ctrl ) {
         found = keyMapCtrl[pressedC][pressedR];
         ctrl = false; // auto release after char
+        led(ctrl);
       } else if ( cap ) {
         if ( found == CAPLOCK_KEY ) { capLock = !capLock; led(capLock); found = 0x00; } // CAPLOCK Key
-        else if ( found == CTRL_KEY ) { ctrl = true; found = 0x00; } // EDIT Key
+        else if ( found == CTRL_KEY ) { ctrl = true; led(ctrl); found = 0x00; } // EDIT Key
         else found = keyMapCap[pressedC][pressedR];
       } else if ( sym ) {
         strRepr = (char*)keyMapSymb[pressedC][pressedR];
