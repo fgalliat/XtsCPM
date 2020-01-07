@@ -45,11 +45,12 @@ int altKeyFlag;
 byte colPins[NUM_COLS] = {8, 9, 10, 11, 12};
 byte rowPins[NUM_ROWS] = {7, 6, 5, 4, 3, 2, 1, 0};
 
+#define LED 13
 
 #define CAP_KEY 0xFF 
 #define SYM_KEY 0xFE 
 #define CAPLOCK_KEY 0xFD 
-#define CTRL_KEY 0xFD 
+#define CTRL_KEY 0xFC 
 
 // Ctrl is a toggleKey -> use a led for that
 // CapLOCK is a toggleKey -> use a led for that too
@@ -66,8 +67,8 @@ unsigned char keyMapDef[NUM_COLS][NUM_ROWS] = {
 unsigned char keyMapCap[NUM_COLS][NUM_ROWS] = {
   { KEY_LEFT_ARROW, 'T', 'G', KEY_DOWN_ARROW, 'Y', 'V', 'H',  'B' },
   {  KEY_F1,        'R', 'F', KEY_UP_ARROW,   'U', 'C', 'J',  'N' },
-  { KEY_ESC,        'E', 'D', KEY_RIGHT_ARROW,'I', 'X', 'K',  'M' },
-  { CAPLOCK_KEY,    'W', 'S', KEY_F12,        'O', 'Z', 'L',  0xfe}, // 7,3 Symb SHIFT
+  { CTRL_KEY,       'E', 'D', KEY_RIGHT_ARROW,'I', 'X', 'K',  'M' },
+  { CAPLOCK_KEY,    'W', 'S', KEY_TAB,        'O', 'Z', 'L',  0xfe}, // 7,3 Symb SHIFT
   { KEY_TAB,        'Q', 'A', KEY_BACKSPACE,  'P',0xff,'\n',  0x03}  // 5,4 Cap SHIFT // 0x03 BREAK / CtrlC
 };
 
@@ -102,7 +103,16 @@ unsigned char keyMapCtrl[NUM_COLS][NUM_ROWS] = {
 #define ACTIVE LOW
 #define INACTIVE HIGH
 
+void led(bool state) {
+  digitalWrite(LED, state ? HIGH : LOW);
+}
+
 void setup() {
+
+  pinMode(LED, OUTPUT);
+  led(false);
+
+  led(true);
   // 0 to 4
   for (byte c = 0 ; c < NUM_COLS ; c++) {
     #if COLS_AS_INPUT
@@ -134,6 +144,8 @@ void setup() {
   // Initialise the keyboard
   // EN layout
   Keyboard.begin();  
+
+  led(false);
 }
 
 // rows 8
@@ -145,9 +157,7 @@ bool scanKey(byte* d0, int d0Size,byte* d1, int d1Size, bool rotated) {
   bool keyPressed = false;
   for(int i=0; i < 5; i++) {
   for (byte y = 0 ; y < d0Size ; y++) {
-
     pinMode(d0[y], OUTPUT);
-
     digitalWrite(d0[y], ACTIVE);
       // 0 to 4
       for (byte x = 0 ; x < d1Size ; x++) { 
@@ -165,58 +175,62 @@ return keyPressed;
 }
 
 
+void sendChar(unsigned char found, char* strRepr, bool cap, bool sym, bool ctrl) {
+  if ( sym ) { Keyboard.print( strRepr ); }
+  else if (ctrl || cap ) { 
+
+    if ( found > 0 && found < 32 ) {
+      Keyboard.press(KEY_LEFT_CTRL);
+      Keyboard.press( ('a'+found-1) );
+      delay(5);
+      Keyboard.release( ('a'+found-1) );
+      Keyboard.release(KEY_LEFT_CTRL);
+    } else if ( found > 0 ) {
+      Keyboard.write( found );
+    }
+
+    // if ( found >= '0' && found <= 'z' ) { Keyboard.write( found );  }
+    // else { Keyboard.press( found ); delay(5); Keyboard.release( found ); }
+  }
+  else { Keyboard.write( found ); }
+}
 
 
+bool capLocked = false;
+bool ctrl = false;
 
 void loop() {
-  bool shifted = false;
   bool keyPressed = false;
 
   keyPressed = scanKey(rowPins, NUM_ROWS, colPins, NUM_COLS, false);
 
-if ( !keyPressed ) {
-
-  for (byte c = 0 ; c < NUM_COLS ; c++) {
-    for (byte r = 0 ; r < NUM_ROWS ; r++) {
-      debounceTotal[r][c] = 0;
+  if ( !keyPressed ) {
+    for (byte c = 0 ; c < NUM_COLS ; c++) {
+      for (byte r = 0 ; r < NUM_ROWS ; r++) {
+        debounceTotal[r][c] = 0;
+      }
     }
-  }
 
-  return;
-}
+    return;
+  }
 
   // if found something : rotate 90deg then re-scan
   // Cf key combos ....
   keyPressed = scanKey(colPins, NUM_COLS, rowPins, NUM_ROWS, true);
 
-
-// if ( !keyPressed ) {
-
-//   for (byte c = 0 ; c < NUM_COLS ; c++) {
-//     for (byte r = 0 ; r < NUM_ROWS ; r++) {
-//       debounceTotal[r][c] = 0;
-//     }
-//   }
-
-//   return;
-// }
-
-
   char found = 0x00;
   bool cap = false;
   bool sym = false;
-  bool ctrl = false;
   int pressedR=-1, pressedC=-1;
   int debounce = 0;
+
+  // auto apply CAP LOCK if needed
+  cap |= capLock;
 
   for(int c=0; c < NUM_COLS; c++) {
     for(int r=0; r < NUM_ROWS; r++) {
       if (debounceCount[r][c] > 0) {
-          // pressedR = r;
-          // pressedC = c;
-
         unsigned char defMapKey = keyMapDef[c][r];
-        // Keyboard.print( (int)defMapKey );
         if ( defMapKey < 0x7F ) {
           found = defMapKey;
           pressedR = r;
@@ -227,15 +241,12 @@ if ( !keyPressed ) {
           // >> no ELSE cf CAP+SYM => EXT MODE key
           if ( defMapKey == CAP_KEY ) { cap = true; }
           if ( defMapKey == SYM_KEY ) { sym = true; }
-
-          ctrl = ( cap && sym );
         } 
         
         debounceCount[r][c] = 0;
       }
     }
   }
-  if ( ctrl ) { cap = false; sym = false; }
 
   char* strRepr = (char*)"Oups";
 
@@ -248,8 +259,11 @@ if ( !keyPressed ) {
 
       if ( ctrl ) {
         found = keyMapCtrl[pressedC][pressedR];
+        ctrl = false; // auto release after char
       } else if ( cap ) {
-        found = keyMapCap[pressedC][pressedR];
+        if ( found == CAPLOCK_KEY ) { capLock = !capLock; led(capLock); found = 0x00; } // CAPLOCK Key
+        else if ( found == CTRL_KEY ) { ctrl = true; found = 0x00; } // EDIT Key
+        else found = keyMapCap[pressedC][pressedR];
       } else if ( sym ) {
         strRepr = (char*)keyMapSymb[pressedC][pressedR];
       }
@@ -258,33 +272,12 @@ if ( !keyPressed ) {
     if (found == 0x00) { return; }
 
     if ( debounce == DEBOUNCE_VALUE_XTS ) {
-      if ( sym ) { Keyboard.print( strRepr ); }
-      else if (ctrl || cap ) { 
-        if ( found >= '0' && found <= 'z' ) { Keyboard.print( found );  }
-        else { Keyboard.press( found ); delay(5); Keyboard.release( found ); }
-      }
-      else { Keyboard.print( found ); }
-      
-      // Keyboard.print( "  " );
-      // Keyboard.print( debounce );
-
-      // if ( cap ) { Keyboard.print( " SHIFT" ); }
-      // if ( sym ) { Keyboard.print( " SYMB" ); }
-      // Keyboard.println(' ');
+      sendChar( found, strRepr, cap, sym, ctrl );
     } else if ( debounce >= DEBOUNCE_REPEAT_XTS ) {
       if ( (debounce % DEBOUNCE_REPEAT_XTS) == 0 ) {
-        if ( sym ) { Keyboard.print( strRepr ); }
-        else if (ctrl || cap ) { 
-          if ( found >= '0' && found <= 'z' ) { Keyboard.print( found );  }
-          else { Keyboard.press( found ); delay(5); Keyboard.release( found ); }
-        }
-        else { Keyboard.print( found ); }
-        // Keyboard.print( found );
-        // if ( cap ) { Keyboard.print( " SHIFT" ); }
-        // if ( sym ) { Keyboard.print( " SYMB" ); }
+        sendChar( found, strRepr, cap, sym, ctrl );
       }
     }
-  } else {
   }
 
 }
