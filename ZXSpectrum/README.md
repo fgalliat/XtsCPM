@@ -1,4 +1,4 @@
-# RPI0W - ZX SECTRUM +
+# Xts RPI0W - Arduino- ZX SPECTRUM +
 
 02 Jan 2020
 
