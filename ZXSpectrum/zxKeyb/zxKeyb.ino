@@ -7,7 +7,7 @@
  * 
  * 
  * for a 32u4 board
- * used an Arduino MICRO board
+ * used an Arduino MICRO
  * 
  * 
  * Xtase - fgalliat @ Jan2020
@@ -44,7 +44,7 @@ byte rowPins[NUM_ROWS] = {7, 6, 5, 4, 3, 2, 1, 0};
 #define CAPLOCK_KEY 0xFD 
 #define CTRL_KEY 0xFC 
 
-// Ctrl is a toggleKey -> use a led for that
+// Ctrl is a toggleAutoOffKey -> use a led for that
 // CapLOCK is a toggleKey -> use a led for that too
 
 unsigned char keyMapDef[NUM_COLS][NUM_ROWS] = {
@@ -85,10 +85,6 @@ unsigned char keyMapCtrl[NUM_COLS][NUM_ROWS] = {
   { 0x00, 23, 19, 0x00, 15,  26,  12, 0x00}, // 7,3 Symb SHIFT
   { 0x00, 17,  1, 0x00, 16,0x00,0x00, 0x00}  // 5,4 Cap SHIFT // 0x03 BREAK / CtrlC
 };
-
-
-// 8 rows - ouputs
-// 5 cols - inputs
 
 // #define COLS_AS_INPUT 1
 #define COLS_AS_INPUT 0
@@ -139,9 +135,6 @@ void setup() {
 
   led(false);
 }
-
-// rows 8
-// cols 5
 
 bool capLock = false;
 bool ctrlLock = false;
