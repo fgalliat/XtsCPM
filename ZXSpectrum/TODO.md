@@ -7,9 +7,10 @@ Xtase - fgalliat
 
 
 - [x] wire the keyboard matrix
-- [x] test arduino MICRO code
-  - [ ] remap sereval keyCodes ...
-  - [ ] manage debouce & repeat again
+  - [x] test arduino MICRO code
+  - [x] remap sereval keyCodes ...
+  - [x] manage debouce & repeat again
+- [ ] wire @least 2 leds for keyb state (CapLock & Ctrl)
 - [ ] RPI deactivate Serial debugging
 - [ ] mount a subMCU
   - [ ] mount a DFPlayer on subMCU
