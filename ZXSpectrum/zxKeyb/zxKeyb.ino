@@ -38,7 +38,6 @@
 // Global Variables
 int debounceCount[NUM_ROWS][NUM_COLS];
 int debounceTotal[NUM_ROWS][NUM_COLS];
-int altKeyFlag;
 
 // Define the row and column pins
 // Arduino micro pins
@@ -66,17 +65,21 @@ unsigned char keyMapDef[NUM_COLS][NUM_ROWS] = {
 
 unsigned char keyMapCap[NUM_COLS][NUM_ROWS] = {
   { KEY_LEFT_ARROW, 'T', 'G', KEY_DOWN_ARROW, 'Y', 'V', 'H',  'B' },
+  // INV VIDEO
   {         KEY_F1, 'R', 'F', KEY_UP_ARROW,   'U', 'C', 'J',  'N' },
-  {       CTRL_KEY, 'E', 'D', KEY_RIGHT_ARROW,'I', 'X', 'K',  'M' },
+  // TRUE VIDEO
+  {       KEY_ESC , 'E', 'D', KEY_RIGHT_ARROW,'I', 'X', 'K',  'M' },
+  // CAP LOCK                   GRAPH
   {    CAPLOCK_KEY, 'W', 'S', KEY_TAB,        'O', 'Z', 'L',  0xfe}, // 7,3 Symb SHIFT
-  {        KEY_TAB, 'Q', 'A', KEY_BACKSPACE,  'P',0xff,'\n',  0x03}  // 5,4 Cap SHIFT // 0x03 BREAK / CtrlC
+  // EDIT                       DEL
+  {       CTRL_KEY, 'Q', 'A', KEY_BACKSPACE,  'P',0xff,'\n',  0x03}  // 5,4 Cap SHIFT // 0x03 BREAK / CtrlC
 };
 
 const char* keyMapSymb[NUM_COLS][NUM_ROWS] = {
   // 0    1    2    3    4    5    6     7
   { "%",  ">", "}",  "&",  "[", "/", "^",  "*" },
   { "$",  "<", "{",  "'",  "]", "?", "-",  "," },
-  { "#", ">=", "\\", "(",  "@", "X", "+",  "." },
+  { "#", ">=", "\\", "(",  "@", "~", "+",  "." },
   { "@", "<>", "|",  ")",  ";", ":", "=", "??" }, // 7,3 Symb SHIFT
   { "!", "<=", '~',  "_", "\"","??","\n",  " " }  // 5,4 Cap SHIFT
 };
@@ -108,7 +111,6 @@ void led(bool state) {
 }
 
 void setup() {
-
   pinMode(LED, OUTPUT);
   led(false);
 
@@ -138,9 +140,6 @@ void setup() {
     #endif
   }
   
-  // Function key is NOT pressed
-  altKeyFlag = ALT_KEY_OFF;
-  
   // Initialise the keyboard
   // EN layout
   Keyboard.begin();  
@@ -152,6 +151,7 @@ void setup() {
 // cols 5
 
 bool capLock = false;
+bool ctrlLock = false;
 
 bool scanKey(byte* d0, int d0Size,byte* d1, int d1Size, bool rotated) {
   bool keyPressed = false;
@@ -178,7 +178,6 @@ return keyPressed;
 void sendChar(unsigned char found, char* strRepr, bool cap, bool sym, bool ctrl) {
   if ( sym ) { Keyboard.print( strRepr ); }
   else if (ctrl || cap ) { 
-
     if ( found > 0 && found < 32 ) {
       Keyboard.press(KEY_LEFT_CTRL);
       Keyboard.press( ('a'+found-1) );
@@ -193,32 +192,34 @@ void sendChar(unsigned char found, char* strRepr, bool cap, bool sym, bool ctrl)
     // else { Keyboard.press( found ); delay(5); Keyboard.release( found ); }
   }
   else { Keyboard.write( found ); }
+
+  ctrlLock = false; // auto release after char
+  led(ctrlLock);
 }
 
 
-bool capLocked = false;
-bool ctrl = false;
+
 
 void loop() {
   bool keyPressed = false;
 
   keyPressed = scanKey(rowPins, NUM_ROWS, colPins, NUM_COLS, false);
 
-  if ( !keyPressed ) {
-    for (byte c = 0 ; c < NUM_COLS ; c++) {
-      for (byte r = 0 ; r < NUM_ROWS ; r++) {
-        debounceTotal[r][c] = 0;
-      }
-    }
+  // if ( !keyPressed ) {
+  //   for (byte c = 0 ; c < NUM_COLS ; c++) {
+  //     for (byte r = 0 ; r < NUM_ROWS ; r++) {
+  //       debounceTotal[r][c] = 0;
+  //     }
+  //   }
 
-    return;
-  }
+  //   return;
+  // }
 
   // if found something : rotate 90deg then re-scan
   // Cf key combos ....
   keyPressed = scanKey(colPins, NUM_COLS, rowPins, NUM_ROWS, true);
 
-  char found = 0x00;
+  unsigned char found = 0x00;
   bool cap = false;
   bool sym = false;
   int pressedR=-1, pressedC=-1;
@@ -242,7 +243,6 @@ void loop() {
           if ( defMapKey == CAP_KEY ) { cap = true; }
           if ( defMapKey == SYM_KEY ) { sym = true; }
         } 
-        
         debounceCount[r][c] = 0;
       }
     }
@@ -257,14 +257,12 @@ void loop() {
 
     if ( debounce >= DEBOUNCE_VALUE_XTS ) {
 
-      if ( ctrl ) {
+      if ( ctrlLock ) {
         found = keyMapCtrl[pressedC][pressedR];
-        ctrl = false; // auto release after char
-        led(ctrl);
       } else if ( cap ) {
-        if ( found == CAPLOCK_KEY ) { capLock = !capLock; led(capLock); found = 0x00; } // CAPLOCK Key
-        else if ( found == CTRL_KEY ) { ctrl = true; led(ctrl); found = 0x00; } // EDIT Key
-        else found = keyMapCap[pressedC][pressedR];
+        found = keyMapCap[pressedC][pressedR];
+        if ( found == CAPLOCK_KEY ) { Keyboard.println("Cap"); capLock = !capLock; led(capLock); found = 0x00; } // CAPLOCK Key
+        else if ( found == CTRL_KEY ) { Keyboard.println("Ctr"); ctrlLock = true; led(ctrlLock); found = 0x00; } // EDIT Key
       } else if ( sym ) {
         strRepr = (char*)keyMapSymb[pressedC][pressedR];
       }
@@ -273,60 +271,13 @@ void loop() {
     if (found == 0x00) { return; }
 
     if ( debounce == DEBOUNCE_VALUE_XTS ) {
-      sendChar( found, strRepr, cap, sym, ctrl );
+      sendChar( found, strRepr, cap, sym, ctrlLock );
     } else if ( debounce >= DEBOUNCE_REPEAT_XTS ) {
       if ( (debounce % DEBOUNCE_REPEAT_XTS) == 0 ) {
-        sendChar( found, strRepr, cap, sym, ctrl );
+        sendChar( found, strRepr, cap, sym, ctrlLock );
       }
     }
+
   }
 
 }
-
-// long lastKey = -1;
-
-// #define DBUG 1
-
-// void pressKey(byte r, byte c, bool shifted)
-// {  
-
-//   if ( lastKey == -1 ) { lastKey = millis(); }
-//   else if ( millis() - lastKey >= 500 ) {
-//     #if DBUG
-//       Keyboard.write(KEY_RETURN);
-//     #endif
-//     lastKey = millis();
-//   }
-
-
-//   // Send the keypress
-//   byte key = shifted ? keyMapShifted[r][c] : keyMap[r][c];
-
-//   if (key == KEY_F5)
-//   {
-//     // If the Function key pressed (Shift + New Line)
-    
-//     altKeyFlag = ALT_KEY_ON;
-//     key = 0;
-//     debounceCount[r][c] = 0;
-//   }
-  
-//   if (altKeyFlag == ALT_KEY_ON)
-//   {
-//     // Get the Alt key pressed after Function has been selected
-    
-//     key = keyMapAlt[r][c];
-//     altKeyFlag = ALT_KEY_OFF;
-//   }
-
-//   // send the key
-  
-//   if (key > 0) Keyboard.write(key);
-//   #if DBUG
-//     Keyboard.print( " [" );
-//     Keyboard.print( r );
-//     Keyboard.print( 'x' );
-//     Keyboard.print( c );
-//     Keyboard.println( "]" );
-//   #endif
-// }
