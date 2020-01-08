@@ -6,11 +6,25 @@ Xtase - fgalliat
 
 
 
-- [x] wire the keyboard matrix
+**ZX Spectrum+ unit**
+
+![ZX Spectrum+ unit](zxspec.jpg)
+
+
+
+**Arduino Keyboard decoder**
+
+
+
+![ZX Spectrum+ unit](zxs_arduinokb.jpg)
+
+
+
+- [x] wire the keyboard matrix (Arduino MICRO)
   - [x] test arduino MICRO code
   - [x] remap sereval keyCodes ...
   - [x] manage debouce & repeat again
-- [ ] wire @least 2 leds for keyb state (CapLock & Ctrl)
+  - [ ] wire @least 2 leds for keyb state (CapLock & Ctrl)
 - [ ] RPI deactivate Serial debugging
 - [ ] mount a subMCU
   - [ ] mount a DFPlayer on subMCU
