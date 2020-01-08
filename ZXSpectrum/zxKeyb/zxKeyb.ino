@@ -25,15 +25,8 @@
 #define NUM_ROWS 8
 #define NUM_COLS 5
 
-#define SHIFT_COL 4
-#define SHIFT_ROW 5
-
-// #define DEBOUNCE_VALUE 250
-#define DEBOUNCE_VALUE 150
-#define REPEAT_DELAY 500
-
-#define ALT_KEY_ON 255
-#define ALT_KEY_OFF 0
+#define DEBOUNCE_VALUE_XTS 15
+#define DEBOUNCE_REPEAT_XTS 30
 
 // Global Variables
 int debounceCount[NUM_ROWS][NUM_COLS];
@@ -159,7 +152,6 @@ bool scanKey(byte* d0, int d0Size,byte* d1, int d1Size, bool rotated) {
   for (byte y = 0 ; y < d0Size ; y++) {
     pinMode(d0[y], OUTPUT);
     digitalWrite(d0[y], ACTIVE);
-      // 0 to 4
       for (byte x = 0 ; x < d1Size ; x++) { 
         pinMode(d1[x], INPUT_TYPE);
 
@@ -187,14 +179,13 @@ void sendChar(unsigned char found, char* strRepr, bool cap, bool sym, bool ctrl)
     } else if ( found > 0 ) {
       Keyboard.write( found );
     }
-
-    // if ( found >= '0' && found <= 'z' ) { Keyboard.write( found );  }
-    // else { Keyboard.press( found ); delay(5); Keyboard.release( found ); }
   }
   else { Keyboard.write( found ); }
 
   ctrlLock = false; // auto release after char
   led(ctrlLock);
+
+  delay(5);
 }
 
 
@@ -203,21 +194,11 @@ void sendChar(unsigned char found, char* strRepr, bool cap, bool sym, bool ctrl)
 void loop() {
   bool keyPressed = false;
 
-  keyPressed = scanKey(rowPins, NUM_ROWS, colPins, NUM_COLS, false);
-
-  // if ( !keyPressed ) {
-  //   for (byte c = 0 ; c < NUM_COLS ; c++) {
-  //     for (byte r = 0 ; r < NUM_ROWS ; r++) {
-  //       debounceTotal[r][c] = 0;
-  //     }
-  //   }
-
-  //   return;
-  // }
+  keyPressed |= scanKey(rowPins, NUM_ROWS, colPins, NUM_COLS, false);
 
   // if found something : rotate 90deg then re-scan
   // Cf key combos ....
-  keyPressed = scanKey(colPins, NUM_COLS, rowPins, NUM_ROWS, true);
+  keyPressed |= scanKey(colPins, NUM_COLS, rowPins, NUM_ROWS, true);
 
   unsigned char found = 0x00;
   bool cap = false;
@@ -230,7 +211,8 @@ void loop() {
 
   for(int c=0; c < NUM_COLS; c++) {
     for(int r=0; r < NUM_ROWS; r++) {
-      if (debounceCount[r][c] > 0) {
+      int count = debounceCount[r][c];
+      if (count > 0) {
         unsigned char defMapKey = keyMapDef[c][r];
         if ( defMapKey < 0x7F ) {
           found = defMapKey;
@@ -248,12 +230,20 @@ void loop() {
     }
   }
 
+  if ( !keyPressed ) {
+    for (byte c = 0 ; c < NUM_COLS ; c++) {
+      for (byte r = 0 ; r < NUM_ROWS ; r++) {
+        debounceTotal[r][c] = 0;
+      }
+    }
+
+    return;
+  }
+
+
   char* strRepr = (char*)"Oups";
 
   if ( found != 0x00 ) {
-
-    #define DEBOUNCE_VALUE_XTS 15
-    #define DEBOUNCE_REPEAT_XTS 30
 
     if ( debounce >= DEBOUNCE_VALUE_XTS ) {
 
@@ -261,12 +251,23 @@ void loop() {
         found = keyMapCtrl[pressedC][pressedR];
       } else if ( cap ) {
         found = keyMapCap[pressedC][pressedR];
-        if ( found == CAPLOCK_KEY ) { Keyboard.println("Cap"); capLock = !capLock; led(capLock); found = 0x00; } // CAPLOCK Key
-        else if ( found == CTRL_KEY ) { Keyboard.println("Ctr"); ctrlLock = true; led(ctrlLock); found = 0x00; } // EDIT Key
+        if ( found == CAPLOCK_KEY ) { 
+          // Keyboard.println("Cap"); 
+          capLock = !capLock; led(capLock); found = 0x00; 
+          delay(70);
+        } // CAPLOCK Key
+        else if ( found == CTRL_KEY ) { 
+          // Keyboard.println("Ctr"); 
+          ctrlLock = !ctrlLock; led(ctrlLock); found = 0x00; 
+          delay(70);
+        } // EDIT Key
       } else if ( sym ) {
         strRepr = (char*)keyMapSymb[pressedC][pressedR];
       }
     }
+
+    // auto apply CAP LOCK if needed
+    cap |= capLock;
 
     if (found == 0x00) { return; }
 
