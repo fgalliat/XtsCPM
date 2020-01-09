@@ -28,6 +28,8 @@
 #define DEBOUNCE_VALUE_XTS 15
 #define DEBOUNCE_REPEAT_XTS 30
 
+#define DELAY_AFTER_KEYSTROKE 40
+
 // Global Variables
 int debounceCount[NUM_ROWS][NUM_COLS];
 int debounceTotal[NUM_ROWS][NUM_COLS];
@@ -178,7 +180,7 @@ void sendChar(unsigned char found, char* strRepr, bool cap, bool sym, bool ctrl)
   ctrlLock = false; // auto release after char
   led(ctrlLock);
 
-  delay(5);
+  delay(DELAY_AFTER_KEYSTROKE);
 }
 
 
