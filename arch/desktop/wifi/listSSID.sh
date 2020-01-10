@@ -1,0 +1,1 @@
+iw wlan0 scan | grep SSID | sort -u | sed "s/\t//" | cut -d " " -f2
