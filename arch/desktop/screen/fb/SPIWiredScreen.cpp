@@ -28,6 +28,13 @@
 #if MODE_480
 int SCREEN_WIDTH = 480;
 int SCREEN_HEIGHT = 320;
+
+#define MODE32BPP 1
+// on RPI TvOut -> memSegfault
+// #define ZOOM 2
+#define ZOOM 1
+
+
 #else
 int SCREEN_WIDTH = 320;
 int SCREEN_HEIGHT = 240;
@@ -578,14 +585,65 @@ void WiredScreen::write(char ch) {
             return;
         }
 
-        location = (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
-                   (y+vinfo.yoffset) * finfo.line_length;
+        int zoom = 1;
+        #if ZOOM > 1
+          zoom = ZOOM;
+        #endif
+
+        if ( color > 0 && color < 16 ) {
+                  if ( color == 0 ) { color = CLR_BLACK; }
+            else if ( color == 1 ) { color = CLR_WHITE; }
+            else if ( color == 2 ) { color = CLR_LIGHTGRAY; }
+            else if ( color == 3 ) { color = CLR_GRAY; }
+            else if ( color == 4 ) { color = CLR_DARKGRAY; }
+
+            else if ( color == 5 ) { color = CLR_LIGHTGREEN; }
+            else if ( color == 6 ) { color = CLR_GREEN; }
+            else if ( color == 7 ) { color = CLR_DARKGREEN; }
+
+            else if ( color ==  8 ) { color = CLR_PINK; }
+            else if ( color ==  9 ) { color = CLR_CYAN; }
+            else if ( color == 10 ) { color = CLR_RED; }
+            else if ( color == 11 ) { color = CLR_GREEN; }
+            else if ( color == 12 ) { color = CLR_BLUE; }
+        }
+
+        location = ((x*zoom)+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
+                   ((y*zoom)+vinfo.yoffset) * finfo.line_length;
         #ifdef MODE32BPP
             // if (vinfo.bits_per_pixel == 32) {
-                *(fbp + location) = 100;        // Some blue
-                *(fbp + location + 1) = (15+(x-50)/2)%255;     // A little green
-                *(fbp + location + 2) = (200-(y-50)/5)%255;    // A lot of red
-                *(fbp + location + 3) = 0;      // No transparency
+            int _r = (unsigned int)((color >> 11) * (255/31) /* % (unsigned char)0xF8*/ );
+            int _g = (unsigned int)(( ((color) >> 5) % (unsigned char)0x40) * (255/63) /*% (unsigned char)0xFC*/);
+            int _b = (unsigned int)(color % (unsigned char)0x20) * (255/31);
+
+                *(fbp + location)     = _b;    // Some blue
+                *(fbp + location + 1) = _g;    // A little green
+                *(fbp + location + 2) = _r;    // A lot of red
+                *(fbp + location + 3) = 0;     // No transparency
+
+
+                if (zoom > 1) {
+                  location += 4;
+                  *(fbp + location)     = _b;    // Some blue
+                  *(fbp + location + 1) = _g;    // A little green
+                  *(fbp + location + 2) = _r;    // A lot of red
+                  *(fbp + location + 3) = 0;     // No transparency
+
+                  location = ((x*zoom)+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
+                             (((y*zoom)+1)+vinfo.yoffset) * finfo.line_length;
+
+
+                  *(fbp + location)     = _b;
+                  *(fbp + location + 1) = _g;
+                  *(fbp + location + 2) = _r;
+                  *(fbp + location + 3) = 0;
+                  location += 4;
+                  *(fbp + location)     = _b;
+                  *(fbp + location + 1) = _g;
+                  *(fbp + location + 2) = _r;
+                  *(fbp + location + 3) = 0;
+                }
+
         #else
             // 16BPP -- ILI9341 current case
             // int b = rand()%32;
@@ -596,24 +654,7 @@ void WiredScreen::write(char ch) {
 
 
             // since 18/09/2018
-            if ( color > 0 && color < 16 ) {
-                     if ( color == 0 ) { color = CLR_BLACK; }
-                else if ( color == 1 ) { color = CLR_WHITE; }
-                else if ( color == 2 ) { color = CLR_LIGHTGRAY; }
-                else if ( color == 3 ) { color = CLR_GRAY; }
-                else if ( color == 4 ) { color = CLR_DARKGRAY; }
-
-                else if ( color == 5 ) { color = CLR_LIGHTGREEN; }
-                else if ( color == 6 ) { color = CLR_GREEN; }
-                else if ( color == 7 ) { color = CLR_DARKGREEN; }
-
-                else if ( color ==  8 ) { color = CLR_PINK; }
-                else if ( color ==  9 ) { color = CLR_CYAN; }
-                else if ( color == 10 ) { color = CLR_RED; }
-                else if ( color == 11 ) { color = CLR_GREEN; }
-                else if ( color == 12 ) { color = CLR_BLUE; }
-                
-            }
+            
 
             unsigned short int t = color;
             *((unsigned short int*)(fbp + location)) = t;
