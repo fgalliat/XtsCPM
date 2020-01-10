@@ -133,8 +133,14 @@ uint8 _getche(void) {
 	return ch;
 }
 
+bool firstCls = true;
+
 void _clrscr(void) {
 	#ifdef NO_TTY_ECHO
+	  if ( firstCls ) {
+	    system("clear");
+	    firstCls = false;
+	  }
 	#else
 	uint8 ch = system("clear");
 	#endif
