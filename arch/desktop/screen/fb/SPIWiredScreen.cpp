@@ -34,6 +34,9 @@ int SCREEN_HEIGHT = 320;
 // #define ZOOM 2
 #define ZOOM 1
 
+int scrOffsetX = 0;
+int scrOffsetY = 0;
+
 
 #else
 int SCREEN_WIDTH = 320;
@@ -124,6 +127,9 @@ void WiredScreen::write(char ch) {
         if ( vinfo.xres < SCREEN_WIDTH || vinfo.yres < SCREEN_HEIGHT ) {
           SCREEN_WIDTH = vinfo.xres;
           SCREEN_HEIGHT = vinfo.yres;
+        } else {
+          scrOffsetX = (vinfo.xres - SCREEN_WIDTH)/2;
+          scrOffsetY = (vinfo.yres - SCREEN_HEIGHT)/2;
         }
 
         // Figure out the size of the screen in bytes
@@ -608,8 +614,8 @@ void WiredScreen::write(char ch) {
             else if ( color == 12 ) { color = CLR_BLUE; }
         }
 
-        location = ((x*zoom)+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
-                   ((y*zoom)+vinfo.yoffset) * finfo.line_length;
+        location = (((x*zoom)+scrOffsetX)+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
+                   (((y*zoom)+scrOffsetY)+vinfo.yoffset) * finfo.line_length;
         #ifdef MODE32BPP
             // if (vinfo.bits_per_pixel == 32) {
             int _r = (unsigned int)((color >> 11) * (255/31) /* % (unsigned char)0xF8*/ );
@@ -629,8 +635,8 @@ void WiredScreen::write(char ch) {
                   *(fbp + location + 2) = _r;    // A lot of red
                   *(fbp + location + 3) = 0;     // No transparency
 
-                  location = ((x*zoom)+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
-                             (((y*zoom)+1)+vinfo.yoffset) * finfo.line_length;
+                  location = (((x*zoom)+scrOffsetX)+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
+                             (((y*zoom)+scrOffsetY)+vinfo.yoffset) * finfo.line_length;
 
 
                   *(fbp + location)     = _b;
