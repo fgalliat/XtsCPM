@@ -12,7 +12,7 @@ Xtase - fgalliat version @ Apr2109
 
 
 
-**Aim** : run interpreters on Teensy 3.6 (& even a small OS)
+**Initial Aim** : run interpreters on Teensy 3.6 (& even a small OS)
 
 
 
@@ -70,10 +70,11 @@ Xtase - fgalliat version @ Apr2109
     - EXT : could have **native-animated-gfx** routines (Starfield, Raycast frame, 3D-Balls, ....) 
   - EXT : HobbyTronics Serial-To-VGA (text-only) board
   - EXT : Teensy ++2 (5v) as TVOut device (gfx + text w/ enough RAM to handle descent resolutions)
-- keyboard
+- keyboard(s)
   - **Vetch Mobigo** console builtin keyboard [see docs here](./Mobigo/README.md)
   - **XBOX 360 Chatpad** Serial builtin keyboard
-  - EXT : HobbyTronics USB Host board for Keyboard
+  - **HobbyTronics USB Host** board for Keyboard (fr layout)
+  - **ZX Spectrum+** builtin keyboard (by Arduino MICRO)
 - audio
   - PCSpeaker-like to play tunes (ex. play "MONKEY.T5K", play "aa#cd" ) **done**
   - MP3 tracks playback via DFPlayer (w/ pause, volume settings, ...) **done**
@@ -81,12 +82,12 @@ Xtase - fgalliat version @ Apr2109
   - start / stop AP/STA (**done**)
   - manage a telnet server (**done**)
   - manage a simple webIDE (may use builtin SDCARD to store resources...)
-  - wget some URLs ...
+  - wget some URLs (**~done**)
 - fond a way to call ext. hardware
   - **currently working** : BdosCall (usable in Pascal, Basic, ...)
     - 225 to 229 are free (able to send a Pascal String[255] to a Bdos interrupt)
   - specific **virtual FDD for assets**, Z: (as original CP/M ends to P:), to store .BMP, .T5K, ...
-  - CP/M itself could have additionals intrinsic commands 
+  - ~~CP/M itself could have additionals intrinsic commands~~ 
   - may could by poke() on specific mem address
   - Current CCP uses 60KB of RAM -> 4KB remains to make the stuff !?
     - 'cause if uses 60KB that means that mem pointers are 16bit long
@@ -112,7 +113,10 @@ Xtase - fgalliat version @ Apr2109
 
 **Runs on**
 
-  - Teensy 3.6 (Yeah !)
+  - Teensy 3.6 (**Yatl**)
+  - Teensy 4.0 (**Yat4l**)
+  - ESP32 (**Yael** + **Yaeh**)
+  - RPI0w (**zxs**)
   - 'nux (ARM64 - Android's chrooted kali - native cpp) / (PC x64 ubuntu Linux)
   - Android (Dalvik nor NDK : <u>Not yet Ported</u>)
 
@@ -126,13 +130,13 @@ Xtase - fgalliat version @ Apr2109
    - then boot (each DISK letter is a folder of ONE letter)
    - ![Teensy 3.6 booting CP/M 2.2](./pictures/yatlCPM_1_mini.jpg)
   - **'Nux Box**
-      - make posix build
+      - make posix build (or posix_fb / posix_sdl for GFX versions)
         - needs libreadline-dev + ncurses-dev
       - make a ./distro/ directory
        - copy CCP/* to ./distro/
        - unzip DISK/A.zip to ./distro/A/0/
-       - copy RunCPM executable ELF to ./distro/
-       - then boot : cd ./distro && ./RunCPM (each DISK letter is a folder of ONE letter)
+       - copy YatlCPM executable ELF to ./distro/
+       - then boot : cd ./distro && ./YatlCPM (each DISK letter is a folder of ONE letter)
 
 
 
@@ -164,11 +168,23 @@ Xtase - fgalliat version @ Apr2109
 
 **Current stage :**
 
+**ZXS version** (started @ Dec2019)
+
+![Start Assembling](./pictures/zxs.jpg)
+
+**YAT4L version**
+
+![Start Assembling](./pictures/yat4l.jpg)
+
+**YAEL version**
+
+![Start Assembling](./pictures/yael.jpg)
+
+**YATL version**
+
 ![Start Assembling](./pictures/yatlAssemblingRunning_mini.jpg)
 
 ![Replacing Screen box](./pictures/yatlShiftEnclosure2.jpg)
-
-![Begin of Enclosure](./pictures/yatlShiftEnclosure1.jpg)
 
 ![CP/M colored console](./pictures/yatlCPM_colored_1_mini.jpg)
 
