@@ -471,8 +471,12 @@ void WiredScreen::write(char ch) {
 				if ( (xxx+x) > SCREEN_WIDTH ) { continue; }
 				
         		color = raster[(yy * width) + (xx)];
-        		*((unsigned short int*)(fbp + location)) = color;
-        		location+=2;
+
+            // see later for modes cf xxx & yyy
+            drawPixel(x+xx, y+yy, color);
+            
+        		// *((unsigned short int*)(fbp + location)) = color;
+        		// location+=2;
         	}
         }
 	}
@@ -494,11 +498,13 @@ void WiredScreen::write(char ch) {
 			        color = (color%256)*256 + color/256;
 			      #endif
 			
-			      int _r = (unsigned int)((color >> 11) * (255/31) /* % (unsigned char)0xF8*/ );
-			      int _g = (unsigned int)(( ((color) >> 5) % (unsigned char)0x40) * (255/63) /*% (unsigned char)0xFC*/);
-			      int _b = (unsigned int)(color % (unsigned char)0x20) * (255/31);
+      // still needed ?
+			  //     int _r = (unsigned int)((color >> 11) * (255/31) /* % (unsigned char)0xF8*/ );
+			  //     int _g = (unsigned int)(( ((color) >> 5) % (unsigned char)0x40) * (255/63) /*% (unsigned char)0xFC*/);
+			  //     int _b = (unsigned int)(color % (unsigned char)0x20) * (255/31);
 
-				c16b = rgb16( _r, _g, _b );
+				// c16b = rgb16( _r, _g, _b );
+        c16b = color;
 
                 drawPixel(x + xx, y + yy, c16b );
             }
