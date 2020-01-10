@@ -2,7 +2,7 @@
 // #define ARDUINO 1
 
 
-#ifdef ARDUINO
+#if defined ARDUINO && defined CORE_TEENSY && not defined __IMXRT1062__
  /**
  * Xtase - fgalliat @Jun2019
  * 

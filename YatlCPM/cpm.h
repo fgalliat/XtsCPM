@@ -312,12 +312,12 @@ void _Bios(void) {
 		Status = 3;
 		break;
 	default:
-#ifdef DEBUG	// Show unimplemented BIOS calls only when debugging
+// #ifdef DEBUG	// Show unimplemented BIOS calls only when debugging
 		_puts("\r\nUnimplemented BIOS call.\r\n");
 		_puts("C = 0x");
 		_puthex8(ch);
 		_puts("\r\n");
-#endif
+// #endif
 		break;
 	}
 #ifdef DEBUGLOG
@@ -735,7 +735,7 @@ void _Bdos(void) {
 		break;
 #endif
 
-#ifdef YATL_PLATFORM
+#if YATL_PLATFORM || YAEL_PLATFORM || YAT4L_PLATFORM
 	case 225:
 	case 226:
 	case 227:
@@ -744,6 +744,17 @@ void _Bdos(void) {
 	  	HL = XtsBdosCall(ch, DE);
 		break;
 #endif
+#else
+ // desktop
+ #ifdef YATL_PLATFORM
+	case 225:
+	case 226:
+	case 227:
+	case 228:
+	case 229:
+	  	HL = XtsBdosCall(ch, DE);
+		break;
+ #endif
 #endif
 		/*
 		C = 230 (E6h) : Set 8 bit masking
@@ -816,12 +827,12 @@ void _Bdos(void) {
 		Unimplemented calls get listed
 		*/
 	default:
-#ifdef DEBUG	// Show unimplemented BDOS calls only when debugging
+//#ifdef DEBUG	// Show unimplemented BDOS calls only when debugging
 		_puts("\r\nUnimplemented BDOS call.\r\n");
 		_puts("C = 0x");
 		_puthex8(ch);
 		_puts("\r\n");
-#endif
+//#endif
 		break;
 	}
 

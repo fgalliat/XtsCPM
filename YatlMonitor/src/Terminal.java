@@ -1,6 +1,9 @@
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.Properties;
 
 import jssc.SerialPort;
 import jssc.SerialPortEventListener;
@@ -17,6 +20,30 @@ public class Terminal {
 		return LISTENER_LOCKED;
 	}
 
+	protected Terminal() {
+		try {
+			File propsF = new File("./config.props");
+			if ( propsF.exists() ) {
+				Properties props = new Properties();
+				Reader reader = new FileReader(propsF);
+				System.out.println("Reading props from "+propsF.getPath());
+				props.load(reader);
+				reader.close();
+
+				if ( props.containsKey("comm.port") ) {
+					commPort = props.getProperty("comm.port");
+					System.out.println("Will use port : "+commPort);
+				}
+
+			} else {
+				System.out.println("Skip reading props from "+propsF.getPath());
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+
 	public static synchronized Terminal getInstance() {
 		if (instance == null) {
 			instance = new Terminal();
@@ -30,7 +57,8 @@ public class Terminal {
 
 	// =====================================
 
-	protected String commPort = "COM16";
+	// protected String commPort = "COM16";
+	protected String commPort = "/dev/ttyACM0";
 
 	public String getCommPort() {
 		return commPort;
@@ -252,8 +280,13 @@ public class Terminal {
 //		System.out.println("-EOF-");
 //	}
 
+	boolean silent = false;
+	public void setSilent(boolean silent) {
+		this.silent = silent;
+	}
+
 	void serPrint(String str) throws Exception {
-		System.out.println(">>> " + str);
+		if (!silent) System.out.println(">>> " + str);
 		serWrite(str.getBytes(), str.length());
 	}
 
@@ -281,9 +314,12 @@ public class Terminal {
 //			// Zzz(2);
 //		}
 		
+
 //		Zzz(5);
 		Zzz(1);
+		// Zzz(10);
 		
+		// serialPort.purgePort( serialPort.PURGE_TXCLEAR );
 		// serialPort.purgePort( serialPort.PURGE_RXCLEAR | serialPort.PURGE_TXCLEAR );
 	}
 
@@ -319,27 +355,32 @@ public class Terminal {
 		try {
 			ch0 = serialPort.readBytes(1, timeout)[0];
 			if (ch0 == '\n' || ch0 == '\r') {
+				if (ch0 == '\r' && consumeBackRtoo) {
+					ch0 = serialPort.readBytes(1, timeout)[0];
+				}
 				LISTENER_LOCKED = false;
 				return "";
 			}
-			line = "" + (char) ch0;
+			// line = "" + (char) ch0;
+			line = "";
 			while (true) {
+				char ch = (ch0 < 0) ? (char) (256 + ch0) : (char) ch0;
+				line += ch;
+
 				// TODO : better
 				ch0 = serialPort.readBytes(1, timeout)[0];
 				if (ch0 == '\n' || ch0 == '\r') {
-					if (consumeBackRtoo && ch0 == '\r') {
-						continue;
+					if (ch0 == '\r' && consumeBackRtoo) {
+						ch0 = serialPort.readBytes(1, timeout)[0];
 					}
 					break;
 				}
-				line += (char) ch0;
 			}
 
 		} catch (Exception ex) {
 			LISTENER_LOCKED = false;
 			return null;
 		}
-		char ch = (ch0 < 0) ? (char) (256 + ch0) : (char) ch0;
 		LISTENER_LOCKED = false;
 		return line;
 	}

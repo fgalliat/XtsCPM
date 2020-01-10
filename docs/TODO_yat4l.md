@@ -1,0 +1,49 @@
+# TODO YAT4L
+
+- [x] Enclosure 
+- [ ] LEDs
+- [x] Buzzer
+- [x] DFPlayer
+- [x] Keyboard
+  - HT USB board ? [x]
+  - MS ChatPad ?
+- [ ] Serial To VGA board ?
+  - both VGA Text boards are soldered but one is on a BUS-CARD
+  - or T3.2 T3.6 VGA out lib => https://github.com/qix67/uVGA
+  - Teensy++2 w/ big RAM TvOut (https://github.com/Avamander/arduino-tvout)
+    - AT90USB1286 MCU (support for TVOut) + 1KR on SYNC(5) / 470R on VID(7) // GND
+    - have to see MAX resolution I could have
+    - 160 width seems to be the max (because of pin usage)
+    - https://sourceforge.net/p/arduino-tvout/wiki/Useage/
+  - https://www.instructables.com/id/MRETV-Video-Stereo-Sound-and-much-more-from-a-s/
+    - 47x29 chars in 8x8 (376x216 ??)
+- [ ] WiFi
+  - ESP12 ~~or ESP01 ?~~
+  - ATcmds ~~or SubMCU code ?~~
+  - API (AT cmds + Java API & C now)
+    - [x] test [x]
+    - [x] list APs [ ] / connect AP [x]
+    - [x] set STA/AP [x]
+    - [x] wget(url) (**to finish**) [ ]
+      - [ ] act as a REST GET client (see Bearers too)
+      - [x] add getHomeServer() method based on current SSID
+      - [x] Z:/wifi.psk => ($HOME_SSID$:$HOME_HOST$:$REMOTE_HOST$\n) + ( $SSID$:$PSK$\n )[]
+    - [ ] startTelnetD (**later**) [ ]
+    - [x] getIP() (STA/AP mode same API method) [x]
+    - [x] getSSID (STA/AP) [x]
+    - [x] disconnect from AP [ ]
+    - [x] reset [ ]
+- [ ] TTS via 328P 16MHz 5v
+- [ ] Thermal Printer (9v)
+
+- [ ] Bdos ReadSerial / WriteSerial
+   -> w/ SerialXX choose
+   -> try to write a full SerialTerm App
+   -> ex. to TEST ESP8266, to check bridge, or Ext. Aux. Port ...
+
+
+
+- take a look at older CP/M system w/ Nano
+
+https://www.eevblog.com/forum/vintage-computing/cpm-system-with-ps2-keyboard-tv-out-powered-by-arduino-nano/
+

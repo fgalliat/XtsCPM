@@ -9,7 +9,7 @@
   * 
   */
 
-  #include "Arduino.h"
+  // #include "Arduino.h"
 
   // forward symbols
   uint8_t mp3BdosCall(int32 value);
@@ -60,7 +60,7 @@
   }
 
   int32 BdosTest229(int32 value) {
-    Serial.println("/===== BDos 229 call =====\\");
+    yatl.dbug("/===== BDos 229 call =====\\");
 
     yatl.getScreen()->grabbSpritesOfSize( (char*)"SPRITE1.BMP", 0, 0, 32, 32);
     sprites[0].drawClip(0,20);
@@ -117,27 +117,33 @@
     uint8_t shapeType = test[2];
     uint8_t fillType = test[3]; // 0 draw / 1 fill
 
-    uint16_t color = ((uint16_t)test[4] << 8) + test[5];
+    uint16_t color = (uint16_t) ((uint8_t)test[4] << 8) + (uint8_t)test[5];
     color = mapColor( color );
 
     if ( OpType == 0x7F ) {
       // drawShapes
-      uint16_t x = ((uint16_t)test[6] << 8) + test[7];
-      uint16_t y = ((uint16_t)test[8] << 8) + test[9];
+      uint16_t x = (uint16_t) ((uint8_t)test[6] << 8) + (uint8_t)test[7];
+      uint16_t y = (uint16_t) ((uint8_t)test[8] << 8) + (uint8_t)test[9];
       if ( shapeType == 0x01 ) {
         // Shape : rectangle
-        uint16_t w = ((uint16_t)test[10] << 8) + test[11];
-        uint16_t h = ((uint16_t)test[12] << 8) + test[13];
+        uint16_t w = (uint16_t) ((uint8_t)test[10] << 8) + (uint8_t)test[11];
+        uint16_t h = (uint16_t) ((uint8_t)test[12] << 8) + (uint8_t)test[13];
         if ( fillType == 0x00 ) {
           // draw outlines
           yatl.getScreen()->drawRect( x, y, w, h, color );
         } else if ( fillType == 0x01 ) {
           // fills the rect
+
+// if ( y > 220 ) {
+// char str[64]; sprintf(str,"drawRect(%d,%d,%d,%d,%d)", x, y, w, h, color);
+// yatl.dbug( (const char*)str );
+// }
+
           yatl.getScreen()->fillRect( x, y, w, h, color );
         }
       } else if ( shapeType == 0x02 ) {
         // Shape : circle
-        uint16_t r = ((uint16_t)test[10] << 8) + test[11];
+        uint16_t r = (uint16_t)((uint8_t)test[10] << 8) + (uint8_t)test[11];
         if ( fillType == 0x00 ) {
           // draw outlines
           yatl.getScreen()->drawCircle( x,y,r, color );
@@ -146,20 +152,20 @@
         }
       } else if ( shapeType == 0x03 ) {
         // Shape : line
-        uint16_t x2 = ((uint16_t)test[10] << 8) + test[11];
-        uint16_t y2 = ((uint16_t)test[12] << 8) + test[13];
+        uint16_t x2 = (uint16_t) ((uint8_t)test[10] << 8) + (uint8_t)test[11];
+        uint16_t y2 = (uint16_t) ((uint8_t)test[12] << 8) + (uint8_t)test[13];
         yatl.getScreen()->drawLine( x, y, x2, y2, color );
       } 
     } else if ( OpType == 0x80 ) {
       // manage Sprite
-      uint16_t x = ((uint16_t)test[6] << 8) + test[7];
-      uint16_t y = ((uint16_t)test[8] << 8) + test[9];
+      uint16_t x = (uint16_t)((uint8_t)test[6] << 8) + (uint8_t)test[7];
+      uint16_t y = (uint16_t)((uint8_t)test[8] << 8) + (uint8_t)test[9];
 
       if ( shapeType == 0x01 ) {
         // define sprite
 
-        uint16_t w = ((uint16_t)test[10] << 8) + test[11];
-        uint16_t h = ((uint16_t)test[12] << 8) + test[13];
+        uint16_t w = (uint16_t)((uint8_t)test[10] << 8) + (uint8_t)test[11];
+        uint16_t h = (uint16_t)((uint8_t)test[12] << 8) + (uint8_t)test[13];
 
         uint8_t num = test[14];
 
@@ -185,27 +191,27 @@
       getStringFromRam(value, test, 256);
 
 
-      if ( test[1] >= 0x7F ) {
+      if ( (unsigned char)test[1] >= 0x7F ) {
         return drawRoutine( test );
       }
 
-      Serial.println("/===== BDos PString call =====\\");
-      Serial.println(test);
+      yatl.dbug("/===== BDos PString call =====\\");
+      yatl.dbug(test);
 
       upper(test);
 
       if ( endsWith(test, (char*)".BMP") ) {
         if ( test[0] == '!' ) {
-          Serial.println("|  Wanna grabb a BMP SpriteBoard |");
+          yatl.dbug("|  Wanna grabb a BMP SpriteBoard |");
           yatl.getScreen()->cleanSprites();
           yatl.getScreen()->grabbSprites( &test[1], 0, 0 );
         } else {
-          Serial.println("|  Wanna draw a BMP wallpaper |");
+          yatl.dbug("|  Wanna draw a BMP wallpaper |");
           yatl.getScreen()->drawWallpaper( test );
         }
 
       } else if ( endsWith(test, (char*)".PAK") ) {
-        Serial.println("|  Wanna draw a PAK image |");
+        yatl.dbug("|  Wanna draw a PAK image |");
 
         int numImg = (int)test[0]-1; // 1 based
         int x = -1;
@@ -226,29 +232,30 @@
           }
           filename = &test[tmp+1];
         }
-        Serial.print("|  @ ");
-        Serial.print(filename);
-        Serial.print(",");
-        Serial.print(x);
-        Serial.print(",");
-        Serial.print(y);
-        Serial.println();
+        // Serial.print("|  @ ");
+        // Serial.print(filename);
+        // Serial.print(",");
+        // Serial.print(x);
+        // Serial.print(",");
+        // Serial.print(y);
+        // Serial.println();
 
         drawImgFromPAK( yatl.getFS()->getAssetsFileEntry( filename ), x, y, numImg );
 
       } else if ( endsWith(test, (char*)".PCT") ) {
-        Serial.println("|  Wanna draw a PCT wallpaper |");
-        Serial.println("|  NYI                        |");
+        yatl.dbug("|  Wanna draw a PCT wallpaper |");
+        yatl.dbug("|  NYI                        |");
       } else if ( endsWith(test, (char*)".BPP") ) {
-        Serial.println("|  Wanna draw a BPP wallpaper |");
-        Serial.println("|  NYI                        |");
+        yatl.dbug("|  Wanna draw a BPP wallpaper |");
+        yatl.dbug("|  NYI                        |");
       } else {
-        Serial.print("| Wanna draw a ");
-        Serial.print( test );
-        Serial.println(" wallpaper? |");
+        yatl.dbug("| Wanna draw a ");
+        yatl.dbug( test );
+        printf( "[ %d, %d ]", (int)test[0], (int)test[1] );
+        yatl.dbug(" -type wallpaper? |");
       }
 
-      Serial.println("\\===== BDos PString call =====/");
+      yatl.dbug("\\===== BDos PString call =====/");
     } else if ( regNum == 226 ) {
      return xbdos_console(value);
     } else if ( regNum == 227 ) {
@@ -256,7 +263,7 @@
     } else if ( regNum == 228 ) {
       return subMCUBdosCall(value);
     } else if ( regNum == 229 ) {
-      Serial.println( "BdosCall 229 NYI => Test Mode" );
+      yatl.dbug( "BdosCall 229 NYI => Test Mode" );
       BdosTest229(value);
     }
     
@@ -327,7 +334,7 @@
 
   // ==============] mp3 Hardware Control [==========
   uint8_t mp3BdosCall(int32 value) {
-      Serial.println("mp3 Bdos call");
+      yatl.dbug("mp3 Bdos call");
       // int trckNum += (128+64) << 8
 
       uint8_t a0 = HIGH_REGISTER(value);
@@ -343,17 +350,17 @@
          a0 -= 64;
          int trkNum = (a0<<8) + a1;
 
-if ( loopMode ) Serial.println("mp3 LOOP");
-Serial.println("mp3 play");
-Serial.println(trkNum);
+if ( loopMode ) yatl.dbug("mp3 LOOP");
+yatl.dbug("mp3 play");
+// yatl.dbug(trkNum);
 
          if ( loopMode ) { yatl.getMusicPlayer()->loop(trkNum); }
          else { yatl.getMusicPlayer()->play(trkNum); }
       } else if (a0 == 0x00) {
-Serial.println("mp3 stop");
+yatl.dbug("mp3 stop");
           yatl.getMusicPlayer()->stop();
       } else if (a0 == 0x01) {
-Serial.println("mp3 pause");
+yatl.dbug("mp3 pause");
           yatl.getMusicPlayer()->pause();
       } else if (a0 == 0x02) {
           yatl.getMusicPlayer()->next();
@@ -362,7 +369,7 @@ Serial.println("mp3 pause");
       } else if (a0 == 0x04) {
           yatl.getMusicPlayer()->volume( a1 );
       } else if (a0 == 0x05) {
-Serial.println("mp3 demo");
+yatl.dbug("mp3 demo");
           // for now : just for demo
           yatl.getMusicPlayer()->play( 65 );
       }

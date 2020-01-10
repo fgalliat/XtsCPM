@@ -1,0 +1,443 @@
+#if defined __IMXRT1062__
+
+ #include "Arduino.h"
+ #include "xts_yat4l.h" 
+
+//  #include "xts_string.h" 
+
+/**
+ * Xtase - fgalliat @Nov2019
+ * 
+ * YAT4L routines Impl.
+ * 
+ * part of XtsCPM project
+ */
+
+    extern bool equals(char* s, char* t);
+    extern bool startsWith(char* str, char* toFind);
+    extern bool contains(char* str, char* toFind);
+    extern int indexOf(char* str, char toFind);
+    extern char* str_split(char* stringToSplit, char delim, int tokenNum);
+    extern bool endsWith(char* str, char* toFind);
+
+  #include "Adafruit_ILI9486_Teensy.h"
+  #include <SPI.h>
+
+  // for pin definitions, please refer to the header file
+  Adafruit_ILI9486_Teensy tft;
+
+
+  #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
+  extern SdFat SD;
+
+  #include "xts_yat4l_dev_fs.h"
+
+  void xts_hdl() {
+      // Xtase runtime handler
+  }
+
+  // ==================
+
+    // ===================================================================================
+    //                                   Keyboard
+    // ===================================================================================
+    #include "xts_kbmap.h"
+    #define KEYMAP_EN 0
+    #define KEYMAP_FR 1
+    int lang = KEYMAP_FR;
+
+    // 255 because of TP3 Strings maxLen
+    #define SOFTBUFF_LEN 255
+    char softBuff[SOFTBUFF_LEN +1];
+    int softBuffCursor = 0;
+
+    // Hobytronics USB HOST KEYB BOARD impl.
+    void yat4l_keyb_init() { 
+      KEYB_UART.begin(9600); 
+      memset( softBuff, 0x00, SOFTBUFF_LEN+1 );
+      softBuffCursor = 0;
+    }
+
+    bool yat4l_keyb_setLang(int _lang) {
+      if ( _lang == KEYMAP_EN || _lang == KEYMAP_FR ) {
+        lang = lang;
+        return true;
+      }
+      return false;
+    }
+
+
+    // ------------------------------------
+    // Software Keyb injection
+    // ------------------------------------
+    bool yat4l_keyb_inject(char ch) {
+      // overflow ??
+      if ( softBuffCursor+1 >= SOFTBUFF_LEN ) { return false; }
+
+      // ?? does reaplace '\n' by '\r' ??
+      // if ( ch == '\n' ) { ch = '\r'; }
+      if ( ch == '\n' ) { 
+        softBuff[ softBuffCursor++ ] = '\r';
+      }
+
+      softBuff[ softBuffCursor++ ] = ch;
+
+      return true;
+    }
+
+    bool yat4l_keyb_injectString(char* str) {
+      if ( str == NULL ) { return false; }
+      bool ok;
+      while (*str) {
+        ok = yat4l_keyb_inject(*(str++));
+        if ( !ok ) { return false; }
+      }
+      return true;
+      // if ( str == NULL ) { return false; }
+      // int tlen = strlen(str);
+      // if ( softBuffCursor + tlen >= SOFTBUFF_LEN ) { return false; }
+      // // for(int i=0; i < tlen; i++) { if ( str[i] == '\n' ) { str[i] = '\r'; } }
+      // strcat(softBuff, str);
+      // softBuffCursor += tlen;
+      // return true;
+    }
+    // ------------------------------------
+
+
+    int yat4l_keyb_available() { 
+      if ( softBuffCursor > 0 ) { return softBuffCursor; }
+      return KEYB_UART.available(); 
+    }
+
+    uint8_t yat4l_keyb_read() {
+      uint8_t ch;
+      if ( softBuffCursor > 0 ) { 
+        ch = softBuff[0];
+        // memcpy( &softBuff[0], &softBuff[1], softBuffCursor );
+        memmove( &softBuff[0], &softBuff[1], softBuffCursor-1 );
+        softBuff[softBuffCursor] = 0x00;
+        softBuffCursor--;
+        return ch;
+      }
+
+      ch = KEYB_UART.read();
+      if ( ch != 0xFF && ch <= 127 ) {
+        ch = keyMap[lang][ch];
+      }
+
+      // CR+LF => CR (only)
+      if ( ch == 13 && KEYB_UART.available() >= 1 && KEYB_UART.peek() == '\n') {
+        KEYB_UART.read();
+      }
+
+      return ch;
+    }
+
+    // ===================================================================================
+    //                                   WiFi
+    // ===================================================================================
+
+    // impl. include
+    #include "xts_yat4l_soft_wifi.h"
+    #include "xts_yat4l_dev_wifi_esp_at.h"
+
+    // ===================================================================================
+    //                                   Music
+    // ===================================================================================
+
+    #include "xts_yael_dev_dfplayer.h"
+
+    #define mp3Serial Serial5
+    SoundCard snd( &mp3Serial );
+
+    bool yat4l_mp3_init() { 
+      if ( MP3_BUSY_PIN > -1 ) {
+        pinMode(MP3_BUSY_PIN, INPUT);
+      }
+      mp3Serial.begin(9600);
+      snd.init();
+
+      return true; 
+    }
+    
+    bool yat4l_mp3IsPlaying() { return digitalRead(MP3_BUSY_PIN) == LOW; }
+
+    void yat4l_mp3Play(int trackNum) { snd.play(trackNum); }
+    void yat4l_mp3Loop(int trackNum) { Serial.println("NYI"); }
+    void yat4l_mp3Vol(int volume) { snd.volume(volume); } // 0..30 ?
+    void yat4l_mp3Pause() { snd.pause(); }
+    void yat4l_mp3Stop() { snd.stop(); }
+    void yat4l_mp3Next() { snd.next(); }
+    void yat4l_mp3Prev() { snd.prev(); }
+
+
+
+    // ===================================================================================
+    //                                   Buzzer
+    // ===================================================================================
+    bool BUZZER_MUTE = false;
+
+    void yat4l_buzzer_init() {
+      pinMode(BUZZER_PIN, OUTPUT);
+      digitalWrite(BUZZER_PIN, LOW);
+    }
+
+    void yat4l_buzzer_tone(int freq, int duration) {
+      if ( !BUZZER_MUTE ) {
+        tone(BUZZER_PIN, freq, duration);
+      }
+    }
+    void yat4l_buzzer_noTone() {
+      noTone(BUZZER_PIN);
+    }
+
+    // void yat4l_buzzer_beep(int freq, int duration) {}
+    // void yat4l_buzzer_playTuneString(char* sequence) {}
+    // bool yat4l_buzzer_playTuneFile(const char* tuneStreamName) {return true;}
+
+
+    //====================================================================================
+    //                                    Led
+    //====================================================================================
+
+    void led(bool state, bool fastMode) {
+        if ( LED_BUILTIN_PIN > 0 ) {
+            digitalWrite(LED_BUILTIN_PIN, state ? HIGH : LOW);
+        }
+
+        if (fastMode) { return; } 
+
+        // if ( state ) { bridgeSerial.write('L'); }
+        // else  { bridgeSerial.write('l'); }
+        delay(1);
+    }
+
+    void drive_led(bool state) {
+        led(state, true);
+    }
+
+    // ===================================================================================
+    //                                   FileSystem
+    // ===================================================================================
+
+    const int _fullyQualifiedFileNameSize = 1+5 + (8+1+3) + 1;
+    char _assetEntry[ _fullyQualifiedFileNameSize ];
+
+    // not ThreadSafe !
+    char* yat4l_fs_getAssetsFileEntry(char* assetName) {
+        if ( assetName == NULL || strlen(assetName) <= 0 ) { yat4l_dbug("NULL filename"); return NULL; }
+        memset(_assetEntry, 0x00, _fullyQualifiedFileNameSize);
+
+        if ( assetName[1] == ':' ) {
+            // ex. "Y:IMG.PAK"
+            // sprintf( _assetEntry, "/%c/0/%s", assetName[0], &assetName[2] );
+            sprintf( _assetEntry, "%c/0/%s", assetName[0], &assetName[2] );
+        } else {
+            // sprintf( _assetEntry, "/Z/0/%s", &assetName[0] );
+            sprintf( _assetEntry, "Z/0/%s", &assetName[0] );
+        }
+
+        return _assetEntry;
+    }
+
+    bool yat4l_fs_downloadFromSerial() { 
+        while( Serial.available() ) { Serial.read(); delay(2); }
+        yat4l_warn("Download in progress");
+        Serial.println("+OK");
+        while( !Serial.available() ) { delay(2); }
+        // for now : file has to be like "/C/0/XTSDEMO.PAS"
+        int tlen = 0;
+        char txt[128+1]; 
+        char name[64+1]; memset(name, 0x00, 64); tlen = Serial.readBytesUntil(0x0A, name, 64);
+        if ( tlen <= 0 ) {
+            sprintf(txt, "Downloading %s (error)", name);
+            yat4l_warn((const char*)txt);
+            Serial.println("Download not ready");
+            Serial.println(name);
+            Serial.println("-OK");
+            return false;
+        }
+
+        // Cf CPM may padd the original file
+        File f = SD.open(name, O_CREAT | O_WRITE);
+        if ( !f ) {
+          Serial.println("-OK");
+          return false;    
+        }
+        f.remove();
+        f.close();
+        // Cf CPM may padd the original file
+
+        f = SD.open(name, O_CREAT | O_WRITE);
+        if ( !f ) {
+          Serial.println("-OK");
+          return false;    
+        }
+
+        Serial.println("+OK");
+        while( !Serial.available() ) { delay(2); }
+        char sizeStr[12+1]; memset(sizeStr, 0x00, 12); tlen = Serial.readBytesUntil(0x0A, sizeStr, 12);
+        long size = atol(sizeStr);
+        sprintf(txt, "Downloading %s (%ld bytes)", name, size);
+        yat4l_warn((const char*)txt);
+        char packet[128+1];
+        Serial.println("+OK");
+        for(int readed=0; readed < size;) {
+            while( !Serial.available() ) { delay(2); }
+            int packetLen = Serial.readBytes( packet, 128 );
+            f.write(packet, packetLen);
+            f.flush();
+            readed += packetLen;
+        }
+        f.close();
+        yat4l_warn("-EOF-");
+        yat4l_buzzer_beep();
+        return true;
+    }
+
+    // ==================
+
+  void yat4l_led(bool state, bool fastMode) { led(state, fastMode); }
+
+    // see xts_yat4l_dev_console.cpp
+    extern void consoleCls(bool clearDisplay);
+    extern void _setConsoleMode(int mode);
+
+
+
+
+
+
+
+
+    bool yat4l_setup() {
+
+       Serial.begin(115200);
+
+      // avoid SD_CS before booting
+        const int SD_CS = 0;
+        pinMode( SD_CS, OUTPUT );
+        digitalWrite( SD_CS, HIGH );
+
+
+        // if ( SUBMCU_READY_PIN > 0 ) {
+        //   pinMode(SUBMCU_READY_PIN, INPUT);
+        // }
+
+        
+        if ( LED_BUILTIN_PIN > 0 ) {
+          pinMode(LED_BUILTIN_PIN, OUTPUT);
+          digitalWrite(LED_BUILTIN_PIN, LOW);
+        }
+
+        yat4l_keyb_init();
+
+        yat4l_mp3_init();
+
+        // SD is init by YatlCPM.ino
+    
+        yat4l_buzzer_init();
+
+        #if HAS_BUILTIN_LCD
+          // Now initialise the TFT
+          SPI.begin();
+          tft.begin();
+          tft.setRotation(DEFAULT_TFT_ROTATION);  // 0 & 2 Portrait. 1 & 3 landscape
+          tft.fillScreen(CLR_BLACK);
+
+          _setConsoleMode(1); // compute 80 cols mode
+        #endif
+
+        bool ok = yat4l_wifi_setup();
+        Serial.println("WiFi module ready !...");
+
+
+        return true;
+    }
+
+
+    // ===================================================================================
+    //                                   TFT Screen
+    // ===================================================================================
+
+    void yat4l_tft_cls() { tft.fillScreen(CLR_BLACK); tft.setCursor(0,0); }
+    void yat4l_tft_setCursor(int col, int row) { tft.setCursor(col,row); }
+
+    #include "xts_yat4l_soft_drawBMP.h"
+    #include "xts_yat4l_soft_drawPAK.h"
+
+    void yat4l_tft_drawBMP(char* filename, int x, int y) { 
+        tft.setRotation(DEFAULT_TFT_ROTATION == 1 ? 2 : 0);
+        // tft.setRotation(DEFAULT_TFT_ROTATION == 1 ? 0 : 2);
+
+        int swap = x;
+        x = y;
+        y = swap;
+        #if MODE_4INCH
+        y += ( 480 - 320 );
+        #endif
+
+        drawBmp(filename, x, y);
+        tft.setRotation(DEFAULT_TFT_ROTATION);
+    }
+    void yat4l_tft_drawPAK(char* filename, int x, int y, int imgNum) { drawImgFromPAK(filename, x, y, imgNum); }
+
+
+
+    void yat4l_tft_drawRect(int x, int y, int w, int h, uint16_t color) { tft.drawRect(x, y, w, h, color); }
+    void yat4l_tft_fillRect(int x, int y, int w, int h, uint16_t color) { tft.fillRect(x, y, w, h, color); }
+    void yat4l_tft_drawCircle(int x, int y, int radius, uint16_t color) { tft.drawCircle(x, y, radius, color); }
+    void yat4l_tft_fillCircle(int x, int y, int radius, uint16_t color) { tft.fillCircle(x, y, radius, color); }
+    void yat4l_tft_drawLine(int x, int y, int x2, int y2, uint16_t color) { tft.drawLine(x, y, x2, y2, color); }
+
+
+  // ===========================================
+  // ===========================================
+
+  void drawTextBox(const char* title, const char* msg, uint16_t color) {
+      // tft.fillRect( 20, 20, TFT_WIDTH-40, TFT_HEIGHT-40, mapColor(color) );
+      tft.fillRect( 20, 20, TFT_WIDTH-40, TFT_HEIGHT-40, color );
+      tft.drawRect( 20, 20, TFT_WIDTH-40, TFT_HEIGHT-40, CLR_WHITE );
+      tft.setTextColor(CLR_WHITE);
+      tft.setCursor( 40, 30 );
+      tft.print( title );
+      tft.setCursor( 40, 30+30 );
+      tft.print( msg );
+  }
+
+
+  void yat4l_dbug(char* str) { 
+    Serial.print("(ii) "); Serial.println(str); 
+  }
+
+  void yat4l_dbug(const char* str) { yat4l_dbug( (char*)str ); }
+
+  void yat4l_warn(char* str) { 
+    // no serial write : because used while Serial copy
+    // Serial.print("(!!) "); Serial.println(str); 
+    drawTextBox("WARNING", (const char*)str, CLR_CYAN);
+  }
+
+  void yat4l_warn(const char* str) { yat4l_warn( (char*)str ); }
+
+  void yat4l_error(char* str) { 
+    // no serial write : because used while Serial copy
+    drawTextBox("ERROR", (const char*)str, CLR_RED);
+  }
+
+  void yat4l_error(const char* str) { yat4l_error( (char*)str ); }
+
+  // ===========================================
+
+    void softReset() {
+        // Teensy 4.0 specify 
+        // but beware w/ some breakout boards
+
+        // semms more like halt than reboot
+        // SCB_AIRCR = 0x05FA0004;
+    }
+
+  void yat4l_reboot() { Serial.println("TEENSY4 rebooting"); softReset(); }
+  void yat4l_halt() { Serial.println("TEENSY4 shutting down"); }
+
+#endif

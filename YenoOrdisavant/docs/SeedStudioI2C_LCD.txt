@@ -1,0 +1,12 @@
+http://wiki.seeedstudio.com/I2C_LCD/
+
+
+Parameter									Value
+Screen Type								Dual colour LCD
+Screen Resolution					128*64 Pixels
+Screen Active Area (L*W)	47.1*26.5mm
+Individual Pixel Size			0.33*0.33mm
+Communication Mode				I2C(100Kbit/s and 400Kbit/s)
+Controller								STM8S005KBT6
+Operating Frequency				16 MHz
+Weight										20g

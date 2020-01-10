@@ -64,6 +64,7 @@ static const unsigned char Pixelzim_8_index[] = {
 };
 /* font index size: 107 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_8 = {
 	Pixelzim_8_index,
 	0,
@@ -83,7 +84,7 @@ const ILI9341_t3_font_t Pixelzim_8 = {
 	6,
 	5
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_9_data[] = {
@@ -158,6 +159,7 @@ static const unsigned char Pixelzim_9_index[] = {
 };
 /* font index size: 119 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_9 = {
 	Pixelzim_9_index,
 	0,
@@ -177,7 +179,7 @@ const ILI9341_t3_font_t Pixelzim_9 = {
 	7,
 	6
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_10_data[] = {
@@ -253,6 +255,7 @@ static const unsigned char Pixelzim_10_index[] = {
 };
 /* font index size: 119 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_10 = {
 	Pixelzim_10_index,
 	0,
@@ -272,7 +275,7 @@ const ILI9341_t3_font_t Pixelzim_10 = {
 	8,
 	7
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_11_data[] = {
@@ -356,6 +359,7 @@ static const unsigned char Pixelzim_11_index[] = {
 };
 /* font index size: 119 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_11 = {
 	Pixelzim_11_index,
 	0,
@@ -375,7 +379,7 @@ const ILI9341_t3_font_t Pixelzim_11 = {
 	8,
 	8
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_12_data[] = {
@@ -463,6 +467,7 @@ static const unsigned char Pixelzim_12_index[] = {
 };
 /* font index size: 119 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_12 = {
 	Pixelzim_12_index,
 	0,
@@ -482,7 +487,7 @@ const ILI9341_t3_font_t Pixelzim_12 = {
 	9,
 	9
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_13_data[] = {
@@ -569,6 +574,7 @@ static const unsigned char Pixelzim_13_index[] = {
 };
 /* font index size: 119 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_13 = {
 	Pixelzim_13_index,
 	0,
@@ -588,7 +594,7 @@ const ILI9341_t3_font_t Pixelzim_13 = {
 	10,
 	9
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_14_data[] = {
@@ -681,6 +687,7 @@ static const unsigned char Pixelzim_14_index[] = {
 };
 /* font index size: 119 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_14 = {
 	Pixelzim_14_index,
 	0,
@@ -700,7 +707,7 @@ const ILI9341_t3_font_t Pixelzim_14 = {
 	10,
 	10
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_16_data[] = {
@@ -798,6 +805,7 @@ static const unsigned char Pixelzim_16_index[] = {
 };
 /* font index size: 119 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_16 = {
 	Pixelzim_16_index,
 	0,
@@ -817,7 +825,7 @@ const ILI9341_t3_font_t Pixelzim_16 = {
 	13,
 	11
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_18_data[] = {
@@ -922,6 +930,7 @@ static const unsigned char Pixelzim_18_index[] = {
 };
 /* font index size: 119 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_18 = {
 	Pixelzim_18_index,
 	0,
@@ -941,7 +950,7 @@ const ILI9341_t3_font_t Pixelzim_18 = {
 	14,
 	13
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_20_data[] = {
@@ -1049,6 +1058,7 @@ static const unsigned char Pixelzim_20_index[] = {
 };
 /* font index size: 119 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_20 = {
 	Pixelzim_20_index,
 	0,
@@ -1068,7 +1078,7 @@ const ILI9341_t3_font_t Pixelzim_20 = {
 	16,
 	14
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_24_data[] = {
@@ -1190,6 +1200,7 @@ static const unsigned char Pixelzim_24_index[] = {
 };
 /* font index size: 119 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_24 = {
 	Pixelzim_24_index,
 	0,
@@ -1209,7 +1220,7 @@ const ILI9341_t3_font_t Pixelzim_24 = {
 	19,
 	16
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_28_data[] = {
@@ -1348,6 +1359,7 @@ static const unsigned char Pixelzim_28_index[] = {
 };
 /* font index size: 131 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_28 = {
 	Pixelzim_28_index,
 	0,
@@ -1367,7 +1379,7 @@ const ILI9341_t3_font_t Pixelzim_28 = {
 	22,
 	20
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_32_data[] = {
@@ -1511,6 +1523,7 @@ static const unsigned char Pixelzim_32_index[] = {
 };
 /* font index size: 131 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_32 = {
 	Pixelzim_32_index,
 	0,
@@ -1530,7 +1543,7 @@ const ILI9341_t3_font_t Pixelzim_32 = {
 	26,
 	22
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_40_data[] = {
@@ -1706,6 +1719,7 @@ static const unsigned char Pixelzim_40_index[] = {
 };
 /* font index size: 131 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_40 = {
 	Pixelzim_40_index,
 	0,
@@ -1725,7 +1739,7 @@ const ILI9341_t3_font_t Pixelzim_40 = {
 	33,
 	28
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_48_data[] = {
@@ -1919,6 +1933,7 @@ static const unsigned char Pixelzim_48_index[] = {
 };
 /* font index size: 131 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_48 = {
 	Pixelzim_48_index,
 	0,
@@ -1938,7 +1953,7 @@ const ILI9341_t3_font_t Pixelzim_48 = {
 	39,
 	34
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_60_data[] = {
@@ -2270,6 +2285,7 @@ static const unsigned char Pixelzim_60_index[] = {
 };
 /* font index size: 143 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_60 = {
 	Pixelzim_60_index,
 	0,
@@ -2289,7 +2305,7 @@ const ILI9341_t3_font_t Pixelzim_60 = {
 	49,
 	41
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_72_data[] = {
@@ -2685,6 +2701,7 @@ static const unsigned char Pixelzim_72_index[] = {
 };
 /* font index size: 143 bytes */
 
+#ifdef CORE_TEENSY
 const ILI9341_t3_font_t Pixelzim_72 = {
 	Pixelzim_72_index,
 	0,
@@ -2704,7 +2721,7 @@ const ILI9341_t3_font_t Pixelzim_72 = {
 	60,
 	50
 };
-
+#endif
 
 
 static const unsigned char Pixelzim_96_data[] = {
@@ -3251,6 +3268,8 @@ static const unsigned char Pixelzim_96_index[] = {
 };
 /* font index size: 155 bytes */
 
+#ifdef CORE_TEENSY
+
 const ILI9341_t3_font_t Pixelzim_96 = {
 	Pixelzim_96_index,
 	0,
@@ -3271,5 +3290,5 @@ const ILI9341_t3_font_t Pixelzim_96 = {
 	66
 };
 
-
+#endif
 

@@ -1,0 +1,12 @@
+# Desktop version
+
+ARCH="RPI"
+
+#DIRECTIVES="-DMY_PC"
+DIRECTIVES=""
+
+#CPPs="dev/screen/sdl2/SDL2WiredScreen.cpp dev/sound/MPG123SoundCard.cpp dev/serial/Serial.cpp dev/gpio/desktop/FakeGPIO.cpp dev/wifi/AriettaG25_WiFi.cpp dev/pwr/desktop/Power.cpp XtsConsole.cpp" 
+CPPs="cpp/arch/desktop/screen/fb/SPIWiredScreen.cpp XtsConsole.cpp" 
+
+
+LIBS="-lncurses -lpthread"

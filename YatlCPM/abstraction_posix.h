@@ -21,6 +21,14 @@ lua_State *L;
 
 #define HostOS 0x02
 
+#ifdef DESKTOPYATL
+  #include "xts_yatl_api.h"
+  extern Yatl yatl;
+  #define NO_TTY_ECHO 1
+#endif
+
+
+
 glob_t	pglob;
 int	dirPos;
 
@@ -106,7 +114,15 @@ uint8 _getch(void) {
 }
 
 void _putch(uint8 ch) {
+
+	#ifdef NO_TTY_ECHO
+	#else
 	putchar(ch);
+	#endif
+
+	#ifdef DESKTOPYATL
+	yatl.getScreen()->write(ch);
+	#endif
 }
 
 uint8 _getche(void) {
@@ -118,7 +134,14 @@ uint8 _getche(void) {
 }
 
 void _clrscr(void) {
+	#ifdef NO_TTY_ECHO
+	#else
 	uint8 ch = system("clear");
+	#endif
+	
+	#ifdef DESKTOPYATL
+	yatl.getScreen()->cls();
+	#endif
 }
 
 #endif

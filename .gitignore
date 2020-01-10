@@ -14,3 +14,4 @@ YatlCPM/lua/luac
 *.class
 *.exe
 XPRG/TURBO.MSG
+ssid_psk.h

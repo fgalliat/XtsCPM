@@ -6,10 +6,10 @@ public class BdosSerialSender {
         if ( args == null || args.length < 1 ) {
             System.out.println("Usage : ");
             System.out.println("");
-            System.out.println("java BdosSerialSender READ.ME [c]");
+            System.out.println("java BdosSerialSender READ.ME [c] [y to compile]");
             return;
           }
-          process( args[0], args.length > 1 ? args[1] : "c" );
+          process( args[0], args.length > 1 ? args[1] : "c", args.length > 2 );
     }
 
     static String okBuff = ""; 
@@ -26,7 +26,7 @@ public class BdosSerialSender {
       return true;
     }
 
-    static void process(String filename, String driveName) throws Exception {
+    static void process(String filename, String driveName, boolean launchCmdPas) throws Exception {
         File f = new File(filename);
         String destName = f.getName().toUpperCase();
         if ( destName.length() > 12 ) {
@@ -57,14 +57,35 @@ public class BdosSerialSender {
         if ( !ok ) { System.out.println("Error 0x03"); return; }
 
         FileInputStream fin = new FileInputStream(f);
-        byte[] buff = new byte[128];
+        int packetLen = 64;
+        byte[] buff = new byte[packetLen];
         while( fin.available() > 0 ) {
-          int len = fin.read(buff, 0, 128);
+          int len = fin.read(buff, 0, packetLen);
           Terminal.getInstance().serWrite( buff, len );
+          Zzz(5);
         }
         fin.close();
         System.out.println("-EOF-");
         // serialOut.close();
+
+        if (launchCmdPas) {
+          Zzz(1500);
+          printLineToCPM("c:CLS");
+          Zzz(1500);
+          printLineToCPM("b:TURBO");
+          Zzz(1500);
+          // Show messages (assumes that C:TURBO.MSG exists)
+          Terminal.getInstance().serPrint("Y");
+          Zzz(500);
+          // Run
+          Terminal.getInstance().serPrint("r");
+          Zzz(500);
+          Terminal.getInstance().serPrint(destName.substring(0, destName.indexOf('.'))+"\r");
+          
+          // System.out.println("Wait Enter ...");
+          // new BufferedReader(new InputStreamReader(System.in)).readLine();
+          // // if !wait -> when JVM ends it break compilation ...
+        }
     }
   
   
