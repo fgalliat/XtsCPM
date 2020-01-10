@@ -78,7 +78,11 @@ const uint16_t CLR_BLUE  = rgb16(0,0,255);
 
 // ===================
 
-void WiredScreen::screenRotate(bool portrait) {}
+bool screenRotated = false;
+void WiredScreen::screenRotate(bool portrait) {
+  screenRotated = !portrait;
+}
+
 void WiredScreen::setFont(int font) {
   #if MODE_480
       // ftSize = FONT_REGULAR;
@@ -593,6 +597,13 @@ void WiredScreen::write(char ch) {
     }
 
     void WiredScreen::drawPixel(int x, int y, uint16_t color) {
+
+        if (screenRotated) {
+          int tmp = x;
+          x = y;
+          y = tmp;
+        }
+
         if ( x >= SCREEN_WIDTH || x < 0 || y >= SCREEN_HEIGHT || y < 0 ) {
             return;
         }
