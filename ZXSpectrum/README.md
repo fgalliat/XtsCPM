@@ -25,11 +25,17 @@ Xtase - fgalliat
   - [x] remap sereval keyCodes ...
   - [x] manage debouce & repeat again
   - [ ] wire @least 2 leds for keyb state (CapLock & Ctrl)
-- [ ] RPI deactivate Serial debugging
-- [ ] mount a subMCU
+- [ ] RPI deactivate Serial debugging (**later** : will use T3.2 SubMCU via USBSerial)
+- [ ] mount a subMCU (T3.2 connected by USB)
   - [ ] mount a DFPlayer on subMCU
   - [ ] mount a Buzzer on SubMCU
     - [ ] reserve 5KB RAM for tunefiles
+  - [ ] mount a 10LED BarGraph
+    - [ ] BOOT
+    - [ ] DRIVE
+    - [ ] WIFI
+    - [ ] CAP LOCK
+    - [ ] Ctrl key
 - [ ] mount USB HUB
 - [ ] ? mount card reader ?
 - [ ] wire HDMI output
