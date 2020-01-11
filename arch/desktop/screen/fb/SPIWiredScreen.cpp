@@ -80,7 +80,7 @@ const uint16_t CLR_BLUE  = rgb16(0,0,255);
 
 bool screenRotated = false;
 void WiredScreen::screenRotate(bool portrait) {
-  screenRotated = !portrait;
+  screenRotated = portrait;
 }
 
 void WiredScreen::setFont(int font) {
