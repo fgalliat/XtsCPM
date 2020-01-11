@@ -116,7 +116,7 @@ Xtase - fgalliat version @ Apr2109
   - Teensy 3.6 (**Yatl**)
   - Teensy 4.0 (**Yat4l**)
   - ESP32 (**Yael** + **Yaeh**)
-  - RPI0w (**zxs**)
+  - RPI0w (**Zxts**)
   - 'nux (ARM64 - Android's chrooted kali - native cpp) / (PC x64 ubuntu Linux)
   - Android (Dalvik nor NDK : <u>Not yet Ported</u>)
 
@@ -168,7 +168,7 @@ Xtase - fgalliat version @ Apr2109
 
 **Current stage :**
 
-**ZXS version** (started @ Dec2019)
+**ZXTS version** (started @ Dec2019)
 
 ![Start Assembling](./pictures/zxs.jpg)
 

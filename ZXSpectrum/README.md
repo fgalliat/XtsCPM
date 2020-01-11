@@ -14,8 +14,6 @@ Xtase - fgalliat
 
 **Arduino Keyboard decoder**
 
-
-
 ![ZX Spectrum+ unit](zxs_arduinokb.jpg)
 
 
@@ -30,12 +28,13 @@ Xtase - fgalliat
   - [ ] mount a DFPlayer on subMCU
   - [ ] mount a Buzzer on SubMCU
     - [ ] reserve 5KB RAM for tunefiles
-  - [ ] mount a 10LED BarGraph
+  - [ ] mount a 10LED BarGraph (could address 8 by T3.2 + 2 by MICRO (keyb) )
     - [ ] BOOT
     - [ ] DRIVE
     - [ ] WIFI
     - [ ] CAP LOCK
     - [ ] Ctrl key
+  - [ ] ? mount an I2C 128x32 monochrome screen ?
 - [ ] mount USB HUB
 - [ ] ? mount card reader ?
 - [ ] wire HDMI output
