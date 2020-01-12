@@ -27,6 +27,9 @@ BEGIN
   Z*(COS(YAN)*COS(XAN)*SIN(ZAN)+SIN(YAN)*SIN(XAN)));
   NEWZ:=ROUND(X*(COS(YAN)*SIN(ZAN)*SIN(XAN)-COS(XAN)*SIN(YAN))+
   Y*(-SIN(ZAN))+Z*(COS(YAN)*COS(ZAN)));
+
+  GotoXY(2,2); writeln(NEWX, ',', NEWY);
+  GotoXY(2,3); writeln(X, ',', Y);
 END;
 
 PROCEDURE PLAY;
@@ -43,7 +46,7 @@ BEGIN
     OLDZ[I]:=UUSIZ[I];
     PYORITA(PISTE[I,1],PISTE[I,2],PISTE[I,3],XANGLE,YANGLE,ZANGLE,UUSIX[I],UUSIY[I],UUSIZ[I]);
   END;
-
+{
   drawLine(OLDX[1]+MI_W,OLDY[1]+MI_H,OLDX[2]+MI_W,OLDY[2]+MI_H,C_BLK);
   drawLine(OLDX[1]+MI_W,OLDY[1]+MI_H,OLDX[4]+MI_W,OLDY[4]+MI_H,C_BLK);
   drawLine(OLDX[1]+MI_W,OLDY[1]+MI_H,OLDX[5]+MI_W,OLDY[5]+MI_H,C_BLK);
@@ -56,7 +59,7 @@ BEGIN
   drawLine(OLDX[5]+MI_W,OLDY[5]+MI_H,OLDX[8]+MI_W,OLDY[8]+MI_H,C_BLK);
   drawLine(OLDX[6]+MI_W,OLDY[6]+MI_H,OLDX[7]+MI_W,OLDY[7]+MI_H,C_BLK);
   drawLine(OLDX[7]+MI_W,OLDY[7]+MI_H,OLDX[8]+MI_W,OLDY[8]+MI_H,C_BLK);
-
+}
   drawLine(UUSIX[1]+MI_W,UUSIY[1]+MI_H,UUSIX[2]+MI_W,UUSIY[2]+MI_H,C_WHT);
   drawLine(UUSIX[1]+MI_W,UUSIY[1]+MI_H,UUSIX[4]+MI_W,UUSIY[4]+MI_H,C_WHT);
   drawLine(UUSIX[1]+MI_W,UUSIY[1]+MI_H,UUSIX[5]+MI_W,UUSIY[5]+MI_H,C_WHT);
@@ -101,6 +104,10 @@ BEGIN
   clrScr;
   REPEAT
     PLAY;
+
+    { GotoXY(2,2); write( cos( 3.141596 / 4.0 ) );
+    GotoXY(2,3); write( cos( 3.141596 / 2.0 ) );
+    GotoXY(2,4); write( cos( 3.141596 / 1.0 ) ); }
 
     choiceCh := '*';
     if ( KeyPressed ) then
