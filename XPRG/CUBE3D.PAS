@@ -10,7 +10,7 @@ const
   MI_H = 99; }
   C_BLK = 0;
   C_WHT = 1;
-  CUB_SIZ = 30;
+  CUB_SIZ = 50;
 
 var PISTE:ARRAY[1..8,1..3] OF INTEGER;
     OLDX,OLDY,OLDZ,UUSIX,UUSIY,UUSIZ:ARRAY[1..8] OF INTEGER;
