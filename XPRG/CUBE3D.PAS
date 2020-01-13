@@ -1,0 +1,140 @@
+program cube;
+
+{$I XTSYATLG.INC gfx control routines}
+
+const
+  NAPPMAARA=6; { nb of key controls }
+  MI_W = 239;
+  MI_H = 159;
+  { MI_W = 159;
+  MI_H = 99; }
+  C_BLK = 0;
+  C_WHT = 1;
+  CUB_SIZ = 30;
+
+var PISTE:ARRAY[1..8,1..3] OF INTEGER;
+    OLDX,OLDY,OLDZ,UUSIX,UUSIY,UUSIZ:ARRAY[1..8] OF INTEGER;
+    VIIVE,I:INTEGER;
+    XANGLE,YANGLE,ZANGLE:REAL;
+    NAPP:ARRAY[1..NAPPMAARA]OF BOOLEAN;
+    choiceCh: char;
+
+PROCEDURE PYORITA(X,Y,Z:INTEGER; XAN,YAN,ZAN:REAL; VAR NEWX,NEWY,NEWZ:INTEGER);
+BEGIN
+  NEWX:=ROUND(X*(SIN(YAN)*SIN(ZAN)*SIN(XAN)+COS(YAN)*COS(XAN))+Y*(COS(ZAN)*SIN(XAN))+
+  Z*(COS(YAN)*SIN(ZAN)*SIN(XAN)-COS(XAN)*SIN(YAN)));
+  NEWY:=ROUND(X*(COS(XAN)*SIN(YAN)*SIN(ZAN)-COS(YAN)*SIN(XAN))+Y*(COS(ZAN)*COS(XAN))+
+  Z*(COS(YAN)*COS(XAN)*SIN(ZAN)+SIN(YAN)*SIN(XAN)));
+  NEWZ:=ROUND(X*(COS(YAN)*SIN(ZAN)*SIN(XAN)-COS(XAN)*SIN(YAN))+Y*(-SIN(ZAN))+
+  Z*(COS(YAN)*COS(ZAN)));
+
+  { GotoXY(2,2); writeln(NEWX, ',', NEWY);
+  GotoXY(2,3); writeln(X, ',', Y); }
+END;
+
+PROCEDURE PLAY;
+BEGIN
+  IF NAPP[1]=TRUE THEN XANGLE:=XANGLE+0.01;
+  IF NAPP[2]=TRUE THEN YANGLE:=YANGLE+0.01;
+  IF NAPP[3]=TRUE THEN XANGLE:=XANGLE-0.01;
+  IF NAPP[4]=TRUE THEN YANGLE:=YANGLE-0.01;
+  IF NAPP[5]=TRUE THEN ZANGLE:=ZANGLE+0.01;
+  IF NAPP[6]=TRUE THEN ZANGLE:=ZANGLE-0.01;
+
+  FOR I:=1 TO 8 DO BEGIN
+    OLDX[I]:=UUSIX[I];
+    OLDY[I]:=UUSIY[I];
+    OLDZ[I]:=UUSIZ[I];
+    PYORITA(PISTE[I,1],PISTE[I,2],PISTE[I,3],XANGLE,YANGLE,ZANGLE,UUSIX[I],UUSIY[I],UUSIZ[I]);
+  END;
+
+  drawLine(OLDX[1]+MI_W,OLDY[1]+MI_H,OLDX[2]+MI_W,OLDY[2]+MI_H,C_BLK);
+  drawLine(OLDX[1]+MI_W,OLDY[1]+MI_H,OLDX[4]+MI_W,OLDY[4]+MI_H,C_BLK);
+  drawLine(OLDX[1]+MI_W,OLDY[1]+MI_H,OLDX[5]+MI_W,OLDY[5]+MI_H,C_BLK);
+  drawLine(OLDX[2]+MI_W,OLDY[2]+MI_H,OLDX[3]+MI_W,OLDY[3]+MI_H,C_BLK);
+  drawLine(OLDX[2]+MI_W,OLDY[2]+MI_H,OLDX[6]+MI_W,OLDY[6]+MI_H,C_BLK);
+  drawLine(OLDX[3]+MI_W,OLDY[3]+MI_H,OLDX[7]+MI_W,OLDY[7]+MI_H,C_BLK);
+  drawLine(OLDX[3]+MI_W,OLDY[3]+MI_H,OLDX[4]+MI_W,OLDY[4]+MI_H,C_BLK);
+  drawLine(OLDX[4]+MI_W,OLDY[4]+MI_H,OLDX[8]+MI_W,OLDY[8]+MI_H,C_BLK);
+  drawLine(OLDX[5]+MI_W,OLDY[5]+MI_H,OLDX[6]+MI_W,OLDY[6]+MI_H,C_BLK);
+  drawLine(OLDX[5]+MI_W,OLDY[5]+MI_H,OLDX[8]+MI_W,OLDY[8]+MI_H,C_BLK);
+  drawLine(OLDX[6]+MI_W,OLDY[6]+MI_H,OLDX[7]+MI_W,OLDY[7]+MI_H,C_BLK);
+  drawLine(OLDX[7]+MI_W,OLDY[7]+MI_H,OLDX[8]+MI_W,OLDY[8]+MI_H,C_BLK);
+
+  drawLine(UUSIX[1]+MI_W,UUSIY[1]+MI_H,UUSIX[2]+MI_W,UUSIY[2]+MI_H,C_WHT);
+  drawLine(UUSIX[1]+MI_W,UUSIY[1]+MI_H,UUSIX[4]+MI_W,UUSIY[4]+MI_H,C_WHT);
+  drawLine(UUSIX[1]+MI_W,UUSIY[1]+MI_H,UUSIX[5]+MI_W,UUSIY[5]+MI_H,C_WHT);
+  drawLine(UUSIX[2]+MI_W,UUSIY[2]+MI_H,UUSIX[3]+MI_W,UUSIY[3]+MI_H,C_WHT);
+  drawLine(UUSIX[2]+MI_W,UUSIY[2]+MI_H,UUSIX[6]+MI_W,UUSIY[6]+MI_H,C_WHT);
+  drawLine(UUSIX[3]+MI_W,UUSIY[3]+MI_H,UUSIX[7]+MI_W,UUSIY[7]+MI_H,C_WHT);
+  drawLine(UUSIX[3]+MI_W,UUSIY[3]+MI_H,UUSIX[4]+MI_W,UUSIY[4]+MI_H,C_WHT);
+  drawLine(UUSIX[4]+MI_W,UUSIY[4]+MI_H,UUSIX[8]+MI_W,UUSIY[8]+MI_H,C_WHT);
+  drawLine(UUSIX[5]+MI_W,UUSIY[5]+MI_H,UUSIX[6]+MI_W,UUSIY[6]+MI_H,C_WHT);
+  drawLine(UUSIX[5]+MI_W,UUSIY[5]+MI_H,UUSIX[8]+MI_W,UUSIY[8]+MI_H,C_WHT);
+  drawLine(UUSIX[6]+MI_W,UUSIY[6]+MI_H,UUSIX[7]+MI_W,UUSIY[7]+MI_H,C_WHT);
+  drawLine(UUSIX[7]+MI_W,UUSIY[7]+MI_H,UUSIX[8]+MI_W,UUSIY[8]+MI_H,C_WHT);
+  
+END;
+
+BEGIN
+  PISTE[1,1]:=CUB_SIZ;
+  PISTE[1,2]:=CUB_SIZ;
+  PISTE[1,3]:=CUB_SIZ;
+  PISTE[2,1]:=CUB_SIZ;
+  PISTE[2,2]:=-CUB_SIZ;
+  PISTE[2,3]:=CUB_SIZ;
+  PISTE[3,1]:=-CUB_SIZ;
+  PISTE[3,2]:=-CUB_SIZ;
+  PISTE[3,3]:=CUB_SIZ;
+  PISTE[4,1]:=-CUB_SIZ;
+  PISTE[4,2]:=CUB_SIZ;
+  PISTE[4,3]:=CUB_SIZ;
+  PISTE[5,1]:=CUB_SIZ;
+  PISTE[5,2]:=CUB_SIZ;
+  PISTE[5,3]:=-CUB_SIZ;
+  PISTE[6,1]:=CUB_SIZ;
+  PISTE[6,2]:=-CUB_SIZ;
+  PISTE[6,3]:=-CUB_SIZ;
+  PISTE[7,1]:=-CUB_SIZ;
+  PISTE[7,2]:=-CUB_SIZ;
+  PISTE[7,3]:=-CUB_SIZ;
+  PISTE[8,1]:=-CUB_SIZ;
+  PISTE[8,2]:=CUB_SIZ;
+  PISTE[8,3]:=-CUB_SIZ;
+
+  XANGLE := 0.0;
+  YANGLE := 0.0;
+  ZANGLE := 0.0;
+  
+  clrScr;
+  REPEAT
+
+    XANGLE := XANGLE + 0.01;
+    YANGLE := YANGLE + 0.01;
+    ZANGLE := ZANGLE + 0.01;
+
+    PLAY;
+
+    { GotoXY(2,2); write( cos( 3.141596 / 4.0 ) );
+    GotoXY(2,3); write( cos( 3.141596 / 2.0 ) );
+    GotoXY(2,4); write( cos( 3.141596 / 1.0 ) ); }
+
+    choiceCh := '*';
+    if ( KeyPressed ) then
+        Read(Kbd,choiceCh);
+
+    for i:=1 to NAPPMAARA do
+    begin
+      NAPP[i]:=FALSE;
+    end;
+
+    if ( choiceCh = 'a' ) then
+      NAPP[1]:=TRUE;
+    if ( choiceCh = 's' ) then
+      NAPP[2]:=TRUE;
+    if ( choiceCh = 'd' ) then
+      NAPP[5]:=TRUE;
+
+  UNTIL ( choiceCh = 'q' );
+ 
+END.
