@@ -83,26 +83,29 @@ begin
  Bdos(225, addr(buffer) );
 end;
 
-procedure _drawShape(shape, x,y,w,h,stroke: integer; color: integer);
- var 
-   buffer : string[16];
-begin
- buffer[0] := Chr(16); { cause not ass. as a reg. str. }
- buffer[2] := #127; { readed as Str[1] }
- buffer[3] := Chr( shape );
- buffer[4] := Chr( stroke ); { 0-draw/1-fill }
- buffer[5] := Chr( color div 256 );
- buffer[6] := Chr( color mod 256 );
- buffer[7] := Chr( x div 256 );
- buffer[8] := Chr( x mod 256 );
- buffer[9] := Chr( y div 256 );
- buffer[10] := Chr( y mod 256 );
- buffer[11] := Chr( w div 256 );
- buffer[12] := Chr( w mod 256 );
- buffer[13] := Chr( h div 256 );
- buffer[14] := Chr( h mod 256 );
+var 
+  shBuff : string[16];
 
- Bdos(225, addr(buffer) );
+procedure _drawShape(shape, x,y,w,h,stroke: integer; color: integer);
+{ var 
+   shBuff : string[16]; }
+begin
+ shBuff[0] := Chr(16); { cause not ass. as a reg. str. }
+ shBuff[2] := #127; { readed as Str[1] }
+ shBuff[3] := Chr( shape );
+ shBuff[4] := Chr( stroke ); { 0-draw/1-fill }
+ shBuff[5] := Chr( color div 256 );
+ shBuff[6] := Chr( color mod 256 );
+ shBuff[7] := Chr( x div 256 );
+ shBuff[8] := Chr( x mod 256 );
+ shBuff[9] := Chr( y div 256 );
+ shBuff[10] := Chr( y mod 256 );
+ shBuff[11] := Chr( w div 256 );
+ shBuff[12] := Chr( w mod 256 );
+ shBuff[13] := Chr( h div 256 );
+ shBuff[14] := Chr( h mod 256 );
+
+ Bdos(225, addr(shBuff) );
 end;
 
 procedure drawRect(x,y,w,h,stroke: integer; color: integer);
