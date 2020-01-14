@@ -38,6 +38,8 @@ BEGIN
 END;
 
 PROCEDURE PLAY;
+var
+  tx, ty : INTEGER;
 BEGIN
   IF NAPP[1]=TRUE THEN XANGLE:=XANGLE+SPEED;
   IF NAPP[2]=TRUE THEN YANGLE:=YANGLE+SPEED;
@@ -65,6 +67,10 @@ BEGIN
   drawLine(OLDX[5]+MI_W,OLDY[5]+MI_H,OLDX[8]+MI_W,OLDY[8]+MI_H,C_BLK);
   drawLine(OLDX[6]+MI_W,OLDY[6]+MI_H,OLDX[7]+MI_W,OLDY[7]+MI_H,C_BLK);
   drawLine(OLDX[7]+MI_W,OLDY[7]+MI_H,OLDX[8]+MI_W,OLDY[8]+MI_H,C_BLK);
+  tx := OLDX[1]+MI_W;
+  ty := OLDY[1]+MI_H;
+  if ( (tx > 0) and (tx < 480-20) and (ty > 0) and (ty < 320-20) ) then
+    drawCircle(tx, ty,5, 1, C_BLK);
 
   drawLine(UUSIX[1]+MI_W,UUSIY[1]+MI_H,UUSIX[2]+MI_W,UUSIY[2]+MI_H,C_WHT);
   drawLine(UUSIX[1]+MI_W,UUSIY[1]+MI_H,UUSIX[4]+MI_W,UUSIY[4]+MI_H,C_WHT);
@@ -79,6 +85,15 @@ BEGIN
   drawLine(UUSIX[6]+MI_W,UUSIY[6]+MI_H,UUSIX[7]+MI_W,UUSIY[7]+MI_H,C_WHT);
   drawLine(UUSIX[7]+MI_W,UUSIY[7]+MI_H,UUSIX[8]+MI_W,UUSIY[8]+MI_H,C_WHT);
   
+  tx := UUSIX[1]+MI_W;
+  ty := UUSIY[1]+MI_H;
+
+  { if ( (tx > 0) and (tx < 480-20) and (ty > 0) and (ty < 320-20) ) then
+    drawSprite( 0, tx,ty ); }
+
+  if ( (tx > 0) and (tx < 480-20) and (ty > 0) and (ty < 320-20) ) then
+    drawCircle(tx, ty,5, 1, 3);
+
 END;
 
 BEGIN
@@ -111,6 +126,9 @@ BEGIN
   YANGLE := 0.0;
   ZANGLE := 0.0;
   
+ drawBmp('!sprite1.bmp'); {* loadSomeSprites *}
+ defineSprite(0, 0, 1, 19, 19); { upperL }
+
   clrScr;
   REPEAT
 
