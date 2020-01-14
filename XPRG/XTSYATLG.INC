@@ -35,8 +35,10 @@ begin
  color := 0;
  stroke := 0;
  shape := 1;
+ buffer := '';
 
  buffer[0] := Chr(16); { cause not ass. as a reg. str. }
+ buffer[1] := #127;
  buffer[2] := #128; { readed as Str[1] }
  buffer[3] := Chr( shape );
  buffer[4] := Chr( stroke ); { 0-draw/1-fill }
@@ -66,8 +68,9 @@ begin
  color := 0;
  stroke := 0;
  shape := 2;
-
+ buffer := '';
  buffer[0] := Chr(16); { cause not ass. as a reg. str. }
+ buffer[1] := #127;
  buffer[2] := #128; { readed as Str[1] }
  buffer[3] := Chr( shape );
  buffer[4] := Chr( stroke ); { 0-draw/1-fill }
@@ -90,8 +93,9 @@ procedure _drawShape(shape, x,y,w,h,stroke: integer; color: integer);
 { var 
    shBuff : string[16]; }
 begin
+ shBuff := '';
  shBuff[0] := Chr(16); { cause not ass. as a reg. str. }
- shBuff[1] := #0;
+ shBuff[1] := #127;
  shBuff[2] := #127; { readed as Str[1] }
  shBuff[3] := Chr( shape );
  shBuff[4] := Chr( stroke ); { 0-draw/1-fill }

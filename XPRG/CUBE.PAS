@@ -88,11 +88,11 @@ BEGIN
   tx := UUSIX[1]+MI_W;
   ty := UUSIY[1]+MI_H;
 
-  { if ( (tx > 0) and (tx < 480-20) and (ty > 0) and (ty < 320-20) ) then
-    drawSprite( 0, tx,ty ); }
-
   if ( (tx > 0) and (tx < 480-20) and (ty > 0) and (ty < 320-20) ) then
-    drawCircle(tx, ty,5, 1, 3);
+   begin
+    drawSprite( 0, tx,ty ); 
+    { drawCircle(tx, ty,5, 1, 3); }
+   end;
 
 END;
 
@@ -127,7 +127,7 @@ BEGIN
   ZANGLE := 0.0;
   
  drawBmp('!sprite1.bmp'); {* loadSomeSprites *}
- defineSprite(0, 0, 1, 19, 19); { upperL }
+ defineSprite(0, 0, 1, 19, 19);  { upperL }
 
   clrScr;
   REPEAT
