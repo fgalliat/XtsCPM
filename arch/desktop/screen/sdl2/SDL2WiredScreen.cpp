@@ -645,16 +645,18 @@ void *_xts_keyThread(void *argument){
                 color = picBuff[(yy * width) + (xx)];
                 // 'color' is 565 colored (for ILI9341 raw)
 
-			      #ifdef INTEL_MODE
-			        // Intel endian ?
-			        color = (color%256)*256 + color/256;
-			      #endif
+			    //   #ifdef INTEL_MODE
+			    //     // Intel endian ?
+			    //     color = (color%256)*256 + color/256;
+			    //   #endif
 			
-			      int _r = (unsigned int)((color >> 11) * (255/31) /* % (unsigned char)0xF8*/ );
-			      int _g = (unsigned int)(( ((color) >> 5) % (unsigned char)0x40) * (255/63) /*% (unsigned char)0xFC*/);
-			      int _b = (unsigned int)(color % (unsigned char)0x20) * (255/31);
+			    //   int _r = (unsigned int)((color >> 11) * (255/31) /* % (unsigned char)0xF8*/ );
+			    //   int _g = (unsigned int)(( ((color) >> 5) % (unsigned char)0x40) * (255/63) /*% (unsigned char)0xFC*/);
+			    //   int _b = (unsigned int)(color % (unsigned char)0x20) * (255/31);
 
-				c16b = rgb16( _r, _g, _b );
+				// c16b = rgb16( _r, _g, _b );
+
+                c16b = color;
 
                 drawPixel(x + xx, y + yy, c16b );
             }

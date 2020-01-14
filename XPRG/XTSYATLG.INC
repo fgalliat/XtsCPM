@@ -91,6 +91,7 @@ procedure _drawShape(shape, x,y,w,h,stroke: integer; color: integer);
    shBuff : string[16]; }
 begin
  shBuff[0] := Chr(16); { cause not ass. as a reg. str. }
+ shBuff[1] := #0;
  shBuff[2] := #127; { readed as Str[1] }
  shBuff[3] := Chr( shape );
  shBuff[4] := Chr( stroke ); { 0-draw/1-fill }
