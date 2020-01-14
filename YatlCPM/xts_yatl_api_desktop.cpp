@@ -168,6 +168,8 @@ extern uint16_t spriteArea[];
          return;
       }
  
+
+
       FILE* bmpFile;
       int bmpWidth, bmpHeight;             // W+H in pixels
       uint8_t bmpDepth;                    // Bit depth (currently must be 24)
@@ -220,6 +222,7 @@ extern uint16_t spriteArea[];
             }
 
             if ((x >= bmpWidth) || (y >= bmpHeight)) {
+               fclose(bmpFile);
                yatl.warn("Sprite OutOfBounds");
                return;
             }
@@ -264,11 +267,17 @@ extern uint16_t spriteArea[];
                   g = sdbuffer[buffidx++];
                   r = sdbuffer[buffidx++];
                   awColors[col] = rgb(r, g, b);
+
+                  // WHITESCREEN BUGFIX 14/01/2020
+                  spriteArea[ (row*SPRITE_AREA_WIDTH)+col ] = awColors[col];
                } // end pixel
 
                // tft.writeRect(0, row, w, 1, awColors);
                // *2 Cf uint16_t
-               memcpy( &spriteArea[ (row*SPRITE_AREA_WIDTH)+col ], &awColors[x], w*2 );
+
+               // WHITESCREEN BUGFIX 14/01/2020
+            //   memcpy( &spriteArea[ (row*SPRITE_AREA_WIDTH)+col ], &awColors[x], w*2 );
+            
 
             } // end scanline
             // long timeElapsed = millis() - startTime;

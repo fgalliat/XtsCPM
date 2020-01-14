@@ -184,16 +184,22 @@
 
   extern void drawImgFromPAK(char* filename, int x, int y, int numInPak);
 
+  char v_memseg[256];
   int32 XtsBdosCall(uint8 regNum, int32 value) {
     if ( regNum == 225 ) {
 
-      char test[256];
-      getStringFromRam(value, test, 256);
+      memset( v_memseg, 0x00, 256 );
+      getStringFromRam(value, v_memseg, 256);
 
 
-      if ( (unsigned char)test[1] >= 0x7F ) {
-        return drawRoutine( test );
+      if ( (unsigned char)v_memseg[1] >= 0x7F ) {
+        return drawRoutine( v_memseg );
       }
+
+      char test[256];
+      memset( test, 0x00, 256 );
+      memcpy( &test[0], &v_memseg[0], 256 );
+
 
       yatl.dbug("/===== BDos PString call =====\\");
       yatl.dbug(test);
