@@ -40,3 +40,5 @@ Xtase - fgalliat
 - [ ] wire HDMI output
 - [ ] wire RCA output
 - [ ] wire USB ext.
+
+![ZXts unit](./zxts_cube.jpg)
