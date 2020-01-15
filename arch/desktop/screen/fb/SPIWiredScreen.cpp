@@ -487,8 +487,6 @@ void WiredScreen::write(char ch) {
 
     
     void WiredScreen::drawColoredImg(int x, int y, int width, int height, uint16_t* picBuff) {
-    	// int width = scanSize / height / 2;
-        // width = scanSize; //???
         uint16_t color, c16b;
         for (int yy = 0; yy < height; yy++)
         {
@@ -497,19 +495,11 @@ void WiredScreen::write(char ch) {
                 color = picBuff[(yy * width) + (xx)];
                 // 'color' is 565 colored (for ILI9341 raw)
 
-			      #ifdef INTEL_MODE
-			        // Intel endian ?
-			        color = (color%256)*256 + color/256;
-			      #endif
-			
-      // still needed ?
-			  //     int _r = (unsigned int)((color >> 11) * (255/31) /* % (unsigned char)0xF8*/ );
-			  //     int _g = (unsigned int)(( ((color) >> 5) % (unsigned char)0x40) * (255/63) /*% (unsigned char)0xFC*/);
-			  //     int _b = (unsigned int)(color % (unsigned char)0x20) * (255/31);
-
-				// c16b = rgb16( _r, _g, _b );
-        c16b = color;
-
+                #ifdef INTEL_MODE
+                  // Intel endian ?
+                  color = (color%256)*256 + color/256;
+                #endif
+                c16b = color;
                 drawPixel(x + xx, y + yy, c16b );
             }
         }
@@ -635,9 +625,22 @@ void WiredScreen::write(char ch) {
                    (((y*zoom)+scrOffsetY)+vinfo.yoffset) * finfo.line_length;
         #ifdef MODE32BPP
             // if (vinfo.bits_per_pixel == 32) {
-            int _r = (unsigned int)((color >> 11) * (255/31) /* % (unsigned char)0xF8*/ );
-            int _g = (unsigned int)(( ((color) >> 5) % (unsigned char)0x40) * (255/63) /*% (unsigned char)0xFC*/);
-            int _b = (unsigned int)(color % (unsigned char)0x20) * (255/31);
+
+            int _r = 0;
+            int _g = 0;
+            int _b = 0;
+
+            if ( color > 0 ) {
+                if ( color >= 65530 ) {
+                    _r = 255;
+                    _g = 255;
+                    _b = 255;
+                } else {
+                    _r = (unsigned int)((color >> 11) * (255/31) );
+                    _g = (unsigned int)(( ((color) >> 5) % (unsigned char)0x40) * (255/63));
+                    _b = (unsigned int)(color % (unsigned char)0x20) * (255/31);
+                }
+            }
 
                 *(fbp + location)     = _b;    // Some blue
                 *(fbp + location + 1) = _g;    // A little green

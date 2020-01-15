@@ -764,14 +764,21 @@ void *_xts_keyThread(void *argument){
         bool forceDirectColor = true;
 
         if ( forceDirectColor || color > 8 ) {
-            #ifdef INTEL_MODE
-                // Intel endian ?
-//                color = (color%256)*256 + color/256;
-            #endif
+            int _r = 0;
+            int _g = 0;
+            int _b = 0;
 
-            int _r = (unsigned int)((color >> 11) * (255/31) /* % (unsigned char)0xF8*/ );
-            int _g = (unsigned int)(( ((color) >> 5) % (unsigned char)0x40) * (255/63) /*% (unsigned char)0xFC*/);
-            int _b = (unsigned int)(color % (unsigned char)0x20) * (255/31);
+            if ( color > 0 ) {
+                if ( color >= 65530 ) {
+                    _r = 255;
+                    _g = 255;
+                    _b = 255;
+                } else {
+                    _r = (unsigned int)((color >> 11) * (255/31) );
+                    _g = (unsigned int)(( ((color) >> 5) % (unsigned char)0x40) * (255/63));
+                    _b = (unsigned int)(color % (unsigned char)0x20) * (255/31);
+                }
+            }
 
                 if (_DBUG) {
                     printf("r=%d g=%d b=%d \n", _r, _g, _b);
