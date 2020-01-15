@@ -28,6 +28,7 @@
 
         void writestr(const char* string);
         void write(void* data, size_t len);
+        void write(uint8_t ch);
         size_t read(void* buffer, size_t charsToRead);
         
         void close();

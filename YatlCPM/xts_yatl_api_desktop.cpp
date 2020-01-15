@@ -858,9 +858,9 @@ extern uint16_t spriteArea[];
     }
 
     void YatlSubMCU::flush() { /*BRIDGE_MCU_SERIAL.flush(); */ }
-    void YatlSubMCU::send(char ch) { /* BRIDGE_MCU_SERIAL.write( ch ); */ }
-    void YatlSubMCU::send(const char* str) { /* BRIDGE_MCU_SERIAL.print( str ); */ }
-    void YatlSubMCU::send(char* str) { /* BRIDGE_MCU_SERIAL.print( str ); */ }
+    void YatlSubMCU::send(char ch) { subMCUSerial.write( ch ); }
+    void YatlSubMCU::send(const char* str) { subMCUSerial.writestr(str); }
+    void YatlSubMCU::send(char* str) { subMCUSerial.writestr( (const char*)str); }
 
     void YatlSubMCU::println(const char* str) { /* BRIDGE_MCU_SERIAL.println( str ); */ }
 
@@ -959,9 +959,9 @@ memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
 
     // ==============] LEDs [==================
 
-    void YatlLEDs::red(bool state) { this->yatl->getSubMCU()->send( state ? "l1xx" : "l0xx" ); }
-    void YatlLEDs::green(bool state) { this->yatl->getSubMCU()->send( state ? "lx1x" : "lx0x" ); }
-    void YatlLEDs::blue(bool state) { this->yatl->getSubMCU()->send( state ? "lxx1" : "lxx0" ); }
+    void YatlLEDs::red(bool state) { this->yatl->getSubMCU()->send( state ? "l11" : "l10" ); }
+    void YatlLEDs::green(bool state) { this->yatl->getSubMCU()->send( state ? "l21" : "l20" ); }
+    void YatlLEDs::blue(bool state) { this->yatl->getSubMCU()->send( state ? "l31" : "l30" ); }
     void YatlLEDs::builtin(bool state) { this->yatl->led(state); }
 
     // ==============] WiFi [==================

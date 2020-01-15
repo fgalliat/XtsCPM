@@ -128,6 +128,11 @@ void Serial::putchar(char *c, int n)
 	::write(tty_fd, c, n);
 }
 
+void Serial::write(uint8_t c)
+{
+	this->putchar(c);
+}
+
 int Serial::readSerial()
 {
 	// en attendant la nouvelle version
