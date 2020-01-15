@@ -33,8 +33,8 @@ BEGIN
   Z*(cYAN*sZAN*sXAN-cXAN*sYAN));
   NEWY:=ROUND(X*(cXAN*sYAN*sZAN-cYAN*sXAN)+Y*(cZAN*cXAN)+
   Z*(cYAN*cXAN*sZAN+sYAN*sXAN));
-  NEWZ:=ROUND(X*(cYAN*sZAN*sXAN-cXAN*sYAN)+Y*(-sZAN)+
-  Z*(cYAN*cZAN));
+  { NEWZ:=ROUND(X*(cYAN*sZAN*sXAN-cXAN*sYAN)+Y*(-sZAN)+
+  Z*(cYAN*cZAN)); }
 END;
 
 PROCEDURE PLAY;
