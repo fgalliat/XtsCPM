@@ -16,6 +16,7 @@
     #include "Arduino.h"
     #else 
     #include "Desktop.h"
+    #define TTY_MCU_PORT "/dev/ttyACM1"
     #endif
 
     // #include "xts_string.h"
@@ -25,6 +26,9 @@
     // @@@@@@@@@@@@@@@@@@
     #include "../arch/desktop/screen/WiredScreen.h"
     WiredScreen sdlScreen;
+    // @@@@@@@@@@@@@@@@@@
+    #include "../arch/desktop/serial/Serial.h"
+    Serial subMCUSerial(TTY_MCU_PORT, 115200);
     // @@@@@@@@@@@@@@@@@@
 
     #include "xts_yatl_settings.h"
@@ -632,8 +636,13 @@ extern uint16_t spriteArea[];
         this->getBuzzer()->beep(440, 100);
     }
 
+    char ledMsg[3+1];
     void Yatl::led(bool state) {
-        digitalWrite(BUILTIN_LED, state ? HIGH : LOW);
+        // digitalWrite(BUILTIN_LED, state ? HIGH : LOW);
+
+        sprintf( ledMsg, "l%d%d", 0, state ? 1 : 0 );
+
+        subMCUSerial.writestr(ledMsg);
     }
 
     void Yatl::blink(int times) {
