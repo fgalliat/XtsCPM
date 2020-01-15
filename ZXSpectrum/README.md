@@ -43,6 +43,8 @@ Xtase - fgalliat
   - [ ] ```
     == SubMCU Protocol ==
     
+    @		PING => '@'					PING THE MODULE
+    
     lxy		LED x{0..7} y{0..1}			SWITCH ON/OFF 1 LED
     Lx		LEDs x{0..255}				SWITCH MASK   8 LEDs
     
@@ -54,7 +56,7 @@ Xtase - fgalliat
     
     p		(UN)PAUSE MP3				PAUSE MP3 PLAYBACK
     Pxx		PLAY MP3 x{1..999}			PLAY MP3 TRACK
-    Lxx		LOOP MP3
+    Xxx		LOOP MP3					LOOP MP3 TRACK
     S		STOP MP3					STOP MP3 PLAYBACK
     vx		VOLUME x{0..30}				SET MP3 VOLUME
     M		IS PLAYING ? => {0..1}		ASK IF MP3 BUSY
