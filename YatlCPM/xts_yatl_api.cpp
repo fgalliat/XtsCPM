@@ -528,6 +528,33 @@ memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
     void YatlLEDs::blue(bool state) { this->yatl->getSubMCU()->send( state ? "lxx1" : "lxx0" ); }
     void YatlLEDs::builtin(bool state) { this->yatl->led(state); }
 
+    void YatlLEDs::any(int num, bool state) {
+        if ( num == 1 ) { red(state); }
+        else if ( num == 2 ) { green(state); }
+        else if ( num == 3 ) { blue(state); }
+        else builtin(state); // 0 & others
+    }
+
+    void YatlLEDs::mask(uint8_t mask) {
+        // TODO : better
+        if ( (mask & 128) == 128 ) { any(7, true); }
+        else { any(7, false); }
+        if ( (mask & 64) == 64 ) { any(6, true); }
+        else { any(6, false); }
+        if ( (mask & 32) == 32 ) { any(5, true); }
+        else { any(5, false); }
+        if ( (mask & 16) == 16 ) { any(4, true); }
+        else { any(4, false); }
+        if ( (mask & 8) == 8 ) { any(3, true); }
+        else { any(3, false); }
+        if ( (mask & 4) == 4 ) { any(2, true); }
+        else { any(2, false); }
+        if ( (mask & 2) == 2 ) { any(1, true); }
+        else { any(1, false); }
+        if ( (mask & 1) == 1 ) { any(0, true); }
+        else { any(0, false); }
+    }
+
     // ==============] WiFi [==================
 
     bool YatlWiFi::beginSTA() { 

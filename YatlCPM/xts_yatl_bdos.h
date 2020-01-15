@@ -290,15 +290,21 @@
         yatl.getPWRManager()->deepSleep();
       } else if ( hiB == 3 ) {
         uint8_t loB = LOW_REGISTER(value);
-        bool r = false;
-        bool g = false;
-        bool b = false;
-        if ( (loB & 4) == 4 ) { r = true; }
-        if ( (loB & 2) == 2 ) { g = true; }
-        if ( (loB & 1) == 1 ) { b = true; }
-        yatl.getLEDs()->red(r);
-        yatl.getLEDs()->green(g);
-        yatl.getLEDs()->blue(b);
+        yatl.getLEDs()->mask(loB);
+        // bool r = false;
+        // bool g = false;
+        // bool b = false;
+        // if ( (loB & 128) == 128 ) { r = true; }
+        // if ( (loB & 64) == 64 ) { r = true; }
+        // if ( (loB & 32) == 32 ) { r = true; }
+        // if ( (loB & 16) == 16 ) { r = true; }
+        // if ( (loB & 8) == 8 ) { r = true; }
+        // if ( (loB & 4) == 4 ) { r = true; }
+        // if ( (loB & 2) == 2 ) { g = true; }
+        // if ( (loB & 1) == 1 ) { b = true; }
+        // yatl.getLEDs()->red(r);
+        // yatl.getLEDs()->green(g);
+        // yatl.getLEDs()->blue(b);
       } else if ( hiB == 4 ) {
         return yatl.getFS()->downloadFromSerial() ? 1 : 0;
       } else if ( hiB == 5 ) {

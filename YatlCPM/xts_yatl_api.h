@@ -218,6 +218,9 @@ class YatlLEDs {
       void green(bool state=true);
       void blue(bool state=true);
       void builtin(bool state=true);
+      /** num : 0..7 */
+      void any(int num, bool state=true);
+      void mask(uint8_t mask);
 };
 
 

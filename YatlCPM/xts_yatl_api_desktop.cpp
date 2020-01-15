@@ -639,9 +639,7 @@ extern uint16_t spriteArea[];
     char ledMsg[3+1];
     void Yatl::led(bool state) {
         // digitalWrite(BUILTIN_LED, state ? HIGH : LOW);
-
         sprintf( ledMsg, "l%d%d", 0, state ? 1 : 0 );
-
         subMCUSerial.writestr(ledMsg);
     }
 
@@ -963,6 +961,31 @@ memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
     void YatlLEDs::green(bool state) { this->yatl->getSubMCU()->send( state ? "l21" : "l20" ); }
     void YatlLEDs::blue(bool state) { this->yatl->getSubMCU()->send( state ? "l31" : "l30" ); }
     void YatlLEDs::builtin(bool state) { this->yatl->led(state); }
+
+    void YatlLEDs::any(int num, bool state) {
+        sprintf( ledMsg, "l%d%d", num, state ? 1 : 0 );
+        subMCUSerial.writestr(ledMsg);
+    }
+
+    void YatlLEDs::mask(uint8_t mask) {
+        // TODO : better
+        if ( (mask & 128) == 128 ) { any(7, true); }
+        else { any(7, false); }
+        if ( (mask & 64) == 64 ) { any(6, true); }
+        else { any(6, false); }
+        if ( (mask & 32) == 32 ) { any(5, true); }
+        else { any(5, false); }
+        if ( (mask & 16) == 16 ) { any(4, true); }
+        else { any(4, false); }
+        if ( (mask & 8) == 8 ) { any(3, true); }
+        else { any(3, false); }
+        if ( (mask & 4) == 4 ) { any(2, true); }
+        else { any(2, false); }
+        if ( (mask & 2) == 2 ) { any(1, true); }
+        else { any(1, false); }
+        if ( (mask & 1) == 1 ) { any(0, true); }
+        else { any(0, false); }
+    }
 
     // ==============] WiFi [==================
 
