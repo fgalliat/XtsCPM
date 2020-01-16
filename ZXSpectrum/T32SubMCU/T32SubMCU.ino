@@ -96,7 +96,7 @@ void loop() {
       } 
       // ====== BUZZER ======
       else if ( ch == 'b' ) { // simple beep
-        beep(440, 200);
+        beep(440/20, 200/50);
       } else if ( ch == 'B' ) { // beep noteOrFreq,duration
         uint8_t f0 = (uint8_t)bridgeWait();
         uint8_t f1 = (uint8_t)bridgeWait();

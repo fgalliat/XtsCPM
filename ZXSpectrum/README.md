@@ -43,29 +43,28 @@ Xtase - fgalliat
   - [ ] ```
     == SubMCU Protocol ==
     
-    @		PING => '@'					PING THE MODULE
+    @		PING => '@'					PING THE MODULE					[x]
     
-    lxy		LED x{0..7} y{0..1}			SWITCH ON/OFF 1 LED
-    Lx		LEDs x{0..255}				SWITCH MASK   8 LEDs
+    lxy		LED x{0..7} y{0..1}			SWITCH ON/OFF 1 LED				[x]
+    Lx		LEDs x{0..255}				SWITCH MASK   8 LEDs			[x]
     
-    b		BEEP						EMIT a single beep
-    Bxxyy	BEEP x{freqOrNote}{durMS}	TONE a sound (0..48 : notes)
-    q{str}	PLAY STRING "A#CCD"			PLAY a notes sequence
-    t{bin}  PLAY TUNE T5K				PLAYS a T5K tune file
-    T{bin}  PLAY TUNE T53				PLAYS a T53 tune file
+    b		BEEP						EMIT a single beep				[x]
+    Bxxyy	BEEP x{freqOrNote}{durMS}	TONE a sound (0..48 : notes)    [x]
+    q{str}	PLAY STRING "A#CCD"			PLAY a notes sequence           [x]
+    t{bin}  PLAY TUNE T5K				PLAYS a T5K tune file           [ ]
+    T{bin}  PLAY TUNE T53				PLAYS a T53 tune file           [ ]
     
-    p		(UN)PAUSE MP3				PAUSE MP3 PLAYBACK
-    Pxx		PLAY MP3 x{1..999}			PLAY MP3 TRACK
-    Xxx		LOOP MP3					LOOP MP3 TRACK
-    S		STOP MP3					STOP MP3 PLAYBACK
-    vx		VOLUME x{0..30}				SET MP3 VOLUME
-    M		IS PLAYING ? => {0..1}		ASK IF MP3 BUSY
-    N		Next						PLAY NEXT TRACK
-    V		preVious					PLAY PREV. TRACK
+    p		(UN)PAUSE MP3				PAUSE MP3 PLAYBACK           	[ ]
+    Pxx		PLAY MP3 x{1..999}			PLAY MP3 TRACK           		[ ]
+    Xxx		LOOP MP3					LOOP MP3 TRACK           		[ ]
+    S		STOP MP3					STOP MP3 PLAYBACK           	[ ]
+    vx		VOLUME x{0..30}				SET MP3 VOLUME           		[ ]
+    M		IS PLAYING ? => {0..1}		ASK IF MP3 BUSY                 [ ]
+    N		Next						PLAY NEXT TRACK                 [ ]
+    V		preVious					PLAY PREV. TRACK           		[ ]
     
     ```
   
-    
 - [ ] mount USB HUB
 - [ ] ? mount card reader ?
 - [ ] wire HDMI output
