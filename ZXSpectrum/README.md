@@ -72,4 +72,6 @@ Xtase - fgalliat
 - [ ] wire RCA output
 - [ ] wire USB ext.
 
+- [ ] add a WebFileEditor (httpd) as WiFiServerMode (directly linked to YatlCPM FS)
+
 ![ZXts unit](./zxts_cube.jpg)
