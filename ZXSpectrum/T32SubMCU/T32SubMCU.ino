@@ -14,6 +14,8 @@ int ledPins[NB_LEDS] = { 14, 15, 16, 17, 18, 19, 20, 21 };
 #define mp3Serial Serial2
 
 #define BUZZER_PIN 22
+#include "notes.h"
+#include "speaker.h"
 
 int bridgeAvailable() { return Serial.available(); }
 int bridgeRead() { return Serial.read(); }
@@ -23,6 +25,9 @@ int bridgeWait() {
 }
 void bridgeWrite(uint8_t bt) { Serial.write(bt); }
 
+int bridgeWaitStrZT(char* str, int maxLen) {
+  return Serial.readBytesUntil( 0x00, str, maxLen );
+}
 
 void led(int num, bool state) {
     digitalWrite( ledPins[num], state ? HIGH : LOW );
@@ -96,11 +101,16 @@ void loop() {
         uint8_t f0 = (uint8_t)bridgeWait();
         uint8_t f1 = (uint8_t)bridgeWait();
         uint8_t d0 = (uint8_t)bridgeWait();
-        uint8_t d1 = (uint8_t)bridgeWait();
 
         uint16_t freqOrNote = (f0 << 8) + f1;
-        uint16_t duration   = (d0 << 8) + d1;
+        uint8_t duration   = (d0); // * 50
         beep(freqOrNote, duration);
+      } else if ( ch == 'q' ) {
+        char str[256]; memset(str, 0x00, 256);
+        int tlen = bridgeWaitStrZT( str, 256-1 );
+        if ( tlen > 0 ) {
+          playTuneString( (const char*)str );
+        }
       }
 
       // ====== MP3 =================
@@ -132,10 +142,24 @@ void loop() {
   delay(5);
 }
 
-void beep(uint16_t freqOrNote, uint16_t duration) {
-  // TODO : check note
-  tone(BUZZER_PIN, freqOrNote, duration);
-  delay(duration);
+// note is {1..48} / freq is {49.4096}
+// beeps for 1/50 msec
+void beep(uint16_t freqOrNote, uint8_t duration) {
+
+  if ( freqOrNote >= 1 && freqOrNote <= 48 ) {
+      // 0..48 octave2 to 5
+      freqOrNote = notes[ freqOrNote-1 ];
+  } else if ( freqOrNote >= 49 && freqOrNote <= 4096 ) {
+      // 49..4096 -> 19200/note in Hz
+      freqOrNote *= 20;
+  } else {
+      freqOrNote = 0;
+  }
+
+  int dd = duration * 50;
+
+  tone(BUZZER_PIN, freqOrNote, dd);
+  delay(dd);
   noTone(BUZZER_PIN);
 }
 
