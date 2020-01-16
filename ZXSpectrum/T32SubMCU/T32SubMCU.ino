@@ -56,7 +56,7 @@ void loop() {
       char ch = (char)bridgeRead();
 
       if ( ch == '@' ) { // PING the module to probe the port
-	bridgeWrite('@');
+      	bridgeWrite('@');
       }  
 
 
@@ -77,50 +77,49 @@ void loop() {
 
           led( (int)ledCh, ((int)stateCh != 0) );
 
-          Serial.print("LED:");Serial.print( (int)ledCh);
-          Serial.print(":");Serial.print( (int)stateCh);
-          Serial.println("");
+          // Serial.print("LED:");Serial.print( (int)ledCh);
+          // Serial.print(":");Serial.print( (int)stateCh);
+          // Serial.println("");
 
       } else if ( ch == 'L' ) { // LED mask {0..255} controls 8 LEDs
-	  uint8_t mask = (uint8_t)bridgeWait();
-	  ledMask(mask);
+          uint8_t mask = (uint8_t)bridgeWait();
+          ledMask(mask);
       } 
       // ====== BUZZER ======
       else if ( ch == 'b' ) { // simple beep
-	  uint8_t mask = (uint8_t)bridgeWait();
-	  beep(440, 200);
+        beep(440, 200);
       } else if ( ch == 'B' ) { // beep noteOrFreq,duration
-	  uint8_t f0 = (uint8_t)bridgeWait();
-	  uint8_t f1 = (uint8_t)bridgeWait();
-	  uint8_t d0 = (uint8_t)bridgeWait();
-	  uint8_t d1 = (uint8_t)bridgeWait();
+        uint8_t f0 = (uint8_t)bridgeWait();
+        uint8_t f1 = (uint8_t)bridgeWait();
+        uint8_t d0 = (uint8_t)bridgeWait();
+        uint8_t d1 = (uint8_t)bridgeWait();
 
-	  uint16_t freqOrNote = (f0 << 8) + f1;
-	  uint16_t duration   = (d0 << 8) + d1;
-	  beep(freqOrNote, duration);
+        uint16_t freqOrNote = (f0 << 8) + f1;
+        uint16_t duration   = (d0 << 8) + d1;
+        beep(freqOrNote, duration);
       }
 
       // ====== MP3 =================
       else if ( ch == 'M' ) { // isPlaying
-          bridgeWrite( 0 ); // not plaing for now
+          bridgeWrite( isMp3Playing() ? 1 : 0 ); // not playing for now
       } else if ( ch == 'P' ) {
-	uint8_t t0 = (uint8_t)bridgeWait();
-	uint8_t t1 = (uint8_t)bridgeWait();
-	uint16_t track = (t0 << 8) + t1;
-        playMp3( track );  
+          uint8_t t0 = (uint8_t)bridgeWait();
+          uint8_t t1 = (uint8_t)bridgeWait();
+          uint16_t track = (t0 << 8) + t1;
+          playMp3( track );  
       } else if ( ch == 'X' ) {
-	uint8_t t0 = (uint8_t)bridgeWait();
-	uint8_t t1 = (uint8_t)bridgeWait();
-	uint16_t track = (t0 << 8) + t1;
+        uint8_t t0 = (uint8_t)bridgeWait();
+        uint8_t t1 = (uint8_t)bridgeWait();
+        uint16_t track = (t0 << 8) + t1;
         loopMp3( track );  
       } else if ( ch == 'p' ) { pauseMp3(); }
         else if ( ch == 'X' ) { stopMp3(); }
         else if ( ch == 'N' ) { nextMp3(); }
-	else if ( ch == 'V' ) { prevMp3(); }
-	else if ( ch == 'v' ) {
-	  uint8_t vol = (uint8_t)bridgeWait();
+        else if ( ch == 'V' ) { prevMp3(); }
+        else if ( ch == 'v' ) {
+	        uint8_t vol = (uint8_t)bridgeWait();
           volumeMp3( vol );
-	}
+	    }
 
       // ====== Aux. Serial  ========
 
@@ -128,3 +127,15 @@ void loop() {
   }
   delay(5);
 }
+
+void beep(uint16_t freqOrNote, uint16_t duration) {}
+
+bool isMp3Playing() { return false; }
+void playMp3(uint16_t trackNum) { ; }
+void loopMp3(uint16_t trackNum) { ; }
+void pauseMp3() { ; }
+void stopMp3() { ; }
+void nextMp3() { ; }
+void prevMp3() { ; }
+void volumeMp3(uint8_t vol) { ; }
+
