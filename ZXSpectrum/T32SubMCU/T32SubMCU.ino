@@ -13,6 +13,7 @@ int ledPins[NB_LEDS] = { 14, 15, 16, 17, 18, 19, 20, 21 };
 
 #define mp3Serial Serial2
 
+#define BUZZER_PIN 22
 
 int bridgeAvailable() { return Serial.available(); }
 int bridgeRead() { return Serial.read(); }
@@ -48,6 +49,9 @@ void setup() {
       pinMode( ledPins[i], OUTPUT );
       led( i, false );
   }
+
+  pinMode(BUZZER_PIN, OUTPUT);
+  digitalWrite(BUZZER_PIN, LOW);
 
 }
 
@@ -128,7 +132,12 @@ void loop() {
   delay(5);
 }
 
-void beep(uint16_t freqOrNote, uint16_t duration) {}
+void beep(uint16_t freqOrNote, uint16_t duration) {
+  // TODO : check note
+  tone(BUZZER_PIN, freqOrNote, duration);
+  delay(duration);
+  noTone(BUZZER_PIN);
+}
 
 bool isMp3Playing() { return false; }
 void playMp3(uint16_t trackNum) { ; }
