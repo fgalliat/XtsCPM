@@ -41,12 +41,20 @@
 
     void YatlBuzzer::beep(int freq, int dur) {
         // use SDL if available
-        printf("beep(x,y)\n");
+        // printf("beep(x,y)\n");
+        this->yatl->getSubMCU()->send('B');
+        int frq = freq / 20;
+        this->yatl->getSubMCU()->send(frq / 256);
+        this->yatl->getSubMCU()->send(frq % 256);
+        this->yatl->getSubMCU()->send(dur / 50);
     }
 
     void YatlBuzzer::playTuneString(const char* str) {
         // use SDL if available
-        printf("playTuneString(...)\n");
+        // printf("playTuneString(...)\n");
+        this->yatl->getSubMCU()->send('q');
+        this->yatl->getSubMCU()->send(str);
+        this->yatl->getSubMCU()->send((char)0x00);
     }
 
     bool YatlBuzzer::playTuneFile(const char* file) {
@@ -969,22 +977,24 @@ memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
 
     void YatlLEDs::mask(uint8_t mask) {
         // TODO : better
-        if ( (mask & 128) == 128 ) { any(7, true); }
-        else { any(7, false); }
-        if ( (mask & 64) == 64 ) { any(6, true); }
-        else { any(6, false); }
-        if ( (mask & 32) == 32 ) { any(5, true); }
-        else { any(5, false); }
-        if ( (mask & 16) == 16 ) { any(4, true); }
-        else { any(4, false); }
-        if ( (mask & 8) == 8 ) { any(3, true); }
-        else { any(3, false); }
-        if ( (mask & 4) == 4 ) { any(2, true); }
-        else { any(2, false); }
-        if ( (mask & 2) == 2 ) { any(1, true); }
-        else { any(1, false); }
-        if ( (mask & 1) == 1 ) { any(0, true); }
-        else { any(0, false); }
+        // if ( (mask & 128) == 128 ) { any(7, true); }
+        // else { any(7, false); }
+        // if ( (mask & 64) == 64 ) { any(6, true); }
+        // else { any(6, false); }
+        // if ( (mask & 32) == 32 ) { any(5, true); }
+        // else { any(5, false); }
+        // if ( (mask & 16) == 16 ) { any(4, true); }
+        // else { any(4, false); }
+        // if ( (mask & 8) == 8 ) { any(3, true); }
+        // else { any(3, false); }
+        // if ( (mask & 4) == 4 ) { any(2, true); }
+        // else { any(2, false); }
+        // if ( (mask & 2) == 2 ) { any(1, true); }
+        // else { any(1, false); }
+        // if ( (mask & 1) == 1 ) { any(0, true); }
+        // else { any(0, false); }
+        this->yatl->getSubMCU()->send('L');
+        this->yatl->getSubMCU()->send((char)mask);
     }
 
     // ==============] WiFi [==================
