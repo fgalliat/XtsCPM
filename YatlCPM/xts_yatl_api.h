@@ -91,6 +91,7 @@ class YatlMusicPlayer {
       void next();
       void prev();
       void volume(uint8_t vol);
+      bool isPlaying();
 };
 
 class YatlClock {

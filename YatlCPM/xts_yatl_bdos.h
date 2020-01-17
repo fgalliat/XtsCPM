@@ -201,23 +201,23 @@
       memcpy( &test[0], &v_memseg[0], 256 );
 
 
-      yatl.dbug("/===== BDos PString call =====\\");
-      yatl.dbug(test);
+      // yatl.dbug("/===== BDos PString call =====\\");
+      // yatl.dbug(test);
 
       upper(test);
 
       if ( endsWith(test, (char*)".BMP") ) {
         if ( test[0] == '!' ) {
-          yatl.dbug("|  Wanna grabb a BMP SpriteBoard |");
+          // yatl.dbug("|  Wanna grabb a BMP SpriteBoard |");
           yatl.getScreen()->cleanSprites();
           yatl.getScreen()->grabbSprites( &test[1], 0, 0 );
         } else {
-          yatl.dbug("|  Wanna draw a BMP wallpaper |");
+          // yatl.dbug("|  Wanna draw a BMP wallpaper |");
           yatl.getScreen()->drawWallpaper( test );
         }
 
       } else if ( endsWith(test, (char*)".PAK") ) {
-        yatl.dbug("|  Wanna draw a PAK image |");
+        // yatl.dbug("|  Wanna draw a PAK image |");
 
         int numImg = (int)test[0]-1; // 1 based
         int x = -1;
@@ -261,7 +261,7 @@
         yatl.dbug(" -type wallpaper? |");
       }
 
-      yatl.dbug("\\===== BDos PString call =====/");
+      // yatl.dbug("\\===== BDos PString call =====/");
     } else if ( regNum == 226 ) {
      return xbdos_console(value);
     } else if ( regNum == 227 ) {
@@ -346,8 +346,7 @@
 
   // ==============] mp3 Hardware Control [==========
   uint8_t mp3BdosCall(int32 value) {
-      yatl.dbug("mp3 Bdos call");
-      // int trckNum += (128+64) << 8
+      // yatl.dbug("mp3 Bdos call");
 
       uint8_t a0 = HIGH_REGISTER(value);
       uint8_t a1 = LOW_REGISTER(value);
@@ -362,17 +361,11 @@
          a0 -= 64;
          int trkNum = (a0<<8) + a1;
 
-if ( loopMode ) yatl.dbug("mp3 LOOP");
-yatl.dbug("mp3 play");
-// yatl.dbug(trkNum);
-
          if ( loopMode ) { yatl.getMusicPlayer()->loop(trkNum); }
          else { yatl.getMusicPlayer()->play(trkNum); }
       } else if (a0 == 0x00) {
-yatl.dbug("mp3 stop");
           yatl.getMusicPlayer()->stop();
       } else if (a0 == 0x01) {
-yatl.dbug("mp3 pause");
           yatl.getMusicPlayer()->pause();
       } else if (a0 == 0x02) {
           yatl.getMusicPlayer()->next();
@@ -381,9 +374,10 @@ yatl.dbug("mp3 pause");
       } else if (a0 == 0x04) {
           yatl.getMusicPlayer()->volume( a1 );
       } else if (a0 == 0x05) {
-yatl.dbug("mp3 demo");
           // for now : just for demo
           yatl.getMusicPlayer()->play( 65 );
+      } else if (a0 == 0x06) {
+          return yatl.getMusicPlayer()->isPlaying() ? 1 : 0;
       }
 
     return 0;

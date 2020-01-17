@@ -12,12 +12,12 @@
  */
 
     #warning "-= Yatl API Desktop Mode =-"
-    #ifdef ARDUINO
-    #include "Arduino.h"
-    #else 
+    // #ifdef ARDUINO
+    // #include "Arduino.h"
+    // #else 
     #include "Desktop.h"
     #define TTY_MCU_PORT "/dev/ttyACM1"
-    #endif
+    // #endif
 
     // #include "xts_string.h"
 
@@ -125,34 +125,10 @@
    }
 
 
-extern uint16_t spriteArea[];
-//     uint16_t spriteArea[ SPRITE_AREA_SIZE ];
-//    Sprite sprites[NB_SPRITES];
-
-//    int spriteInstanceCounter = 0; 
-//    int lastAddr = 0;
-
-//    void Sprite::drawClip(int x, int y) {
-//       if ( w < 0 || h < 0 ) { return; }
-//       if ( !isValid() ) { return; }
-
-//       uint16_t row[ w ];
-//       for(int i=0; i < h; i++) {
-//          if ( i+y >= TFT_HEIGHT ) { break; }
-//          // *2 cf uint16_t
-//          memcpy( &row[0], &spriteArea[ ( (this->y+i) * SPRITE_AREA_WIDTH )+this->x ], w*2 );
-//          __fillPixelRect(x, i+y, w, 1, row);
-//       }
-//    }
+    extern uint16_t spriteArea[];
    
     void cleanSprites();
     void _feedSprites(char* filename, int x, int y);
-
-    // void grabbSprites(char* imageName, int offsetX, int offsetY) {
-    //    char* fileName = yatl.getFS()->getAssetsFileEntry( imageName );
-    //    _feedSprites(fileName, offsetX, offsetY);
-    // }
-
     void grabbSpritesOfSize(char* imageName, int offsetX, int offsetY, int width, int height);
 
 
@@ -160,15 +136,12 @@ extern uint16_t spriteArea[];
 
   void YatlScreen::cleanSprites() { 
      ::cleanSprites(); 
-     //this->yatl->dbug("cleanSprites NYI");
   }
   void YatlScreen::grabbSpritesOfSize(char* imageName, int offsetX, int offsetY, int width, int height) {
      ::grabbSpritesOfSize(imageName, offsetX, offsetY, width, height);
-     //this->yatl->dbug("grabbSpritesOfSize NYI");
   }
   void YatlScreen::grabbSprites(char* imageName, int offsetX, int offsetY) {
      ::grabbSprites(imageName, offsetX, offsetY);
-     //this->yatl->dbug("grabbSprites NYI");
   }
 
     // @@@@ Impl.
@@ -180,8 +153,6 @@ extern uint16_t spriteArea[];
          return;
       }
  
-
-
       FILE* bmpFile;
       int bmpWidth, bmpHeight;             // W+H in pixels
       uint8_t bmpDepth;                    // Bit depth (currently must be 24)
@@ -496,7 +467,6 @@ extern uint16_t spriteArea[];
 
 
       void __setFont(int fontMode) {
-          //yatl.dbug("SET Font NYI");
           sdlScreen.setFont( fontMode == LCD_CONSOLE_80_COLS ? 0 : 1 );
       }
       void __fillPixelRect(int x, int y, int w, int h, uint16_t* raster) {
@@ -544,13 +514,15 @@ extern uint16_t spriteArea[];
     // ============== Console routines ==================
 
     void YatlScreen::drawTextBox(char const* title, char const* text, unsigned short color) {
-        printf("TXT BOX '%s' \n", text);
+        sdlScreen.drawRect( 20, 20, TFT_WIDTH-40, TFT_HEIGHT-40, 1, mapColor(color) );
+        sdlScreen.drawRect( 20, 20, TFT_WIDTH-40, TFT_HEIGHT-40, 0, CLR_WHITE );
+        sdlScreen.setTextColor(CLR_WHITE);
+        sdlScreen.setCursor( 40, 30 );
+        sdlScreen.print( (char*)title );
+        sdlScreen.setCursor( 40, 30+30 );
+        sdlScreen.print( (char*)text );
     }
     // ::::::::::::::::::::::::::::::::::::::
-
-
-    // #include <SdFat.h>  // One SD library to rule them all - Greinman SdFat from Library Manager
-    // extern SdFatSdio SD;
 
     extern Yatl yatl;
     YatlSubMCU _subMcu(&yatl);
@@ -664,7 +636,7 @@ extern uint16_t spriteArea[];
 
     void Yatl::alert(const char* msg) {
         if ( screenReady ) {
-            this->getScreen()->drawTextBox( "ALERT", msg, 2 ); // red
+            this->getScreen()->drawTextBox( "ALERT", msg, CLR_RED ); // red
         } else {
             this->blink(5);
             printf("*****************************\n");
@@ -677,7 +649,7 @@ extern uint16_t spriteArea[];
     }
     void Yatl::warn(const char* msg) {
         if ( screenReady ) {
-            this->getScreen()->drawTextBox( "WARNING", msg, 7 ); // cyan
+            this->getScreen()->drawTextBox( "WARNING", msg, CLR_CYAN ); // cyan
         } else {
             this->blink(5);
             printf("*****************************\n");
@@ -712,6 +684,7 @@ extern uint16_t spriteArea[];
     }
 
     bool YatlFS::downloadFromSerial() {
+        this->yatl->warn("Download from Serial NYI");
         // while( Serial.available() ) { Serial.read(); delay(2); }
         // this->yatl->warn("Download in progress");
         // Serial.println("+OK");
@@ -768,6 +741,7 @@ extern uint16_t spriteArea[];
     }
 
     bool YatlFS::downloadFromSubMcu() {
+        this->yatl->warn("Download from Sub:CU NYI");
 //         this->yatl->getSubMCU()->lock();
 //         this->yatl->getSubMCU()->cleanBuffer();
 
@@ -880,10 +854,10 @@ extern uint16_t spriteArea[];
         keybLocked = false;
     }
 
-    int YatlSubMCU::available() { return 0;/*BRIDGE_MCU_SERIAL.available(); */ }
+    int YatlSubMCU::available() { return 0; }
     int YatlSubMCU::read() { 
-        // int ret = BRIDGE_MCU_SERIAL.read(); 
-        int ret = -1;
+        // int ret = subMCUSerial.read();
+        int ret = -1; 
         return ret;
     }
 
@@ -894,8 +868,7 @@ extern uint16_t spriteArea[];
     }
 
     int YatlSubMCU::readBytes(char* dest, int maxLen) {
-    //   int readed = BRIDGE_MCU_SERIAL.readBytes(dest, maxLen);
-    int readed = 0;
+      int readed = subMCUSerial.read(dest, maxLen);
       return readed;
     }
 
@@ -945,12 +918,8 @@ memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
         return volt;
     }
 
-    #define RESTART_ADDR 0xE000ED0C
-    #define READ_RESTART() (*(volatile uint32_t *)RESTART_ADDR)
-    #define WRITE_RESTART(val) ((*(volatile uint32_t *)RESTART_ADDR) = (val))
     void softReset() {
-        // WRITE_RESTART(0x5FA0004);
-        printf("Reset to Impl. \n");
+        system("reboot");
     }
 
 
@@ -976,23 +945,6 @@ memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
     }
 
     void YatlLEDs::mask(uint8_t mask) {
-        // TODO : better
-        // if ( (mask & 128) == 128 ) { any(7, true); }
-        // else { any(7, false); }
-        // if ( (mask & 64) == 64 ) { any(6, true); }
-        // else { any(6, false); }
-        // if ( (mask & 32) == 32 ) { any(5, true); }
-        // else { any(5, false); }
-        // if ( (mask & 16) == 16 ) { any(4, true); }
-        // else { any(4, false); }
-        // if ( (mask & 8) == 8 ) { any(3, true); }
-        // else { any(3, false); }
-        // if ( (mask & 4) == 4 ) { any(2, true); }
-        // else { any(2, false); }
-        // if ( (mask & 2) == 2 ) { any(1, true); }
-        // else { any(1, false); }
-        // if ( (mask & 1) == 1 ) { any(0, true); }
-        // else { any(0, false); }
         this->yatl->getSubMCU()->send('L');
         this->yatl->getSubMCU()->send((char)mask);
     }
@@ -1046,7 +998,7 @@ memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
     void YatlMusicPlayer::play(int trackNum) { 
         uint8_t d0 = trackNum / 256;
         uint8_t d1 = trackNum % 256;
-        this->yatl->getSubMCU()->send("pp");
+        this->yatl->getSubMCU()->send("P");
         this->yatl->getSubMCU()->send(d0);
         this->yatl->getSubMCU()->send(d1);
 
@@ -1055,31 +1007,38 @@ memset(lastSubMCULine, 0x00, MAX_SUBMCU_LINE_LEN+1);
         // 'Nix
         // mpg123 /vm_mnt/MP3/060_*.mp3
 
-        char str[32]; sprintf(str, "Playing MP3 # %03d", trackNum);
-        this->yatl->dbug( (const char*) str );
-
-
+        // char str[32]; sprintf(str, "Playing MP3 # %03d", trackNum);
+        // this->yatl->dbug( (const char*) str );
     }
+
     void YatlMusicPlayer::loop(int trackNum) {
         uint8_t d0 = trackNum / 256;
         uint8_t d1 = trackNum % 256;
-        this->yatl->getSubMCU()->send("pl");
+        this->yatl->getSubMCU()->send("X");
         this->yatl->getSubMCU()->send(d0);
         this->yatl->getSubMCU()->send(d1);
     }
+
     void YatlMusicPlayer::stop() { 
-        this->yatl->getSubMCU()->send("ps"); 
+        this->yatl->getSubMCU()->send("S"); 
         // from WSL to Win64
         // killall mpg123.exe
         // 'Nix
         // killall mpg123
     }
-    void YatlMusicPlayer::pause() { this->yatl->getSubMCU()->send("pP"); }
-    void YatlMusicPlayer::next() { this->yatl->getSubMCU()->send("pn"); }
-    void YatlMusicPlayer::prev() { this->yatl->getSubMCU()->send("pv"); }
+
+    void YatlMusicPlayer::pause() { this->yatl->getSubMCU()->send("p"); }
+    void YatlMusicPlayer::next() { this->yatl->getSubMCU()->send("N"); }
+    void YatlMusicPlayer::prev() { this->yatl->getSubMCU()->send("V"); }
     void YatlMusicPlayer::volume(uint8_t vol) {
-        this->yatl->getSubMCU()->send("pV");
+        this->yatl->getSubMCU()->send("v");
         this->yatl->getSubMCU()->send(vol%256);
+    }
+    bool YatlMusicPlayer::isPlaying() {
+        this->yatl->getSubMCU()->send("M");
+        char chs[1]; chs[0] = 0x00;
+        this->yatl->getSubMCU()->readBytes(chs, 1);
+        return chs[0] == 0x01;
     }
 
 #endif
