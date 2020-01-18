@@ -11,7 +11,11 @@
 #define NB_LEDS 8
 int ledPins[NB_LEDS] = { 14, 15, 16, 17, 18, 19, 20, 21 };
 
+
 #define mp3Serial Serial2
+#define MP3_BUSY_PIN 23
+#include "xts_zxts_dev_dfplayer.h"
+SoundCard mp3Player(&mp3Serial);
 
 #define BUZZER_PIN 22
 #include "notes.h"
@@ -49,6 +53,8 @@ void setup() {
   Serial.begin(115200);
 
   mp3Serial.begin(9600);
+  pinMode(MP3_BUSY_PIN, INPUT);
+  mp3Player.init();
 
   for(int i=0; i < NB_LEDS; i++) {
       pinMode( ledPins[i], OUTPUT );
@@ -163,12 +169,12 @@ void beep(uint16_t freqOrNote, uint8_t duration) {
   noTone(BUZZER_PIN);
 }
 
-bool isMp3Playing() { return false; }
-void playMp3(uint16_t trackNum) { ; }
+bool isMp3Playing() { return digitalRead(MP3_BUSY_PIN) == LOW; }
+void playMp3(uint16_t trackNum) { mp3Player.play(trackNum); }
 void loopMp3(uint16_t trackNum) { ; }
-void pauseMp3() { ; }
-void stopMp3() { ; }
-void nextMp3() { ; }
-void prevMp3() { ; }
-void volumeMp3(uint8_t vol) { ; }
+void pauseMp3() { mp3Player.pause(); }
+void stopMp3() { mp3Player.stop(); }
+void nextMp3() { mp3Player.next(); }
+void prevMp3() { mp3Player.prev(); }
+void volumeMp3(uint8_t vol) { mp3Player.volume(vol); }
 
