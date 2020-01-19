@@ -17,6 +17,8 @@ int ledPins[NB_LEDS] = { 14, 15, 16, 17, 18, 19, 20, 21 };
 #include "xts_zxts_dev_dfplayer.h"
 SoundCard mp3Player(&mp3Serial);
 
+void led(int num, bool state);
+
 #define BUZZER_PIN 22
 #include "notes.h"
 #include "speaker.h"
@@ -31,6 +33,16 @@ void bridgeWrite(uint8_t bt) { Serial.write(bt); }
 
 int bridgeWaitStrZT(char* str, int maxLen) {
   return Serial.readBytesUntil( 0x00, str, maxLen );
+}
+
+int bridgeWaitBinStream(char* dest, int maxLen) {
+  int l0 = bridgeWait();
+  int l1 = bridgeWait();
+
+  int len = (l0*256) + l1;
+
+  // return Serial.readBytesUntil( 0x00, str, maxLen );
+  return -1;
 }
 
 void led(int num, bool state) {
