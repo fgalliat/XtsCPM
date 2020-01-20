@@ -60,6 +60,12 @@
     bool YatlBuzzer::playTuneFile(const char* file) {
         // use SDL if available
         printf("playTuneFile(...)\n");
+
+        // t for .T5K, T for .T53
+        // this->yatl->getSubMCU()->send('t');
+        // this->yatl->getSubMCU()->sendBinStream( audioBuff, fileLen );
+        // wait for(0x01) that tune was played
+
         return true;
     }
 
@@ -838,6 +844,23 @@
     }
 
     void YatlSubMCU::flush() { /*BRIDGE_MCU_SERIAL.flush(); */ }
+    void YatlSubMCU::sendBinStream(uint8_t* buff, int buffLen) { 
+        subMCUSerial.write( (char)(buffLen / 256) ); 
+        subMCUSerial.write( (char)(buffLen % 256) );
+        // loop on packets of 64 bytes
+        // wait for 0x01 ACK 
+        char chs[1] = { 0x00 };
+        for(int i=0; i < buffLen; i+=64) {
+            int tlen = 64;
+            if ( i + 64 > buffLen ) { tlen = buffLen % 64; }
+            subMCUSerial.write( &buff[i], tlen);
+            int ch = subMCUSerial.read(chs, 1);
+            if ( chs[0] != 0x01 ) {
+                this->yatl->warn("Error sending bin to mcu");
+                break;
+            }
+        }
+    }
     void YatlSubMCU::send(char ch) { subMCUSerial.write( ch ); }
     void YatlSubMCU::send(const char* str) { subMCUSerial.writestr(str); }
     void YatlSubMCU::send(char* str) { subMCUSerial.writestr( (const char*)str); }

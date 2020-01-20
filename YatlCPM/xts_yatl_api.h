@@ -27,6 +27,7 @@ class YatlSubMCU {
 
       void println(const char* ch);
 
+      void sendBinStream(uint8_t* buff, int buffLen);
       void send(char ch);
       void send(const char* ch);
       void send(char* ch);
