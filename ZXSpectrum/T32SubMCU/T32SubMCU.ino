@@ -38,7 +38,7 @@ int bridgeWaitStrZT(char* str, int maxLen) {
 // 5KB => 80 packets
 #define SERIAL_PACKET_LEN 64
 uint8_t SerialBinPacket[SERIAL_PACKET_LEN];
-int bridgeWaitBinStream(char* dest, int maxLen) {
+int bridgeWaitBinStream(uint8_t* dest, int maxLen) {
   memset( dest, 0x00, maxLen );
 
   int l0 = bridgeWait();
@@ -48,7 +48,7 @@ int bridgeWaitBinStream(char* dest, int maxLen) {
   int total = 0;
 
   while( total < len ) {
-    int read = Serial.readBytes( SerialBinPacket, SERIAL_PACKET_LEN );
+    int read = Serial.readBytes( (char*)SerialBinPacket, SERIAL_PACKET_LEN );
     if ( read <= 0 ) {
       break;
     }
