@@ -35,14 +35,36 @@ int bridgeWaitStrZT(char* str, int maxLen) {
   return Serial.readBytesUntil( 0x00, str, maxLen );
 }
 
+// 5KB => 80 packets
+#define SERIAL_PACKET_LEN 64
+uint8_t SerialBinPacket[SERIAL_PACKET_LEN];
 int bridgeWaitBinStream(char* dest, int maxLen) {
+  memset( dest, 0x00, maxLen );
+
   int l0 = bridgeWait();
   int l1 = bridgeWait();
 
   int len = (l0*256) + l1;
+  int total = 0;
 
-  // return Serial.readBytesUntil( 0x00, str, maxLen );
-  return -1;
+  while( total < len ) {
+    int read = Serial.readBytes( SerialBinPacket, SERIAL_PACKET_LEN );
+    if ( read <= 0 ) {
+      break;
+    }
+
+    memcpy( &dest[total], &SerialBinPacket[0], read );
+    Serial.write( 0x01 ); // ACK
+
+    total += read;
+  }
+
+  if ( total < len ) {
+    // there was an error
+    return -1;
+  }
+
+  return total;
 }
 
 void led(int num, bool state) {
@@ -129,6 +151,16 @@ void loop() {
         if ( tlen > 0 ) {
           playTuneString( (const char*)str );
         }
+      } else if ( ch == 't' ) {
+        // .T5K tune stream
+        int read = bridgeWaitBinStream(audiobuff, AUDIO_BUFF_SIZE);
+        __playTune(audiobuff, true);
+        bridgeWrite(0x01);
+      } else if ( ch == 'T' ) {
+        // .T53 tune stream
+        int read = bridgeWaitBinStream(audiobuff, AUDIO_BUFF_SIZE);
+        __playTuneT53(audiobuff, true);
+        bridgeWrite(0x01);
       }
 
       // ====== MP3 =================
