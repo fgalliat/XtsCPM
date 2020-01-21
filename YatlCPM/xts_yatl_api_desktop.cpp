@@ -57,16 +57,140 @@
         this->yatl->getSubMCU()->send((char)0x00);
     }
 
-    bool YatlBuzzer::playTuneFile(const char* file) {
-        // use SDL if available
-        printf("playTuneFile(...)\n");
+    // 5KB audio buffer
+    #define AUDIO_BUFF_SIZE (5 * 1024)
+    uint8_t audiobuff[AUDIO_BUFF_SIZE];
+    void cleanAudioBuff() { memset(audiobuff, 0x00, AUDIO_BUFF_SIZE); }
+
+    #define AUDIO_FORMAT_T5K 1
+    #define AUDIO_FORMAT_T53 2
+
+    typedef struct Note {
+        unsigned char note;
+        unsigned short duration;
+    } Note;
+
+    // returns nb of bytes readed
+    int _SD_readBinFile(char* filename, uint8_t* outBuff, long fileLength) {
+      FILE* f;
+      
+      if (f = fopen(filename, "r") ) {
+        // ....
+        fseek(f, 0, SEEK_SET);
+      } else { return -1; }
+
+      int readed = 0;
+
+      // while (f.available()) {
+      while(true) {
+            int rr = fgetc( f );
+            if ( rr == EOF ) { break; }
+			// outBuff[readed++] = (uint8_t)f.read();
+            outBuff[readed++] = (uint8_t)rr;
+            if ( fileLength > -1 && readed >= fileLength ) {
+                break;
+            }
+      }
+
+      fclose(f);
+
+      return readed;
+    }
+
+
+    // T5K Format
+    bool __playTune( Yatl* yatl, unsigned char* tuneStream, int streamLen, bool btnStop) {
+        yatl->getSubMCU()->send('t');
+        bool ok = yatl->getSubMCU()->sendBinStream( tuneStream, streamLen );
+        if ( !ok ) { return false; }
+        char chs[1];
+        while(true) {
+            int ch = subMCUSerial.read(chs, 1);
+            if ( ch > 0 && chs[0] == 0x01 ) {
+                // tune has finished
+                return true;
+            } else if ( ch > 0) {
+                return false;
+            }
+        }
+        return false;
+    }
+    // T53
+    bool __playTuneT53( Yatl* yatl, unsigned char* tuneStream, int streamLen, bool btnStop) {
+        yatl->getSubMCU()->send('T');
+        bool ok = yatl->getSubMCU()->sendBinStream( tuneStream, streamLen );
+        if ( !ok ) { return false; }
+        char chs[1];
+        while(true) {
+            int ch = subMCUSerial.read(chs, 1);
+            if ( ch > 0 && chs[0] == 0x01 ) {
+                // tune has finished
+                return true;
+            } else if ( ch > 0) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    // ex. "MONKEY.T5K"
+    bool YatlBuzzer::playTuneFile(const char* tuneStreamName) {
+        cleanAudioBuff();
+        // if (this->_mute) { return true; } 
+
 
         // t for .T5K, T for .T53
         // this->yatl->getSubMCU()->send('t');
         // this->yatl->getSubMCU()->sendBinStream( audioBuff, fileLen );
         // wait for(0x01) that tune was played
 
-        return true;
+        int tlen = strlen(tuneStreamName);
+        if ( tlen < 1 ) {
+            char msg[64+1];
+            sprintf(msg, "BUZ NO File provided");
+            this->yatl->warn(msg);
+            return false;
+        }
+
+        char* ftuneStreamName = this->yatl->getFS()->getAssetsFileEntry( (char*)tuneStreamName );
+        int format = 0;
+        bool btnStop = true;
+
+        char lastCh = tuneStreamName[ tlen-1 ];
+        lastCh = charUpCase(lastCh);
+        if ( (( lastCh == 'K' || lastCh == '3') && (tlen >= 2 && tuneStreamName[ tlen-2 ] == '5') ) ) {
+            if ( lastCh == 'K' ) {
+                format = AUDIO_FORMAT_T5K;
+            } else {
+                format = AUDIO_FORMAT_T53;
+            }
+        }
+
+        /*static*/ unsigned char preBuff[2];
+        memset(preBuff, 0x00, 2);
+        int n = _SD_readBinFile(ftuneStreamName, preBuff, 2);
+        if ( n <= 0 ) {
+            char msg[64+1];
+            sprintf(msg, "BUZ File not ready %s", ftuneStreamName);
+            this->yatl->warn(msg);
+            return false;
+        }
+        int nbNotes = (preBuff[0]<<8)|preBuff[1];
+
+        int fileLen = (nbNotes*sizeof(Note))+2+16+2;
+        if ( format == AUDIO_FORMAT_T53 ) {
+            fileLen = (nbNotes*(3+3+3))+2+16+2;
+        }
+        n = _SD_readBinFile(ftuneStreamName, audiobuff, fileLen);
+
+        bool ok = false;
+        if ( format == AUDIO_FORMAT_T5K ) {
+            ok = __playTune(this->yatl,  &audiobuff[0], fileLen, btnStop );  
+        } else {
+            ok = __playTuneT53(this->yatl,  &audiobuff[0], fileLen, btnStop );  
+        }
+        // this->noTone();
+        return ok;
     }
 
     void YatlBuzzer::setup() {
@@ -844,7 +968,7 @@
     }
 
     void YatlSubMCU::flush() { /*BRIDGE_MCU_SERIAL.flush(); */ }
-    void YatlSubMCU::sendBinStream(uint8_t* buff, int buffLen) { 
+    bool YatlSubMCU::sendBinStream(uint8_t* buff, int buffLen) { 
         subMCUSerial.write( (char)(buffLen / 256) ); 
         subMCUSerial.write( (char)(buffLen % 256) );
         // loop on packets of 64 bytes
@@ -857,9 +981,10 @@
             int ch = subMCUSerial.read(chs, 1);
             if ( chs[0] != 0x01 ) {
                 this->yatl->warn("Error sending bin to mcu");
-                break;
+                return false;
             }
         }
+        return true;
     }
     void YatlSubMCU::send(char ch) { subMCUSerial.write( ch ); }
     void YatlSubMCU::send(const char* str) { subMCUSerial.writestr(str); }
