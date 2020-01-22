@@ -36,6 +36,8 @@
 
     #include "xts_yatl_dev_console.h"
 
+    extern char* upper(char* str);
+
     // ::::::::::::::::::::::::::::::::::::::
     bool keybLocked = false;
 
@@ -205,7 +207,7 @@
     }
 
     bool YatlKeyboard::setup() {
-        return false;
+        return true;
     }
 
     // ============== Draw routines ==================
@@ -810,6 +812,7 @@
         memset(_assetEntry, 0x00, _fullyQualifiedFileNameSize);
         strcpy( _assetEntry, "./Z/0/" );
         strcat( _assetEntry, assetName );
+        upper( _assetEntry );
         return _assetEntry;
     }
 
@@ -978,9 +981,18 @@
             int tlen = 64;
             if ( i + 64 > buffLen ) { tlen = buffLen % 64; }
             subMCUSerial.write( &buff[i], tlen);
-            int ch = subMCUSerial.read(chs, 1);
+            
+            int retry = 0, read = 0;
+            while( retry < 100 ) { 
+                read = subMCUSerial.read(chs, 1);
+                if (read > 0) { break; } 
+                delay(5);
+                retry++; 
+            }
             if ( chs[0] != 0x01 ) {
-                this->yatl->warn("Error sending bin to mcu");
+                char msg[128];
+                sprintf( msg, "Error sending bin to mcu @[%d] [%d][%d][%d]", i, (int)chs[0], read, retry );
+                this->yatl->warn(msg);
                 return false;
             }
         }

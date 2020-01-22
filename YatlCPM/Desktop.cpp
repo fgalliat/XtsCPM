@@ -2,8 +2,14 @@
 
 #include "Desktop.h"
 
+// for sleep
+#include <unistd.h>
+
+
 void delay(long millis) {
-    printf("delay() to impl.");    
+    // printf("delay() to impl.");    
+    // BEWARE w/ SDL & threads
+    usleep(millis*10);
 }
 
 void pinMode(int pin, int mode) {}
