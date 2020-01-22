@@ -239,8 +239,8 @@
           filename = &test[tmp+1];
         }
 
-        char msg[128];
-        sprintf(msg, "PAK:%s @%d,%d (%s)", filename, x, y, &test[1] );
+        // char msg[128];
+        // sprintf(msg, "PAK:%s @%d,%d (%s)", filename, x, y, &test[1] );
         // yatl.dbug(msg);
 
         drawImgFromPAK( yatl.getFS()->getAssetsFileEntry( filename ), x, y, numImg );
