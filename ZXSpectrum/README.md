@@ -18,6 +18,10 @@ Xtase - fgalliat
 
 
 
+**ZXTS SubMCU wiring**
+
+![SubMCU](./subMCU.png)
+
 - [x] wire the keyboard matrix (Arduino MICRO)
   - [x] test arduino MICRO code
   - [x] remap sereval keyCodes ...
