@@ -22,14 +22,21 @@ Xtase - fgalliat
 
 ![SubMCU](./subMCU.png)
 
+**ZTXS Both Arduinos + DFPlayerMP3**
+
+![BOTH MCU](./zxts2arduinos.jpg)
+
 - [x] wire the keyboard matrix (Arduino MICRO)
+  
   - [x] test arduino MICRO code
   - [x] remap sereval keyCodes ...
   - [x] manage debouce & repeat again
-  - [ ] wire @least 2 leds for keyb state (CapLock & Ctrl)
+  - [x] wire @least 2 leds for keyb state (CapLock & Ctrl)
+  
 - [ ] RPI deactivate Serial debugging (**later** : will use T3.2 SubMCU via USBSerial for now)
-- [ ] mount a subMCU (T3.2 connected by USB)
-  - [ ] mount a DFPlayer on subMCU
+
+- [x] mount a subMCU (T3.2 connected by USB)
+  - [x] mount a DFPlayer on subMCU
   
   - [x] mount a Buzzer on SubMCU
     
@@ -70,9 +77,13 @@ Xtase - fgalliat
     ```
   
 - [ ] mount USB HUB
+
 - [ ] ? mount card reader ?
+
 - [ ] wire HDMI output
+
 - [ ] wire RCA output
+
 - [ ] wire USB ext.
 
 - [ ] add a WebFileEditor (httpd) as WiFiServerMode (directly linked to YatlCPM FS)
