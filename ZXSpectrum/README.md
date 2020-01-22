@@ -23,15 +23,15 @@ Xtase - fgalliat
   - [x] remap sereval keyCodes ...
   - [x] manage debouce & repeat again
   - [ ] wire @least 2 leds for keyb state (CapLock & Ctrl)
-- [ ] RPI deactivate Serial debugging (**later** : will use T3.2 SubMCU via USBSerial)
+- [ ] RPI deactivate Serial debugging (**later** : will use T3.2 SubMCU via USBSerial for now)
 - [ ] mount a subMCU (T3.2 connected by USB)
   - [ ] mount a DFPlayer on subMCU
   
-  - [ ] mount a Buzzer on SubMCU
+  - [x] mount a Buzzer on SubMCU
     
-    - [ ] reserve 5KB RAM for tunefiles
+    - [x] reserve 5KB RAM for tunefiles
     
-  - [ ] mount a 10LED BarGraph (could address 8 by T3.2 + 2 by MICRO (keyb) )
+  - [x] mount a 10LED BarGraph (could address 8 by T3.2 + 2 by MICRO (keyb) )
     - [ ] BOOT
     - [ ] DRIVE
     - [ ] WIFI
@@ -51,8 +51,8 @@ Xtase - fgalliat
     b		BEEP						EMIT a single beep				[x]
     Bxxyy	BEEP x{freqOrNote}{durMS}	TONE a sound (0..48 : notes)    [x]
     q{str}	PLAY STRING "A#CCD"			PLAY a notes sequence           [x]
-    t{bin}  PLAY TUNE T5K				PLAYS a T5K tune file           [ ]
-    T{bin}  PLAY TUNE T53				PLAYS a T53 tune file           [ ]
+    t{bin}  PLAY TUNE T5K				PLAYS a T5K tune file           [x]
+    T{bin}  PLAY TUNE T53				PLAYS a T53 tune file           [x]
     
     p		(UN)PAUSE MP3				PAUSE MP3 PLAYBACK           	[x]
     Pxx		PLAY MP3 x{1..999}			PLAY MP3 TRACK           		[x]
