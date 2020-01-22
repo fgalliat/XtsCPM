@@ -238,13 +238,10 @@
           }
           filename = &test[tmp+1];
         }
-        // Serial.print("|  @ ");
-        // Serial.print(filename);
-        // Serial.print(",");
-        // Serial.print(x);
-        // Serial.print(",");
-        // Serial.print(y);
-        // Serial.println();
+
+        char msg[128];
+        sprintf(msg, "PAK:%s @%d,%d (%s)", filename, x, y, &test[1] );
+        // yatl.dbug(msg);
 
         drawImgFromPAK( yatl.getFS()->getAssetsFileEntry( filename ), x, y, numImg );
 

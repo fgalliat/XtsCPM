@@ -70,8 +70,13 @@ bool screenRotated = false; // for Bitmap WallPaper
 
 void WiredScreen::screenRotate(bool portrait) {
     screenRotated = portrait;
+    #if MODE_480
+    SCREEN_WIDTH = portrait ? 320 : 480;
+    SCREEN_HEIGHT = portrait ? 480 : 320;
+    #else
     SCREEN_WIDTH = portrait ? 240 : 320;
     SCREEN_HEIGHT = portrait ? 320 : 240;
+    #endif
 }
 
 

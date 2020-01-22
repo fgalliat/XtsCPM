@@ -37,6 +37,7 @@
     #include "xts_yatl_dev_console.h"
 
     extern char* upper(char* str);
+    extern int indexOf(char* str, char ch, int start);
 
     // ::::::::::::::::::::::::::::::::::::::
     bool keybLocked = false;
@@ -422,7 +423,9 @@
       FILE* pakFile;
 
       if (!(pakFile = fopen(filename, "r"))) {
-         yatl.warn("PAK File not found");
+          char msg[64];
+          sprintf(msg, "PAK File not found >%s<", filename);
+         yatl.warn(msg);
          return;
       }
 
@@ -440,7 +443,10 @@
       uint16_t scanLine[w];
       for(int yy=0; yy < h; yy++) {
          int ct = fread( (uint8_t*)scanLine, 1, w*2, pakFile ); // *2 cf U16
-         if ( ct <= 0 ) { yatl.dbug("Oups EOF !"); break; }
+         if ( ct <= 0 ) { 
+            // yatl.dbug("Oups EOF !"); 
+            break; 
+         }
          __fillPixelRect(x, yy+y, w, 1, scanLine);
       }
 
@@ -811,7 +817,13 @@
     char* YatlFS::getAssetsFileEntry(char* assetName) {
         memset(_assetEntry, 0x00, _fullyQualifiedFileNameSize);
         strcpy( _assetEntry, "./Z/0/" );
-        strcat( _assetEntry, assetName );
+        if ( indexOf(assetName, ':', 0) > -1 ) {
+            // change asset current drive
+            _assetEntry[2] = assetName[0];
+            strcat( _assetEntry, &assetName[2] );
+        } else {
+            strcat( _assetEntry, assetName );
+        }
         upper( _assetEntry );
         return _assetEntry;
     }
