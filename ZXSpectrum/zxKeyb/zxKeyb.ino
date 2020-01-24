@@ -40,6 +40,7 @@ byte colPins[NUM_COLS] = {8, 9, 10, 11, 12};
 byte rowPins[NUM_ROWS] = {7, 6, 5, 4, 3, 2, 1, 0};
 
 #define LED 13
+#define LED2 14
 
 #define CAP_KEY 0xFF 
 #define SYM_KEY 0xFE 
@@ -101,9 +102,16 @@ void led(bool state) {
   digitalWrite(LED, state ? HIGH : LOW);
 }
 
+void led2(bool state) {
+  digitalWrite(LED2, state ? HIGH : LOW);
+}
+
 void setup() {
   pinMode(LED, OUTPUT);
   led(false);
+
+  pinMode(LED2, OUTPUT);
+  led2(false);
 
   led(true);
   // 0 to 4
@@ -178,7 +186,7 @@ void sendChar(unsigned char found, char* strRepr, bool cap, bool sym, bool ctrl)
   else { Keyboard.write( found ); }
 
   ctrlLock = false; // auto release after char
-  led(ctrlLock);
+  led2(ctrlLock);
 
   delay(DELAY_AFTER_KEYSTROKE);
 }
@@ -253,7 +261,7 @@ void loop() {
         } // CAPLOCK Key
         else if ( found == CTRL_KEY ) { 
           // Keyboard.println("Ctr"); 
-          ctrlLock = !ctrlLock; led(ctrlLock); found = 0x00; 
+          ctrlLock = !ctrlLock; led2(ctrlLock); found = 0x00; 
           delay(70);
         } // EDIT Key
       } else if ( sym ) {
