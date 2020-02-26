@@ -16,7 +16,8 @@
     // #include "Arduino.h"
     // #else 
     #include "Desktop.h"
-    #define TTY_MCU_PORT "/dev/ttyACM1"
+    // #define TTY_MCU_PORT "/dev/ttyACM1"
+    #define TTY_MCU_PORT "/dev/ttyACM0"
     // #endif
 
     // #include "xts_string.h"
