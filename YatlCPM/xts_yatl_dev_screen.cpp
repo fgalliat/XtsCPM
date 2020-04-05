@@ -352,7 +352,8 @@
       #ifdef COLORED_CONSOLE
          memset( &ttyConsoleAttrs[ addr ], 0x00, len );
       #endif
-      memset( &ttyConsoleFrame[ addr ], 0x00, len );
+      // memset( &ttyConsoleFrame[ addr ], 0x00, len );
+      memset( &ttyConsoleFrame[ addr ], ' ', len );
    }
 
    bool __escapeChar = false;
