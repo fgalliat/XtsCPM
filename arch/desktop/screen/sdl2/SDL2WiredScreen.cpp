@@ -1150,6 +1150,7 @@ int_least16_t WiredScreen::drawChar(int_least16_t x, int_least16_t y, char c, ui
         }
         else
         {
+          this->drawPixel(x + xx, y + yy, bg);
           //draw(bg);
           // not for now as real SSD1306 does
           // __DrawPixel(x + xx, y + yy, bg);
